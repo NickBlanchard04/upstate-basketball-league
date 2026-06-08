@@ -1,10 +1,3 @@
-const teams = [
-  "The King’s School",
-  "Perth",
-  "Wilton Baptist",
-  "Hudson Valley Rocks",
-];
-
 const schedule = [
   { date: "Dec 1", iso: "2026-12-01", time: "6:00 PM", division: "Boys Varsity", home: "The King’s School", away: "Wilton Baptist", location: "The King’s School Gym", result: "Scheduled" },
   { date: "Dec 5", iso: "2026-12-05", time: "5:30 PM", division: "Girls Varsity", home: "Perth", away: "Hudson Valley Rocks", location: "Perth", result: "Scheduled" },
@@ -121,10 +114,7 @@ const scoreList = document.querySelector("[data-score-list]");
 function renderScores() {
   if (!scoreList) return;
 
-  const savedScores = JSON.parse(localStorage.getItem("ublScores") || "[]");
-  const scores = [...savedScores, ...sampleScores].slice(0, 4);
-
-  scoreList.innerHTML = scores.map((game) => `
+  scoreList.innerHTML = sampleScores.map((game) => `
     <article class="score-card">
       <div class="score-card-top">
         <span>${game.date} · ${game.division}</span>
@@ -136,50 +126,6 @@ function renderScores() {
     </article>
   `).join("");
 }
-
-document.querySelectorAll("[data-team-select]").forEach((select) => {
-  teams.forEach((team) => {
-    const option = document.createElement("option");
-    option.value = team;
-    option.textContent = team;
-    select.append(option);
-  });
-});
-
-const scoreForm = document.querySelector("[data-score-form]");
-const formStatus = document.querySelector("[data-form-status]");
-
-scoreForm?.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const formData = new FormData(scoreForm);
-  const entry = Object.fromEntries(formData.entries());
-
-  if (entry.homeTeam === entry.awayTeam) {
-    formStatus.textContent = "Home and away teams must be different.";
-    return;
-  }
-
-  if (entry.homeScore === entry.awayScore) {
-    formStatus.textContent = "A final basketball score cannot end in a tie.";
-    return;
-  }
-
-  const savedScores = JSON.parse(localStorage.getItem("ublScores") || "[]");
-  savedScores.unshift({
-    date: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(`${entry.date}T12:00:00`)),
-    division: entry.division,
-    home: entry.homeTeam,
-    homeScore: Number(entry.homeScore),
-    away: entry.awayTeam,
-    awayScore: Number(entry.awayScore),
-    note: entry.notes ? `${entry.notes} · Submitted by ${entry.submittedBy}` : `Submitted by ${entry.submittedBy}`,
-  });
-  localStorage.setItem("ublScores", JSON.stringify(savedScores.slice(0, 10)));
-
-  scoreForm.reset();
-  formStatus.textContent = "Score saved in this browser and added to the latest results.";
-  renderScores();
-});
 
 renderSchedule();
 renderStandings();

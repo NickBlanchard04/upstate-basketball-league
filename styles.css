@@ -186,10 +186,6 @@ p {
   text-transform: uppercase;
 }
 
-.header-action {
-  display: none;
-}
-
 .hero {
   min-height: min(47rem, calc(100svh - 5.25rem));
   position: relative;
@@ -932,82 +928,6 @@ h1 span {
   font-size: 0.88rem;
 }
 
-.report-panel {
-  padding: clamp(1.25rem, 4vw, 2.5rem);
-  border: 1px solid var(--ink);
-  background: var(--paper);
-}
-
-.report-panel > p {
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.score-form {
-  margin-top: 1.5rem;
-  display: grid;
-  gap: 1rem;
-}
-
-.form-row {
-  display: grid;
-  gap: 1rem;
-}
-
-.score-form label {
-  display: grid;
-  gap: 0.4rem;
-  color: var(--ink);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.score-form label span {
-  color: var(--muted);
-  font-weight: 500;
-  text-transform: none;
-}
-
-.score-form input,
-.score-form select,
-.score-form textarea {
-  width: 100%;
-  min-height: 3rem;
-  padding: 0.7rem 0.75rem;
-  border: 1px solid var(--line);
-  border-radius: 0;
-  color: var(--ink);
-  background: var(--paper-light);
-  font-size: 0.9rem;
-}
-
-.score-form textarea {
-  min-height: 6.3rem;
-  resize: vertical;
-}
-
-.score-form input:focus,
-.score-form select:focus,
-.score-form textarea:focus {
-  outline: 2px solid var(--red);
-  outline-offset: 1px;
-  border-color: var(--red);
-}
-
-.score-form .button {
-  width: 100%;
-}
-
-.form-status {
-  min-height: 1.4rem;
-  margin: 0;
-  color: var(--red-dark);
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
 .contact-band {
   padding: clamp(3rem, 7vw, 5rem) var(--page-pad);
   display: grid;
@@ -1089,10 +1009,6 @@ h1 span {
 @media (min-width: 640px) {
   .brand-copy {
     display: block;
-  }
-
-  .form-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .league-strip {
@@ -1193,19 +1109,6 @@ h1 span {
     color: var(--paper);
   }
 
-  .header-action {
-    min-height: 2.9rem;
-    padding: 0.75rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    color: white;
-    background: var(--red);
-    font: 800 0.86rem/1 var(--display);
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-
   .hero {
     min-height: min(50rem, calc(100vh - 5.8rem));
   }
@@ -1220,9 +1123,7 @@ h1 span {
   }
 
   .operations-inner {
-    grid-template-columns: minmax(0, 1fr) minmax(25rem, 0.75fr);
-    gap: clamp(4rem, 7vw, 8rem);
-    align-items: start;
+    max-width: 74rem;
   }
 
   .contact-band {

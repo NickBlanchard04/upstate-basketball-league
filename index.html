@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/ubl-logo.png">
-  <link rel="stylesheet" href="styles.css?v=20260608-2">
-  <script src="script.js?v=20260608-2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260608-3">
+  <script src="script.js?v=20260608-3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -38,8 +38,6 @@
         <a href="#teams">Teams</a>
         <a href="#rules">Rules</a>
       </nav>
-
-      <a class="header-action" href="#report">Report a score</a>
     </div>
   </header>
 
@@ -321,66 +319,6 @@
           </div>
         </section>
 
-        <section class="report-panel" id="report" aria-labelledby="report-title">
-          <div class="section-heading compact-heading">
-            <div>
-              <span class="section-index">07</span>
-              <h2 id="report-title">Report a score</h2>
-            </div>
-          </div>
-          <p>Home teams submit results after each game. This preview saves submissions only in the current browser.</p>
-
-          <form class="score-form" data-score-form>
-            <div class="form-row">
-              <label>
-                Game date
-                <input type="date" name="date" required>
-              </label>
-              <label>
-                Division
-                <select name="division" required>
-                  <option value="">Choose division</option>
-                  <option>Boys Varsity</option>
-                  <option>Girls Varsity</option>
-                </select>
-              </label>
-            </div>
-            <div class="form-row">
-              <label>
-                Home team
-                <select name="homeTeam" required data-team-select>
-                  <option value="">Choose team</option>
-                </select>
-              </label>
-              <label>
-                Away team
-                <select name="awayTeam" required data-team-select>
-                  <option value="">Choose team</option>
-                </select>
-              </label>
-            </div>
-            <div class="form-row score-inputs">
-              <label>
-                Home score
-                <input type="number" name="homeScore" min="0" max="200" inputmode="numeric" required>
-              </label>
-              <label>
-                Away score
-                <input type="number" name="awayScore" min="0" max="200" inputmode="numeric" required>
-              </label>
-            </div>
-            <label>
-              Top scorers or game notes <span>(optional)</span>
-              <textarea name="notes" rows="3" placeholder="Player names, scoring totals, or issues to flag"></textarea>
-            </label>
-            <label>
-              Submitted by
-              <input type="text" name="submittedBy" autocomplete="name" required>
-            </label>
-            <button class="button button-red" type="submit">Submit final score</button>
-            <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-          </form>
-        </section>
       </div>
     </section>
 
@@ -410,7 +348,6 @@
       <a href="#schedule">Schedule</a>
       <a href="#standings">Standings</a>
       <a href="#rules">Rules</a>
-      <a href="#report">Report a score</a>
     </div>
   </footer>
 </body>
