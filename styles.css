@@ -114,39 +114,11 @@ p {
   text-decoration: none;
 }
 
-.brand-mark {
-  width: 3.4rem;
-  height: 3.4rem;
-  position: relative;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-  color: var(--paper);
-}
-
-.brand-mark::before,
-.brand-mark::after {
-  content: "";
-  position: absolute;
-  inset: -0.3rem 48%;
-  border-inline: 1px solid currentColor;
-  transform: rotate(28deg);
-  opacity: 0.55;
-}
-
-.brand-mark::after {
-  transform: rotate(-28deg);
-}
-
-.brand-mark span {
-  position: relative;
-  z-index: 1;
-  padding: 0.18rem;
-  background: var(--black);
-  font: 900 1.18rem/1 var(--display);
-  letter-spacing: 0.04em;
+.brand-logo {
+  width: 3.75rem;
+  height: 3.75rem;
+  display: block;
+  object-fit: contain;
 }
 
 .brand-copy {
