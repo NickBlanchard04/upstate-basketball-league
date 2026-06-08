@@ -3,22 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sorrentino's Delicatessen & Market serves famous overstuffed subs, fresh butcher cuts, homemade salads, and catering in South Glens Falls, NY.">
-  <title>Sorrentino's Delicatessen & Market</title>
+  <meta name="description" content="The Upstate Basketball League is a faith-based high school basketball league built for structured competition, sportsmanship, and a meaningful championship experience.">
+  <title>UBL | Upstate Basketball League</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260608">
+  <script src="script.js?v=20260608" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="#top" aria-label="Sorrentino's home">
-        <span class="brand-name">Sorrentino's</span>
-        <span class="brand-sub">Delicatessen &amp; Market</span>
+      <a class="brand" href="#top" aria-label="UBL home">
+        <span class="brand-mark" aria-hidden="true">
+          <span>UBL</span>
+        </span>
+        <span class="brand-copy">
+          <strong>Upstate Basketball League</strong>
+          <span>Faith · Competition · Sportsmanship</span>
+        </span>
       </a>
 
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -27,212 +32,387 @@
       </button>
 
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="#menu">Subs &amp; deli</a>
-        <a href="#butcher">Butcher</a>
-        <a href="#catering">Catering</a>
-        <a href="#story">Our story</a>
-        <a href="#visit">Visit</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#standings">Standings</a>
+        <a href="#scores">Scores</a>
+        <a href="#playoffs">Playoffs</a>
+        <a href="#teams">Teams</a>
+        <a href="#rules">Rules</a>
       </nav>
 
-      <a class="header-call" href="tel:+15187980273">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.2-.2 1.3.4 2.7.7 4.1.7.7 0 1.3.6 1.3 1.3v3.7c0 .7-.6 1.3-1.3 1.3C10.4 22 2 13.6 2 3.3 2 2.6 2.6 2 3.3 2H7c.7 0 1.3.6 1.3 1.3 0 1.4.2 2.8.7 4.1.1.4 0 .9-.3 1.2l-2.1 2.2Z"/></svg>
-        Call ahead
-      </a>
+      <a class="header-action" href="#report">Report a score</a>
     </div>
   </header>
 
   <main id="main">
     <section class="hero" id="top">
-      <img class="hero-image" src="assets/hero-italian-sub.png" alt="An overstuffed Italian sub on a deli counter">
-      <div class="hero-shade"></div>
-      <div class="hero-content">
-        <p class="hero-intro">South Glens Falls' neighborhood deli &amp; butcher since 2000.</p>
-        <h1>Big subs.<br>Good meat.<br>No shortcuts.</h1>
-        <p class="hero-copy">Come hungry for an overstuffed sub, leave with dinner from the butcher counter.</p>
-        <div class="hero-actions">
-          <a class="button button-red" href="tel:+15187980273">Call (518) 798-0273</a>
-          <a class="button button-paper" href="https://www.google.com/maps/dir/?api=1&destination=40+Main+Street+South+Glens+Falls+NY+12803" target="_blank" rel="noreferrer">Get directions</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="open-strip" data-open-strip>
-      <span class="open-status" data-open-status>Checking today's hours...</span>
-      <span class="strip-address">40 Main Street · South Glens Falls, NY</span>
-      <a href="#visit">See all hours</a>
-    </div>
-
-    <section class="first-visit section-shell">
-      <div class="section-title">
-        <span class="section-number">01</span>
-        <h2>First time at Sorrentino's?</h2>
-      </div>
-      <div class="first-visit-copy">
-        <p>No need to study a giant menu. Start with a <strong>Sorrentino Special</strong>, grab a homemade salad, then check the butcher case for dinner.</p>
-        <div class="first-steps" aria-label="First visit tips">
-          <span><b>1.</b> Call ahead for subs</span>
-          <span><b>2.</b> Ask what's fresh</span>
-          <span><b>3.</b> Bring an appetite</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="departments section-shell" aria-labelledby="departments-title">
-      <div class="section-title departments-title">
-        <span class="section-number">02</span>
-        <h2 id="departments-title">One stop. Three good reasons.</h2>
-      </div>
-
-      <article class="department department-deli" id="menu">
-        <div>
-          <span class="department-index">A</span>
-          <h3>The deli</h3>
-        </div>
-        <p>Famous overstuffed subs, Boar's Head provisions, a large variety of meats and cheeses, homemade salads, cannoli, and eclairs.</p>
-        <a class="text-link" href="#popular">See popular subs <span aria-hidden="true">→</span></a>
-      </article>
-
-      <article class="department department-butcher" id="butcher">
-        <div>
-          <span class="department-index">B</span>
-          <h3>The butcher</h3>
-        </div>
-        <p>All-natural meat free of growth hormones and antibiotics, including steaks, chicken, ground beef, and 20 varieties of store-made sausage.</p>
-        <a class="text-link" href="https://www.sorrentinosdeliandmarket.com/meat" target="_blank" rel="noreferrer">Explore the meat counter <span aria-hidden="true">→</span></a>
-      </article>
-
-      <article class="department department-catering" id="catering">
-        <div>
-          <span class="department-index">C</span>
-          <h3>Catering</h3>
-        </div>
-        <p>Party subs, deli platters, antipasto, hot entrees, salads, and desserts for office lunches, family gatherings, and celebrations.</p>
-        <a class="text-link" href="tel:+15187980273">Call to plan your order <span aria-hidden="true">→</span></a>
-      </article>
-    </section>
-
-    <section class="popular section-shell" id="popular">
-      <div class="popular-heading">
-        <div class="section-title">
-          <span class="section-number">03</span>
-          <h2>Popular at the counter</h2>
-        </div>
-        <p>Built to order with your choice of cheese, lettuce, tomato, onion, black olives, and pickles.</p>
-      </div>
-
-      <div class="menu-board">
-        <div class="menu-list">
-          <article class="menu-item">
-            <div><h3>Sorrentino Special</h3><p>Genoa salami, pepperoni, hot ham, provolone, lettuce, tomato, onion, Italian dressing</p></div>
-            <strong>$11.75</strong>
-          </article>
-          <article class="menu-item">
-            <div><h3>The Goomba</h3><p>Sopressata, prosciutto, ham cappy, imported provolone, roasted red peppers, lettuce, tomato, onion</p></div>
-            <strong>$14.75</strong>
-          </article>
-          <article class="menu-item">
-            <div><h3>That's Amore</h3><p>Boar's Head chicken breast, roasted red peppers, sundried tomatoes, lettuce, mozzarella, Italian dressing</p></div>
-            <strong>$14.75</strong>
-          </article>
-          <article class="menu-item">
-            <div><h3>Manhattan Special</h3><p>Corned beef, pastrami, Swiss, coleslaw, and Russian dressing</p></div>
-            <strong>$12.75</strong>
-          </article>
+      <div class="hero-court" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="season-line">2026–27 UBL Basketball Season · Starts December 1, 2026</p>
+          <h1>Built for the game.<br><span>Grounded in purpose.</span></h1>
+          <p class="hero-summary">The Upstate Basketball League gives smaller high school programs structured competition, strong sportsmanship, and a meaningful championship experience.</p>
+          <div class="hero-actions">
+            <a class="button button-red" href="#schedule">View schedule</a>
+            <a class="button button-light" href="#standings">Check standings</a>
+          </div>
         </div>
 
-        <aside class="order-note">
-          <p class="order-note-big">Hungry now?</p>
-          <p>Call ahead and we'll get your order started. Ask about today's soups and homemade salads while you're at it.</p>
-          <a class="button button-red" href="tel:+15187980273">Call the deli</a>
-          <a class="text-link light-link" href="https://www.sorrentinosdeliandmarket.com/subs-wraps" target="_blank" rel="noreferrer">Browse the full online menu <span aria-hidden="true">→</span></a>
-          <p class="price-note">Online prices are shown as listed by the deli and may change.</p>
+        <aside class="next-game" aria-label="Next scheduled game">
+          <div class="next-game-top">
+            <span>Next tipoff</span>
+            <time datetime="2026-12-01T18:00">Dec 1 · 6:00 PM</time>
+          </div>
+          <div class="matchup">
+            <div class="matchup-team">
+              <span class="team-code">TKS</span>
+              <strong>The King’s School</strong>
+              <span>Home</span>
+            </div>
+            <div class="versus">VS</div>
+            <div class="matchup-team matchup-team-away">
+              <span class="team-code">WBC</span>
+              <strong>Wilton Baptist</strong>
+              <span>Away</span>
+            </div>
+          </div>
+          <div class="next-game-bottom">
+            <span>Boys Varsity</span>
+            <span>The King’s School Gym</span>
+          </div>
         </aside>
       </div>
     </section>
 
-    <section class="catering-callout">
-      <div class="catering-mark" aria-hidden="true">3 ft.</div>
+    <div class="league-strip" aria-label="League summary">
+      <div><strong>04</strong><span>Founding teams</span></div>
+      <div><strong>02</strong><span>Varsity divisions</span></div>
+      <div><strong>01</strong><span>Championship goal</span></div>
+      <p>Season begins December 1, 2026 · Playoffs planned for mid-February 2027.</p>
+    </div>
+
+    <section class="section-shell schedule-section" id="schedule">
+      <div class="section-heading">
+        <div>
+          <span class="section-index">01</span>
+          <h2>League schedule</h2>
+        </div>
+        <p>Dates and locations are working placeholders until the official 2026 schedule is confirmed.</p>
+      </div>
+
+      <div class="filter-bar" aria-label="Schedule filters">
+        <button class="filter-button active" type="button" data-division="all">All games</button>
+        <button class="filter-button" type="button" data-division="Boys Varsity">Boys varsity</button>
+        <button class="filter-button" type="button" data-division="Girls Varsity">Girls varsity</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table schedule-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Division</th>
+              <th>Matchup</th>
+              <th>Location</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody data-schedule-body></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="results-band">
+      <div class="results-inner">
+        <section id="standings" aria-labelledby="standings-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-index">02</span>
+              <h2 id="standings-title">Standings</h2>
+            </div>
+            <p>Preseason</p>
+          </div>
+
+          <div class="division-tabs" role="tablist" aria-label="Standings division">
+            <button class="division-tab active" type="button" role="tab" aria-selected="true" data-standings-division="Boys Varsity">Boys varsity</button>
+            <button class="division-tab" type="button" role="tab" aria-selected="false" data-standings-division="Girls Varsity">Girls varsity</button>
+          </div>
+
+          <div class="table-wrap dark-table-wrap">
+            <table class="data-table standings-table">
+              <thead>
+                <tr>
+                  <th>Seed</th>
+                  <th>Team</th>
+                  <th>W</th>
+                  <th>L</th>
+                  <th>PCT</th>
+                  <th>PF</th>
+                  <th>PA</th>
+                  <th>DIFF</th>
+                </tr>
+              </thead>
+              <tbody data-standings-body></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="scores-panel" id="scores" aria-labelledby="scores-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-index">03</span>
+              <h2 id="scores-title">Scores</h2>
+            </div>
+            <p>Latest finals</p>
+          </div>
+
+          <div class="score-list" data-score-list></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="section-shell playoffs-section" id="playoffs">
+      <div class="section-heading">
+        <div>
+          <span class="section-index">04</span>
+          <h2>Road to the title</h2>
+        </div>
+        <p>The bracket rewards the regular season while keeping every program in the championship picture.</p>
+      </div>
+
+      <div class="playoff-note">
+        <strong>Mid-February 2027</strong>
+        <p>Playoffs are planned for mid-February. When a fifth team joins, Seed 4 and Seed 5 play for the final semifinal spot. With four teams, Seed 4 advances directly.</p>
+      </div>
+
+      <div class="bracket" aria-label="UBL playoff bracket">
+        <div class="bracket-round play-in-round">
+          <h3>Play-in</h3>
+          <div class="bracket-game muted-game">
+            <div><span>Seed 4</span><strong>TBD</strong></div>
+            <div><span>Seed 5</span><strong>Future team</strong></div>
+            <p>Activates with five teams</p>
+          </div>
+        </div>
+
+        <div class="bracket-round semifinal-round">
+          <h3>Semifinals</h3>
+          <div class="bracket-game">
+            <div><span>Seed 1</span><strong>Regular season leader</strong></div>
+            <div><span>Play-in winner</span><strong>TBD</strong></div>
+          </div>
+          <div class="bracket-game">
+            <div><span>Seed 2</span><strong>TBD</strong></div>
+            <div><span>Seed 3</span><strong>TBD</strong></div>
+          </div>
+        </div>
+
+        <div class="bracket-round championship-round">
+          <h3>Championship</h3>
+          <div class="bracket-game title-game">
+            <div><span>Semifinal winner</span><strong>TBD</strong></div>
+            <div><span>Semifinal winner</span><strong>TBD</strong></div>
+            <p>2027 UBL Championship</p>
+          </div>
+        </div>
+
+        <div class="champion-mark" aria-hidden="true">
+          <span>UBL</span>
+          <strong>Champion</strong>
+          <span>2027</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="teams-section" id="teams">
+      <div class="section-shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">05</span>
+            <h2>Founding teams</h2>
+          </div>
+          <p>Four programs building a league centered on meaningful games and shared standards.</p>
+        </div>
+
+        <div class="team-list">
+          <article class="team-row">
+            <span class="team-number">01</span>
+            <div class="team-monogram">TKS</div>
+            <div>
+              <h3>The King’s School</h3>
+              <p>School-based program</p>
+            </div>
+            <dl>
+              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
+              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
+            </dl>
+          </article>
+          <article class="team-row">
+            <span class="team-number">02</span>
+            <div class="team-monogram">PER</div>
+            <div>
+              <h3>Perth</h3>
+              <p>Independent program</p>
+            </div>
+            <dl>
+              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
+              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
+            </dl>
+          </article>
+          <article class="team-row">
+            <span class="team-number">03</span>
+            <div class="team-monogram">WBC</div>
+            <div>
+              <h3>Wilton Baptist</h3>
+              <p>School-based program</p>
+            </div>
+            <dl>
+              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
+              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
+            </dl>
+          </article>
+          <article class="team-row">
+            <span class="team-number">04</span>
+            <div class="team-monogram">HVR</div>
+            <div>
+              <h3>Hudson Valley Rocks</h3>
+              <p>Homeschool-based program</p>
+            </div>
+            <dl>
+              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
+              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="operations-section">
+      <div class="operations-inner">
+        <section class="rules-panel" id="rules" aria-labelledby="rules-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-index">06</span>
+              <h2 id="rules-title">League standards</h2>
+            </div>
+          </div>
+          <p class="rules-intro">Clear expectations protect the game, the players, and every program involved.</p>
+          <div class="rules-list">
+            <details open>
+              <summary>Mission &amp; purpose</summary>
+              <p>Provide smaller programs with structured competition, sportsmanship, and a meaningful championship experience rooted in faith.</p>
+            </details>
+            <details>
+              <summary>Communication policy</summary>
+              <p>Schedule changes, disputes, and league decisions move through each team’s designated representative and the commissioner.</p>
+            </details>
+            <details>
+              <summary>Sportsmanship &amp; discipline</summary>
+              <p>Players, coaches, and spectators are expected to honor opponents and officials. Repeated or serious issues move through a documented review process.</p>
+            </details>
+            <details>
+              <summary>Eligibility &amp; cancellations</summary>
+              <p>Teams must verify player eligibility before competition and communicate weather or facility cancellations as early as possible.</p>
+            </details>
+            <details>
+              <summary>Referee expectations</summary>
+              <p>Officials should receive confirmed game details in advance and have authority to enforce game and sportsmanship standards.</p>
+            </details>
+          </div>
+        </section>
+
+        <section class="report-panel" id="report" aria-labelledby="report-title">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-index">07</span>
+              <h2 id="report-title">Report a score</h2>
+            </div>
+          </div>
+          <p>Home teams submit results after each game. This preview saves submissions only in the current browser.</p>
+
+          <form class="score-form" data-score-form>
+            <div class="form-row">
+              <label>
+                Game date
+                <input type="date" name="date" required>
+              </label>
+              <label>
+                Division
+                <select name="division" required>
+                  <option value="">Choose division</option>
+                  <option>Boys Varsity</option>
+                  <option>Girls Varsity</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Home team
+                <select name="homeTeam" required data-team-select>
+                  <option value="">Choose team</option>
+                </select>
+              </label>
+              <label>
+                Away team
+                <select name="awayTeam" required data-team-select>
+                  <option value="">Choose team</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row score-inputs">
+              <label>
+                Home score
+                <input type="number" name="homeScore" min="0" max="200" inputmode="numeric" required>
+              </label>
+              <label>
+                Away score
+                <input type="number" name="awayScore" min="0" max="200" inputmode="numeric" required>
+              </label>
+            </div>
+            <label>
+              Top scorers or game notes <span>(optional)</span>
+              <textarea name="notes" rows="3" placeholder="Player names, scoring totals, or issues to flag"></textarea>
+            </label>
+            <label>
+              Submitted by
+              <input type="text" name="submittedBy" autocomplete="name" required>
+            </label>
+            <button class="button button-red" type="submit">Submit final score</button>
+            <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </section>
+
+    <section class="contact-band" id="contact">
       <div>
-        <h2>Feed the whole room.</h2>
-        <p>From a three-foot giant party sub to Italian-style platters and hot trays, Sorrentino's makes group orders easier.</p>
+        <h2>Questions about the league?</h2>
+        <p>Coaches and team representatives can contact league leadership for scheduling, rules, and officiating.</p>
       </div>
-      <div class="catering-actions">
-        <a class="button button-paper" href="tel:+15187980273">Talk catering</a>
-        <a class="text-link light-link" href="https://www.sorrentinosdeliandmarket.com/platters-catering" target="_blank" rel="noreferrer">See catering menu <span aria-hidden="true">→</span></a>
+      <div class="contact-people">
+        <div><span>Commissioner</span><strong>Andrew Walts</strong></div>
+        <div><span>Referee coordinator</span><strong>Chris Webster</strong></div>
       </div>
-    </section>
-
-    <section class="story section-shell" id="story">
-      <div class="story-statement">
-        <span class="section-number">04</span>
-        <h2>Family owned.<br><em>Since 2000.</em></h2>
-      </div>
-      <div class="story-copy">
-        <p class="story-lead">Sorrentino's is the kind of local place where lunch, dinner, and the weekend grocery run can all happen at the same counter.</p>
-        <p>They have served South Glens Falls with friendly service, authentic Italian deli favorites, fresh produce, and a butcher case stocked with meat you can feel good about bringing home.</p>
-        <div class="quality-line">
-          <span>20 varieties of store-made sausage</span>
-          <span>Natural meat, free of growth hormones &amp; antibiotics</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="visit" id="visit">
-      <div class="visit-details">
-        <div class="section-title">
-          <span class="section-number">05</span>
-          <h2>Come see us</h2>
-        </div>
-
-        <address>
-          <strong>40 Main Street</strong><br>
-          South Glens Falls, NY 12803
-        </address>
-
-        <a class="visit-phone" href="tel:+15187980273">(518) 798-0273</a>
-
-        <dl class="hours">
-          <div><dt>Mon, Wed–Sat</dt><dd>10:00 am–6:00 pm</dd></div>
-          <div><dt>Tuesday</dt><dd>Closed</dd></div>
-          <div><dt>Sunday</dt><dd>9:00 am–5:00 pm</dd></div>
-        </dl>
-
-        <div class="visit-actions">
-          <a class="button button-red" href="https://www.google.com/maps/dir/?api=1&destination=40+Main+Street+South+Glens+Falls+NY+12803" target="_blank" rel="noreferrer">Get directions</a>
-          <a class="button button-outline" href="tel:+15187980273">Call ahead</a>
-        </div>
-      </div>
-
-      <div class="map-wrap">
-        <div class="map-card">
-          <span>You are here</span>
-          <strong>40 Main Street</strong>
-          <p>South Glens Falls, NY 12803</p>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=40+Main+Street+South+Glens+Falls+NY+12803" target="_blank" rel="noreferrer">Open in maps →</a>
-        </div>
-        <iframe
-          title="Map to Sorrentino's Delicatessen and Market"
-          src="https://www.google.com/maps?q=40+Main+Street,+South+Glens+Falls,+NY+12803&output=embed"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-      </div>
+      <a class="button button-light" href="mailto:ublbasketball@example.com">Email the UBL</a>
     </section>
   </main>
 
   <footer class="site-footer">
     <a class="brand footer-brand" href="#top">
-      <span class="brand-name">Sorrentino's</span>
-      <span class="brand-sub">Delicatessen &amp; Market</span>
+      <span class="brand-mark" aria-hidden="true"><span>UBL</span></span>
+      <span class="brand-copy">
+        <strong>Upstate Basketball League</strong>
+        <span>2026–27 founding season</span>
+      </span>
     </a>
-    <p>Family owned in South Glens Falls, NY.</p>
-    <div class="footer-links">
-      <a href="https://www.facebook.com/sorrentinosdeliandmarket" target="_blank" rel="noreferrer">Facebook</a>
-      <a href="#visit">Hours &amp; directions</a>
-      <a href="tel:+15187980273">Call the deli</a>
+    <p>Faith-based competition for smaller high school basketball programs.</p>
+    <div>
+      <a href="#schedule">Schedule</a>
+      <a href="#standings">Standings</a>
+      <a href="#rules">Rules</a>
+      <a href="#report">Report a score</a>
     </div>
   </footer>
-
-  <a class="mobile-call" href="tel:+15187980273">Call ahead · (518) 798-0273</a>
 </body>
 </html>
