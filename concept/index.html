@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="../assets/ubl-logo.png">
-  <link rel="stylesheet" href="styles.css?v=20260610-1">
-  <script src="script.js?v=20260610-1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260610-2">
+  <script src="script.js?v=20260610-2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -32,9 +32,8 @@
         <a href="#schedule">Schedule</a>
         <a href="#standings">Standings</a>
         <a href="#teams">Teams</a>
-        <a href="#scores">Scores</a>
-        <a href="#bracket">Bracket</a>
-        <a href="#rules">Rules</a>
+        <a href="bracket.html">Bracket</a>
+        <a href="rules.html">League standards</a>
         <a class="current-site-link" href="../">Current site</a>
       </nav>
     </div>
@@ -161,108 +160,25 @@
       </section>
     </div>
 
-    <section class="panel bracket-panel section-wrap" id="bracket" aria-labelledby="bracket-title">
-      <div class="section-title section-title-inline">
-        <div>
-          <h2 id="bracket-title">Playoff bracket</h2>
-          <span>Mid-February 2027</span>
-        </div>
-        <strong>5-team play-in format</strong>
-      </div>
-
-      <div class="bracket">
-        <div class="bracket-round">
-          <h3>Play-in</h3>
-          <article class="bracket-game">
-            <div><span>Seed 4</span><strong>TBD</strong></div>
-            <div><span>Seed 5</span><strong>Future team</strong></div>
-            <p>Winner advances</p>
-          </article>
-        </div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round">
-          <h3>Semifinals</h3>
-          <article class="bracket-game">
-            <div><span>Seed 1</span><strong>Regular season leader</strong></div>
-            <div><span>Play-in winner</span><strong>TBD</strong></div>
-          </article>
-          <article class="bracket-game">
-            <div><span>Seed 2</span><strong>TBD</strong></div>
-            <div><span>Seed 3</span><strong>TBD</strong></div>
-          </article>
-        </div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round championship-round">
-          <h3>Championship</h3>
-          <article class="champion-card">
-            <span>2027 UBL</span>
-            <strong>Champion</strong>
-            <p>Semifinal winners</p>
-          </article>
-        </div>
-      </div>
-      <p class="panel-note">With four teams, Seed 4 advances directly to the semifinals.</p>
-    </section>
-
-    <div class="content-grid section-wrap lower-grid">
-      <section class="panel scores-panel" id="scores" aria-labelledby="scores-title">
-        <div class="section-title">
-          <h2 id="scores-title">Scores</h2>
-          <span>Official results</span>
-        </div>
-        <div class="empty-score">
-          <img src="../assets/ubl-logo.png" alt="">
-          <div>
-            <strong>Opening night starts December 1</strong>
-            <p>Final scores and game results will appear here after each UBL matchup.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel rules-panel" id="rules" aria-labelledby="rules-title">
-        <div class="section-title">
-          <h2 id="rules-title">League standards</h2>
-          <span>Faith · Competition · Character</span>
-        </div>
-        <div class="rules-list">
-          <details open>
-            <summary>Mission &amp; purpose</summary>
-            <p>Honor God through competition, build character, and unite our communities on and off the court.</p>
-          </details>
-          <details>
-            <summary>Sportsmanship &amp; discipline</summary>
-            <p>Coaches, players, and spectators are expected to represent their programs and the league with respect.</p>
-          </details>
-          <details>
-            <summary>Eligibility &amp; cancellations</summary>
-            <p>Teams follow agreed eligibility standards and communicate schedule changes through league representatives.</p>
-          </details>
-          <details>
-            <summary>Referee expectations</summary>
-            <p>Officials are supported through clear communication, consistent standards, and respectful conduct.</p>
-          </details>
-        </div>
-      </section>
-    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <img src="../assets/ubl-logo.png" alt="">
-      <div>
-        <strong>Upstate Basketball League</strong>
-        <span>Faith. Competition. Kingdom impact.</span>
+  <footer class="score-ticker" id="score-ticker" aria-label="Moving mock game scores">
+    <div class="ticker-label"><strong>Mock finals</strong><span>Concept preview</span></div>
+    <div class="ticker-window">
+      <div class="ticker-track">
+        <div class="ticker-group">
+          <article class="ticker-game"><time>Dec 5</time><img src="../assets/team-kings-school.png" alt=""><b>TKS</b><strong>48</strong><span>Final</span><strong>42</strong><b>PER</b><img src="../assets/team-perth.png" alt=""></article>
+          <article class="ticker-game"><time>Dec 8</time><img src="../assets/team-hudson-valley-rocks.png" alt=""><b>HVR</b><strong>44</strong><span>Final</span><strong>39</strong><b>WBC</b><img src="../assets/team-wilton-baptist.png" alt=""></article>
+          <article class="ticker-game"><time>Dec 11</time><img src="../assets/team-wilton-baptist.png" alt=""><b>WBC</b><strong>51</strong><span>Final</span><strong>47</strong><b>TKS</b><img src="../assets/team-kings-school.png" alt=""></article>
+          <article class="ticker-game"><time>Dec 15</time><img src="../assets/team-perth.png" alt=""><b>PER</b><strong>56</strong><span>Final</span><strong>52</strong><b>HVR</b><img src="../assets/team-hudson-valley-rocks.png" alt=""></article>
+        </div>
+        <div class="ticker-group" aria-hidden="true">
+          <article class="ticker-game"><time>Dec 5</time><img src="../assets/team-kings-school.png" alt=""><b>TKS</b><strong>48</strong><span>Final</span><strong>42</strong><b>PER</b><img src="../assets/team-perth.png" alt=""></article>
+          <article class="ticker-game"><time>Dec 8</time><img src="../assets/team-hudson-valley-rocks.png" alt=""><b>HVR</b><strong>44</strong><span>Final</span><strong>39</strong><b>WBC</b><img src="../assets/team-wilton-baptist.png" alt=""></article>
+          <article class="ticker-game"><time>Dec 11</time><img src="../assets/team-wilton-baptist.png" alt=""><b>WBC</b><strong>51</strong><span>Final</span><strong>47</strong><b>TKS</b><img src="../assets/team-kings-school.png" alt=""></article>
+          <article class="ticker-game"><time>Dec 15</time><img src="../assets/team-perth.png" alt=""><b>PER</b><strong>56</strong><span>Final</span><strong>52</strong><b>HVR</b><img src="../assets/team-hudson-valley-rocks.png" alt=""></article>
+        </div>
       </div>
-    </div>
-    <div class="footer-values" aria-label="League values">
-      <span>Faith driven</span>
-      <span>Compete together</span>
-      <span>Build character</span>
-      <span>Make an impact</span>
-    </div>
-    <div class="footer-contact">
-      <strong>More than basketball.<br>It’s our mission.</strong>
-      <a href="../">Return to current site</a>
     </div>
   </footer>
 </body>

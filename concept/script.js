@@ -97,6 +97,8 @@ const countdownParts = {
 const countdownMessage = document.querySelector("[data-countdown-message]");
 
 function updateCountdown() {
+  if (!countdownParts.days || !countdownParts.hours || !countdownParts.minutes || !countdownParts.seconds) return;
+
   const remaining = Math.max(0, countdownTarget - Date.now());
   const totalSeconds = Math.floor(remaining / 1000);
 
@@ -113,4 +115,7 @@ function updateCountdown() {
 renderSchedule();
 renderStandings();
 updateCountdown();
-setInterval(updateCountdown, 1000);
+
+if (countdownParts.seconds) {
+  setInterval(updateCountdown, 1000);
+}
