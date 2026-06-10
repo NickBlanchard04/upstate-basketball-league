@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/ubl-logo.png">
-  <link rel="stylesheet" href="styles.css?v=20260610-sticky-header">
-  <script src="script.js?v=20260608-3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260610-countdown">
+  <script src="script.js?v=20260610-countdown" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -81,11 +81,12 @@
       </div>
     </section>
 
-    <div class="league-strip" aria-label="League summary">
-      <div><strong>04</strong><span>Founding teams</span></div>
-      <div><strong>02</strong><span>Varsity divisions</span></div>
-      <div><strong>01</strong><span>Championship goal</span></div>
-      <p>Season begins December 1, 2026 · Playoffs planned for mid-February 2027.</p>
+    <div class="league-strip countdown-strip" aria-label="Countdown to the first UBL tipoff">
+      <div><strong data-countdown-days>000</strong><span>Days</span></div>
+      <div><strong data-countdown-hours>00</strong><span>Hours</span></div>
+      <div><strong data-countdown-minutes>00</strong><span>Minutes</span></div>
+      <div><strong data-countdown-seconds>00</strong><span>Seconds</span></div>
+      <p data-countdown-message>First tipoff · December 1, 2026 · 6:00 PM Eastern</p>
     </div>
 
     <section class="section-shell schedule-section" id="schedule">

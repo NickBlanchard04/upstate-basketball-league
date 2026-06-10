@@ -29,6 +29,28 @@ const sampleScores = [
 
 const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
+const countdownTarget = new Date("2026-12-01T18:00:00-05:00").getTime();
+const countdownParts = {
+  days: document.querySelector("[data-countdown-days]"),
+  hours: document.querySelector("[data-countdown-hours]"),
+  minutes: document.querySelector("[data-countdown-minutes]"),
+  seconds: document.querySelector("[data-countdown-seconds]"),
+};
+const countdownMessage = document.querySelector("[data-countdown-message]");
+
+function updateCountdown() {
+  const remaining = Math.max(0, countdownTarget - Date.now());
+  const totalSeconds = Math.floor(remaining / 1000);
+
+  countdownParts.days.textContent = String(Math.floor(totalSeconds / 86400)).padStart(3, "0");
+  countdownParts.hours.textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0");
+  countdownParts.minutes.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+  countdownParts.seconds.textContent = String(totalSeconds % 60).padStart(2, "0");
+
+  if (remaining === 0) {
+    countdownMessage.textContent = "The 2026–27 UBL season is underway.";
+  }
+}
 
 menuToggle?.addEventListener("click", () => {
   const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
@@ -130,3 +152,5 @@ function renderScores() {
 renderSchedule();
 renderStandings();
 renderScores();
+updateCountdown();
+setInterval(updateCountdown, 1000);

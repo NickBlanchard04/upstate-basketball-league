@@ -383,7 +383,7 @@ h1 span {
 .league-strip {
   padding: 1rem var(--page-pad);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0;
   color: var(--paper);
   background: var(--red);
@@ -395,7 +395,7 @@ h1 span {
   border-right: 1px solid rgba(242, 238, 228, 0.35);
 }
 
-.league-strip div:nth-child(3) {
+.league-strip div:nth-child(4) {
   border-right: 0;
 }
 
@@ -405,7 +405,8 @@ h1 span {
 }
 
 .league-strip strong {
-  font: 900 1.8rem/1 var(--display);
+  font: 900 clamp(1.6rem, 7vw, 2.4rem)/1 var(--display);
+  font-variant-numeric: tabular-nums;
 }
 
 .league-strip span {
@@ -1000,9 +1001,11 @@ h1 span {
   .brand-copy {
     display: block;
   }
+}
 
+@media (min-width: 768px) {
   .league-strip {
-    grid-template-columns: repeat(3, minmax(8rem, 1fr)) minmax(16rem, 2fr);
+    grid-template-columns: repeat(4, minmax(6rem, 1fr)) minmax(18rem, 2fr);
     align-items: center;
   }
 
@@ -1011,9 +1014,7 @@ h1 span {
     margin: 0;
     text-align: right;
   }
-}
 
-@media (min-width: 768px) {
   .section-heading {
     grid-template-columns: minmax(20rem, 1fr) minmax(18rem, 0.55fr);
     align-items: end;
