@@ -12,6 +12,7 @@ const teams = [
   { name: "Perth", logo: "../assets/team-perth.png", wins: 0, losses: 0, pf: 0, pa: 0 },
   { name: "Wilton Baptist", logo: "../assets/team-wilton-baptist.png", wins: 0, losses: 0, pf: 0, pa: 0 },
   { name: "Hudson Valley Rocks", logo: "../assets/team-hudson-valley-rocks.png", wins: 0, losses: 0, pf: 0, pa: 0 },
+  { name: "TBD", logo: "../assets/ubl-logo.png", wins: 0, losses: 0, pf: 0, pa: 0 },
 ];
 
 const menuToggle = document.querySelector(".menu-toggle");
@@ -29,6 +30,16 @@ siteNav?.querySelectorAll("a").forEach((link) => {
     menuToggle?.setAttribute("aria-expanded", "false");
     siteNav.classList.remove("open");
     document.body.classList.remove("menu-open");
+  });
+});
+
+document.querySelectorAll(".team-gallery").forEach((gallery) => {
+  gallery.addEventListener("toggle", () => {
+    if (!gallery.open) return;
+
+    document.querySelectorAll(".team-gallery[open]").forEach((openGallery) => {
+      if (openGallery !== gallery) openGallery.open = false;
+    });
   });
 });
 

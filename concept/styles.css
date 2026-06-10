@@ -310,14 +310,14 @@ p {
 }
 
 .countdown-card {
-  padding: 1rem;
+  padding: 0.72rem 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.48);
   border-radius: 0.9rem;
   background: rgba(2, 15, 34, 0.86);
 }
 
 .countdown-heading {
-  padding-bottom: 0.9rem;
+  padding-bottom: 0.6rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -325,8 +325,8 @@ p {
 }
 
 .countdown-heading img {
-  width: 2.8rem;
-  height: 3.5rem;
+  width: 2.25rem;
+  height: 2.8rem;
   object-fit: contain;
 }
 
@@ -336,7 +336,7 @@ p {
 }
 
 .countdown-heading strong {
-  font: 800 1.3rem/1 var(--display);
+  font: 800 1.15rem/1 var(--display);
   text-transform: uppercase;
 }
 
@@ -347,7 +347,7 @@ p {
 }
 
 .countdown-grid {
-  padding: 1rem 0;
+  padding: 0.65rem 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
@@ -367,7 +367,7 @@ p {
 }
 
 .countdown-grid strong {
-  font: 900 clamp(1.7rem, 7vw, 2.5rem)/1 var(--display);
+  font: 900 clamp(1.45rem, 6vw, 2.15rem)/1 var(--display);
   font-variant-numeric: tabular-nums;
 }
 
@@ -920,42 +920,120 @@ th {
   padding: 1rem;
 }
 
-.gallery-intro {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
+.gallery-lede {
+  max-width: 46rem;
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.team-gallery-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.team-gallery {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: var(--white);
+}
+
+.team-gallery summary {
+  min-height: 4.6rem;
+  padding: 0.65rem 0.75rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
-  border: 1px solid var(--line);
-  border-radius: 0.55rem;
+  color: var(--navy-800);
+  cursor: pointer;
+  list-style: none;
   background: var(--canvas);
 }
 
-.gallery-intro img {
+.team-gallery summary::-webkit-details-marker {
+  display: none;
+}
+
+.team-gallery summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--red);
+  font: 900 1.35rem/1 var(--display);
+}
+
+.team-gallery[open] summary {
+  color: var(--white);
+  background: var(--navy-900);
+}
+
+.team-gallery[open] summary::after {
+  content: "−";
+}
+
+.team-gallery-identity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.team-gallery-identity img,
+.tbd-gallery-mark {
   width: 3rem;
-  aspect-ratio: 1;
+  height: 3rem;
+  flex: 0 0 3rem;
   object-fit: contain;
 }
 
-.gallery-intro p {
-  margin: 0;
+.tbd-gallery-mark {
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 900 0.8rem/1 var(--display);
 }
 
-.gallery-intro strong,
-.gallery-intro span {
+.team-gallery-identity strong,
+.team-gallery-identity small {
   display: block;
 }
 
-.gallery-intro strong {
-  color: var(--navy-800);
-  font: 800 1.15rem/1 var(--display);
+.team-gallery-identity strong {
+  overflow: hidden;
+  font: 800 1.1rem/1 var(--display);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.team-gallery-identity small {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+
+.team-gallery[open] .team-gallery-identity small {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.team-gallery-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.57rem;
+  font-weight: 700;
+  text-align: right;
   text-transform: uppercase;
 }
 
-.gallery-intro span {
-  margin-top: 0.3rem;
-  color: var(--muted);
-  font-size: 0.65rem;
+.team-gallery[open] .team-gallery-count {
+  color: #ff9aac;
+}
+
+.team-gallery-content {
+  padding: 0.75rem;
+  border-top: 1px solid var(--line);
 }
 
 .gallery-grid {
@@ -1003,15 +1081,18 @@ th {
   text-align: right;
 }
 
-.gallery-source-note {
-  margin: 1rem 0 0;
+.gallery-empty {
+  min-height: 7rem;
+  margin: 0;
+  padding: 1rem;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--line);
+  border-radius: 0.55rem;
   color: var(--muted);
-  font-size: 0.65rem;
-}
-
-.gallery-source-note a {
-  color: var(--navy-700);
-  font-weight: 700;
+  font-size: 0.72rem;
+  text-align: center;
+  background: var(--canvas);
 }
 
 .standards-intro {
@@ -1134,7 +1215,7 @@ th {
 
 @media (min-width: 640px) {
   .team-card-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .game-row {
@@ -1276,7 +1357,11 @@ th {
   }
 
   .countdown-card {
-    padding: 1.2rem;
+    padding: 0.85rem;
+  }
+
+  .team-card-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
 
   .feature-deck,
