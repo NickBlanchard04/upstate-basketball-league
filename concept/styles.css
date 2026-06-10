@@ -176,6 +176,7 @@ p {
   padding: 1rem var(--page-pad) 6.5rem;
   display: none;
   flex-direction: column;
+  overflow-y: auto;
   background: var(--navy-950);
 }
 
@@ -236,32 +237,42 @@ p {
   width: min(100%, var(--max));
   min-height: inherit;
   margin: 0 auto;
-  padding: clamp(3.5rem, 8vw, 7rem) var(--page-pad);
+  padding: clamp(2.8rem, 8vw, 7rem) var(--page-pad);
   display: grid;
   align-items: center;
   gap: 2rem;
 }
 
+.hero-copy {
+  text-align: center;
+}
+
 .hero-copy h1 {
-  max-width: 13ch;
-  margin-bottom: 1.25rem;
-  font: 900 clamp(3.8rem, 14vw, 7rem)/0.82 var(--display);
+  max-width: 12ch;
+  margin: 0 auto 1.25rem;
+  font: 900 clamp(3.15rem, 13.5vw, 7rem)/0.84 var(--display);
   letter-spacing: -0.025em;
   text-transform: uppercase;
 }
 
 .hero-copy h1 span {
+  display: block;
   color: var(--white);
 }
 
+.hero-copy h1 br {
+  display: none;
+}
+
 .hero-copy h1 em {
+  display: block;
   color: var(--red);
   font-style: normal;
 }
 
 .hero-copy p {
   max-width: 37rem;
-  margin-bottom: 1.7rem;
+  margin: 0 auto 1.7rem;
   color: rgba(255, 255, 255, 0.78);
   font-size: clamp(1rem, 2vw, 1.14rem);
 }
@@ -269,6 +280,7 @@ p {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.7rem;
 }
 
@@ -540,6 +552,10 @@ p {
 .content-grid {
   display: grid;
   gap: 0.5rem;
+}
+
+.content-grid > * {
+  min-width: 0;
 }
 
 .schedule-panel,
@@ -900,6 +916,64 @@ th {
   padding: 1rem;
 }
 
+.gallery-panel {
+  padding: 1rem;
+}
+
+.gallery-empty {
+  min-height: clamp(18rem, 52vw, 29rem);
+  padding: clamp(2rem, 8vw, 5rem) 1rem;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background:
+    linear-gradient(rgba(238, 242, 247, 0.9), rgba(238, 242, 247, 0.9)),
+    url("../assets/ubl-website-hero.png") center / cover;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+}
+
+.gallery-empty-content {
+  max-width: 34rem;
+}
+
+.gallery-empty-content > img {
+  width: 4.6rem;
+  height: 5.8rem;
+  margin-bottom: 1rem;
+  object-fit: contain;
+}
+
+.gallery-empty-content h2 {
+  margin-bottom: 0.65rem;
+  color: var(--navy-800);
+  font: 900 clamp(2rem, 8vw, 3.6rem)/0.9 var(--display);
+  text-transform: uppercase;
+}
+
+.gallery-empty-content p {
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.gallery-team-marks {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.gallery-team-marks img {
+  width: 2.7rem;
+  aspect-ratio: 1;
+  padding: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  background: var(--white);
+  object-fit: contain;
+}
+
 .standards-intro {
   margin-bottom: 1.5rem;
   padding: 1rem;
@@ -1102,7 +1176,8 @@ th {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: clamp(0.75rem, 1.4vw, 1.35rem);
+    gap: clamp(0.55rem, 1vw, 1rem);
+    overflow: visible;
     background: transparent;
   }
 
@@ -1131,6 +1206,31 @@ th {
     gap: clamp(2rem, 6vw, 6rem);
   }
 
+  .hero-copy {
+    text-align: left;
+  }
+
+  .hero-copy h1 {
+    max-width: 13ch;
+    margin-inline: 0;
+  }
+
+  .hero-copy h1 span {
+    display: inline;
+  }
+
+  .hero-copy h1 br {
+    display: initial;
+  }
+
+  .hero-copy p {
+    margin-inline: 0;
+  }
+
+  .hero-actions {
+    justify-content: flex-start;
+  }
+
   .countdown-card {
     padding: 1.2rem;
   }
@@ -1157,6 +1257,10 @@ th {
   }
 
   .rules-page-panel {
+    padding: 1.2rem;
+  }
+
+  .gallery-panel {
     padding: 1.2rem;
   }
 
