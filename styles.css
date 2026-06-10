@@ -22,6 +22,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.25rem;
 }
 
 body {
@@ -89,8 +90,9 @@ p {
 }
 
 .site-header {
-  position: relative;
+  position: sticky;
   z-index: 20;
+  top: 0;
   color: var(--paper);
   background: var(--black);
   border-bottom: 1px solid var(--line-light);
@@ -1061,9 +1063,8 @@ h1 span {
 }
 
 @media (min-width: 1024px) {
-  .site-header {
-    position: sticky;
-    top: 0;
+  html {
+    scroll-padding-top: 5.8rem;
   }
 
   .header-inner {
