@@ -458,13 +458,6 @@ h1 span {
   gap: 0.9rem;
 }
 
-.section-index {
-  min-width: 1.7rem;
-  padding-top: 0.42rem;
-  color: var(--red);
-  font: 700 0.72rem/1 var(--body);
-}
-
 .section-heading h2 {
   margin: 0;
   font: 900 clamp(3rem, 8vw, 6rem)/0.84 var(--display);
@@ -573,10 +566,6 @@ h1 span {
 
 .compact-heading {
   margin-bottom: 1.6rem;
-}
-
-.compact-heading .section-index {
-  color: var(--gold);
 }
 
 .compact-heading h2 {
@@ -796,10 +785,6 @@ h1 span {
   background: var(--red);
 }
 
-.teams-section .section-heading .section-index {
-  color: var(--gold);
-}
-
 .teams-section .section-heading > p {
   color: rgba(242, 238, 228, 0.7);
 }
@@ -811,16 +796,10 @@ h1 span {
 .team-row {
   padding: 1.2rem 0;
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 0.9rem;
   border-bottom: 1px solid rgba(242, 238, 228, 0.3);
-}
-
-.team-number {
-  color: var(--gold);
-  font-size: 0.65rem;
-  font-weight: 700;
 }
 
 .team-logo {
@@ -880,10 +859,6 @@ h1 span {
   padding: clamp(4.5rem, 9vw, 8rem) var(--page-pad);
   display: grid;
   gap: 5rem;
-}
-
-.operations-section .compact-heading .section-index {
-  color: var(--red);
 }
 
 .rules-intro {
@@ -1051,7 +1026,7 @@ h1 span {
   }
 
   .team-row {
-    grid-template-columns: auto auto minmax(15rem, 1fr) minmax(20rem, 0.9fr);
+    grid-template-columns: auto minmax(15rem, 1fr) minmax(20rem, 0.9fr);
     gap: 1.2rem;
   }
 
