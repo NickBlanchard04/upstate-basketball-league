@@ -920,58 +920,98 @@ th {
   padding: 1rem;
 }
 
-.gallery-empty {
-  min-height: clamp(18rem, 52vw, 29rem);
-  padding: clamp(2rem, 8vw, 5rem) 1rem;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  background:
-    linear-gradient(rgba(238, 242, 247, 0.9), rgba(238, 242, 247, 0.9)),
-    url("../assets/ubl-website-hero.png") center / cover;
-  border: 1px solid var(--line);
-  border-radius: 0.65rem;
-}
-
-.gallery-empty-content {
-  max-width: 34rem;
-}
-
-.gallery-empty-content > img {
-  width: 4.6rem;
-  height: 5.8rem;
+.gallery-intro {
   margin-bottom: 1rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--canvas);
+}
+
+.gallery-intro img {
+  width: 3rem;
+  aspect-ratio: 1;
   object-fit: contain;
 }
 
-.gallery-empty-content h2 {
-  margin-bottom: 0.65rem;
+.gallery-intro p {
+  margin: 0;
+}
+
+.gallery-intro strong,
+.gallery-intro span {
+  display: block;
+}
+
+.gallery-intro strong {
   color: var(--navy-800);
-  font: 900 clamp(2rem, 8vw, 3.6rem)/0.9 var(--display);
+  font: 800 1.15rem/1 var(--display);
   text-transform: uppercase;
 }
 
-.gallery-empty-content p {
-  margin: 0 auto;
+.gallery-intro span {
+  margin-top: 0.3rem;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.65rem;
 }
 
-.gallery-team-marks {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.65rem;
+.gallery-grid {
+  display: grid;
+  gap: 0.7rem;
 }
 
-.gallery-team-marks img {
-  width: 2.7rem;
-  aspect-ratio: 1;
-  padding: 0.25rem;
+.gallery-item {
+  margin: 0;
+  overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 0.35rem;
+  border-radius: 0.55rem;
   background: var(--white);
+}
+
+.gallery-item a {
+  display: block;
+  background: var(--navy-950);
+}
+
+.gallery-item img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  display: block;
   object-fit: contain;
+}
+
+.gallery-item figcaption {
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.gallery-item figcaption strong {
+  color: var(--navy-800);
+  font: 800 0.95rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.gallery-item figcaption span {
+  color: var(--muted);
+  font-size: 0.58rem;
+  text-align: right;
+}
+
+.gallery-source-note {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
+.gallery-source-note a {
+  color: var(--navy-700);
+  font-weight: 700;
 }
 
 .standards-intro {
@@ -1104,6 +1144,10 @@ th {
 
   .game-info em {
     grid-column: 3;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
 }
@@ -1262,6 +1306,11 @@ th {
 
   .gallery-panel {
     padding: 1.2rem;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
   }
 
 }
