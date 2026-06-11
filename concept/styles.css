@@ -1126,7 +1126,7 @@ th {
 
 .about-purpose {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 
 .about-mission,
@@ -1152,8 +1152,8 @@ th {
 }
 
 .about-feature summary {
-  min-height: 15rem;
-  padding: clamp(1.25rem, 4vw, 2.5rem);
+  min-height: 10.5rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -1168,7 +1168,7 @@ th {
 .about-feature summary::after {
   content: "Open +";
   align-self: flex-start;
-  margin-top: 1.1rem;
+  margin-top: 0.75rem;
   padding: 0.42rem 0.65rem;
   border: 1px solid currentColor;
   border-radius: 999px;
@@ -1183,7 +1183,7 @@ th {
 }
 
 .about-feature-content {
-  padding: 1rem clamp(1.25rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2.5rem);
+  padding: 0.8rem 1rem 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
@@ -1193,7 +1193,7 @@ th {
 
 .about-feature summary span,
 .contact-callout > div > span {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
   color: #ff9aac;
   font-size: 0.62rem;
   font-weight: 800;
@@ -1206,9 +1206,9 @@ th {
 }
 
 .about-feature summary h2 {
-  max-width: 14ch;
+  max-width: 16ch;
   margin: 0;
-  font: 900 clamp(2.1rem, 8vw, 4rem)/0.92 var(--display);
+  font: 900 clamp(1.8rem, 8vw, 4rem)/0.92 var(--display);
   text-transform: uppercase;
 }
 
@@ -1236,27 +1236,36 @@ th {
 }
 
 .leader-card {
-  padding: 1rem;
+  padding: 0.8rem;
   display: grid;
-  grid-template-columns: 4.3rem minmax(0, 1fr);
+  grid-template-columns: 3.6rem minmax(0, 1fr);
   align-items: start;
-  gap: 1rem;
+  gap: 0.75rem;
   border: 1px solid var(--line);
   border-radius: 0.7rem;
   background: var(--canvas);
 }
 
-.leader-mark {
-  width: 4.3rem;
+.leader-mark,
+.leader-photo {
+  width: 3.6rem;
   aspect-ratio: 1;
-  display: grid;
-  place-items: center;
   border: 2px solid var(--red);
   border-radius: 50%;
+}
+
+.leader-mark {
+  display: grid;
+  place-items: center;
   color: var(--white);
   background: var(--navy-900);
   font: 900 1.45rem/1 var(--display);
   letter-spacing: 0.05em;
+}
+
+.leader-photo {
+  display: block;
+  object-fit: cover;
 }
 
 .leader-card span {
@@ -1281,9 +1290,10 @@ th {
 }
 
 .contact-callout {
-  padding: 1rem;
+  padding: 0.85rem;
   display: grid;
-  gap: 1rem;
+  grid-template-columns: 2.8rem minmax(0, 1fr);
+  gap: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1rem;
   color: var(--white);
@@ -1294,14 +1304,14 @@ th {
 }
 
 .contact-callout img {
-  width: 3.5rem;
-  height: 4.5rem;
+  width: 2.8rem;
+  height: 3.5rem;
   object-fit: contain;
 }
 
 .contact-callout h2 {
-  margin-bottom: 0.4rem;
-  font: 900 clamp(2rem, 8vw, 3.6rem)/0.9 var(--display);
+  margin-bottom: 0.3rem;
+  font: 900 clamp(1.8rem, 8vw, 3.6rem)/0.9 var(--display);
   text-transform: uppercase;
 }
 
@@ -1313,15 +1323,33 @@ th {
 }
 
 .contact-callout .button {
+  grid-column: 1 / -1;
   width: 100%;
+}
+
+.contact-links {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.55rem;
+  justify-items: center;
 }
 
 .contact-email {
   overflow-wrap: anywhere;
   color: #ff9aac;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-align: center;
+}
+
+.social-coming-soon {
+  padding: 0.38rem 0.58rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .score-ticker {
@@ -1473,18 +1501,49 @@ th {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .about-purpose {
+    gap: 0.7rem;
+  }
+
+  .about-feature summary {
+    min-height: 15rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .about-feature summary::after {
+    margin-top: 1.1rem;
+  }
+
+  .about-feature-content {
+    padding: 1rem clamp(1.25rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .leader-card {
+    padding: 1rem;
+    grid-template-columns: 4.3rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .leader-mark,
+  .leader-photo {
+    width: 4.3rem;
+  }
+
   .contact-callout {
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
   }
 
   .contact-callout .button {
+    grid-column: auto;
     width: auto;
   }
 
-  .contact-email {
+  .contact-links {
     grid-column: 2 / -1;
-    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 }
 
