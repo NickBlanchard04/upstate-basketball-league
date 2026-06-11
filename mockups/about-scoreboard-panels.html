@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UBL About Cards - Scoreboard Panels</title>
+  <style>
+    :root{--navy:#020f22;--panel:#061d3d;--red:#f0193a;--white:#f7fbff;--muted:#9dafc4;--line:#204264}
+    *{box-sizing:border-box}body{margin:0;color:var(--white);background:radial-gradient(circle at 50% 0,#103d70 0,var(--navy) 42%);font-family:Arial,sans-serif}.top{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);background:#020f22dd}.brand{font-weight:900;text-transform:uppercase;letter-spacing:.05em}.brand b{color:var(--red)}.option{font-size:10px;color:var(--muted);text-transform:uppercase}
+    main{width:min(1000px,calc(100% - 24px));margin:auto;padding:36px 0 60px}.hero{text-align:center;margin-bottom:22px}.hero span{color:var(--red);font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}.hero h1{margin:8px auto 10px;font-family:Impact,sans-serif;font-size:clamp(42px,9vw,86px);line-height:.9;text-transform:uppercase}.hero p{max-width:560px;margin:auto;color:var(--muted);font-size:13px;line-height:1.6}
+    .board{padding:8px;display:grid;gap:8px;border:1px solid #345675;background:#010b19;box-shadow:0 25px 70px #0008}details{overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#09264d,#04172f)}summary{min-height:170px;padding:18px;display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}.number{color:var(--red);font-family:Impact,sans-serif;font-size:48px;text-shadow:0 0 20px #f0193a88}.label{color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}h2{margin:5px 0 8px;font-family:Impact,sans-serif;font-size:clamp(28px,6vw,52px);line-height:.95;text-transform:uppercase}.preview{margin:0;color:#b7c5d4;font-size:12px;line-height:1.5}.toggle{padding:8px;border:1px solid var(--red);color:var(--red);font-size:10px;font-weight:900;text-transform:uppercase}details[open] .toggle{color:var(--navy);background:var(--red)}.body{padding:16px 18px;border-top:1px solid var(--line);color:#c5d0db;font-size:13px;line-height:1.7}
+    .contact{margin-top:12px;padding:18px;display:grid;gap:14px;border:1px solid var(--line);background:#06172f}.contact strong{display:block;font-family:Impact,sans-serif;font-size:28px;text-transform:uppercase}.contact span{color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions a,.actions em{padding:10px 13px;border:1px solid var(--line);font-size:10px;font-style:normal;font-weight:900;text-transform:uppercase}.actions a{color:white;background:var(--red);border-color:var(--red);text-decoration:none}summary:focus-visible,a:focus-visible{outline:3px solid white;outline-offset:3px}@media(max-width:560px){summary{grid-template-columns:42px 1fr}.number{font-size:36px}.toggle{grid-column:2;justify-self:start}}@media(min-width:760px){.contact{grid-template-columns:1fr auto;align-items:center}.actions{justify-content:flex-end}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="brand"><b>UBL</b> · Upstate Basketball League</div><span class="option">Option 2 · Scoreboard</span></header>
+  <main><section class="hero"><span>About the league</span><h1>Purpose on the scoreboard.</h1><p>A darker arena-inspired direction that makes the two ideas feel like the league's defining stats.</p></section>
+    <section class="board">
+      <details name="purpose"><summary><span class="number">01</span><div><span class="label">Our mission</span><h2>Faith. Competition. Kingdom impact.</h2><p class="preview">Honor God. Build character. Unite communities.</p></div><span class="toggle">View</span></summary><div class="body">The Upstate Basketball League exists to honor God through competition, build character, and unite our communities on and off the court.</div></details>
+      <details name="purpose"><summary><span class="number">02</span><div><span class="label">Why UBL exists</span><h2>Meaningful competition.</h2><p class="preview">A real league structure for growing varsity programs.</p></div><span class="toggle">View</span></summary><div class="body">UBL serves smaller schools, homeschool teams, and independent programs with organized competition, shared standards, and a championship experience.</div></details>
+    </section>
+    <section class="contact"><div><strong>Connect with the UBL</strong><span>Official league communication and inquiries.</span></div><div class="actions"><a href="mailto:Info.upstatebasketballleague@gmail.com">Email league office</a><em>Facebook soon</em></div></section>
+  </main>
+</body>
+</html>
