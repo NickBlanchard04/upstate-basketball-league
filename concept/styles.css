@@ -1131,11 +1131,6 @@ th {
 
 .about-mission,
 .about-value {
-  min-height: 18rem;
-  padding: clamp(1.25rem, 4vw, 2.5rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   overflow: hidden;
   border-radius: 1rem;
   color: var(--white);
@@ -1156,8 +1151,47 @@ th {
   border: 1px solid var(--line);
 }
 
-.about-mission span,
-.about-value span,
+.about-feature summary {
+  min-height: 15rem;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: pointer;
+  list-style: none;
+}
+
+.about-feature summary::-webkit-details-marker {
+  display: none;
+}
+
+.about-feature summary::after {
+  content: "Open +";
+  align-self: flex-start;
+  margin-top: 1.1rem;
+  padding: 0.42rem 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.about-feature[open] summary::after {
+  content: "Close −";
+}
+
+.about-feature-content {
+  padding: 1rem clamp(1.25rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2.5rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.about-value .about-feature-content {
+  border-top-color: var(--line);
+}
+
+.about-feature summary span,
 .contact-callout > div > span {
   margin-bottom: 0.6rem;
   color: #ff9aac;
@@ -1167,30 +1201,28 @@ th {
   text-transform: uppercase;
 }
 
-.about-value span {
+.about-value summary span {
   color: var(--red);
 }
 
-.about-mission h2,
-.about-value h2 {
+.about-feature summary h2 {
   max-width: 14ch;
-  margin-bottom: 0.75rem;
+  margin: 0;
   font: 900 clamp(2.1rem, 8vw, 4rem)/0.92 var(--display);
   text-transform: uppercase;
 }
 
-.about-mission p,
-.about-value p {
+.about-feature-content p {
   max-width: 43rem;
   margin: 0;
   font-size: 0.78rem;
 }
 
-.about-mission p {
+.about-mission .about-feature-content p {
   color: rgba(255, 255, 255, 0.76);
 }
 
-.about-value p {
+.about-value .about-feature-content p {
   color: var(--muted);
 }
 
