@@ -1,19 +1,4 @@
-const schedule = [
-  { date: "Tue Dec 1", time: "6:00 PM", division: "Boys Varsity", home: "The King’s School", away: "Wilton Baptist", location: "The King’s School Gym" },
-  { date: "Sat Dec 5", time: "5:30 PM", division: "Girls Varsity", home: "Perth", away: "Hudson Valley Rocks", location: "Perth" },
-  { date: "Tue Dec 8", time: "6:30 PM", division: "Boys Varsity", home: "Hudson Valley Rocks", away: "Perth", location: "HV Rocks Home Gym" },
-  { date: "Fri Dec 11", time: "5:30 PM", division: "Girls Varsity", home: "Wilton Baptist", away: "The King’s School", location: "Wilton Baptist" },
-  { date: "Tue Dec 15", time: "6:00 PM", division: "Boys Varsity", home: "Perth", away: "The King’s School", location: "Perth" },
-  { date: "Fri Dec 18", time: "6:00 PM", division: "Girls Varsity", home: "Hudson Valley Rocks", away: "Wilton Baptist", location: "HV Rocks Home Gym" },
-];
-
-const teams = [
-  { name: "The King’s School", logo: "../assets/team-kings-school.png", wins: 0, losses: 0, pf: 0, pa: 0 },
-  { name: "Perth", logo: "../assets/team-perth.png", wins: 0, losses: 0, pf: 0, pa: 0 },
-  { name: "Wilton Baptist", logo: "../assets/team-wilton-baptist.png", wins: 0, losses: 0, pf: 0, pa: 0 },
-  { name: "Hudson Valley Rocks", logo: "../assets/team-hudson-valley-rocks.png", wins: 0, losses: 0, pf: 0, pa: 0 },
-  { name: "TBD", logo: "../assets/ubl-logo.png", wins: 0, losses: 0, pf: 0, pa: 0 },
-];
+const league = window.UBL_DATA;
 
 const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
@@ -33,58 +18,127 @@ siteNav?.querySelectorAll("a").forEach((link) => {
   });
 });
 
-document.querySelectorAll(".team-gallery").forEach((gallery) => {
-  gallery.addEventListener("toggle", () => {
-    if (!gallery.open) return;
-
-    document.querySelectorAll(".team-gallery[open]").forEach((openGallery) => {
-      if (openGallery !== gallery) openGallery.open = false;
-    });
+document.addEventListener("toggle", (event) => {
+  const item = event.target;
+  if (!(item instanceof HTMLDetailsElement) || !item.open) return;
+  const group = item.dataset.accordionGroup;
+  if (!group) return;
+  document.querySelectorAll(`[data-accordion-group="${group}"][open]`).forEach((openItem) => {
+    if (openItem !== item) openItem.open = false;
   });
-});
+}, true);
 
-const gameList = document.querySelector("[data-game-list]");
+function programById(id) {
+  return league.programs.find((program) => program.id === id);
+}
 
-function renderSchedule(filter = "all") {
+function gameTeamName(game, side) {
+  const directName = game[`${side}Name`];
+  if (directName) return directName;
+  return programById(game[`${side}Id`])?.name || "TBD";
+}
+
+function gameMarkup(game) {
+  return `
+    <article class="game-row">
+      <div class="game-date">${game.date.split(" ")[0]}<span>${game.date.split(" ").slice(1).join(" ")} · ${game.time}</span></div>
+      <div class="game-info">
+        <strong>${gameTeamName(game, "away")} <em>vs</em> ${gameTeamName(game, "home")}</strong>
+        <p>${game.division} · ${game.stage ? `${game.stage} · ` : ""}${game.location}</p>
+      </div>
+    </article>
+  `;
+}
+
+function allScheduledGames() {
+  return league.scheduleWeeks.flatMap((week) => week.games);
+}
+
+let scheduleDivision = "all";
+let selectedWeekId = league.scheduleWeeks[0]?.id;
+
+function renderHomeSchedule() {
+  const gameList = document.querySelector("[data-game-list]");
   if (!gameList) return;
-  const games = filter === "all" ? schedule : schedule.filter((game) => game.division === filter);
+  const games = allScheduledGames()
+    .filter((game) => scheduleDivision === "all" || game.division === scheduleDivision)
+    .slice(0, 4);
+  gameList.innerHTML = games.map(gameMarkup).join("");
+}
 
-  gameList.innerHTML = games.map((game) => {
-    const [day, month, date] = game.date.split(" ");
-    return `
-      <article class="game-row">
-        <div class="game-date">${day}<span>${month} ${date} · ${game.time}</span></div>
-        <div class="game-info">
-          <strong>${game.away} <em>vs</em> ${game.home}</strong>
-          <p>${game.division} · ${game.location}</p>
-        </div>
-      </article>
-    `;
-  }).join("");
+function renderSchedulePage() {
+  const weekList = document.querySelector("[data-week-game-list]");
+  const weekSelect = document.querySelector("[data-week-select]");
+  const weekHeading = document.querySelector("[data-week-heading]");
+  const weekNote = document.querySelector("[data-week-note]");
+  if (!weekList || !weekSelect) return;
+
+  const week = league.scheduleWeeks.find((item) => item.id === selectedWeekId) || league.scheduleWeeks[0];
+  const games = week.games.filter((game) => scheduleDivision === "all" || game.division === scheduleDivision);
+  weekSelect.value = week.id;
+  if (weekHeading) weekHeading.textContent = `${week.label} · ${week.range}`;
+  if (weekNote) weekNote.textContent = week.note || league.scheduleNotice;
+  weekList.innerHTML = games.length
+    ? games.map(gameMarkup).join("")
+    : `<div class="schedule-empty"><strong>No games planned</strong><p>${week.note || "No games match this division filter."}</p></div>`;
 }
 
 document.querySelectorAll("[data-schedule-filter]").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll("[data-schedule-filter]").forEach((item) => item.classList.remove("active"));
     button.classList.add("active");
-    renderSchedule(button.dataset.scheduleFilter);
+    scheduleDivision = button.dataset.scheduleFilter;
+    renderHomeSchedule();
+    renderSchedulePage();
   });
 });
 
-const standingsBody = document.querySelector("[data-standings-body]");
+const weekSelect = document.querySelector("[data-week-select]");
+if (weekSelect) {
+  weekSelect.innerHTML = league.scheduleWeeks.map((week) => `<option value="${week.id}">${week.label} · ${week.range}</option>`).join("");
+  weekSelect.addEventListener("change", () => {
+    selectedWeekId = weekSelect.value;
+    renderSchedulePage();
+  });
+}
+
+document.querySelectorAll("[data-week-step]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const currentIndex = league.scheduleWeeks.findIndex((week) => week.id === selectedWeekId);
+    const direction = Number(button.dataset.weekStep);
+    const nextIndex = Math.min(league.scheduleWeeks.length - 1, Math.max(0, currentIndex + direction));
+    selectedWeekId = league.scheduleWeeks[nextIndex].id;
+    renderSchedulePage();
+  });
+});
+
+let standingsDivision = "Boys Varsity";
+
+function standingsRows(division) {
+  return league.standings[division].map((row, index) => {
+    const program = programById(row.programId);
+    const games = row.wins + row.losses;
+    const pct = games ? (row.wins / games).toFixed(3).replace(/^0/, "") : ".000";
+    const diff = row.pf - row.pa;
+    return `
+      <tr>
+        <td class="seed-cell">${index + 1}</td>
+        <td><a class="standings-team" href="teams.html#${program.id}"><img src="${program.logo}" alt="">${program.name}</a></td>
+        <td>${row.wins}</td>
+        <td>${row.losses}</td>
+        <td>${pct}</td>
+        <td>${row.pf}</td>
+        <td>${row.pa}</td>
+        <td>${diff > 0 ? `+${diff}` : diff}</td>
+      </tr>
+    `;
+  }).join("");
+}
 
 function renderStandings() {
-  if (!standingsBody) return;
-  standingsBody.innerHTML = teams.map((team) => `
-    <tr>
-      <td><span class="standings-team"><img src="${team.logo}" alt="">${team.name}</span></td>
-      <td>${team.wins}</td>
-      <td>${team.losses}</td>
-      <td>.000</td>
-      <td>${team.pf}</td>
-      <td>${team.pa}</td>
-    </tr>
-  `).join("");
+  document.querySelectorAll("[data-standings-body]").forEach((body) => {
+    body.innerHTML = standingsRows(standingsDivision);
+  });
 }
 
 document.querySelectorAll("[data-standings-filter]").forEach((button) => {
@@ -95,38 +149,115 @@ document.querySelectorAll("[data-standings-filter]").forEach((button) => {
     });
     button.classList.add("active");
     button.setAttribute("aria-selected", "true");
+    standingsDivision = button.dataset.standingsFilter;
+    renderStandings();
   });
 });
+
+function teamCardMarkup(program) {
+  return `
+    <a class="team-card" href="teams.html#${program.id}">
+      <img src="${program.logo}" alt="">
+      <strong>${program.name}</strong>
+      <span>${program.divisions.join(" · ")}</span>
+    </a>
+  `;
+}
+
+function renderHomeTeams() {
+  const grid = document.querySelector("[data-team-card-grid]");
+  if (grid) grid.innerHTML = league.programs.map(teamCardMarkup).join("");
+}
+
+function profileDivisionMarkup(program, division) {
+  const team = program.teams[division];
+  const assistants = team.assistants.length ? team.assistants.join("<br>") : "To be confirmed";
+  return `
+    <section class="program-division">
+      <span>${division}</span>
+      <dl>
+        <div><dt>Head coach</dt><dd>${team.headCoach}</dd></div>
+        <div><dt>Assistant coach</dt><dd>${assistants}</dd></div>
+      </dl>
+      <p>${team.notes}</p>
+    </section>
+  `;
+}
+
+function programProfileMarkup(program) {
+  const contact = program.representativeEmail
+    ? `<a href="mailto:${program.representativeEmail}">${program.representativeEmail}</a>`
+    : "To be confirmed";
+  return `
+    <details class="program-profile" id="${program.id}" data-accordion-group="programs">
+      <summary>
+        <span class="program-profile-identity"><img src="${program.logo}" alt=""><span><strong>${program.name}</strong><small>${program.type}</small></span></span>
+        <span class="program-profile-divisions">${program.divisions.join(" · ")}</span>
+      </summary>
+      <div class="program-profile-content">
+        <p class="program-summary">${program.summary}</p>
+        <div class="program-division-grid">${program.divisions.map((division) => profileDivisionMarkup(program, division)).join("")}</div>
+        <dl class="program-facts">
+          <div><dt>Home gym</dt><dd>${program.homeGym}</dd></div>
+          <div><dt>Program representative</dt><dd>${contact}</dd></div>
+        </dl>
+      </div>
+    </details>
+  `;
+}
+
+function renderPrograms(filter = "all") {
+  const list = document.querySelector("[data-program-list]");
+  if (!list) return;
+  const programs = filter === "all" ? league.programs : league.programs.filter((program) => program.divisions.includes(filter));
+  list.innerHTML = programs.map(programProfileMarkup).join("");
+  openHashProgram();
+}
+
+document.querySelectorAll("[data-program-filter]").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-program-filter]").forEach((item) => item.classList.remove("active"));
+    button.classList.add("active");
+    renderPrograms(button.dataset.programFilter);
+  });
+});
+
+function openHashProgram() {
+  if (!location.hash) return;
+  const profile = document.querySelector(location.hash);
+  if (profile?.matches(".program-profile")) {
+    profile.open = true;
+    setTimeout(() => profile.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  }
+}
+
+window.addEventListener("hashchange", openHashProgram);
 
 const countdownTarget = new Date("2026-12-01T18:00:00-05:00").getTime();
 const countdownParts = {
   days: document.querySelector("[data-countdown-days]"),
   hours: document.querySelector("[data-countdown-hours]"),
   minutes: document.querySelector("[data-countdown-minutes]"),
-  seconds: document.querySelector("[data-countdown-seconds]"),
+  seconds: document.querySelector("[data-countdown-seconds]")
 };
 const countdownMessage = document.querySelector("[data-countdown-message]");
 
 function updateCountdown() {
   if (!countdownParts.days || !countdownParts.hours || !countdownParts.minutes || !countdownParts.seconds) return;
-
   const remaining = Math.max(0, countdownTarget - Date.now());
   const totalSeconds = Math.floor(remaining / 1000);
-
   countdownParts.days.textContent = String(Math.floor(totalSeconds / 86400)).padStart(3, "0");
   countdownParts.hours.textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0");
   countdownParts.minutes.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
   countdownParts.seconds.textContent = String(totalSeconds % 60).padStart(2, "0");
-
-  if (remaining === 0) {
-    countdownMessage.textContent = "The 2026–27 UBL season is underway.";
-  }
+  if (remaining === 0) countdownMessage.textContent = "The 2026–27 UBL season is underway.";
 }
 
-renderSchedule();
+renderHomeSchedule();
+renderSchedulePage();
 renderStandings();
+renderHomeTeams();
+renderPrograms();
 updateCountdown();
 
-if (countdownParts.seconds) {
-  setInterval(updateCountdown, 1000);
-}
+if (countdownParts.seconds) setInterval(updateCountdown, 1000);

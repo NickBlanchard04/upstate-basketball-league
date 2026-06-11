@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Upstate Basketball League playoff bracket concept.">
-  <title>Playoff Bracket | UBL Concept</title>
+  <meta name="description" content="Meet the programs and coaches competing in the Upstate Basketball League.">
+  <title>Teams | Upstate Basketball League</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,28 +20,30 @@
       <a class="brand" href="index.html" aria-label="UBL concept home"><img src="../assets/ubl-logo.png" alt=""><span><strong>Upstate</strong> Basketball League</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
-        <a class="active" href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
+        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a class="active" href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
       </nav>
     </div>
   </header>
 
   <main class="subpage-main" id="main">
     <section class="page-banner">
-      <div><h1>Playoff bracket</h1><p>Every regular-season game builds toward the mid-February 2027 UBL championship.</p></div>
-      <strong>5-team play-in format</strong>
+      <div><h1>UBL programs</h1><p>Meet the schools, independent teams, coaches, and program representatives building the league.</p></div>
+      <strong>Two divisions &middot; six program identities</strong>
     </section>
 
-    <section class="panel bracket-panel section-wrap" aria-labelledby="bracket-title">
-      <div class="section-title section-title-inline"><div><h2 id="bracket-title">Road to the title</h2><span>Mid-February 2027</span></div><strong>Championship format</strong></div>
-      <div class="bracket">
-        <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game"><div><span>Seed 4</span><strong>TBD</strong></div><div><span>Seed 5</span><strong>TBD</strong></div><p>Winner advances to play Seed 1</p></article></div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round"><h3>Semifinals</h3><article class="bracket-game"><div><span>Seed 1</span><strong>Regular season leader</strong></div><div><span>Play-in winner</span><strong>TBD</strong></div></article><article class="bracket-game"><div><span>Seed 2</span><strong>TBD</strong></div><div><span>Seed 3</span><strong>TBD</strong></div></article></div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card"><span>2027 UBL</span><strong>Champion</strong><p>Semifinal winners</p></article></div>
+    <section class="panel teams-page-panel section-wrap" aria-labelledby="teams-page-title">
+      <div class="section-title section-title-inline">
+        <div><h2 id="teams-page-title">Program directory</h2><span>Tap a program to learn more</span></div>
+        <a href="standings.html">View standings</a>
       </div>
-      <p class="panel-note">Seed 4 and Seed 5 meet in the play-in. The winner advances to face the number one seed in the semifinals.</p>
+      <div class="tabs" aria-label="Program filters">
+        <button class="active" type="button" data-program-filter="all">All programs</button>
+        <button type="button" data-program-filter="Boys Varsity">Boys Varsity</button>
+        <button type="button" data-program-filter="Girls Varsity">Girls Varsity</button>
+      </div>
+      <p class="directory-note">Public program profiles are intentionally brief. Information marked to be confirmed will be updated as team representatives respond.</p>
+      <div class="program-list" data-program-list></div>
     </section>
   </main>
 

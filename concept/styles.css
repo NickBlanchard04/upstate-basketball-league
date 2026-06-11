@@ -439,6 +439,22 @@ p {
   text-transform: uppercase;
 }
 
+.heading-link,
+.section-title > a,
+.section-title-inline > a {
+  color: var(--red);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-align: right;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.section-title > a,
+.section-title-inline > a {
+  color: #ff9aac;
+}
+
 .featured-matchup {
   padding: 1rem 0;
   display: grid;
@@ -528,7 +544,17 @@ p {
   justify-items: center;
   border: 1px solid var(--line);
   border-radius: 0.65rem;
+  color: inherit;
   text-align: center;
+  text-decoration: none;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.team-card:hover,
+.team-card:focus-visible {
+  border-color: #9cb8d8;
+  box-shadow: 0 0.45rem 1rem rgba(2, 15, 34, 0.1);
+  transform: translateY(-2px);
 }
 
 .team-card img {
@@ -686,6 +712,11 @@ td:first-child {
   text-align: left;
 }
 
+th:nth-child(2),
+td:nth-child(2) {
+  text-align: left;
+}
+
 th {
   color: var(--muted);
   background: var(--canvas);
@@ -698,13 +729,20 @@ th {
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  color: var(--navy-800);
   font-weight: 700;
+  text-decoration: none;
 }
 
 .standings-team img {
   width: 2rem;
   aspect-ratio: 1;
   object-fit: contain;
+}
+
+.seed-cell {
+  color: var(--red);
+  font-weight: 800;
 }
 
 .panel-note {
@@ -1352,6 +1390,302 @@ th {
   text-transform: uppercase;
 }
 
+.schedule-page-panel,
+.standings-page-panel,
+.teams-page-panel {
+  padding: 1rem;
+}
+
+.planning-note,
+.standings-explainer {
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  border: 1px solid #b9cce1;
+  border-left: 4px solid var(--red);
+  border-radius: 0.55rem;
+  background: #f4f8fc;
+}
+
+.planning-note strong,
+.standings-explainer strong {
+  color: var(--navy-800);
+  font: 800 1rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.planning-note p,
+.standings-explainer p,
+.directory-note {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.week-controls {
+  margin-bottom: 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.week-controls label {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.week-controls label span {
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.week-controls button,
+.week-controls select {
+  min-height: 2.8rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  color: var(--navy-800);
+  background: var(--white);
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.week-controls button {
+  cursor: pointer;
+}
+
+.week-summary {
+  margin-bottom: 0.7rem;
+  padding: 0.9rem;
+  border-radius: 0.55rem;
+  color: var(--white);
+  background: var(--navy-900);
+}
+
+.week-summary span {
+  color: #ff9aac;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.week-summary h2 {
+  margin: 0.2rem 0 0.3rem;
+  font: 900 1.65rem/0.95 var(--display);
+  text-transform: uppercase;
+}
+
+.week-summary p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.65rem;
+}
+
+.schedule-empty {
+  min-height: 9rem;
+  padding: 1.2rem;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  color: var(--muted);
+  text-align: center;
+  background: var(--canvas);
+}
+
+.schedule-empty strong {
+  color: var(--navy-800);
+  font: 800 1.2rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.schedule-empty p {
+  max-width: 34rem;
+  margin: 0.45rem 0 0;
+  font-size: 0.68rem;
+}
+
+.standings-explainer {
+  margin: 1rem 0 0;
+}
+
+.directory-note {
+  max-width: 48rem;
+  margin: 0 0 1rem;
+}
+
+.program-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.program-profile {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: var(--white);
+  scroll-margin-top: 6rem;
+}
+
+.program-profile summary {
+  min-height: 4.8rem;
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  color: var(--navy-800);
+  background: var(--canvas);
+  cursor: pointer;
+  list-style: none;
+}
+
+.program-profile summary::-webkit-details-marker {
+  display: none;
+}
+
+.program-profile summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--red);
+  font: 900 1.35rem/1 var(--display);
+}
+
+.program-profile[open] summary {
+  color: var(--white);
+  background: var(--navy-900);
+}
+
+.program-profile[open] summary::after {
+  content: "-";
+  color: #ff9aac;
+}
+
+.program-profile-identity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.program-profile-identity img {
+  width: 3.1rem;
+  height: 3.1rem;
+  flex: 0 0 3.1rem;
+  object-fit: contain;
+}
+
+.program-profile-identity strong,
+.program-profile-identity small {
+  display: block;
+}
+
+.program-profile-identity strong {
+  font: 800 1.2rem/0.95 var(--display);
+  text-transform: uppercase;
+}
+
+.program-profile-identity small {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.56rem;
+}
+
+.program-profile[open] .program-profile-identity small {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.program-profile-divisions {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.program-profile[open] .program-profile-divisions {
+  color: #ff9aac;
+}
+
+.program-profile-content {
+  padding: 0.85rem;
+}
+
+.program-summary {
+  margin-bottom: 0.8rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.program-division-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.program-division {
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--canvas);
+}
+
+.program-division > span {
+  color: var(--red);
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.program-division dl,
+.program-facts {
+  margin: 0.55rem 0 0;
+}
+
+.program-division dl div,
+.program-facts div {
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.program-division dt,
+.program-facts dt {
+  color: var(--muted);
+  font-size: 0.53rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.program-division dd,
+.program-facts dd {
+  margin: 0.15rem 0 0;
+  color: var(--navy-800);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.program-division p {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.63rem;
+}
+
+.program-facts {
+  padding: 0.2rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+}
+
+.program-facts a {
+  overflow-wrap: anywhere;
+  color: var(--navy-700);
+}
+
 .score-ticker {
   position: fixed;
   z-index: 70;
@@ -1456,6 +1790,20 @@ th {
   }
 
   .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .week-controls {
+    grid-template-columns: auto minmax(15rem, 1fr) auto;
+    align-items: end;
+  }
+
+  .week-controls label {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .program-division-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1639,7 +1987,7 @@ th {
   }
 
   .team-card-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .feature-deck,
@@ -1654,7 +2002,10 @@ th {
   .standings-panel,
   .scores-panel,
   .rules-panel,
-  .bracket-panel {
+  .bracket-panel,
+  .schedule-page-panel,
+  .standings-page-panel,
+  .teams-page-panel {
     padding: 1.2rem;
   }
 

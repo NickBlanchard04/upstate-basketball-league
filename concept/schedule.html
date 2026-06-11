@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Upstate Basketball League playoff bracket concept.">
-  <title>Playoff Bracket | UBL Concept</title>
+  <meta name="description" content="Browse the 2026-27 Upstate Basketball League schedule by week and division.">
+  <title>Schedule | Upstate Basketball League</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,28 +20,40 @@
       <a class="brand" href="index.html" aria-label="UBL concept home"><img src="../assets/ubl-logo.png" alt=""><span><strong>Upstate</strong> Basketball League</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
-        <a class="active" href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
+        <a href="index.html">Home</a><a class="active" href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
       </nav>
     </div>
   </header>
 
   <main class="subpage-main" id="main">
     <section class="page-banner">
-      <div><h1>Playoff bracket</h1><p>Every regular-season game builds toward the mid-February 2027 UBL championship.</p></div>
-      <strong>5-team play-in format</strong>
+      <div><h1>League schedule</h1><p>Follow every planned Monday and Thursday league date, school break, and postseason game.</p></div>
+      <strong>Dec 1, 2026 &ndash; Feb 22, 2027</strong>
     </section>
 
-    <section class="panel bracket-panel section-wrap" aria-labelledby="bracket-title">
-      <div class="section-title section-title-inline"><div><h2 id="bracket-title">Road to the title</h2><span>Mid-February 2027</span></div><strong>Championship format</strong></div>
-      <div class="bracket">
-        <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game"><div><span>Seed 4</span><strong>TBD</strong></div><div><span>Seed 5</span><strong>TBD</strong></div><p>Winner advances to play Seed 1</p></article></div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round"><h3>Semifinals</h3><article class="bracket-game"><div><span>Seed 1</span><strong>Regular season leader</strong></div><div><span>Play-in winner</span><strong>TBD</strong></div></article><article class="bracket-game"><div><span>Seed 2</span><strong>TBD</strong></div><div><span>Seed 3</span><strong>TBD</strong></div></article></div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card"><span>2027 UBL</span><strong>Champion</strong><p>Semifinal winners</p></article></div>
+    <section class="panel schedule-page-panel section-wrap" aria-labelledby="schedule-page-title">
+      <div class="section-title section-title-inline">
+        <div><h2 id="schedule-page-title">Choose a week</h2><span>2026-27 planning schedule</span></div>
+        <a href="bracket.html">View playoff format</a>
       </div>
-      <p class="panel-note">Seed 4 and Seed 5 meet in the play-in. The winner advances to face the number one seed in the semifinals.</p>
+      <div class="planning-note"><strong>Planning schedule</strong><p>Matchups, times, and locations are placeholders until confirmed by team representatives. Calendar breaks reflect The King's School 2026-27 calendar.</p></div>
+      <div class="week-controls">
+        <button type="button" data-week-step="-1" aria-label="View previous week">Previous week</button>
+        <label><span>Select week</span><select data-week-select aria-label="Select schedule week"></select></label>
+        <button type="button" data-week-step="1" aria-label="View next week">Next week</button>
+      </div>
+      <div class="tabs" aria-label="Schedule division filters">
+        <button class="active" type="button" data-schedule-filter="all">All games</button>
+        <button type="button" data-schedule-filter="Boys Varsity">Boys Varsity</button>
+        <button type="button" data-schedule-filter="Girls Varsity">Girls Varsity</button>
+      </div>
+      <div class="week-summary">
+        <span>Selected week</span>
+        <h2 data-week-heading></h2>
+        <p data-week-note></p>
+      </div>
+      <div class="game-list" data-week-game-list></div>
     </section>
   </main>
 

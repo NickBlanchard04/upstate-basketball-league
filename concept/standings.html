@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Upstate Basketball League playoff bracket concept.">
-  <title>Playoff Bracket | UBL Concept</title>
+  <meta name="description" content="View Boys Varsity and Girls Varsity Upstate Basketball League standings.">
+  <title>Standings | Upstate Basketball League</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,28 +20,37 @@
       <a class="brand" href="index.html" aria-label="UBL concept home"><img src="../assets/ubl-logo.png" alt=""><span><strong>Upstate</strong> Basketball League</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
-        <a class="active" href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
+        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a class="active" href="standings.html">Standings</a><a href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
       </nav>
     </div>
   </header>
 
   <main class="subpage-main" id="main">
     <section class="page-banner">
-      <div><h1>Playoff bracket</h1><p>Every regular-season game builds toward the mid-February 2027 UBL championship.</p></div>
-      <strong>5-team play-in format</strong>
+      <div><h1>Standings</h1><p>Track each varsity division and see how the five-team postseason field is taking shape.</p></div>
+      <strong>Seeds update after opening night</strong>
     </section>
 
-    <section class="panel bracket-panel section-wrap" aria-labelledby="bracket-title">
-      <div class="section-title section-title-inline"><div><h2 id="bracket-title">Road to the title</h2><span>Mid-February 2027</span></div><strong>Championship format</strong></div>
-      <div class="bracket">
-        <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game"><div><span>Seed 4</span><strong>TBD</strong></div><div><span>Seed 5</span><strong>TBD</strong></div><p>Winner advances to play Seed 1</p></article></div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round"><h3>Semifinals</h3><article class="bracket-game"><div><span>Seed 1</span><strong>Regular season leader</strong></div><div><span>Play-in winner</span><strong>TBD</strong></div></article><article class="bracket-game"><div><span>Seed 2</span><strong>TBD</strong></div><div><span>Seed 3</span><strong>TBD</strong></div></article></div>
-        <div class="bracket-arrow" aria-hidden="true">→</div>
-        <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card"><span>2027 UBL</span><strong>Champion</strong><p>Semifinal winners</p></article></div>
+    <section class="panel standings-page-panel section-wrap" aria-labelledby="standings-page-title">
+      <div class="section-title section-title-inline">
+        <div><h2 id="standings-page-title">Division standings</h2><span>Preseason records</span></div>
+        <a href="bracket.html">How playoffs work</a>
       </div>
-      <p class="panel-note">Seed 4 and Seed 5 meet in the play-in. The winner advances to face the number one seed in the semifinals.</p>
+      <div class="tabs" role="tablist" aria-label="Standings division">
+        <button class="active" type="button" role="tab" aria-selected="true" data-standings-filter="Boys Varsity">Boys Varsity</button>
+        <button type="button" role="tab" aria-selected="false" data-standings-filter="Girls Varsity">Girls Varsity</button>
+      </div>
+      <div class="table-wrap standings-table-wrap">
+        <table>
+          <thead><tr><th>Seed</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
+          <tbody data-standings-body></tbody>
+        </table>
+      </div>
+      <div class="standings-explainer">
+        <strong>Five-team playoff path</strong>
+        <p>Seed 4 plays Seed 5 in the play-in game. The winner advances to play Seed 1, while Seed 2 plays Seed 3 in the other semifinal.</p>
+      </div>
     </section>
   </main>
 

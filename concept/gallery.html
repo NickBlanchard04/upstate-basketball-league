@@ -9,8 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="../assets/ubl-logo.png">
-  <link rel="stylesheet" href="styles.css?v=20260611-3">
-  <script src="script.js?v=20260611-3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260611-4">
+  <script src="data.js?v=20260611-4"></script>
+  <script src="script.js?v=20260611-4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -19,7 +20,7 @@
       <a class="brand" href="index.html" aria-label="UBL concept home"><img src="../assets/ubl-logo.png" alt=""><span><strong>Upstate</strong> Basketball League</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a><a href="index.html#schedule">Schedule</a><a href="index.html#standings">Standings</a><a href="index.html#teams">Teams</a>
+        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
         <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a class="active" href="gallery.html">Gallery</a><a href="about.html">About</a><a class="current-site-link" href="../">Current site</a>
       </nav>
     </div>
@@ -32,11 +33,11 @@
     </section>
 
     <section class="panel gallery-panel section-wrap" aria-labelledby="gallery-title">
-      <div class="section-title"><h2 id="gallery-title">Team galleries</h2><span>5 teams</span></div>
+      <div class="section-title"><h2 id="gallery-title">Team galleries</h2><span>6 programs</span></div>
       <p class="gallery-lede">Choose a team to open its gallery. Every team has its own space, ready to grow with the season.</p>
 
       <div class="team-gallery-list">
-        <details class="team-gallery" name="team-gallery">
+        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries">
           <summary>
             <span class="team-gallery-identity"><img src="../assets/team-kings-school.png" alt=""><span><strong>The King's School</strong><small>Boys &amp; Girls Varsity</small></span></span>
             <span class="team-gallery-count">13 photos</span>
@@ -60,22 +61,27 @@
           </div>
         </details>
 
-        <details class="team-gallery" name="team-gallery">
+        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries">
           <summary><span class="team-gallery-identity"><img src="../assets/team-perth.png" alt=""><span><strong>Perth</strong><small>Boys &amp; Girls Varsity</small></span></span><span class="team-gallery-count">Coming soon</span></summary>
           <div class="team-gallery-content"><p class="gallery-empty">Perth photos will appear here as the season gets underway.</p></div>
         </details>
 
-        <details class="team-gallery" name="team-gallery">
+        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries">
           <summary><span class="team-gallery-identity"><img src="../assets/team-wilton-baptist.png" alt=""><span><strong>Wilton Baptist</strong><small>Boys &amp; Girls Varsity</small></span></span><span class="team-gallery-count">Coming soon</span></summary>
           <div class="team-gallery-content"><p class="gallery-empty">Wilton Baptist photos will appear here as the season gets underway.</p></div>
         </details>
 
-        <details class="team-gallery" name="team-gallery">
-          <summary><span class="team-gallery-identity"><img src="../assets/team-hudson-valley-rocks.png" alt=""><span><strong>Hudson Valley Rocks</strong><small>Boys &amp; Girls Varsity</small></span></span><span class="team-gallery-count">Coming soon</span></summary>
-          <div class="team-gallery-content"><p class="gallery-empty">Hudson Valley Rocks photos will appear here as the season gets underway.</p></div>
+        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries">
+          <summary><span class="team-gallery-identity"><img src="../assets/team-hudson-valley-rocks.png" alt=""><span><strong>HV Rocks</strong><small>Boys Varsity</small></span></span><span class="team-gallery-count">Coming soon</span></summary>
+          <div class="team-gallery-content"><p class="gallery-empty">HV Rocks boys varsity photos will appear here as the season gets underway.</p></div>
         </details>
 
-        <details class="team-gallery" name="team-gallery">
+        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries">
+          <summary><span class="team-gallery-identity"><img src="../assets/ubl-logo.png" alt=""><span><strong>HV Flames</strong><small>Girls Varsity</small></span></span><span class="team-gallery-count">Coming soon</span></summary>
+          <div class="team-gallery-content"><p class="gallery-empty">HV Flames girls varsity photos will appear here as the season gets underway.</p></div>
+        </details>
+
+        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries">
           <summary><span class="team-gallery-identity"><span class="tbd-gallery-mark" aria-hidden="true">TBD</span><span><strong>TBD</strong><small>Fifth UBL program</small></span></span><span class="team-gallery-count">Coming soon</span></summary>
           <div class="team-gallery-content"><p class="gallery-empty">The fifth team's gallery will be ready when the program is announced.</p></div>
         </details>
