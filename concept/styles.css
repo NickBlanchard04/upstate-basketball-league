@@ -1124,6 +1124,174 @@ th {
   font-size: 0.72rem;
 }
 
+.about-purpose {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.about-mission,
+.about-value {
+  min-height: 18rem;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 1rem;
+  color: var(--white);
+  box-shadow: 0 0.25rem 0.9rem rgba(2, 15, 34, 0.12);
+}
+
+.about-mission {
+  background:
+    linear-gradient(145deg, rgba(2, 15, 34, 0.7), rgba(4, 26, 56, 0.98)),
+    url("../assets/ubl-website-hero.png") center / cover;
+}
+
+.about-value {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 100% 0, rgba(227, 19, 49, 0.14), transparent 43%),
+    var(--white);
+  border: 1px solid var(--line);
+}
+
+.about-mission span,
+.about-value span,
+.contact-callout > div > span {
+  margin-bottom: 0.6rem;
+  color: #ff9aac;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.about-value span {
+  color: var(--red);
+}
+
+.about-mission h2,
+.about-value h2 {
+  max-width: 14ch;
+  margin-bottom: 0.75rem;
+  font: 900 clamp(2.1rem, 8vw, 4rem)/0.92 var(--display);
+  text-transform: uppercase;
+}
+
+.about-mission p,
+.about-value p {
+  max-width: 43rem;
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.about-mission p {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.about-value p {
+  color: var(--muted);
+}
+
+.leadership-panel {
+  padding: 1rem;
+}
+
+.leadership-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.leader-card {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 4.3rem minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: var(--canvas);
+}
+
+.leader-mark {
+  width: 4.3rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  color: var(--white);
+  background: var(--navy-900);
+  font: 900 1.45rem/1 var(--display);
+  letter-spacing: 0.05em;
+}
+
+.leader-card span {
+  color: var(--red);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.leader-card h3 {
+  margin: 0.25rem 0 0.45rem;
+  color: var(--navy-800);
+  font: 900 1.7rem/0.95 var(--display);
+  text-transform: uppercase;
+}
+
+.leader-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.contact-callout {
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1rem;
+  color: var(--white);
+  background:
+    radial-gradient(circle at 100% 0, rgba(227, 19, 49, 0.3), transparent 40%),
+    var(--navy-950);
+  box-shadow: 0 0.25rem 0.9rem rgba(2, 15, 34, 0.18);
+}
+
+.contact-callout img {
+  width: 3.5rem;
+  height: 4.5rem;
+  object-fit: contain;
+}
+
+.contact-callout h2 {
+  margin-bottom: 0.4rem;
+  font: 900 clamp(2rem, 8vw, 3.6rem)/0.9 var(--display);
+  text-transform: uppercase;
+}
+
+.contact-callout p {
+  max-width: 46rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.72rem;
+}
+
+.contact-callout .button {
+  width: 100%;
+}
+
+.contact-email {
+  overflow-wrap: anywhere;
+  color: #ff9aac;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .score-ticker {
   position: fixed;
   z-index: 70;
@@ -1267,6 +1435,25 @@ th {
     width: auto;
     margin-inline: 0;
   }
+
+  .about-purpose,
+  .leadership-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contact-callout {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .contact-callout .button {
+    width: auto;
+  }
+
+  .contact-email {
+    grid-column: 2 / -1;
+    text-align: right;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -1390,6 +1577,11 @@ th {
   }
 
   .gallery-panel {
+    padding: 1.2rem;
+  }
+
+  .leadership-panel,
+  .contact-callout {
     padding: 1.2rem;
   }
 
