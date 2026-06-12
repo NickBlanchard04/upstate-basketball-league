@@ -90,7 +90,7 @@ function tickerGameMarkup(game) {
       <em>vs</em>
       <b>${home.short}</b>
       <img src="${home.logo}" alt="">
-      <span class="ticker-status">Planning schedule</span>
+      <span class="ticker-status">${game.division}</span>
     </a>
   `;
 }
