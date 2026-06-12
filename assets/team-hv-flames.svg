@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">HV Flames temporary logo</title>
+  <desc id="desc">A navy basketball crest with a red flame and HV Flames lettering.</desc>
+  <defs>
+    <linearGradient id="flame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff4b58"/>
+      <stop offset="0.52" stop-color="#e31331"/>
+      <stop offset="1" stop-color="#a70920"/>
+    </linearGradient>
+  </defs>
+  <path fill="#020f22" d="M256 20 444 92v145c0 119-73 213-188 255C141 450 68 356 68 237V92z"/>
+  <path fill="none" stroke="#e31331" stroke-width="14" d="M256 37 427 103v134c0 108-64 194-171 236C149 431 85 345 85 237V103z"/>
+  <circle cx="256" cy="238" r="125" fill="#fff"/>
+  <circle cx="256" cy="238" r="109" fill="#073467"/>
+  <path fill="none" stroke="#fff" stroke-width="10" d="M153 238h206M256 129c-31 26-49 64-49 109s18 83 49 109m0-218c31 26 49 64 49 109s-18 83-49 109M179 165c47 40 107 40 154 0m-154 146c47-40 107-40 154 0"/>
+  <path fill="url(#flame)" stroke="#fff" stroke-width="7" stroke-linejoin="round" d="M291 105c13 48-29 67-13 101 9 19 26 25 41 40 24 23 30 56 15 83-16 28-48 44-78 44-54 0-92-36-88-81 3-33 24-52 51-73 24-19 42-42 45-75 22 17 30 37 27 61 26-22 33-58 0-100z"/>
+  <path fill="#fff" d="M200 217h29v38h54v-38h29v102h-29v-40h-54v40h-29z"/>
+  <path fill="#020f22" d="M128 351h256v70H128z"/>
+  <text x="256" y="397" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="900" text-anchor="middle" letter-spacing="4">FLAMES</text>
+</svg>

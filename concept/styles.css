@@ -684,6 +684,12 @@ p {
   font-size: 0.6rem;
 }
 
+.game-info .map-trigger {
+  display: inline;
+  color: var(--navy-700);
+  font-size: inherit;
+}
+
 .game-info em {
   color: var(--red);
   font-style: normal;
@@ -1647,6 +1653,72 @@ th {
   margin: 0.55rem 0 0;
 }
 
+.coach-list {
+  margin-top: 0.6rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.coach-card {
+  min-height: 4.6rem;
+  padding: 0.55rem;
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--white);
+}
+
+.coach-photo {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: block;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.coach-initials {
+  display: grid;
+  place-items: center;
+  color: var(--white);
+  background: var(--navy-900);
+  font: 900 1rem/1 var(--display);
+  letter-spacing: 0.04em;
+}
+
+.coach-card span {
+  color: var(--red);
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.coach-card strong {
+  margin-top: 0.08rem;
+  display: block;
+  color: var(--navy-800);
+  font: 800 1.05rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.coach-card p,
+.coach-vacancy {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+
+.coach-vacancy {
+  padding: 0.5rem 0.6rem;
+  border: 1px dashed #b9cce1;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+
 .program-division dl div,
 .program-facts div {
   padding: 0.45rem 0;
@@ -1684,6 +1756,138 @@ th {
 .program-facts a {
   overflow-wrap: anywhere;
   color: var(--navy-700);
+}
+
+.map-trigger {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--navy-700);
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: rgba(11, 75, 137, 0.35);
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.map-trigger span,
+.map-trigger small {
+  display: block;
+}
+
+.map-trigger small {
+  margin-top: 0.12rem;
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.map-dialog {
+  width: min(calc(100% - 1.5rem), 31rem);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.9rem;
+  color: var(--white);
+  background:
+    radial-gradient(circle at 100% 0, rgba(227, 19, 49, 0.28), transparent 42%),
+    var(--navy-950);
+  box-shadow: 0 1rem 3rem rgba(2, 15, 34, 0.45);
+}
+
+.map-dialog::backdrop {
+  background: rgba(2, 15, 34, 0.76);
+  backdrop-filter: blur(3px);
+}
+
+.map-dialog-card {
+  padding: 1rem;
+}
+
+.map-dialog-heading {
+  padding-bottom: 0.8rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.map-dialog-heading span {
+  color: #ff9aac;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.map-dialog-heading h2 {
+  margin: 0.25rem 0 0;
+  font: 900 1.8rem/0.92 var(--display);
+  text-transform: uppercase;
+}
+
+.map-dialog-heading button {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  color: var(--white);
+  background: transparent;
+  cursor: pointer;
+}
+
+.map-dialog-heading svg {
+  width: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.map-dialog-card > p {
+  margin: 0.85rem 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.72rem;
+}
+
+.map-options {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.map-options a {
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.45rem;
+  color: var(--white);
+  font: 800 0.88rem/1 var(--display);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.map-options a::after {
+  content: "Open";
+  color: #ff9aac;
+  font: 700 0.52rem/1 var(--body);
+}
+
+.map-options a:hover,
+.map-options a:focus-visible {
+  border-color: var(--red);
+  background: rgba(227, 19, 49, 0.14);
 }
 
 .score-ticker {

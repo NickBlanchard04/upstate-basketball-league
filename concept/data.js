@@ -1,28 +1,26 @@
 window.UBL_DATA = {
   season: "2026–27",
   divisions: ["Boys Varsity", "Girls Varsity"],
-  scheduleNotice: "League dates, matchups, times, and locations are planning placeholders until confirmed by team representatives.",
+  scheduleNotice: "All listed matchups, times, and locations are placeholders until the schedule is confirmed by the league commissioner.",
   programs: [
     {
       id: "kings-school",
       name: "The King’s School",
       short: "TKS",
       logo: "../assets/team-kings-school.png",
-      type: "School-based program",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "The King’s School Gym",
+      homeAddress: "",
       representativeEmail: "athletic_director@kingsschool.info",
       summary: "A founding UBL program fielding both boys and girls varsity teams.",
       teams: {
         "Boys Varsity": {
-          headCoach: "Hudson Waters",
-          assistants: ["Jacob Fischer — Assistant Coach, Class of 2022 alumnus"],
-          notes: "Hudson Waters enters his second season as head coach."
+          headCoach: { name: "Hudson Waters", experience: "Second season as head coach.", photo: "" },
+          assistants: [{ name: "Jacob Fischer", experience: "Assistant coach and Class of 2022 alumnus.", photo: "" }]
         },
         "Girls Varsity": {
-          headCoach: "Brodie Farr",
-          assistants: ["Todd Brown — Assistant Coach"],
-          notes: "Brodie Farr, Class of 1992 alumnus, and Todd Brown have coached together for four seasons."
+          headCoach: { name: "Brodie Farr", experience: "Class of 1992 alumnus; coached the program for four seasons.", photo: "" },
+          assistants: [{ name: "Todd Brown", experience: "Coached alongside Brodie Farr for four seasons.", photo: "" }]
         }
       }
     },
@@ -31,14 +29,14 @@ window.UBL_DATA = {
       name: "Perth",
       short: "PER",
       logo: "../assets/team-perth.png",
-      type: "Independent program",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "To be confirmed",
+      homeAddress: "",
       representativeEmail: "",
       summary: "A founding UBL program with boys and girls varsity participation planned.",
       teams: {
-        "Boys Varsity": { headCoach: "To be confirmed", assistants: [], notes: "Additional program information is being collected." },
-        "Girls Varsity": { headCoach: "To be confirmed", assistants: [], notes: "Additional program information is being collected." }
+        "Boys Varsity": { headCoach: { name: "To be confirmed", experience: "Coach information is being collected.", photo: "" }, assistants: [] },
+        "Girls Varsity": { headCoach: { name: "To be confirmed", experience: "Coach information is being collected.", photo: "" }, assistants: [] }
       }
     },
     {
@@ -46,14 +44,20 @@ window.UBL_DATA = {
       name: "Wilton Baptist",
       short: "WBC",
       logo: "../assets/team-wilton-baptist.png",
-      type: "School-based program",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "To be confirmed",
+      homeAddress: "",
       representativeEmail: "",
       summary: "A founding UBL program led by coach Chris Webster.",
       teams: {
-        "Boys Varsity": { headCoach: "Chris Webster", assistants: [], notes: "Roster and assistant-coach information are being collected." },
-        "Girls Varsity": { headCoach: "Chris Webster", assistants: [], notes: "Roster and assistant-coach information are being collected." }
+        "Boys Varsity": {
+          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "../assets/chris-webster.jpg" },
+          assistants: [{ name: "Rob Newcome", experience: "Coaching for eight seasons.", photo: "" }]
+        },
+        "Girls Varsity": {
+          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "../assets/chris-webster.jpg" },
+          assistants: []
+        }
       }
     },
     {
@@ -61,27 +65,33 @@ window.UBL_DATA = {
       name: "HV Rocks",
       short: "HVR",
       logo: "../assets/team-hudson-valley-rocks.png",
-      type: "Independent boys program",
       divisions: ["Boys Varsity"],
-      homeGym: "Hudson Valley home gym — to be confirmed",
+      homeGym: "Open Arms Church",
+      homeAddress: "2714 Curry Rd, Schenectady, NY 12303",
       representativeEmail: "",
-      summary: "A boys varsity program operated separately from the HV Flames girls program.",
+      summary: "HV Rocks has competed for nearly 30 years.",
       teams: {
-        "Boys Varsity": { headCoach: "Marc Bailey", assistants: [], notes: "Additional program information is being collected." }
+        "Boys Varsity": {
+          headCoach: { name: "Marc Bailey", experience: "Head coach with 15 seasons of coaching experience.", photo: "" },
+          assistants: [{ name: "Tim Stuitje", experience: "Assistant coach for three seasons, entering his fourth.", photo: "" }]
+        }
       }
     },
     {
       id: "hv-flames",
       name: "HV Flames",
       short: "HVF",
-      logo: "../assets/ubl-logo.png",
-      type: "Independent girls program",
+      logo: "../assets/team-hv-flames.svg",
       divisions: ["Girls Varsity"],
-      homeGym: "Hudson Valley home gym — to be confirmed",
+      homeGym: "Open Arms Church",
+      homeAddress: "2714 Curry Rd, Schenectady, NY 12303",
       representativeEmail: "",
-      summary: "A girls varsity program operated separately from the HV Rocks boys program.",
+      summary: "HV Flames competes in the UBL Girls Varsity division.",
       teams: {
-        "Girls Varsity": { headCoach: "Rebekah Johnson", assistants: [], notes: "Team logo and additional program information are being collected." }
+        "Girls Varsity": {
+          headCoach: { name: "Rebekah Johnson", experience: "Additional coach information is being collected.", photo: "" },
+          assistants: []
+        }
       }
     },
     {
@@ -89,14 +99,14 @@ window.UBL_DATA = {
       name: "TBD",
       short: "TBD",
       logo: "../assets/ubl-logo.png",
-      type: "Future UBL program",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "To be confirmed",
+      homeAddress: "",
       representativeEmail: "",
       summary: "Reserved for the fifth program in each UBL division.",
       teams: {
-        "Boys Varsity": { headCoach: "To be confirmed", assistants: [], notes: "The fifth boys varsity program is being recruited." },
-        "Girls Varsity": { headCoach: "To be confirmed", assistants: [], notes: "The fifth girls varsity program is being recruited." }
+        "Boys Varsity": { headCoach: { name: "To be confirmed", experience: "The fifth boys varsity program is being recruited.", photo: "" }, assistants: [] },
+        "Girls Varsity": { headCoach: { name: "To be confirmed", experience: "The fifth girls varsity program is being recruited.", photo: "" }, assistants: [] }
       }
     }
   ],
@@ -120,14 +130,12 @@ window.UBL_DATA = {
     {
       id: "opening-week",
       label: "Opening Week",
-      range: "Dec 1–3",
+      range: "Dec 3",
       type: "regular",
-      note: "Special Tuesday opening night followed by the first regular Thursday league date.",
+      note: "Opening night begins the Monday-and-Thursday league schedule.",
       games: [
-        { iso: "2026-12-01", date: "Tue Dec 1", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2026-12-01", date: "Tue Dec 1", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2026-12-03", date: "Thu Dec 3", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "hv-rocks", location: "Hudson Valley home gym — TBD" },
-        { iso: "2026-12-03", date: "Thu Dec 3", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Hudson Valley home gym — TBD" }
+        { iso: "2026-12-03", date: "Thu Dec 3", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
+        { iso: "2026-12-03", date: "Thu Dec 3", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" }
       ]
     },
     {
@@ -149,8 +157,8 @@ window.UBL_DATA = {
       type: "regular",
       games: [
         { iso: "2026-12-14", date: "Mon Dec 14", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "perth", location: "Perth — TBD" },
-        { iso: "2026-12-14", date: "Mon Dec 14", time: "7:30 PM", division: "Girls Varsity", awayId: "kings-school", homeId: "hv-flames", location: "Hudson Valley home gym — TBD" },
-        { iso: "2026-12-17", date: "Thu Dec 17", time: "6:00 PM", division: "Boys Varsity", awayId: "kings-school", homeId: "hv-rocks", location: "Hudson Valley home gym — TBD" },
+        { iso: "2026-12-14", date: "Mon Dec 14", time: "7:30 PM", division: "Girls Varsity", awayId: "kings-school", homeId: "hv-flames", location: "Open Arms Church" },
+        { iso: "2026-12-17", date: "Thu Dec 17", time: "6:00 PM", division: "Boys Varsity", awayId: "kings-school", homeId: "hv-rocks", location: "Open Arms Church" },
         { iso: "2026-12-17", date: "Thu Dec 17", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "perth", location: "Perth — TBD" }
       ]
     },
@@ -170,7 +178,7 @@ window.UBL_DATA = {
       games: [
         { iso: "2027-01-04", date: "Mon Jan 4", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "kings-school", location: "The King’s School Gym" },
         { iso: "2027-01-04", date: "Mon Jan 4", time: "7:30 PM", division: "Girls Varsity", awayId: "hv-flames", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2027-01-07", date: "Thu Jan 7", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "hv-rocks", location: "Hudson Valley home gym — TBD" },
+        { iso: "2027-01-07", date: "Thu Jan 7", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "hv-rocks", location: "Open Arms Church" },
         { iso: "2027-01-07", date: "Thu Jan 7", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" }
       ]
     },
@@ -183,7 +191,7 @@ window.UBL_DATA = {
         { iso: "2027-01-11", date: "Mon Jan 11", time: "6:00 PM", division: "Boys Varsity", awayId: "hv-rocks", homeId: "perth", location: "Perth — TBD" },
         { iso: "2027-01-11", date: "Mon Jan 11", time: "7:30 PM", division: "Girls Varsity", awayId: "kings-school", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
         { iso: "2027-01-14", date: "Thu Jan 14", time: "6:00 PM", division: "Boys Varsity", awayId: "kings-school", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-01-14", date: "Thu Jan 14", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Hudson Valley home gym — TBD" }
+        { iso: "2027-01-14", date: "Thu Jan 14", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Open Arms Church" }
       ]
     },
     {
@@ -202,7 +210,7 @@ window.UBL_DATA = {
       note: "League play resumes after midterm exams.",
       games: [
         { iso: "2027-01-28", date: "Thu Jan 28", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-01-28", date: "Thu Jan 28", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "hv-flames", location: "Hudson Valley home gym — TBD" }
+        { iso: "2027-01-28", date: "Thu Jan 28", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "hv-flames", location: "Open Arms Church" }
       ]
     },
     {
@@ -224,10 +232,10 @@ window.UBL_DATA = {
       type: "regular",
       note: "Final planned regular-season games before winter break and the postseason.",
       games: [
-        { iso: "2027-02-08", date: "Mon Feb 8", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "hv-rocks", location: "Hudson Valley home gym — TBD" },
+        { iso: "2027-02-08", date: "Mon Feb 8", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "hv-rocks", location: "Open Arms Church" },
         { iso: "2027-02-08", date: "Mon Feb 8", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
         { iso: "2027-02-11", date: "Thu Feb 11", time: "6:00 PM", division: "Boys Varsity", awayId: "hv-rocks", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-02-11", date: "Thu Feb 11", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Hudson Valley home gym — TBD" }
+        { iso: "2027-02-11", date: "Thu Feb 11", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Open Arms Church" }
       ]
     },
     {

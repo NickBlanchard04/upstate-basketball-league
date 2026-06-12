@@ -38,13 +38,27 @@ function gameTeamName(game, side) {
   return programById(game[`${side}Id`])?.name || "TBD";
 }
 
+function mapTriggerMarkup(label, address, detail = "") {
+  if (!address) return label;
+  return `
+    <button class="map-trigger" type="button" data-map-label="${label}" data-map-address="${address}">
+      <span>${label}</span>${detail ? `<small>${detail}</small>` : ""}
+    </button>
+  `;
+}
+
+function gameLocationMarkup(game) {
+  const homeProgram = game.homeId ? programById(game.homeId) : null;
+  return mapTriggerMarkup(game.location, homeProgram?.homeAddress || "");
+}
+
 function gameMarkup(game) {
   return `
     <article class="game-row">
       <div class="game-date">${game.date.split(" ")[0]}<span>${game.date.split(" ").slice(1).join(" ")} · ${game.time}</span></div>
       <div class="game-info">
         <strong>${gameTeamName(game, "away")} <em>vs</em> ${gameTeamName(game, "home")}</strong>
-        <p>${game.division} · ${game.stage ? `${game.stage} · ` : ""}${game.location}</p>
+        <p>${game.division} · ${game.stage ? `${game.stage} · ` : ""}${gameLocationMarkup(game)}</p>
       </div>
     </article>
   `;
@@ -169,17 +183,38 @@ function renderHomeTeams() {
   if (grid) grid.innerHTML = league.programs.map(teamCardMarkup).join("");
 }
 
+function coachInitials(name) {
+  if (name === "To be confirmed") return "TBD";
+  return name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("");
+}
+
+function coachCardMarkup(coach, role) {
+  const portrait = coach.photo
+    ? `<img class="coach-photo" src="${coach.photo}" alt="${coach.name}">`
+    : `<span class="coach-photo coach-initials" aria-hidden="true">${coachInitials(coach.name)}</span>`;
+  return `
+    <article class="coach-card">
+      ${portrait}
+      <div>
+        <span>${role}</span>
+        <strong>${coach.name}</strong>
+        <p>${coach.experience}</p>
+      </div>
+    </article>
+  `;
+}
+
 function profileDivisionMarkup(program, division) {
   const team = program.teams[division];
-  const assistants = team.assistants.length ? team.assistants.join("<br>") : "To be confirmed";
+  const coaches = [
+    coachCardMarkup(team.headCoach, "Head coach"),
+    ...team.assistants.map((coach) => coachCardMarkup(coach, "Assistant coach"))
+  ].join("");
   return `
     <section class="program-division">
       <span>${division}</span>
-      <dl>
-        <div><dt>Head coach</dt><dd>${team.headCoach}</dd></div>
-        <div><dt>Assistant coach</dt><dd>${assistants}</dd></div>
-      </dl>
-      <p>${team.notes}</p>
+      <div class="coach-list">${coaches}</div>
+      ${team.assistants.length ? "" : `<p class="coach-vacancy">Assistant coach to be confirmed.</p>`}
     </section>
   `;
 }
@@ -191,14 +226,14 @@ function programProfileMarkup(program) {
   return `
     <details class="program-profile" id="${program.id}" data-accordion-group="programs">
       <summary>
-        <span class="program-profile-identity"><img src="${program.logo}" alt=""><span><strong>${program.name}</strong><small>${program.type}</small></span></span>
+        <span class="program-profile-identity"><img src="${program.logo}" alt=""><span><strong>${program.name}</strong></span></span>
         <span class="program-profile-divisions">${program.divisions.join(" · ")}</span>
       </summary>
       <div class="program-profile-content">
         <p class="program-summary">${program.summary}</p>
         <div class="program-division-grid">${program.divisions.map((division) => profileDivisionMarkup(program, division)).join("")}</div>
         <dl class="program-facts">
-          <div><dt>Home gym</dt><dd>${program.homeGym}</dd></div>
+          <div><dt>Home gym</dt><dd>${mapTriggerMarkup(program.homeGym, program.homeAddress, program.homeAddress)}</dd></div>
           <div><dt>Program representative</dt><dd>${contact}</dd></div>
         </dl>
       </div>
@@ -233,7 +268,43 @@ function openHashProgram() {
 
 window.addEventListener("hashchange", openHashProgram);
 
-const countdownTarget = new Date("2026-12-01T18:00:00-05:00").getTime();
+const mapDialog = document.createElement("dialog");
+mapDialog.className = "map-dialog";
+mapDialog.innerHTML = `
+  <div class="map-dialog-card">
+    <div class="map-dialog-heading">
+      <div><span>Game location</span><h2 data-map-dialog-label></h2></div>
+      <button type="button" data-map-dialog-close aria-label="Close map options"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+    </div>
+    <p data-map-dialog-address></p>
+    <div class="map-options">
+      <a data-map-apple target="_blank" rel="noopener">Apple Maps</a>
+      <a data-map-google target="_blank" rel="noopener">Google Maps</a>
+      <a data-map-waze target="_blank" rel="noopener">Waze</a>
+    </div>
+  </div>
+`;
+document.body.append(mapDialog);
+
+document.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-map-address]");
+  if (!trigger) return;
+  const address = trigger.dataset.mapAddress;
+  const label = trigger.dataset.mapLabel;
+  mapDialog.querySelector("[data-map-dialog-label]").textContent = label;
+  mapDialog.querySelector("[data-map-dialog-address]").textContent = address;
+  mapDialog.querySelector("[data-map-apple]").href = `https://maps.apple.com/?q=${encodeURIComponent(address)}`;
+  mapDialog.querySelector("[data-map-google]").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  mapDialog.querySelector("[data-map-waze]").href = `https://www.waze.com/ul?q=${encodeURIComponent(address)}&navigate=yes`;
+  mapDialog.showModal();
+});
+
+mapDialog.querySelector("[data-map-dialog-close]").addEventListener("click", () => mapDialog.close());
+mapDialog.addEventListener("click", (event) => {
+  if (event.target === mapDialog) mapDialog.close();
+});
+
+const countdownTarget = new Date("2026-12-03T18:00:00-05:00").getTime();
 const countdownParts = {
   days: document.querySelector("[data-countdown-days]"),
   hours: document.querySelector("[data-countdown-hours]"),
