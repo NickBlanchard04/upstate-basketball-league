@@ -68,6 +68,48 @@ function allScheduledGames() {
   return league.scheduleWeeks.flatMap((week) => week.games);
 }
 
+function tickerTeam(game, side) {
+  const program = game[`${side}Id`] ? programById(game[`${side}Id`]) : null;
+  const name = gameTeamName(game, side);
+  return {
+    name,
+    short: program?.short || name,
+    logo: program?.logo || "../assets/ubl-logo.png"
+  };
+}
+
+function tickerGameMarkup(game) {
+  const away = tickerTeam(game, "away");
+  const home = tickerTeam(game, "home");
+  const shortDate = game.date.split(" ").slice(1).join(" ");
+  return `
+    <a class="ticker-game" href="schedule.html" aria-label="${away.name} versus ${home.name}, ${shortDate} at ${game.time}. Planning schedule.">
+      <time><span>${shortDate}</span><small>${game.time}</small></time>
+      <img src="${away.logo}" alt="">
+      <b>${away.short}</b>
+      <em>vs</em>
+      <b>${home.short}</b>
+      <img src="${home.logo}" alt="">
+      <span class="ticker-status">Planning schedule</span>
+    </a>
+  `;
+}
+
+function renderUpcomingTicker() {
+  const ticker = document.querySelector(".score-ticker");
+  if (!ticker) return;
+  const games = allScheduledGames().filter((game) => !game.stage).slice(0, 4);
+  const group = games.map(tickerGameMarkup).join("");
+  ticker.innerHTML = `
+    <div class="ticker-window">
+      <div class="ticker-track">
+        <div class="ticker-group">${group}</div>
+        <div class="ticker-group" aria-hidden="true">${group}</div>
+      </div>
+    </div>
+  `;
+}
+
 let scheduleDivision = "all";
 let selectedWeekId = league.scheduleWeeks[0]?.id;
 
@@ -329,6 +371,7 @@ renderSchedulePage();
 renderStandings();
 renderHomeTeams();
 renderPrograms();
+renderUpcomingTicker();
 updateCountdown();
 
 if (countdownParts.seconds) setInterval(updateCountdown, 1000);

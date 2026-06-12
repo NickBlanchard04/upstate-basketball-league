@@ -27,7 +27,7 @@ html {
 
 body {
   margin: 0;
-  padding-bottom: 3.65rem;
+  padding-bottom: 0;
   color: var(--ink);
   background:
     linear-gradient(rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.78)),
@@ -173,7 +173,7 @@ p {
 .site-nav {
   position: fixed;
   inset: 5rem 0 0;
-  padding: 1rem var(--page-pad) 6.5rem;
+  padding: 1rem var(--page-pad);
   display: none;
   flex-direction: column;
   overflow-y: auto;
@@ -198,10 +198,6 @@ p {
 .site-nav a.active {
   color: var(--white);
   box-shadow: inset 0 -3px var(--red);
-}
-
-.site-nav .current-site-link {
-  color: #ff9aac;
 }
 
 .hero {
@@ -1891,35 +1887,28 @@ th {
 }
 
 .score-ticker {
-  position: fixed;
-  z-index: 70;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  position: static;
   height: 3.65rem;
   display: block;
   color: var(--white);
   background: var(--navy-950);
   border-top: 2px solid var(--red);
-  box-shadow: 0 -0.35rem 1rem rgba(2, 15, 34, 0.24);
+  box-shadow: none;
 }
 
 .ticker-window {
   height: 100%;
   min-width: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
 }
 
 .ticker-track {
   width: max-content;
   height: 100%;
   display: flex;
-  animation: ticker-scroll 30s linear infinite;
-  will-change: transform;
-}
-
-.ticker-window:hover .ticker-track {
-  animation-play-state: paused;
+  animation: none;
 }
 
 .ticker-group {
@@ -1928,21 +1917,38 @@ th {
   align-items: stretch;
 }
 
+.ticker-group[aria-hidden="true"] {
+  display: none;
+}
+
 .ticker-game {
-  min-width: 15.5rem;
+  min-width: 18rem;
   padding: 0.35rem 0.75rem;
   display: grid;
-  grid-template-columns: auto 1.6rem auto auto auto auto auto 1.6rem;
+  grid-template-columns: auto 1.6rem auto auto auto 1.6rem;
   align-items: center;
   gap: 0.34rem;
   border-right: 1px solid rgba(255, 255, 255, 0.17);
+  color: var(--white);
+  text-decoration: none;
 }
 
 .ticker-game time {
+  display: grid;
   color: #ff9aac;
+  text-transform: uppercase;
+}
+
+.ticker-game time span {
+  color: #ff9aac;
+  font-size: 0.55rem;
+  font-weight: 800;
+}
+
+.ticker-game time small {
+  color: rgba(255, 255, 255, 0.65);
   font-size: 0.48rem;
   font-weight: 700;
-  text-transform: uppercase;
 }
 
 .ticker-game img {
@@ -1957,15 +1963,26 @@ th {
   font: 800 0.8rem/1 var(--display);
 }
 
-.ticker-game strong {
-  font: 900 1.15rem/1 var(--display);
+.ticker-game em {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.52rem;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
-.ticker-game span {
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.44rem;
-  font-weight: 700;
+.ticker-game .ticker-status {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.45rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.ticker-game:hover,
+.ticker-game:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 @keyframes ticker-scroll {
@@ -2100,6 +2117,10 @@ th {
 }
 
 @media (min-width: 1024px) {
+  body {
+    padding-bottom: 3.65rem;
+  }
+
   html {
     scroll-padding-top: 5.7rem;
   }
@@ -2140,12 +2161,6 @@ th {
     min-height: 2.8rem;
     border: 0;
     font-size: 0.7rem;
-  }
-
-  .site-nav .current-site-link {
-    padding: 0 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 1rem;
   }
 
   .hero {
@@ -2236,6 +2251,31 @@ th {
     gap: 0.9rem;
   }
 
+  .score-ticker {
+    position: fixed;
+    z-index: 70;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    box-shadow: 0 -0.35rem 1rem rgba(2, 15, 34, 0.24);
+  }
+
+  .ticker-window {
+    overflow: hidden;
+  }
+
+  .ticker-track {
+    animation: ticker-scroll 30s linear infinite;
+    will-change: transform;
+  }
+
+  .ticker-window:hover .ticker-track {
+    animation-play-state: paused;
+  }
+
+  .ticker-group[aria-hidden="true"] {
+    display: flex;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
