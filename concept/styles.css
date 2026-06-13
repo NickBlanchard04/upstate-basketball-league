@@ -774,6 +774,52 @@ th {
   gap: 1rem;
 }
 
+.bracket-directory {
+  display: grid;
+  gap: 1rem;
+}
+
+.bracket-division {
+  margin-top: 0;
+}
+
+.bracket-date-note {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.6rem;
+}
+
+.bracket-dates {
+  margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--canvas);
+}
+
+.bracket-dates span {
+  min-width: 0;
+  padding: 0.65rem 0.35rem;
+  display: grid;
+  gap: 0.18rem;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.52rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.bracket-dates span:last-child {
+  border-right: 0;
+}
+
+.bracket-dates strong {
+  color: var(--navy-800);
+  font: 800 0.76rem/1 var(--display);
+}
+
 .bracket-round {
   min-width: 0;
 }
@@ -2060,6 +2106,10 @@ th {
 
   .bracket-arrow {
     display: block;
+  }
+
+  .bracket-directory {
+    gap: 1.5rem;
   }
 
   .page-banner {
