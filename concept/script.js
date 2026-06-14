@@ -65,7 +65,34 @@ function gameMarkup(game) {
 }
 
 function allScheduledGames() {
-  return league.scheduleWeeks.flatMap((week) => week.games);
+  return league.scheduleWeeks
+    .flatMap((week) => week.games)
+    .sort((a, b) => gameStartTime(a) - gameStartTime(b));
+}
+
+function gameStartTime(game) {
+  const [clock, meridiem] = game.time.split(" ");
+  let [hours, minutes] = clock.split(":").map(Number);
+  if (meridiem === "PM" && hours !== 12) hours += 12;
+  if (meridiem === "AM" && hours === 12) hours = 0;
+  const time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
+  return new Date(`${game.iso}T${time}-05:00`).getTime();
+}
+
+function scheduleFocus(now = Date.now()) {
+  const games = allScheduledGames();
+  const current = games.find((game) => {
+    const start = gameStartTime(game);
+    return now >= start && now < start + (2 * 60 * 60 * 1000);
+  });
+  const next = games.find((game) => gameStartTime(game) > now);
+  return { current, next };
+}
+
+function upcomingScheduledGames(limit = 4, now = Date.now()) {
+  const { current } = scheduleFocus(now);
+  const future = allScheduledGames().filter((game) => gameStartTime(game) > now);
+  return [...(current ? [current] : []), ...future].slice(0, limit);
 }
 
 function tickerTeam(game, side) {
@@ -74,7 +101,7 @@ function tickerTeam(game, side) {
   return {
     name,
     short: program?.short || name,
-    logo: program?.logo || "../assets/ubl-logo.png"
+    logo: program?.logo || "../assets/optimized/ubl-logo-192.webp"
   };
 }
 
@@ -82,6 +109,7 @@ function tickerGameMarkup(game) {
   const away = tickerTeam(game, "away");
   const home = tickerTeam(game, "home");
   const shortDate = game.date.split(" ").slice(1).join(" ");
+  const isLive = scheduleFocus().current === game;
   return `
     <a class="ticker-game" href="schedule.html" aria-label="${away.name} versus ${home.name}, ${shortDate} at ${game.time}. Planning schedule.">
       <time><span>${shortDate}</span><small>${game.time}</small></time>
@@ -90,7 +118,7 @@ function tickerGameMarkup(game) {
       <em>vs</em>
       <b>${home.short}</b>
       <img src="${home.logo}" alt="">
-      <span class="ticker-status">${game.division}</span>
+      <span class="ticker-status">${isLive ? "Live now · " : ""}${game.division}${game.stage ? ` · ${game.stage}` : ""}</span>
     </a>
   `;
 }
@@ -98,7 +126,12 @@ function tickerGameMarkup(game) {
 function renderUpcomingTicker() {
   const ticker = document.querySelector(".score-ticker");
   if (!ticker) return;
-  const games = allScheduledGames().filter((game) => !game.stage).slice(0, 4);
+  const games = upcomingScheduledGames(4);
+  if (!games.length) {
+    ticker.hidden = true;
+    return;
+  }
+  ticker.hidden = false;
   const group = games.map(tickerGameMarkup).join("");
   ticker.innerHTML = `
     <div class="ticker-window">
@@ -111,15 +144,64 @@ function renderUpcomingTicker() {
 }
 
 let scheduleDivision = "all";
-let selectedWeekId = league.scheduleWeeks[0]?.id;
+const initialScheduleGame = scheduleFocus().current || scheduleFocus().next;
+let selectedWeekId = league.scheduleWeeks.find((week) => week.games.includes(initialScheduleGame))?.id || league.scheduleWeeks[0]?.id;
+
+function renderFeaturedGame() {
+  const featured = document.querySelector("[data-featured-game]");
+  if (!featured) return;
+  const { current, next } = scheduleFocus();
+  const game = current || next;
+
+  if (!game) {
+    featured.innerHTML = `
+      <div class="panel-heading"><h2>Season complete</h2><span>2026–27</span></div>
+      <div class="featured-empty">
+        <strong>Thank you for following the UBL.</strong>
+        <p>Final results and the next season schedule will appear here.</p>
+      </div>
+      <a class="text-link" href="schedule.html">View season schedule</a>
+    `;
+    return;
+  }
+
+  const away = tickerTeam(game, "away");
+  const home = tickerTeam(game, "home");
+  featured.innerHTML = `
+    <div class="panel-heading">
+      <h2>${current ? "Live now" : "Next league game"}</h2>
+      <span>${game.date.split(" ").slice(1).join(" ")} · ${game.time}</span>
+    </div>
+    <div class="featured-matchup">
+      <div>
+        <img src="${away.logo}" alt="">
+        <strong>${away.name}</strong>
+        <span>Away</span>
+      </div>
+      <b>VS</b>
+      <div>
+        <img src="${home.logo}" alt="">
+        <strong>${home.name}</strong>
+        <span>Home</span>
+      </div>
+    </div>
+    <p>${game.division} · ${game.stage ? `${game.stage} · ` : ""}${gameLocationMarkup(game)}</p>
+    <a class="text-link" href="schedule.html">View game details</a>
+  `;
+}
 
 function renderHomeSchedule() {
   const gameList = document.querySelector("[data-game-list]");
   if (!gameList) return;
-  const games = allScheduledGames()
+  const { current, next } = scheduleFocus();
+  const featuredGame = current || next;
+  const games = upcomingScheduledGames(12)
     .filter((game) => scheduleDivision === "all" || game.division === scheduleDivision)
+    .filter((game) => game !== featuredGame)
     .slice(0, 4);
-  gameList.innerHTML = games.map(gameMarkup).join("");
+  gameList.innerHTML = games.length
+    ? games.map(gameMarkup).join("")
+    : `<div class="schedule-empty"><strong>No upcoming games</strong><p>Check the full schedule for completed dates and postseason details.</p></div>`;
 }
 
 function renderSchedulePage() {
@@ -211,6 +293,15 @@ document.querySelectorAll("[data-standings-filter]").forEach((button) => {
 });
 
 function teamCardMarkup(program) {
+  if (program.id === "tbd") {
+    return `
+      <a class="team-card team-card-open-spot" href="teams.html#tbd">
+        <span class="open-spot-mark" aria-hidden="true">+</span>
+        <strong>Join the UBL</strong>
+        <span>One league spot is open</span>
+      </a>
+    `;
+  }
   return `
     <a class="team-card" href="teams.html#${program.id}">
       <img src="${program.logo}" alt="">
@@ -262,6 +353,21 @@ function profileDivisionMarkup(program, division) {
 }
 
 function programProfileMarkup(program) {
+  if (program.id === "tbd") {
+    return `
+      <section class="program-profile open-spot-profile" id="tbd">
+        <div class="open-spot-copy">
+          <span>2026–27 opportunity</span>
+          <h3>Bring your program to the UBL</h3>
+          <p>${program.summary}</p>
+        </div>
+        <div class="open-spot-actions">
+          <strong>Boys Varsity · Girls Varsity</strong>
+          <a class="button button-primary" href="mailto:${program.representativeEmail}?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
+        </div>
+      </section>
+    `;
+  }
   const contact = program.representativeEmail
     ? `<a href="mailto:${program.representativeEmail}">${program.representativeEmail}</a>`
     : "To be confirmed";
@@ -303,12 +409,65 @@ function openHashProgram() {
   if (!location.hash) return;
   const profile = document.querySelector(location.hash);
   if (profile?.matches(".program-profile")) {
-    profile.open = true;
+    if (profile instanceof HTMLDetailsElement) profile.open = true;
     setTimeout(() => profile.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   }
 }
 
 window.addEventListener("hashchange", openHashProgram);
+
+function initializeGallery() {
+  const galleryItems = [...document.querySelectorAll("[data-gallery-division]")];
+  if (!galleryItems.length) return;
+
+  document.querySelectorAll("[data-gallery-filter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const division = button.dataset.galleryFilter;
+      document.querySelectorAll("[data-gallery-filter]").forEach((item) => {
+        item.classList.toggle("active", item === button);
+        item.setAttribute("aria-selected", String(item === button));
+      });
+      galleryItems.forEach((item) => {
+        item.hidden = division !== "all" && item.dataset.galleryDivision !== division;
+      });
+      document.querySelectorAll("[data-gallery-divisions]").forEach((gallery) => {
+        const divisions = gallery.dataset.galleryDivisions.split("|");
+        gallery.hidden = division !== "all" && !divisions.includes(division);
+      });
+    });
+  });
+
+  const lightbox = document.createElement("dialog");
+  lightbox.className = "gallery-lightbox";
+  lightbox.innerHTML = `
+    <div class="gallery-lightbox-card">
+      <button type="button" class="gallery-lightbox-close" aria-label="Close fullscreen photo">Close</button>
+      <img data-gallery-lightbox-image alt="">
+      <div class="gallery-lightbox-caption">
+        <strong data-gallery-lightbox-title></strong>
+        <span data-gallery-lightbox-detail></span>
+      </div>
+    </div>
+  `;
+  document.body.append(lightbox);
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-gallery-full]");
+    if (!trigger) return;
+    const figure = trigger.closest(".gallery-item");
+    const preview = trigger.querySelector("img");
+    lightbox.querySelector("[data-gallery-lightbox-image]").src = trigger.dataset.galleryFull;
+    lightbox.querySelector("[data-gallery-lightbox-image]").alt = preview.alt;
+    lightbox.querySelector("[data-gallery-lightbox-title]").textContent = figure.querySelector("figcaption strong").textContent;
+    lightbox.querySelector("[data-gallery-lightbox-detail]").textContent = figure.querySelector("figcaption span").textContent;
+    lightbox.showModal();
+  });
+
+  lightbox.querySelector(".gallery-lightbox-close").addEventListener("click", () => lightbox.close());
+  lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) lightbox.close();
+  });
+}
 
 const mapDialog = document.createElement("dialog");
 mapDialog.className = "map-dialog";
@@ -372,6 +531,16 @@ renderStandings();
 renderHomeTeams();
 renderPrograms();
 renderUpcomingTicker();
+renderFeaturedGame();
+initializeGallery();
 updateCountdown();
 
 if (countdownParts.seconds) setInterval(updateCountdown, 1000);
+
+if (document.querySelector("[data-featured-game]") || document.querySelector(".score-ticker")) {
+  setInterval(() => {
+    renderFeaturedGame();
+    renderHomeSchedule();
+    renderUpcomingTicker();
+  }, 60000);
+}
