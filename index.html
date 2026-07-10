@@ -10,9 +10,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="styles.css?v=20260710-1">
-  <script src="data.js?v=20260710-1"></script>
-  <script src="script.js?v=20260710-1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260710-2">
+  <script src="config.js?v=20260710-2"></script>
+  <script src="league-core.js?v=20260710-2"></script>
+  <script src="data.js?v=20260710-2"></script>
+  <script src="data-loader.js?v=20260710-2" defer></script>
+  <script src="script.js?v=20260710-2" defer></script>
 </head>
 <body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -64,7 +67,7 @@
             <img src="assets/optimized/ubl-logo-192.webp" alt="">
             <div>
               <strong>Tip off</strong>
-              <span>December 3, 2026 · 6:00 PM ET</span>
+              <span data-tipoff-date>Dec 3, 2026 · 6:00 PM ET</span>
             </div>
           </div>
           <div class="countdown-grid">
@@ -124,6 +127,8 @@
         <p class="panel-note">Standings begin updating after opening night.</p>
       </section>
     </div>
+
+    <p class="data-freshness home-data-freshness section-wrap" data-freshness aria-live="polite"></p>
 
   </main>
 

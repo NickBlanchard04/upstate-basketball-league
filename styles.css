@@ -505,6 +505,28 @@ p {
   font: 800 0.9rem/1 var(--display);
 }
 
+.featured-live-list {
+  display: grid;
+}
+
+.featured-matchup-compact {
+  padding-block: 0.7rem;
+  border-top: 0;
+}
+
+.featured-matchup-compact img {
+  width: 2.8rem;
+}
+
+.featured-matchup-compact strong {
+  font-size: 0.95rem;
+}
+
+.featured-score {
+  color: var(--navy-800);
+  font: 900 1.25rem/1 var(--display);
+}
+
 .featured-game > p {
   margin: 0.8rem 0;
   color: var(--muted);
@@ -744,6 +766,84 @@ p {
   font-style: normal;
 }
 
+.game-row-status {
+  min-height: 0.2rem;
+  margin-top: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.game-row-status:empty {
+  display: none;
+}
+
+.game-status {
+  padding: 0.18rem 0.38rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  font-size: 0.56rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.status-final,
+.status-forfeit {
+  color: var(--navy-700);
+  background: #e8f1fb;
+}
+
+.status-live {
+  color: var(--red-dark);
+  background: #fff0f2;
+}
+
+.status-postponed {
+  color: #8a4b00;
+  background: #fff6e8;
+}
+
+.status-cancelled {
+  color: #596273;
+  background: #f1f3f6;
+}
+
+.game-score {
+  color: var(--navy-900);
+  font: 900 0.9rem/1 var(--display) !important;
+}
+
+.game-status-note {
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+
+.data-freshness {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.data-freshness::before {
+  content: "";
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-right: 0.4rem;
+  display: inline-block;
+  border-radius: 50%;
+  background: #2f7d4a;
+}
+
+.data-freshness-warning::before {
+  background: #b36b00;
+}
+
+.home-data-freshness {
+  margin-bottom: 1rem;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -912,6 +1012,27 @@ th {
 
 .bracket-game strong {
   font-size: 0.65rem;
+}
+
+.bracket-slot {
+  align-items: center;
+}
+
+.bracket-slot strong {
+  flex: 1;
+  text-align: right;
+}
+
+.bracket-slot b {
+  min-width: 1.3rem;
+  color: var(--navy-900);
+  font: 900 0.8rem/1 var(--display);
+  text-align: right;
+}
+
+.bracket-slot-winner strong,
+.bracket-slot-winner b {
+  color: var(--red-dark);
 }
 
 .bracket-game p,
@@ -2283,7 +2404,7 @@ th {
   }
 
   .game-row {
-    grid-template-columns: 5.5rem 1fr auto;
+    grid-template-columns: 5.5rem 1fr;
     align-items: center;
   }
 

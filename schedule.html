@@ -10,9 +10,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="styles.css?v=20260710-1">
-  <script src="data.js?v=20260710-1"></script>
-  <script src="script.js?v=20260710-1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260710-2">
+  <script src="config.js?v=20260710-2"></script>
+  <script src="league-core.js?v=20260710-2"></script>
+  <script src="data.js?v=20260710-2"></script>
+  <script src="data-loader.js?v=20260710-2" defer></script>
+  <script src="script.js?v=20260710-2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -39,6 +42,7 @@
         <a href="bracket.html">View playoff format</a>
       </div>
       <div class="planning-note"><strong>Planning schedule</strong><p>All listed matchups, times, and locations are placeholders until the schedule is confirmed by the league commissioner.</p></div>
+      <p class="data-freshness" data-freshness aria-live="polite"></p>
       <div class="week-controls">
         <button type="button" data-week-step="-1" aria-label="View previous week">Previous week</button>
         <label><span>Select week</span><select data-week-select aria-label="Select schedule week"></select></label>

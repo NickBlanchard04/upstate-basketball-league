@@ -10,9 +10,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="styles.css?v=20260710-1">
-  <script src="data.js?v=20260710-1"></script>
-  <script src="script.js?v=20260710-1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260710-2">
+  <script src="config.js?v=20260710-2"></script>
+  <script src="league-core.js?v=20260710-2"></script>
+  <script src="data.js?v=20260710-2"></script>
+  <script src="data-loader.js?v=20260710-2" defer></script>
+  <script src="script.js?v=20260710-2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -34,17 +37,12 @@
     </section>
 
     <div class="bracket-directory section-wrap">
+      <p class="data-freshness" data-freshness aria-live="polite"></p>
       <section class="panel bracket-panel bracket-division" aria-labelledby="boys-bracket-title">
         <div class="section-title section-title-inline"><div><h2 id="boys-bracket-title">Boys Varsity bracket</h2><span>2027 UBL Boys Championship</span></div><strong>Boys Varsity</strong></div>
         <p class="bracket-date-note">Tentative postseason dates shown until confirmed by the league commissioner.</p>
         <div class="bracket-dates" role="group" aria-label="Boys Varsity playoff dates"><span><strong>Play-in</strong>Mon, Feb 15</span><span><strong>Semifinals</strong>Thu, Feb 18</span><span><strong>Championship</strong>Mon, Feb 22</span></div>
-        <div class="bracket" role="group" aria-label="Boys Varsity playoff bracket">
-          <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game"><div><span>Seed 4</span><strong>TBD</strong></div><div><span>Seed 5</span><strong>TBD</strong></div><p>Winner advances to play Seed 1</p></article></div>
-          <div class="bracket-arrow" aria-hidden="true">→</div>
-          <div class="bracket-round"><h3>Semifinals</h3><article class="bracket-game"><div><span>Seed 1</span><strong>Regular season leader</strong></div><div><span>Play-in winner</span><strong>TBD</strong></div></article><article class="bracket-game"><div><span>Seed 2</span><strong>TBD</strong></div><div><span>Seed 3</span><strong>TBD</strong></div></article></div>
-          <div class="bracket-arrow" aria-hidden="true">→</div>
-          <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card"><span>2027 UBL Boys</span><strong>Champion</strong><p>Semifinal winners</p></article></div>
-        </div>
+        <div class="bracket" role="group" aria-label="Boys Varsity playoff bracket" data-bracket="Boys Varsity"></div>
         <p class="panel-note">Seed 4 and Seed 5 meet in the Boys Varsity play-in. The winner advances to face Seed 1.</p>
       </section>
 
@@ -52,13 +50,7 @@
         <div class="section-title section-title-inline"><div><h2 id="girls-bracket-title">Girls Varsity bracket</h2><span>2027 UBL Girls Championship</span></div><strong>Girls Varsity</strong></div>
         <p class="bracket-date-note">Tentative postseason dates shown until confirmed by the league commissioner.</p>
         <div class="bracket-dates" role="group" aria-label="Girls Varsity playoff dates"><span><strong>Play-in</strong>Mon, Feb 15</span><span><strong>Semifinals</strong>Thu, Feb 18</span><span><strong>Championship</strong>Mon, Feb 22</span></div>
-        <div class="bracket" role="group" aria-label="Girls Varsity playoff bracket">
-          <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game"><div><span>Seed 4</span><strong>TBD</strong></div><div><span>Seed 5</span><strong>TBD</strong></div><p>Winner advances to play Seed 1</p></article></div>
-          <div class="bracket-arrow" aria-hidden="true">→</div>
-          <div class="bracket-round"><h3>Semifinals</h3><article class="bracket-game"><div><span>Seed 1</span><strong>Regular season leader</strong></div><div><span>Play-in winner</span><strong>TBD</strong></div></article><article class="bracket-game"><div><span>Seed 2</span><strong>TBD</strong></div><div><span>Seed 3</span><strong>TBD</strong></div></article></div>
-          <div class="bracket-arrow" aria-hidden="true">→</div>
-          <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card"><span>2027 UBL Girls</span><strong>Champion</strong><p>Semifinal winners</p></article></div>
-        </div>
+        <div class="bracket" role="group" aria-label="Girls Varsity playoff bracket" data-bracket="Girls Varsity"></div>
         <p class="panel-note">Seed 4 and Seed 5 meet in the Girls Varsity play-in. The winner advances to face Seed 1.</p>
       </section>
     </div>

@@ -1,7 +1,10 @@
-const league = window.UBL_DATA;
+let league = window.UBL_DATA;
+const core = window.UBL_CORE;
+const { ACTIVE_STATUSES, FINAL_STATUSES, escapeHtml, safeImageUrl } = core;
 
 const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
+siteNav?.querySelector("a.active")?.setAttribute("aria-current", "page");
 
 menuToggle?.addEventListener("click", () => {
   const open = menuToggle.getAttribute("aria-expanded") === "true";
@@ -38,61 +41,69 @@ function gameTeamName(game, side) {
   return programById(game[`${side}Id`])?.name || "TBD";
 }
 
+function safeAttribute(value) {
+  return escapeHtml(value);
+}
+
 function mapTriggerMarkup(label, address, detail = "") {
-  if (!address) return label;
+  if (!address) return escapeHtml(label);
   return `
-    <button class="map-trigger" type="button" data-map-label="${label}" data-map-address="${address}">
-      <span>${label}</span>${detail ? `<small>${detail}</small>` : ""}
+    <button class="map-trigger" type="button" data-map-label="${safeAttribute(label)}" data-map-address="${safeAttribute(address)}">
+      <span>${escapeHtml(label)}</span>${detail ? `<small>${escapeHtml(detail)}</small>` : ""}
     </button>
   `;
 }
 
 function gameLocationMarkup(game) {
-  const homeProgram = game.homeId ? programById(game.homeId) : null;
-  return mapTriggerMarkup(game.location, homeProgram?.homeAddress || "");
+  return mapTriggerMarkup(game.location || "Location TBD", game.locationAddress || "");
+}
+
+function gameStatusMarkup(game) {
+  const status = game.status || "Scheduled";
+  if (FINAL_STATUSES.has(status)) {
+    return `<span class="game-status status-${status.toLowerCase()}">${escapeHtml(status)}</span><strong class="game-score">${game.awayScore} - ${game.homeScore}</strong>`;
+  }
+  if (status === "Postponed") {
+    return `<span class="game-status status-postponed">Postponed</span><span class="game-status-note">${escapeHtml(league.settings?.postponedDisplay || "New date pending")}</span>`;
+  }
+  if (status === "Cancelled") return `<span class="game-status status-cancelled">Cancelled</span>`;
+  if (status === "Live") return `<span class="game-status status-live">Live</span>`;
+  return "";
 }
 
 function gameMarkup(game) {
+  const dateParts = String(game.date || "Date TBD").split(" ");
   return `
-    <article class="game-row">
-      <div class="game-date">${game.date.split(" ")[0]}<span>${game.date.split(" ").slice(1).join(" ")} · ${game.time}</span></div>
+    <article class="game-row" data-game-id="${safeAttribute(game.id || "")}">
+      <div class="game-date">${escapeHtml(dateParts[0])}<span>${escapeHtml(dateParts.slice(1).join(" "))} &middot; ${escapeHtml(game.time)}</span></div>
       <div class="game-info">
-        <strong>${gameTeamName(game, "away")} <em>vs</em> ${gameTeamName(game, "home")}</strong>
-        <p>${game.division} · ${game.stage ? `${game.stage} · ` : ""}${gameLocationMarkup(game)}</p>
+        <strong>${escapeHtml(gameTeamName(game, "away"))} <em>vs</em> ${escapeHtml(gameTeamName(game, "home"))}</strong>
+        <p>${escapeHtml(game.division)} &middot; ${game.stage ? `${escapeHtml(game.stage)} &middot; ` : ""}${gameLocationMarkup(game)}</p>
+        <div class="game-row-status">${gameStatusMarkup(game)}</div>
       </div>
     </article>
   `;
 }
 
 function allScheduledGames() {
-  return league.scheduleWeeks
-    .flatMap((week) => week.games)
+  const games = league.games || league.scheduleWeeks.flatMap((week) => week.games);
+  return [...new Map(games.map((game) => [game.id || `${game.iso}-${game.time}-${game.division}`, game])).values()]
     .sort((a, b) => gameStartTime(a) - gameStartTime(b));
 }
 
 function gameStartTime(game) {
-  const [clock, meridiem] = game.time.split(" ");
-  let [hours, minutes] = clock.split(":").map(Number);
-  if (meridiem === "PM" && hours !== 12) hours += 12;
-  if (meridiem === "AM" && hours === 12) hours = 0;
-  const time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
-  return new Date(`${game.iso}T${time}-05:00`).getTime();
+  return core.gameStartTime(game, league.settings?.timezone || "America/New_York");
 }
 
 function scheduleFocus(now = Date.now()) {
   const games = allScheduledGames();
-  const current = games.find((game) => {
-    const start = gameStartTime(game);
-    return now >= start && now < start + (2 * 60 * 60 * 1000);
-  });
-  const next = games.find((game) => gameStartTime(game) > now);
-  return { current, next };
+  const currentGames = core.getCurrentGames(games, now, league.settings || {});
+  const next = games.find((game) => ACTIVE_STATUSES.has(game.status || "Scheduled") && gameStartTime(game) > now);
+  return { currentGames, current: currentGames[0], next };
 }
 
 function upcomingScheduledGames(limit = 4, now = Date.now()) {
-  const { current } = scheduleFocus(now);
-  const future = allScheduledGames().filter((game) => gameStartTime(game) > now);
-  return [...(current ? [current] : []), ...future].slice(0, limit);
+  return core.getUpcomingGames(allScheduledGames(), now, league.settings || {}, limit);
 }
 
 function tickerTeam(game, side) {
@@ -101,7 +112,7 @@ function tickerTeam(game, side) {
   return {
     name,
     short: program?.short || name,
-    logo: program?.logo || "assets/optimized/ubl-logo-192.webp"
+    logo: safeImageUrl(program?.logo)
   };
 }
 
@@ -109,16 +120,16 @@ function tickerGameMarkup(game) {
   const away = tickerTeam(game, "away");
   const home = tickerTeam(game, "home");
   const shortDate = game.date.split(" ").slice(1).join(" ");
-  const isLive = scheduleFocus().current === game;
+  const isLive = scheduleFocus().currentGames.some((current) => current.id === game.id);
   return `
-    <a class="ticker-game" href="schedule.html" aria-label="${away.name} versus ${home.name}, ${shortDate} at ${game.time}. Planning schedule.">
-      <time><span>${shortDate}</span><small>${game.time}</small></time>
-      <img src="${away.logo}" alt="">
-      <b>${away.short}</b>
+    <a class="ticker-game" href="schedule.html" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}.">
+      <time><span>${escapeHtml(shortDate)}</span><small>${escapeHtml(game.time)}</small></time>
+      <img src="${safeAttribute(away.logo)}" alt="">
+      <b>${escapeHtml(away.short)}</b>
       <em>vs</em>
-      <b>${home.short}</b>
-      <img src="${home.logo}" alt="">
-      <span class="ticker-status">${isLive ? "Live now · " : ""}${game.division}${game.stage ? ` · ${game.stage}` : ""}</span>
+      <b>${escapeHtml(home.short)}</b>
+      <img src="${safeAttribute(home.logo)}" alt="">
+      <span class="ticker-status">${isLive ? "Live now &middot; " : ""}${escapeHtml(game.division)}${game.stage ? ` &middot; ${escapeHtml(game.stage)}` : ""}</span>
     </a>
   `;
 }
@@ -144,14 +155,28 @@ function renderUpcomingTicker() {
 }
 
 let scheduleDivision = "all";
-const initialScheduleGame = scheduleFocus().current || scheduleFocus().next;
-let selectedWeekId = league.scheduleWeeks.find((week) => week.games.includes(initialScheduleGame))?.id || league.scheduleWeeks[0]?.id;
+let selectedWeekId = "";
+
+function featuredMatchupMarkup(game, compact = false) {
+  const away = tickerTeam(game, "away");
+  const home = tickerTeam(game, "home");
+  const score = FINAL_STATUSES.has(game.status)
+    ? `<strong class="featured-score">${game.awayScore} - ${game.homeScore}</strong>`
+    : "";
+  return `
+    <div class="featured-matchup${compact ? " featured-matchup-compact" : ""}" data-game-id="${safeAttribute(game.id || "")}">
+      <div><img src="${safeAttribute(away.logo)}" alt=""><strong>${escapeHtml(away.name)}</strong><span>Away</span></div>
+      ${score || "<b>VS</b>"}
+      <div><img src="${safeAttribute(home.logo)}" alt=""><strong>${escapeHtml(home.name)}</strong><span>Home</span></div>
+    </div>
+  `;
+}
 
 function renderFeaturedGame() {
   const featured = document.querySelector("[data-featured-game]");
   if (!featured) return;
-  const { current, next } = scheduleFocus();
-  const game = current || next;
+  const { currentGames, next } = scheduleFocus();
+  const game = currentGames[0] || next;
 
   if (!game) {
     featured.innerHTML = `
@@ -165,27 +190,14 @@ function renderFeaturedGame() {
     return;
   }
 
-  const away = tickerTeam(game, "away");
-  const home = tickerTeam(game, "home");
+  const liveGames = currentGames.length ? currentGames : [game];
   featured.innerHTML = `
     <div class="panel-heading">
-      <h2>${current ? "Live now" : "Next league game"}</h2>
-      <span>${game.date.split(" ").slice(1).join(" ")} · ${game.time}</span>
+      <h2>${currentGames.length > 1 ? `${currentGames.length} games live` : currentGames.length ? "Live now" : "Next league game"}</h2>
+      <span>${escapeHtml(game.date.split(" ").slice(1).join(" "))} &middot; ${escapeHtml(game.time)}</span>
     </div>
-    <div class="featured-matchup">
-      <div>
-        <img src="${away.logo}" alt="">
-        <strong>${away.name}</strong>
-        <span>Away</span>
-      </div>
-      <b>VS</b>
-      <div>
-        <img src="${home.logo}" alt="">
-        <strong>${home.name}</strong>
-        <span>Home</span>
-      </div>
-    </div>
-    <p>${game.division} · ${game.stage ? `${game.stage} · ` : ""}${gameLocationMarkup(game)}</p>
+    <div class="featured-live-list">${liveGames.map((item, index) => featuredMatchupMarkup(item, index > 0)).join("")}</div>
+    <p>${escapeHtml(game.division)} &middot; ${game.stage ? `${escapeHtml(game.stage)} &middot; ` : ""}${gameLocationMarkup(game)}</p>
     <a class="text-link" href="schedule.html">View game details</a>
   `;
 }
@@ -193,11 +205,11 @@ function renderFeaturedGame() {
 function renderHomeSchedule() {
   const gameList = document.querySelector("[data-game-list]");
   if (!gameList) return;
-  const { current, next } = scheduleFocus();
-  const featuredGame = current || next;
+  const { currentGames, next } = scheduleFocus();
+  const featuredIds = new Set((currentGames.length ? currentGames : next ? [next] : []).map((game) => game.id));
   const games = upcomingScheduledGames(12)
     .filter((game) => scheduleDivision === "all" || game.division === scheduleDivision)
-    .filter((game) => game !== featuredGame)
+    .filter((game) => !featuredIds.has(game.id))
     .slice(0, 4);
   gameList.innerHTML = games.length
     ? games.map(gameMarkup).join("")
@@ -212,13 +224,14 @@ function renderSchedulePage() {
   if (!weekList || !weekSelect) return;
 
   const week = league.scheduleWeeks.find((item) => item.id === selectedWeekId) || league.scheduleWeeks[0];
+  if (!week) return;
   const games = week.games.filter((game) => scheduleDivision === "all" || game.division === scheduleDivision);
   weekSelect.value = week.id;
   if (weekHeading) weekHeading.textContent = `${week.label} · ${week.range}`;
   if (weekNote) weekNote.textContent = week.note || league.scheduleNotice;
   weekList.innerHTML = games.length
     ? games.map(gameMarkup).join("")
-    : `<div class="schedule-empty"><strong>No games planned</strong><p>${week.note || "No games match this division filter."}</p></div>`;
+    : `<div class="schedule-empty"><strong>No games planned</strong><p>${escapeHtml(week.note || "No games match this division filter.")}</p></div>`;
 }
 
 document.querySelectorAll("[data-schedule-filter]").forEach((button) => {
@@ -232,8 +245,12 @@ document.querySelectorAll("[data-schedule-filter]").forEach((button) => {
 });
 
 const weekSelect = document.querySelector("[data-week-select]");
+function populateWeekOptions() {
+  if (!weekSelect) return;
+  weekSelect.innerHTML = league.scheduleWeeks.map((week) => `<option value="${safeAttribute(week.id)}">${escapeHtml(week.label)} &middot; ${escapeHtml(week.range)}</option>`).join("");
+}
+
 if (weekSelect) {
-  weekSelect.innerHTML = league.scheduleWeeks.map((week) => `<option value="${week.id}">${week.label} · ${week.range}</option>`).join("");
   weekSelect.addEventListener("change", () => {
     selectedWeekId = weekSelect.value;
     renderSchedulePage();
@@ -253,15 +270,16 @@ document.querySelectorAll("[data-week-step]").forEach((button) => {
 let standingsDivision = "Boys Varsity";
 
 function standingsRows(division) {
-  return league.standings[division].map((row, index) => {
+  return (league.standings?.[division] || []).map((row, index) => {
     const program = programById(row.programId);
+    if (!program) return "";
     const games = row.wins + row.losses;
     const pct = games ? (row.wins / games).toFixed(3).replace(/^0/, "") : ".000";
     const diff = row.pf - row.pa;
     return `
       <tr>
         <td class="seed-cell">${index + 1}</td>
-        <td><a class="standings-team" href="teams.html#${program.id}"><img src="${program.logo}" alt="">${program.name}</a></td>
+        <td><a class="standings-team" href="teams.html#${safeAttribute(program.id)}"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="">${escapeHtml(program.name)}</a></td>
         <td>${row.wins}</td>
         <td>${row.losses}</td>
         <td>${pct}</td>
@@ -276,6 +294,100 @@ function standingsRows(division) {
 function renderStandings() {
   document.querySelectorAll("[data-standings-body]").forEach((body) => {
     body.innerHTML = standingsRows(standingsDivision);
+  });
+}
+
+function winnerFromParticipants(game, awayId, homeId) {
+  if (!game || !FINAL_STATUSES.has(game.status)) return "";
+  if (game.awayScore === null || game.homeScore === null || game.awayScore === game.homeScore) return "";
+  return game.awayScore > game.homeScore ? awayId : homeId;
+}
+
+function bracketTeamName(programId, fallback) {
+  return programById(programId)?.name || fallback;
+}
+
+function bracketSlotMarkup(label, programId, fallback, game, side, winner) {
+  const score = game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
+    ? `<b>${game[`${side}Score`]}</b>`
+    : "";
+  return `
+    <div class="bracket-slot${winner && winner === programId ? " bracket-slot-winner" : ""}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(bracketTeamName(programId, fallback))}</strong>
+      ${score}
+    </div>
+  `;
+}
+
+function bracketMarkup(division) {
+  const standings = league.standings?.[division] || [];
+  const standingsStarted = standings.some((row) => row.wins + row.losses > 0);
+  const seeds = standingsStarted ? standings.map((row) => row.programId) : [];
+  const seed = (number) => seeds[number - 1] || "";
+  const playoffGames = allScheduledGames().filter((game) => game.division === division && game.stage);
+  const playIn = playoffGames.find((game) => game.stage === "Play-in");
+  const semifinals = playoffGames.filter((game) => game.stage === "Semifinal").sort((a, b) => gameStartTime(a) - gameStartTime(b));
+  const semifinalOne = semifinals[0];
+  const semifinalTwo = semifinals[1];
+  const championship = playoffGames.find((game) => game.stage === "Championship");
+
+  const playInAway = playIn?.awayId || seed(5);
+  const playInHome = playIn?.homeId || seed(4);
+  const playInWinner = winnerFromParticipants(playIn, playInAway, playInHome);
+  const semifinalOneAway = semifinalOne?.awayId || playInWinner;
+  const semifinalOneHome = semifinalOne?.homeId || seed(1);
+  const semifinalTwoAway = semifinalTwo?.awayId || seed(3);
+  const semifinalTwoHome = semifinalTwo?.homeId || seed(2);
+  const semifinalOneWinner = winnerFromParticipants(semifinalOne, semifinalOneAway, semifinalOneHome);
+  const semifinalTwoWinner = winnerFromParticipants(semifinalTwo, semifinalTwoAway, semifinalTwoHome);
+  const championshipAway = championship?.awayId || semifinalOneWinner;
+  const championshipHome = championship?.homeId || semifinalTwoWinner;
+  const champion = winnerFromParticipants(championship, championshipAway, championshipHome);
+  const divisionName = division.startsWith("Boys") ? "Boys" : "Girls";
+
+  return `
+    <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game">
+      ${bracketSlotMarkup("Seed 5", playInAway, "TBD", playIn, "away", playInWinner)}
+      ${bracketSlotMarkup("Seed 4", playInHome, "TBD", playIn, "home", playInWinner)}
+      <p>Winner advances to play Seed 1</p>
+    </article></div>
+    <div class="bracket-arrow" aria-hidden="true">&rarr;</div>
+    <div class="bracket-round"><h3>Semifinals</h3>
+      <article class="bracket-game">
+        ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "TBD", semifinalOne, "away", semifinalOneWinner)}
+        ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner)}
+      </article>
+      <article class="bracket-game">
+        ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "TBD", semifinalTwo, "away", semifinalTwoWinner)}
+        ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "TBD", semifinalTwo, "home", semifinalTwoWinner)}
+      </article>
+    </div>
+    <div class="bracket-arrow" aria-hidden="true">&rarr;</div>
+    <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card">
+      <span>2027 UBL ${divisionName}</span><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong><p>${champion ? "Division champion" : "Semifinal winners"}</p>
+    </article></div>
+  `;
+}
+
+function renderBrackets() {
+  document.querySelectorAll("[data-bracket]").forEach((bracket) => {
+    bracket.innerHTML = bracketMarkup(bracket.dataset.bracket);
+  });
+}
+
+function renderDataFreshness() {
+  const source = window.UBL_DATA_SOURCE || "bundled fallback";
+  const updated = league.lastUpdated ? new Date(league.lastUpdated) : null;
+  const validDate = updated && Number.isFinite(updated.getTime());
+  let message = validDate
+    ? `Schedule updated ${new Intl.DateTimeFormat("en-US", { timeZone: league.settings?.timezone || "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(updated)}.`
+    : "Using the bundled backup schedule.";
+  if (source === "published snapshot") message += " Published snapshot.";
+  if (source === "bundled fallback" || window.UBL_DATA_ERROR) message += " Live updates are temporarily unavailable.";
+  document.querySelectorAll("[data-freshness]").forEach((element) => {
+    element.textContent = message;
+    element.classList.toggle("data-freshness-warning", source === "bundled fallback" || Boolean(window.UBL_DATA_ERROR));
   });
 }
 
@@ -303,10 +415,10 @@ function teamCardMarkup(program) {
     `;
   }
   return `
-    <a class="team-card" href="teams.html#${program.id}">
-      <img src="${program.logo}" alt="">
-      <strong>${program.name}</strong>
-      <span>${program.divisions.join(" · ")}</span>
+    <a class="team-card" href="teams.html#${safeAttribute(program.id)}">
+      <img src="${safeAttribute(safeImageUrl(program.logo))}" alt="">
+      <strong>${escapeHtml(program.name)}</strong>
+      <span>${program.divisions.map(escapeHtml).join(" &middot; ")}</span>
     </a>
   `;
 }
@@ -323,15 +435,15 @@ function coachInitials(name) {
 
 function coachCardMarkup(coach, role) {
   const portrait = coach.photo
-    ? `<img class="coach-photo" src="${coach.photo}" alt="${coach.name}">`
-    : `<span class="coach-photo coach-initials" aria-hidden="true">${coachInitials(coach.name)}</span>`;
+    ? `<img class="coach-photo" src="${safeAttribute(safeImageUrl(coach.photo))}" alt="${safeAttribute(coach.name)}">`
+    : `<span class="coach-photo coach-initials" aria-hidden="true">${escapeHtml(coachInitials(coach.name))}</span>`;
   return `
     <article class="coach-card">
       ${portrait}
       <div>
-        <span>${role}</span>
-        <strong>${coach.name}</strong>
-        <p>${coach.experience}</p>
+        <span>${escapeHtml(role)}</span>
+        <strong>${escapeHtml(coach.name)}</strong>
+        <p>${escapeHtml(coach.experience)}</p>
       </div>
     </article>
   `;
@@ -345,7 +457,7 @@ function profileDivisionMarkup(program, division) {
   ].join("");
   return `
     <section class="program-division">
-      <span>${division}</span>
+      <span>${escapeHtml(division)}</span>
       <div class="coach-list">${coaches}</div>
       ${team.assistants.length ? "" : `<p class="coach-vacancy">Assistant coach to be confirmed.</p>`}
     </section>
@@ -359,26 +471,27 @@ function programProfileMarkup(program) {
         <div class="open-spot-copy">
           <span>2026–27 opportunity</span>
           <h3>Bring your program to the UBL</h3>
-          <p>${program.summary}</p>
+          <p>${escapeHtml(program.summary)}</p>
         </div>
         <div class="open-spot-actions">
           <strong>Boys Varsity · Girls Varsity</strong>
-          <a class="button button-primary" href="mailto:${program.representativeEmail}?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
+          <a class="button button-primary" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
         </div>
       </section>
     `;
   }
-  const contact = program.representativeEmail
-    ? `<a href="mailto:${program.representativeEmail}">${program.representativeEmail}</a>`
+  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(program.representativeEmail || "") ? program.representativeEmail : "";
+  const contact = email
+    ? `<a href="mailto:${safeAttribute(email)}">${escapeHtml(email)}</a>`
     : "To be confirmed";
   return `
-    <details class="program-profile" id="${program.id}" data-accordion-group="programs">
+    <details class="program-profile" id="${safeAttribute(program.id)}" data-accordion-group="programs">
       <summary>
-        <span class="program-profile-identity"><img src="${program.logo}" alt=""><span><strong>${program.name}</strong></span></span>
-        <span class="program-profile-divisions">${program.divisions.join(" · ")}</span>
+        <span class="program-profile-identity"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt=""><span><strong>${escapeHtml(program.name)}</strong></span></span>
+        <span class="program-profile-divisions">${program.divisions.map(escapeHtml).join(" &middot; ")}</span>
       </summary>
       <div class="program-profile-content">
-        <p class="program-summary">${program.summary}</p>
+        <p class="program-summary">${escapeHtml(program.summary)}</p>
         <div class="program-division-grid">${program.divisions.map((division) => profileDivisionMarkup(program, division)).join("")}</div>
         <dl class="program-facts">
           <div><dt>Home gym</dt><dd>${mapTriggerMarkup(program.homeGym, program.homeAddress, program.homeAddress)}</dd></div>
@@ -505,7 +618,7 @@ mapDialog.addEventListener("click", (event) => {
   if (event.target === mapDialog) mapDialog.close();
 });
 
-const countdownTarget = new Date("2026-12-03T18:00:00-05:00").getTime();
+let countdownTarget = new Date("2026-12-03T18:00:00-05:00").getTime();
 const countdownParts = {
   days: document.querySelector("[data-countdown-days]"),
   hours: document.querySelector("[data-countdown-hours]"),
@@ -513,6 +626,14 @@ const countdownParts = {
   seconds: document.querySelector("[data-countdown-seconds]")
 };
 const countdownMessage = document.querySelector("[data-countdown-message]");
+
+function configureCountdown() {
+  const openingGame = allScheduledGames().find((game) => !game.stage && ACTIVE_STATUSES.has(game.status || "Scheduled"));
+  if (!openingGame) return;
+  countdownTarget = gameStartTime(openingGame);
+  const label = document.querySelector("[data-tipoff-date]");
+  if (label) label.textContent = `${openingGame.date.replace(/^\w+\s/, "")} · ${openingGame.time} ET`;
+}
 
 function updateCountdown() {
   if (!countdownParts.days || !countdownParts.hours || !countdownParts.minutes || !countdownParts.seconds) return;
@@ -522,18 +643,44 @@ function updateCountdown() {
   countdownParts.hours.textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0");
   countdownParts.minutes.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
   countdownParts.seconds.textContent = String(totalSeconds % 60).padStart(2, "0");
-  if (remaining === 0) countdownMessage.textContent = "The 2026–27 UBL season is underway.";
+  if (remaining === 0 && countdownMessage) countdownMessage.textContent = "The 2026–27 UBL season is underway.";
 }
 
-renderHomeSchedule();
-renderSchedulePage();
-renderStandings();
-renderHomeTeams();
-renderPrograms();
-renderUpcomingTicker();
-renderFeaturedGame();
-initializeGallery();
-updateCountdown();
+function chooseScheduleWeek() {
+  if (league.scheduleWeeks.some((week) => week.id === selectedWeekId)) return;
+  const focus = scheduleFocus();
+  const game = focus.current || focus.next;
+  selectedWeekId = league.scheduleWeeks.find((week) => week.games.some((item) => item.id === game?.id))?.id || league.scheduleWeeks[0]?.id || "";
+}
+
+function renderLeagueData() {
+  chooseScheduleWeek();
+  populateWeekOptions();
+  renderHomeSchedule();
+  renderSchedulePage();
+  renderStandings();
+  renderHomeTeams();
+  renderPrograms();
+  renderUpcomingTicker();
+  renderFeaturedGame();
+  renderBrackets();
+  renderDataFreshness();
+  configureCountdown();
+  updateCountdown();
+}
+
+async function initializeApp() {
+  league = await (window.UBL_DATA_READY || Promise.resolve(window.UBL_DATA));
+  renderLeagueData();
+  initializeGallery();
+}
+
+document.addEventListener("ubl:data-updated", (event) => {
+  league = event.detail.data;
+  renderLeagueData();
+});
+
+initializeApp();
 
 if (countdownParts.seconds) setInterval(updateCountdown, 1000);
 
