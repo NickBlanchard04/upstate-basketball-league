@@ -1,5 +1,5 @@
 window.UBL_CONFIG = {
   liveFeedUrl: "",
   staticFeedUrl: "league-data.json",
-  refreshMinutes: 5
+  refreshMinutes: 1
 };

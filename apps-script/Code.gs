@@ -86,11 +86,122 @@ function onEdit(event) {
   if (!event || !event.range) return;
   var spreadsheet = event.source;
   var sheet = event.range.getSheet();
+  if (sheet.getName() !== "Games" || event.range.getRow() <= 1) return;
   var now = new Date().toISOString();
 
-  if (sheet.getName() === "Games" && event.range.getRow() > 1) {
-    sheet.getRange(event.range.getRow(), 15).setValue(now);
+  sheet.getRange(event.range.getRow(), 15).setValue(now);
+  touchPublication_(spreadsheet, now);
+}
+
+function installCoachScoreTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (trigger) {
+    if (trigger.getHandlerFunction() === "handleCoachScoreEdit") ScriptApp.deleteTrigger(trigger);
+  });
+  ScriptApp.newTrigger("handleCoachScoreEdit")
+    .forSpreadsheet(SPREADSHEET_ID)
+    .onEdit()
+    .create();
+  SpreadsheetApp.openById(SPREADSHEET_ID).toast("Coach score publishing is active.", "UBL setup", 6);
+}
+
+function handleCoachScoreEdit(event) {
+  if (!event || !event.range) return;
+  var range = event.range;
+  if (range.getSheet().getName() !== "Coach Score Entry") return;
+  if (range.getRow() < 5 || range.getColumn() !== 10 || range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;
+  if (String(event.value).toUpperCase() !== "TRUE") return;
+
+  var lock = LockService.getDocumentLock();
+  lock.waitLock(30000);
+  try {
+    publishCoachScore_(event.source, range.getRow());
+  } finally {
+    lock.releaseLock();
   }
+}
+
+function publishCoachScore_(spreadsheet, coachRow) {
+  var coachSheet = spreadsheet.getSheetByName("Coach Score Entry");
+  var gamesSheet = spreadsheet.getSheetByName("Games");
+  var auditSheet = spreadsheet.getSheetByName("Score Audit");
+  var values = coachSheet.getRange(coachRow, 1, 1, 9).getValues()[0];
+  var gameId = text_(values[0]);
+  var awayScore = Number(values[6]);
+  var homeScore = Number(values[7]);
+  var submittedBy = text_(values[8]);
+
+  var error = coachScoreError_(gameId, values[6], values[7], submittedBy);
+
+  var gameRow = findGameRow_(gamesSheet, gameId);
+  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0] : [];
+  if (!error && !gameRow) error = "The selected game could not be found.";
+  if (!error && (gameValues[9] === "Final" || gameValues[9] === "Forfeit")) {
+    error = "This result is already published. Contact the commissioner to make a correction.";
+  }
+
+  if (error) {
+    coachSheet.getRange(coachRow, 10).setValue(false);
+    appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, "Rejected: " + error);
+    spreadsheet.toast(error, "Score not submitted", 8);
+    return;
+  }
+
+  var now = new Date().toISOString();
+  gamesSheet.getRange(gameRow, 10, 1, 3).setValues([["Final", awayScore, homeScore]]);
+  gamesSheet.getRange(gameRow, 15).setValue(now);
+  touchPublication_(spreadsheet, now);
+  appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, "Published");
+  coachSheet.getRange(coachRow, 7, 1, 3).clearContent();
+  coachSheet.getRange(coachRow, 10).setValue(false);
+  SpreadsheetApp.flush();
+  spreadsheet.toast("Final score published to the UBL website.", "Score submitted", 8);
+}
+
+function coachScoreError_(gameId, rawAwayScore, rawHomeScore, submittedBy) {
+  var awayScore = Number(rawAwayScore);
+  var homeScore = Number(rawHomeScore);
+  if (!text_(gameId)) return "This game is not available for score entry.";
+  if (rawAwayScore === "" || rawHomeScore === "") return "Enter both final scores before submitting.";
+  if (!Number.isInteger(awayScore) || !Number.isInteger(homeScore) || awayScore < 0 || homeScore < 0) return "Scores must be whole numbers of 0 or greater.";
+  if (awayScore === homeScore) return "A final basketball score cannot be tied.";
+  if (!text_(submittedBy)) return "Enter your full name before submitting.";
+  return "";
+}
+
+function findGameRow_(gamesSheet, gameId) {
+  var lastRow = gamesSheet.getLastRow();
+  if (lastRow < 2) return 0;
+  var ids = gamesSheet.getRange(2, 1, lastRow - 1, 1).getDisplayValues();
+  for (var index = 0; index < ids.length; index += 1) {
+    if (ids[index][0] === gameId) return index + 2;
+  }
+  return 0;
+}
+
+function appendScoreAudit_(auditSheet, gameId, coachValues, awayScore, homeScore, submittedBy, outcome) {
+  var email = "";
+  try {
+    email = Session.getActiveUser().getEmail() || "";
+  } catch (error) {
+    email = "";
+  }
+  auditSheet.appendRow([
+    new Date().toISOString(),
+    gameId,
+    coachValues[1],
+    coachValues[3],
+    coachValues[4],
+    coachValues[5],
+    Number.isFinite(awayScore) ? awayScore : "",
+    Number.isFinite(homeScore) ? homeScore : "",
+    submittedBy,
+    email,
+    outcome
+  ]);
+}
+
+function touchPublication_(spreadsheet, now) {
+  now = now || new Date().toISOString();
 
   var settings = spreadsheet.getSheetByName("Settings");
   var values = settings.getRange(2, 1, Math.max(1, settings.getLastRow() - 1), 1).getValues();

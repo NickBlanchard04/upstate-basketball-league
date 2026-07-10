@@ -2,15 +2,20 @@
 
 Control sheet: [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit)
 
-## Enter a final score
+## Coach final-score entry
 
-1. Open the `Games` tab.
-2. Find the game by date and matchup. Do not change its Game ID.
-3. Enter Away Score and Home Score.
-4. Change Status to `Final`.
-5. Wait up to five minutes, then refresh the public schedule and standings.
+1. Open the `Coach Score Entry` tab. It is the only tab visible to team representatives.
+2. Find the game by date, division, and matchup.
+3. Enter Away Score and Home Score in the yellow cells.
+4. Enter your full name under Submitted By.
+5. Check the Submit box.
+6. Wait up to one minute, then refresh the public schedule and standings.
+
+Published results cannot be edited from the coach tab. Corrections go through the commissioner. Every accepted or rejected attempt is recorded in the protected `Score Audit` tab.
 
 ## Postpone, cancel, or reschedule
+
+League leadership must unhide the protected `Games` tab, then:
 
 1. Change Status to `Postponed` or `Cancelled`.
 2. Put a short public explanation in Notes when useful.
