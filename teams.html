@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Meet the programs and coaches competing in the Upstate Basketball League.">
+  <title>Teams | Upstate Basketball League</title>
+  <link rel="canonical" href="https://nickblanchard04.github.io/upstate-basketball-league/teams.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
+  <link rel="stylesheet" href="styles.css?v=20260710-1">
+  <script src="data.js?v=20260710-1"></script>
+  <script src="script.js?v=20260710-1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Upstate Basketball League home"><img src="assets/optimized/ubl-logo-192.webp" alt=""><span><strong>Upstate</strong> Basketball League</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a class="active" href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="subpage-main" id="main">
+    <section class="page-banner">
+      <div><h1>UBL programs</h1><p>Meet the programs, coaches, and program representatives building the league.</p></div>
+      <strong>Two divisions &middot; one open league spot</strong>
+    </section>
+
+    <section class="panel teams-page-panel section-wrap" aria-labelledby="teams-page-title">
+      <div class="section-title section-title-inline">
+        <div><h2 id="teams-page-title">Program directory</h2><span>Tap a program to learn more</span></div>
+        <a href="standings.html">View standings</a>
+      </div>
+      <div class="tabs" role="group" aria-label="Program filters">
+        <button class="active" type="button" data-program-filter="all">All programs</button>
+        <button type="button" data-program-filter="Boys Varsity">Boys Varsity</button>
+        <button type="button" data-program-filter="Girls Varsity">Girls Varsity</button>
+      </div>
+      <p class="directory-note">Public program profiles are intentionally brief. Information marked to be confirmed will be updated as team representatives respond.</p>
+      <div class="program-list" data-program-list></div>
+    </section>
+  </main>
+</body>
+</html>

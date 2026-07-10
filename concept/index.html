@@ -3,129 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Official home of the Upstate Basketball League.">
-  <title>Upstate Basketball League | Official League Website</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="styles.css?v=20260614-1">
-  <script src="data.js?v=20260614-1"></script>
-  <script src="script.js?v=20260614-1" defer></script>
+  <meta name="robots" content="noindex">
+  <title>Home | Upstate Basketball League</title>
+  <link rel="canonical" href="https://nickblanchard04.github.io/upstate-basketball-league/">
+  <meta http-equiv="refresh" content="0; url=../index.html">
+  <script>
+    location.replace("../index.html" + location.search + location.hash);
+  </script>
 </head>
-<body class="home-page">
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="index.html" aria-label="Upstate Basketball League home">
-        <img src="../assets/optimized/ubl-logo-192.webp" alt="">
-        <span><strong>Upstate</strong> Basketball League</span>
-      </a>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-        <span></span><span></span><span></span>
-        <span class="sr-only">Open menu</span>
-      </button>
-
-      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a class="active" href="index.html">Home</a>
-        <a href="schedule.html">Schedule</a>
-        <a href="standings.html">Standings</a>
-        <a href="teams.html">Teams</a>
-        <a href="bracket.html">Bracket</a>
-        <a href="rules.html">League standards</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="about.html">About</a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="main">
-    <section class="hero" id="home">
-      <picture>
-        <source srcset="../assets/optimized/ubl-website-hero-768.webp 768w, ../assets/optimized/ubl-website-hero-1600.webp 1600w" sizes="100vw" type="image/webp">
-        <img class="hero-art" src="../assets/ubl-website-hero.png" alt="">
-      </picture>
-      <div class="hero-shade"></div>
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <h1><span>Faith.</span> <span>Competition.</span><br><em>Kingdom impact.</em></h1>
-          <p>The Upstate Basketball League exists to honor God through competition, build character, and unite our communities on and off the court.</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="schedule.html">View schedule</a>
-            <a class="button button-outline" href="standings.html">Check standings</a>
-          </div>
-        </div>
-
-        <aside class="countdown-card" aria-label="Countdown to tip off">
-          <div class="countdown-heading">
-            <img src="../assets/optimized/ubl-logo-192.webp" alt="">
-            <div>
-              <strong>Tip off</strong>
-              <span>December 3, 2026 · 6:00 PM ET</span>
-            </div>
-          </div>
-          <div class="countdown-grid">
-            <div><strong data-countdown-days>000</strong><span>Days</span></div>
-            <div><strong data-countdown-hours>00</strong><span>Hours</span></div>
-            <div><strong data-countdown-minutes>00</strong><span>Minutes</span></div>
-            <div><strong data-countdown-seconds>00</strong><span>Seconds</span></div>
-          </div>
-          <p data-countdown-message>The road to opening night starts now.</p>
-        </aside>
-      </div>
-    </section>
-
-    <section class="feature-deck section-wrap" aria-label="Next league game and UBL teams">
-      <article class="panel featured-game" data-featured-game aria-live="polite"></article>
-
-      <section class="panel featured-teams" id="teams" aria-labelledby="teams-title">
-        <div class="panel-heading">
-          <h2 id="teams-title">UBL teams</h2>
-          <a class="heading-link" href="teams.html">Explore teams</a>
-        </div>
-        <div class="team-card-grid" data-team-card-grid></div>
-      </section>
-    </section>
-
-    <div class="content-grid section-wrap">
-      <section class="panel schedule-panel" id="schedule" aria-labelledby="schedule-title">
-        <div class="section-title">
-          <h2 id="schedule-title">Coming up</h2>
-          <a href="schedule.html">Full schedule</a>
-        </div>
-        <div class="tabs" aria-label="Schedule filters">
-          <button class="active" type="button" data-schedule-filter="all">All games</button>
-          <button type="button" data-schedule-filter="Boys Varsity">Boys</button>
-          <button type="button" data-schedule-filter="Girls Varsity">Girls</button>
-        </div>
-        <div class="game-list" data-game-list></div>
-      </section>
-
-      <section class="panel standings-panel" id="standings" aria-labelledby="standings-title">
-        <div class="section-title">
-          <h2 id="standings-title">Standings</h2>
-          <a href="standings.html">Full standings</a>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Standings division">
-          <button class="active" type="button" role="tab" aria-selected="true" data-standings-filter="Boys Varsity">Boys Varsity</button>
-          <button type="button" role="tab" aria-selected="false" data-standings-filter="Girls Varsity">Girls Varsity</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Seed</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>PF</th><th>PA</th><th>Diff</th></tr>
-            </thead>
-            <tbody data-standings-body></tbody>
-          </table>
-        </div>
-        <p class="panel-note">Standings begin updating after opening night.</p>
-      </section>
-    </div>
-
-  </main>
-
-  <footer class="score-ticker" aria-label="Upcoming league games"></footer>
+<body>
+  <p>This UBL page has moved to <a href="../index.html">../index.html</a>.</p>
 </body>
 </html>

@@ -3,26 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Upstate Basketball League is a faith-based high school basketball league built for structured competition, sportsmanship, and a meaningful championship experience.">
-  <title>UBL | Upstate Basketball League</title>
+  <meta name="description" content="Official home of the Upstate Basketball League.">
+  <title>Upstate Basketball League | Official League Website</title>
+  <link rel="canonical" href="https://nickblanchard04.github.io/upstate-basketball-league/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="assets/ubl-logo.png">
-  <link rel="stylesheet" href="styles.css?v=20260610-no-indexes">
-  <script src="script.js?v=20260610-countdown" defer></script>
+  <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
+  <link rel="stylesheet" href="styles.css?v=20260710-1">
+  <script src="data.js?v=20260710-1"></script>
+  <script src="script.js?v=20260710-1" defer></script>
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="#top" aria-label="UBL home">
-        <img class="brand-logo" src="assets/ubl-logo.png" alt="">
-        <span class="brand-copy">
-          <strong>Upstate Basketball League</strong>
-          <span>Faith · Competition · Sportsmanship</span>
-        </span>
+      <a class="brand" href="index.html" aria-label="Upstate Basketball League home">
+        <img src="assets/optimized/ubl-logo-192.webp" alt="">
+        <span><strong>Upstate</strong> Basketball League</span>
       </a>
 
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -31,317 +30,103 @@
       </button>
 
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="#schedule">Schedule</a>
-        <a href="#standings">Standings</a>
-        <a href="#scores">Scores</a>
-        <a href="#playoffs">Playoffs</a>
-        <a href="#teams">Teams</a>
-        <a href="#rules">Rules</a>
+        <a class="active" href="index.html">Home</a>
+        <a href="schedule.html">Schedule</a>
+        <a href="standings.html">Standings</a>
+        <a href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a>
+        <a href="rules.html">League standards</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="about.html">About</a>
       </nav>
     </div>
   </header>
 
   <main id="main">
-    <section class="hero" id="top">
-      <img class="hero-art" src="assets/ubl-website-hero.png" alt="" aria-hidden="true">
+    <section class="hero" id="home">
+      <picture>
+        <source srcset="assets/optimized/ubl-website-hero-768.webp 768w, assets/optimized/ubl-website-hero-1600.webp 1600w" sizes="100vw" type="image/webp">
+        <img class="hero-art" src="assets/ubl-website-hero.png" alt="">
+      </picture>
+      <div class="hero-shade"></div>
       <div class="hero-inner">
         <div class="hero-copy">
-          <p class="season-line">2026–27 UBL Basketball Season · Starts December 1, 2026</p>
-          <h1>Built for the game.<br><span>Grounded in purpose.</span></h1>
-          <p class="hero-summary">The Upstate Basketball League gives smaller high school programs structured competition, strong sportsmanship, and a meaningful championship experience.</p>
+          <h1><span>Faith.</span> <span>Competition.</span><br><em>Kingdom impact.</em></h1>
+          <p>The Upstate Basketball League exists to honor God through competition, build character, and unite our communities on and off the court.</p>
           <div class="hero-actions">
-            <a class="button button-red" href="#schedule">View schedule</a>
-            <a class="button button-light" href="#standings">Check standings</a>
+            <a class="button button-primary" href="schedule.html">View schedule</a>
+            <a class="button button-outline" href="standings.html">Check standings</a>
           </div>
         </div>
 
-        <aside class="next-game" aria-label="Next scheduled game">
-          <div class="next-game-top">
-            <span>Next tipoff</span>
-            <time datetime="2026-12-01T18:00">Dec 1 · 6:00 PM</time>
-          </div>
-          <div class="matchup">
-            <div class="matchup-team">
-              <img class="matchup-logo" src="assets/team-kings-school.png" alt="">
-              <span class="team-code">TKS</span>
-              <strong>The King’s School</strong>
-              <span>Home</span>
-            </div>
-            <div class="versus">VS</div>
-            <div class="matchup-team matchup-team-away">
-              <img class="matchup-logo" src="assets/team-wilton-baptist.png" alt="">
-              <span class="team-code">WBC</span>
-              <strong>Wilton Baptist</strong>
-              <span>Away</span>
+        <aside class="countdown-card" aria-label="Countdown to tip off">
+          <div class="countdown-heading">
+            <img src="assets/optimized/ubl-logo-192.webp" alt="">
+            <div>
+              <strong>Tip off</strong>
+              <span>December 3, 2026 · 6:00 PM ET</span>
             </div>
           </div>
-          <div class="next-game-bottom">
-            <span>Boys Varsity</span>
-            <span>The King’s School Gym</span>
+          <div class="countdown-grid">
+            <div><strong data-countdown-days>000</strong><span>Days</span></div>
+            <div><strong data-countdown-hours>00</strong><span>Hours</span></div>
+            <div><strong data-countdown-minutes>00</strong><span>Minutes</span></div>
+            <div><strong data-countdown-seconds>00</strong><span>Seconds</span></div>
           </div>
+          <p data-countdown-message>The road to opening night starts now.</p>
         </aside>
       </div>
     </section>
 
-    <div class="league-strip countdown-strip" aria-label="Countdown to the first UBL tipoff">
-      <div><strong data-countdown-days>000</strong><span>Days</span></div>
-      <div><strong data-countdown-hours>00</strong><span>Hours</span></div>
-      <div><strong data-countdown-minutes>00</strong><span>Minutes</span></div>
-      <div><strong data-countdown-seconds>00</strong><span>Seconds</span></div>
-      <p data-countdown-message>First tipoff · December 1, 2026 · 6:00 PM Eastern</p>
+    <section class="feature-deck section-wrap" aria-label="Next league game and UBL teams">
+      <article class="panel featured-game" data-featured-game aria-live="polite"></article>
+
+      <section class="panel featured-teams" id="teams" aria-labelledby="teams-title">
+        <div class="panel-heading">
+          <h2 id="teams-title">UBL teams</h2>
+          <a class="heading-link" href="teams.html">Explore teams</a>
+        </div>
+        <div class="team-card-grid" data-team-card-grid></div>
+      </section>
+    </section>
+
+    <div class="content-grid section-wrap">
+      <section class="panel schedule-panel" id="schedule" aria-labelledby="schedule-title">
+        <div class="section-title">
+          <h2 id="schedule-title">Coming up</h2>
+          <a href="schedule.html">Full schedule</a>
+        </div>
+        <div class="tabs" role="group" aria-label="Schedule filters">
+          <button class="active" type="button" data-schedule-filter="all">All games</button>
+          <button type="button" data-schedule-filter="Boys Varsity">Boys</button>
+          <button type="button" data-schedule-filter="Girls Varsity">Girls</button>
+        </div>
+        <div class="game-list" data-game-list></div>
+      </section>
+
+      <section class="panel standings-panel" id="standings" aria-labelledby="standings-title">
+        <div class="section-title">
+          <h2 id="standings-title">Standings</h2>
+          <a href="standings.html">Full standings</a>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Standings division">
+          <button class="active" type="button" role="tab" aria-selected="true" data-standings-filter="Boys Varsity">Boys Varsity</button>
+          <button type="button" role="tab" aria-selected="false" data-standings-filter="Girls Varsity">Girls Varsity</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Seed</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>PF</th><th>PA</th><th>Diff</th></tr>
+            </thead>
+            <tbody data-standings-body></tbody>
+          </table>
+        </div>
+        <p class="panel-note">Standings begin updating after opening night.</p>
+      </section>
     </div>
 
-    <section class="section-shell schedule-section" id="schedule">
-      <div class="section-heading">
-        <div>
-          <h2>League schedule</h2>
-        </div>
-        <p>Dates and locations are working placeholders until the official 2026 schedule is confirmed.</p>
-      </div>
-
-      <div class="filter-bar" aria-label="Schedule filters">
-        <button class="filter-button active" type="button" data-division="all">All games</button>
-        <button class="filter-button" type="button" data-division="Boys Varsity">Boys varsity</button>
-        <button class="filter-button" type="button" data-division="Girls Varsity">Girls varsity</button>
-      </div>
-
-      <div class="table-wrap">
-        <table class="data-table schedule-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Division</th>
-              <th>Matchup</th>
-              <th>Location</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody data-schedule-body></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="results-band">
-      <div class="results-inner">
-        <section id="standings" aria-labelledby="standings-title">
-          <div class="section-heading compact-heading">
-            <div>
-              <h2 id="standings-title">Standings</h2>
-            </div>
-            <p>Preseason</p>
-          </div>
-
-          <div class="division-tabs" role="tablist" aria-label="Standings division">
-            <button class="division-tab active" type="button" role="tab" aria-selected="true" data-standings-division="Boys Varsity">Boys varsity</button>
-            <button class="division-tab" type="button" role="tab" aria-selected="false" data-standings-division="Girls Varsity">Girls varsity</button>
-          </div>
-
-          <div class="table-wrap dark-table-wrap">
-            <table class="data-table standings-table">
-              <thead>
-                <tr>
-                  <th>Seed</th>
-                  <th>Team</th>
-                  <th>W</th>
-                  <th>L</th>
-                  <th>PCT</th>
-                  <th>PF</th>
-                  <th>PA</th>
-                  <th>DIFF</th>
-                </tr>
-              </thead>
-              <tbody data-standings-body></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="scores-panel" id="scores" aria-labelledby="scores-title">
-          <div class="section-heading compact-heading">
-            <div>
-              <h2 id="scores-title">Scores</h2>
-            </div>
-            <p>Latest finals</p>
-          </div>
-
-          <div class="score-list" data-score-list></div>
-        </section>
-      </div>
-    </section>
-
-    <section class="section-shell playoffs-section" id="playoffs">
-      <div class="section-heading">
-        <div>
-          <h2>Road to the title</h2>
-        </div>
-        <p>The bracket rewards the regular season while keeping every program in the championship picture.</p>
-      </div>
-
-      <div class="playoff-note">
-        <strong>Mid-February 2027</strong>
-        <p>Playoffs are planned for mid-February. When a fifth team joins, Seed 4 and Seed 5 play for the final semifinal spot. With four teams, Seed 4 advances directly.</p>
-      </div>
-
-      <div class="bracket" aria-label="UBL playoff bracket">
-        <div class="bracket-round play-in-round">
-          <h3>Play-in</h3>
-          <div class="bracket-game muted-game">
-            <div><span>Seed 4</span><strong>TBD</strong></div>
-            <div><span>Seed 5</span><strong>Future team</strong></div>
-            <p>Activates with five teams</p>
-          </div>
-        </div>
-
-        <div class="bracket-round semifinal-round">
-          <h3>Semifinals</h3>
-          <div class="bracket-game">
-            <div><span>Seed 1</span><strong>Regular season leader</strong></div>
-            <div><span>Play-in winner</span><strong>TBD</strong></div>
-          </div>
-          <div class="bracket-game">
-            <div><span>Seed 2</span><strong>TBD</strong></div>
-            <div><span>Seed 3</span><strong>TBD</strong></div>
-          </div>
-        </div>
-
-        <div class="bracket-round championship-round">
-          <h3>Championship</h3>
-          <div class="bracket-game title-game">
-            <div><span>Semifinal winner</span><strong>TBD</strong></div>
-            <div><span>Semifinal winner</span><strong>TBD</strong></div>
-            <p>2027 UBL Championship</p>
-          </div>
-        </div>
-
-        <div class="champion-mark" aria-hidden="true">
-          <span>UBL</span>
-          <strong>Champion</strong>
-          <span>2027</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="teams-section" id="teams">
-      <div class="section-shell">
-        <div class="section-heading">
-          <div>
-            <h2>Founding teams</h2>
-          </div>
-          <p>Four programs building a league centered on meaningful games and shared standards.</p>
-        </div>
-
-        <div class="team-list">
-          <article class="team-row">
-            <img class="team-logo" src="assets/team-kings-school.png" alt="">
-            <div>
-              <h3>The King’s School</h3>
-              <p>School-based program</p>
-            </div>
-            <dl>
-              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
-              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
-            </dl>
-          </article>
-          <article class="team-row">
-            <img class="team-logo" src="assets/team-perth.png" alt="">
-            <div>
-              <h3>Perth</h3>
-              <p>Independent program</p>
-            </div>
-            <dl>
-              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
-              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
-            </dl>
-          </article>
-          <article class="team-row">
-            <img class="team-logo" src="assets/team-wilton-baptist.png" alt="">
-            <div>
-              <h3>Wilton Baptist</h3>
-              <p>School-based program</p>
-            </div>
-            <dl>
-              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
-              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
-            </dl>
-          </article>
-          <article class="team-row">
-            <img class="team-logo" src="assets/team-hudson-valley-rocks.png" alt="">
-            <div>
-              <h3>Hudson Valley Rocks</h3>
-              <p>Homeschool-based program</p>
-            </div>
-            <dl>
-              <div><dt>Teams</dt><dd>Boys &amp; Girls Varsity</dd></div>
-              <div><dt>Home gym</dt><dd>To be confirmed</dd></div>
-            </dl>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="operations-section">
-      <div class="operations-inner">
-        <section class="rules-panel" id="rules" aria-labelledby="rules-title">
-          <div class="section-heading compact-heading">
-            <div>
-              <h2 id="rules-title">League standards</h2>
-            </div>
-          </div>
-          <p class="rules-intro">Clear expectations protect the game, the players, and every program involved.</p>
-          <div class="rules-list">
-            <details open>
-              <summary>Mission &amp; purpose</summary>
-              <p>Provide smaller programs with structured competition, sportsmanship, and a meaningful championship experience rooted in faith.</p>
-            </details>
-            <details>
-              <summary>Communication policy</summary>
-              <p>Schedule changes, disputes, and league decisions move through each team’s designated representative and the commissioner.</p>
-            </details>
-            <details>
-              <summary>Sportsmanship &amp; discipline</summary>
-              <p>Players, coaches, and spectators are expected to honor opponents and officials. Repeated or serious issues move through a documented review process.</p>
-            </details>
-            <details>
-              <summary>Eligibility &amp; cancellations</summary>
-              <p>Teams must verify player eligibility before competition and communicate weather or facility cancellations as early as possible.</p>
-            </details>
-            <details>
-              <summary>Referee expectations</summary>
-              <p>Officials should receive confirmed game details in advance and have authority to enforce game and sportsmanship standards.</p>
-            </details>
-          </div>
-        </section>
-
-      </div>
-    </section>
-
-    <section class="contact-band" id="contact">
-      <div>
-        <h2>Questions about the league?</h2>
-        <p>Coaches and team representatives can contact league leadership for scheduling, rules, and officiating.</p>
-      </div>
-      <div class="contact-people">
-        <div><span>Commissioner</span><strong>Andrew Walts</strong></div>
-        <div><span>Referee coordinator</span><strong>Chris Webster</strong></div>
-      </div>
-      <a class="button button-light" href="mailto:ublbasketball@example.com">Email the UBL</a>
-    </section>
   </main>
 
-  <footer class="site-footer">
-    <a class="brand footer-brand" href="#top">
-      <img class="brand-logo" src="assets/ubl-logo.png" alt="">
-      <span class="brand-copy">
-        <strong>Upstate Basketball League</strong>
-        <span>2026–27 founding season</span>
-      </span>
-    </a>
-    <p>Faith-based competition for smaller high school basketball programs.</p>
-    <div>
-      <a href="#schedule">Schedule</a>
-      <a href="#standings">Standings</a>
-      <a href="#rules">Rules</a>
-    </div>
-  </footer>
+  <footer class="score-ticker" aria-label="Upcoming league games"></footer>
 </body>
 </html>

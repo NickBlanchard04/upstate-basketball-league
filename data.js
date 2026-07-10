@@ -7,7 +7,7 @@ window.UBL_DATA = {
       id: "kings-school",
       name: "The King’s School",
       short: "TKS",
-      logo: "../assets/optimized/team-kings-school-192.webp",
+      logo: "assets/optimized/team-kings-school-192.webp",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "The King’s School Gym",
       homeAddress: "",
@@ -28,7 +28,7 @@ window.UBL_DATA = {
       id: "perth",
       name: "Perth",
       short: "PER",
-      logo: "../assets/optimized/team-perth-192.webp",
+      logo: "assets/optimized/team-perth-192.webp",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "To be confirmed",
       homeAddress: "",
@@ -43,7 +43,7 @@ window.UBL_DATA = {
       id: "wilton-baptist",
       name: "Wilton Baptist",
       short: "WBC",
-      logo: "../assets/optimized/team-wilton-baptist-192.webp",
+      logo: "assets/optimized/team-wilton-baptist-192.webp",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "To be confirmed",
       homeAddress: "",
@@ -51,11 +51,11 @@ window.UBL_DATA = {
       summary: "A founding UBL program led by coach Chris Webster.",
       teams: {
         "Boys Varsity": {
-          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "../assets/chris-webster.jpg" },
+          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "assets/chris-webster.jpg" },
           assistants: [{ name: "Rob Newcome", experience: "Coaching for eight seasons.", photo: "" }]
         },
         "Girls Varsity": {
-          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "../assets/chris-webster.jpg" },
+          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "assets/chris-webster.jpg" },
           assistants: []
         }
       }
@@ -64,7 +64,7 @@ window.UBL_DATA = {
       id: "hv-rocks",
       name: "HV Rocks",
       short: "HVR",
-      logo: "../assets/optimized/team-hudson-valley-rocks-192.webp",
+      logo: "assets/optimized/team-hudson-valley-rocks-192.webp",
       divisions: ["Boys Varsity"],
       homeGym: "Open Arms Church",
       homeAddress: "2714 Curry Rd, Schenectady, NY 12303",
@@ -81,7 +81,7 @@ window.UBL_DATA = {
       id: "hv-flames",
       name: "HV Flames",
       short: "HVF",
-      logo: "../assets/team-hv-flames.svg",
+      logo: "assets/team-hv-flames.svg",
       divisions: ["Girls Varsity"],
       homeGym: "Open Arms Church",
       homeAddress: "2714 Curry Rd, Schenectady, NY 12303",
@@ -98,7 +98,7 @@ window.UBL_DATA = {
       id: "tbd",
       name: "Open League Spot",
       short: "OPEN",
-      logo: "../assets/optimized/ubl-logo-192.webp",
+      logo: "assets/optimized/ubl-logo-192.webp",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "Your home court",
       homeAddress: "",
