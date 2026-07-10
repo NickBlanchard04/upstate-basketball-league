@@ -104,6 +104,21 @@ function installCoachScoreTrigger() {
   SpreadsheetApp.openById(SPREADSHEET_ID).toast("Coach score publishing is active.", "UBL setup", 6);
 }
 
+function publishPendingCoachScores() {
+  var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var coachSheet = spreadsheet.getSheetByName("Coach Score Entry");
+  var lastRow = Math.max(5, coachSheet.getLastRow());
+  var submitValues = coachSheet.getRange(5, 10, lastRow - 4, 1).getValues();
+  var published = 0;
+  submitValues.forEach(function (row, index) {
+    if (row[0] === true) {
+      publishCoachScore_(spreadsheet, index + 5);
+      published += 1;
+    }
+  });
+  spreadsheet.toast(published + " queued score submission(s) processed.", "UBL score queue", 8);
+}
+
 function handleCoachScoreEdit(event) {
   if (!event || !event.range) return;
   var range = event.range;

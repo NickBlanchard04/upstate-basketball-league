@@ -18,3 +18,30 @@ test("coach score validation rejects missing, tied, and invalid results", () => 
   assert.match(context.coachScoreError_("ubl-001", 41.5, 50, "Coach Name"), /whole numbers/);
   assert.match(context.coachScoreError_("ubl-001", 41, 50, ""), /full name/);
 });
+
+test("pending score publisher processes only checked coach rows", () => {
+  const publishedRows = [];
+  const toastCalls = [];
+  const coachSheet = {
+    getLastRow: () => 8,
+    getRange: (row, column, rowCount, columnCount) => {
+      assert.deepEqual([row, column, rowCount, columnCount], [5, 10, 4, 1]);
+      return { getValues: () => [[true], [false], [true], [false]] };
+    }
+  };
+  const spreadsheet = {
+    getSheetByName: (name) => {
+      assert.equal(name, "Coach Score Entry");
+      return coachSheet;
+    },
+    toast: (...args) => toastCalls.push(args)
+  };
+
+  context.SpreadsheetApp = { openById: () => spreadsheet };
+  context.publishCoachScore_ = (_spreadsheet, row) => publishedRows.push(row);
+
+  context.publishPendingCoachScores();
+
+  assert.deepEqual(publishedRows, [5, 7]);
+  assert.match(toastCalls[0][0], /2 queued score submission/);
+});
