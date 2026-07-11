@@ -1187,6 +1187,52 @@ th {
   font-size: 0.72rem;
 }
 
+.gallery-submission {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  border: 1px solid var(--line);
+  border-left: 0.25rem solid var(--red);
+  border-radius: 0.55rem;
+  background: var(--white);
+}
+
+.gallery-submission-copy {
+  min-width: 0;
+}
+
+.gallery-submission h2 {
+  margin: 0;
+  color: var(--navy-900);
+  font: 800 1.25rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.gallery-submission p {
+  max-width: 60ch;
+  margin: 0.45rem 0 0;
+  color: var(--navy-800);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.gallery-submission ul {
+  margin: 0.65rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.gallery-submission-action {
+  width: 100%;
+  min-height: 2.75rem;
+  align-self: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .gallery-filters {
   margin-bottom: 0.9rem;
 }
@@ -2414,6 +2460,16 @@ th {
 
   .gallery-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gallery-submission {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .gallery-submission-action {
+    width: auto;
+    min-width: 12rem;
   }
 
   .week-controls {

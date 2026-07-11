@@ -145,6 +145,17 @@ test("team profiles and gallery interactions remain usable", async ({ page }) =>
   await page.getByRole("button", { name: "Close fullscreen photo" }).click();
 });
 
+test("gallery photo submissions use a moderated league inbox", async ({ page }) => {
+  await page.goto("/gallery.html");
+  const submission = page.locator(".gallery-submission");
+  await expect(submission).toContainText("No submission is published automatically");
+  await expect(submission).toContainText("permission to share");
+  await expect(page.getByRole("link", { name: "Submit photos for review" })).toHaveAttribute(
+    "href",
+    /^mailto:Info\.upstatebasketballleague@gmail\.com\?subject=UBL%20Photo%20Submission/
+  );
+});
+
 test("completed score updates schedule, standings, and bracket seeds", async ({ page }) => {
   const resultFeed = structuredClone(feed);
   Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
