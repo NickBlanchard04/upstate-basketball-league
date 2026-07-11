@@ -67,6 +67,20 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
 });
 
+test("desktop ticker moves and is larger than the mobile ticker", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("desktop"), "Desktop-specific ticker behavior");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/index.html");
+  const ticker = page.locator(".score-ticker");
+  const track = page.locator(".ticker-track");
+  await expect(ticker).toBeVisible();
+  expect(await ticker.evaluate((element) => parseFloat(getComputedStyle(element).height))).toBeGreaterThan(65);
+  const startTransform = await track.evaluate((element) => getComputedStyle(element).transform);
+  await page.waitForTimeout(750);
+  const endTransform = await track.evaluate((element) => getComputedStyle(element).transform);
+  expect(endTransform).not.toBe(startTransform);
+});
+
 test("schedule week, division, and map controls work", async ({ page }) => {
   await page.goto("/schedule.html");
   await page.locator("[data-week-select]").selectOption("week-3");

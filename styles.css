@@ -2666,6 +2666,45 @@ th {
     align-items: end;
   }
 
+  .score-ticker {
+    height: 4.15rem;
+  }
+
+  .ticker-track {
+    animation-duration: 26s;
+    animation-play-state: running;
+  }
+
+  .ticker-game {
+    min-width: 20rem;
+    padding: 0.45rem 0.95rem;
+    gap: 0.42rem;
+  }
+
+  .ticker-game time span {
+    font-size: 0.62rem;
+  }
+
+  .ticker-game time small {
+    font-size: 0.54rem;
+  }
+
+  .ticker-game img {
+    width: 1.8rem;
+  }
+
+  .ticker-game b {
+    font-size: 0.9rem;
+  }
+
+  .ticker-game em {
+    font-size: 0.58rem;
+  }
+
+  .ticker-game .ticker-status {
+    font-size: 0.5rem;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
