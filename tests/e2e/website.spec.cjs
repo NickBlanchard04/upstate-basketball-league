@@ -67,6 +67,29 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
 });
 
+test("homepage places Coming Up below standings and mixes prior-night finals into the ticker", async ({ page }) => {
+  const resultFeed = structuredClone(feed);
+  Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
+  Object.assign(resultFeed.games[1], { status: "Final", awayScore: 44, homeScore: 52 });
+  await page.unroute(scoreFeedUrlPattern);
+  await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(resultFeed) }));
+  await page.addInitScript(() => {
+    Date.now = () => Date.parse("2026-12-04T15:00:00.000Z");
+  });
+  await page.goto("/index.html");
+  const overview = page.locator(".home-league-grid");
+  await expect(overview.locator(".standings-panel")).toBeVisible();
+  await expect(overview.locator(".schedule-panel")).toBeVisible();
+  expect(await overview.evaluate((element) => Array.from(element.children).map((child) => child.className))).toEqual([
+    "panel standings-panel",
+    "panel schedule-panel"
+  ]);
+  const recentTickerGames = page.locator("[data-ticker-state='recent']");
+  await expect(recentTickerGames).toHaveCount(4);
+  expect(await recentTickerGames.evaluateAll((elements) => elements.every((element) => element.textContent.includes("Final")))).toBe(true);
+  await expect(page.locator("[data-ticker-state='upcoming']")).toHaveCount(8);
+});
+
 test("desktop ticker moves even when the browser requests reduced motion", async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("desktop"), "Desktop-specific ticker behavior");
   await page.emulateMedia({ reducedMotion: "reduce" });

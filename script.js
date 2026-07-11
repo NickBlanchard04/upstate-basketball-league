@@ -106,6 +106,32 @@ function upcomingScheduledGames(limit = 4, now = Date.now()) {
   return core.getUpcomingGames(allScheduledGames(), now, league.settings || {}, limit);
 }
 
+function leagueIsoDate(now = Date.now()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: league.settings?.timezone || "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date(now));
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function previousLeagueDate(now = Date.now()) {
+  const date = new Date(`${leagueIsoDate(now)}T12:00:00Z`);
+  date.setUTCDate(date.getUTCDate() - 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function tickerGames(now = Date.now()) {
+  const games = allScheduledGames();
+  const previousNight = games.filter((game) =>
+    FINAL_STATUSES.has(game.status) && game.iso === previousLeagueDate(now)
+  );
+  const upcoming = core.getUpcomingGames(games, now, league.settings || {}, 4);
+  return [...previousNight, ...upcoming];
+}
+
 function tickerTeam(game, side) {
   const program = game[`${side}Id`] ? programById(game[`${side}Id`]) : null;
   const name = gameTeamName(game, side);
@@ -121,15 +147,20 @@ function tickerGameMarkup(game) {
   const home = tickerTeam(game, "home");
   const shortDate = game.date.split(" ").slice(1).join(" ");
   const isLive = scheduleFocus().currentGames.some((current) => current.id === game.id);
+  const isFinal = FINAL_STATUSES.has(game.status);
+  const state = isFinal ? "recent" : "upcoming";
+  const status = isFinal
+    ? `Final &middot; ${escapeHtml(game.division)}`
+    : `${isLive ? "Live now &middot; " : ""}${escapeHtml(game.division)}${game.stage ? ` &middot; ${escapeHtml(game.stage)}` : ""}`;
   return `
-    <a class="ticker-game" href="schedule.html" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}.">
+    <a class="ticker-game" href="schedule.html" data-ticker-state="${state}" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}${isFinal ? ", final" : ""}.">
       <time><span>${escapeHtml(shortDate)}</span><small>${escapeHtml(game.time)}</small></time>
       <img src="${safeAttribute(away.logo)}" alt="">
       <b>${escapeHtml(away.short)}</b>
       <em>vs</em>
       <b>${escapeHtml(home.short)}</b>
       <img src="${safeAttribute(home.logo)}" alt="">
-      <span class="ticker-status">${isLive ? "Live now &middot; " : ""}${escapeHtml(game.division)}${game.stage ? ` &middot; ${escapeHtml(game.stage)}` : ""}</span>
+      <span class="ticker-status">${status}</span>
     </a>
   `;
 }
@@ -137,7 +168,7 @@ function tickerGameMarkup(game) {
 function renderUpcomingTicker() {
   const ticker = document.querySelector(".score-ticker");
   if (!ticker) return;
-  const games = upcomingScheduledGames(4);
+  const games = tickerGames();
   if (!games.length) {
     ticker.hidden = true;
     return;
