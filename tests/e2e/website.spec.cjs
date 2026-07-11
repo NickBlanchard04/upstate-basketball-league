@@ -67,14 +67,16 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
 });
 
-test("desktop ticker moves and is larger than the mobile ticker", async ({ page }, testInfo) => {
+test("desktop ticker moves even when the browser requests reduced motion", async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("desktop"), "Desktop-specific ticker behavior");
-  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/index.html");
   const ticker = page.locator(".score-ticker");
   const track = page.locator(".ticker-track");
   await expect(ticker).toBeVisible();
   expect(await ticker.evaluate((element) => parseFloat(getComputedStyle(element).height))).toBeGreaterThan(65);
+  await expect(track).toHaveCSS("animation-name", "ticker-scroll");
+  await expect(page.locator(".ticker-window")).toHaveCSS("overflow-x", "hidden");
   const startTransform = await track.evaluate((element) => getComputedStyle(element).transform);
   await page.waitForTimeout(750);
   const endTransform = await track.evaluate((element) => getComputedStyle(element).transform);
