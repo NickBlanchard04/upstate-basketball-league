@@ -36,6 +36,97 @@
       .replace(/^-|-$/g, "");
   }
 
+  function csvRows(text) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let quoted = false;
+    const input = String(text || "").replace(/^\uFEFF/, "");
+
+    for (let index = 0; index < input.length; index += 1) {
+      const character = input[index];
+      if (quoted) {
+        if (character === '"' && input[index + 1] === '"') {
+          field += '"';
+          index += 1;
+        } else if (character === '"') {
+          quoted = false;
+        } else {
+          field += character;
+        }
+      } else if (character === '"') {
+        quoted = true;
+      } else if (character === ",") {
+        row.push(field);
+        field = "";
+      } else if (character === "\n") {
+        row.push(field.replace(/\r$/, ""));
+        rows.push(row);
+        row = [];
+        field = "";
+      } else {
+        field += character;
+      }
+    }
+
+    if (field || row.length) {
+      row.push(field.replace(/\r$/, ""));
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function parseScoreFeedCsv(text) {
+    const rows = csvRows(text);
+    if (!rows.length) throw new Error("Score feed is empty.");
+    const requiredHeaders = [
+      "Game ID",
+      "Date",
+      "Time",
+      "Division",
+      "Away Team ID",
+      "Home Team ID",
+      "Venue ID",
+      "Status",
+      "Away Score",
+      "Home Score",
+      "Week ID"
+    ];
+    const headers = rows.shift().map((value) => String(value || "").trim());
+    const indexes = Object.fromEntries(headers.map((header, index) => [header, index]));
+    const missing = requiredHeaders.filter((header) => indexes[header] === undefined);
+    if (missing.length) throw new Error(`Score feed is missing: ${missing.join(", ")}.`);
+
+    const games = rows.filter((values) => String(values[indexes["Game ID"]] || "").trim()).map((values) => ({
+      id: String(values[indexes["Game ID"]] || "").trim(),
+      date: String(values[indexes.Date] || "").trim(),
+      time: String(values[indexes.Time] || "").trim(),
+      division: String(values[indexes.Division] || "").trim(),
+      awayTeamId: String(values[indexes["Away Team ID"]] || "").trim(),
+      homeTeamId: String(values[indexes["Home Team ID"]] || "").trim(),
+      venueId: String(values[indexes["Venue ID"]] || "").trim(),
+      status: String(values[indexes.Status] || "Scheduled").trim() || "Scheduled",
+      awayScore: numberOrNull(values[indexes["Away Score"]]),
+      homeScore: numberOrNull(values[indexes["Home Score"]]),
+      weekId: String(values[indexes["Week ID"]] || "").trim()
+    }));
+    if (!games.length) throw new Error("Score feed contains no games.");
+    return games;
+  }
+
+  function mergeScoreFeed(feed, scoreGames) {
+    if (!feed || !Array.isArray(feed.games)) throw new Error("Base feed has no games.");
+    if (!Array.isArray(scoreGames) || !scoreGames.length) return feed;
+    const baseGames = new Map(feed.games.map((game) => [game.id, game]));
+    return {
+      ...feed,
+      games: scoreGames.map((scoreGame) => ({
+        ...(baseGames.get(scoreGame.id) || {}),
+        ...scoreGame
+      }))
+    };
+  }
+
   function validateFeed(feed) {
     const errors = [];
     if (!feed || typeof feed !== "object") return ["Feed must be an object."];
@@ -395,9 +486,11 @@
     getUpcomingGames,
     normalizeFeed,
     numberOrNull,
+    parseScoreFeedCsv,
     safeImageUrl,
     settingsObject,
     slug,
+    mergeScoreFeed,
     validateFeed,
     winnerId
   };

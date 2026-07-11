@@ -1,17 +1,23 @@
-# UBL Public Feed Deployment
+# UBL Score Feed
 
-The script reads the private league control spreadsheet and publishes only public schedule, team, venue, and settings fields.
+The production site uses the published `Website Feed` CSV from the UBL League Control Panel. It does not require Google Apps Script.
 
-1. Open the control spreadsheet.
-2. Choose Extensions, then Apps Script.
-3. Replace `Code.gs` with this folder's `Code.gs` and set the project manifest to `appsscript.json`.
-4. Run `installCoachScoreTrigger` once and approve the requested spreadsheet authorization. This owner-run trigger lets coaches submit through protected input cells without editing administrative tabs.
-5. Deploy as a web app, execute as the deploying account, and allow access to anyone.
-6. Open the deployment URL and confirm valid JSON appears.
-7. Put that `/exec` URL in `config.js` as `liveFeedUrl`.
+## In-season workflow
 
-If coaches checked Submit before the trigger was installed, run `publishPendingCoachScores` once after installation. It processes every checked row without requiring the scores to be retyped.
+1. On `Coach Score Entry`, find the completed game.
+2. Enter the away score, home score, and your full name.
+3. Check `Submit` only after the result is final.
+4. Confirm `Website Status` changes to `Published to website`.
+5. The `Website Feed` tab mirrors only public schedule and result fields. The site refreshes from it every minute.
 
-The site validates the response. If the endpoint is unavailable or invalid, it automatically uses `league-data.json`, then the bundled `data.js` dataset.
+The public website automatically falls back to its published schedule if Google Sheets is temporarily unavailable.
 
-Coach submissions are entered on the visible `Coach Score Entry` tab. The installable trigger validates the score, marks the canonical game `Final`, updates the public timestamp, clears the input cells, and appends an audit record. The public site checks for changes every minute.
+## Sheet maintenance
+
+- Update dates, times, teams, venues, and game status in the protected `Games` tab. The `Coach Score Entry` and `Website Feed` tabs update from that source.
+- Keep the `Website Feed` publication set to `Comma-separated values (.csv)` with automatic republishing enabled.
+- Do not publish the entire control panel. Only the `Website Feed` tab is public.
+
+## Optional Apps Script
+
+`Code.gs` remains as an optional future upgrade for audit logging and automatic clearing of score-entry rows. It is not part of the current production workflow.

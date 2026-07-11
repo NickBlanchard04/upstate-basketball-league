@@ -1,5 +1,33 @@
 const { test, expect } = require("@playwright/test");
 const feed = require("../../league-data.json");
+const scoreFeedUrlPattern = /docs\.google\.com\/spreadsheets\/d\/e\/2PACX-1vTp7iD4G8a9gp67-XCnN4in2fFfAuGJNKqYpKaxHoADZDABGCT_YMP7aFYa8ynhY1Itk6OvdHW6bq5T\/pub/;
+
+function csvCell(value) {
+  const text = value === null || value === undefined ? "" : String(value);
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+function scoreFeedCsv(sourceFeed) {
+  const headers = ["Game ID", "Date", "Time", "Division", "Away Team ID", "Home Team ID", "Venue ID", "Status", "Away Score", "Home Score", "Week ID"];
+  const rows = sourceFeed.games.map((game) => [
+    game.id,
+    game.date,
+    game.time,
+    game.division,
+    game.awayTeamId,
+    game.homeTeamId,
+    game.venueId,
+    game.status,
+    game.awayScore,
+    game.homeScore,
+    game.weekId
+  ]);
+  return [headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(feed) }));
+});
 
 async function expectNoAppErrors(page, action) {
   const errors = [];
@@ -36,7 +64,7 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await expect(page.locator("[data-featured-game]")).toContainText("Next league game");
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");
-  await expect(page.locator("[data-freshness]")).toContainText("Schedule updated");
+  await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
 });
 
 test("schedule week, division, and map controls work", async ({ page }) => {
@@ -81,8 +109,8 @@ test("team profiles and gallery interactions remain usable", async ({ page }) =>
 test("completed score updates schedule, standings, and bracket seeds", async ({ page }) => {
   const resultFeed = structuredClone(feed);
   Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
-  resultFeed.lastUpdated = "2026-12-04T02:00:00.000Z";
-  await page.route("**/league-data.json*", (route) => route.fulfill({ json: resultFeed }));
+  await page.unroute(scoreFeedUrlPattern);
+  await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(resultFeed) }));
 
   await page.goto("/schedule.html");
   await expect(page.locator("[data-game-id='ubl-001']")).toContainText("41 - 50");

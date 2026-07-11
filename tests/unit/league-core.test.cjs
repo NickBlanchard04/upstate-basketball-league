@@ -68,6 +68,22 @@ test("normalization connects venues, statuses, and new feed teams", () => {
   assert.ok(normalized.programs[0].teams["Boys Varsity"].headCoach);
 });
 
+test("published score CSV safely replaces schedule and result fields", () => {
+  const csv = [
+    "Game ID,Date,Time,Division,Away Team ID,Home Team ID,Venue ID,Status,Away Score,Home Score,Week ID",
+    "ubl-001,2026-12-03,6:00 PM,Boys Varsity,wilton-baptist,kings-school,kings-school-gym,Final,42,51,opening-week",
+    'ubl-002,2026-12-03,7:30 PM,Girls Varsity,wilton-baptist,kings-school,kings-school-gym,Scheduled,,,opening-week'
+  ].join("\n");
+  const scoreGames = core.parseScoreFeedCsv(csv);
+  const merged = core.mergeScoreFeed(structuredClone(feed), scoreGames);
+
+  assert.equal(merged.games.length, 2);
+  assert.equal(merged.games[0].status, "Final");
+  assert.equal(merged.games[0].awayScore, 42);
+  assert.equal(merged.games[0].homeScore, 51);
+  assert.deepEqual(core.validateFeed(merged), []);
+});
+
 test("bracket state advances completed games with assigned participants", () => {
   const teams = [
     { id: "a", name: "Alpha", divisions: ["Boys Varsity"] },

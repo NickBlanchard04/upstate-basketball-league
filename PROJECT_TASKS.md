@@ -6,14 +6,14 @@
 - [x] Build a phone-friendly league update system backed by one Google Sheet.
   - Keep one `Games` table for dates, times, divisions, teams, venues, game status, and final scores.
   - Keep one `Venues` table so addresses and map links are entered once.
-  - Publish only approved public fields through a small Google Apps Script JSON endpoint.
+  - Publish only the public `Website Feed` tab as a Google Sheets CSV feed.
   - Make the homepage, schedule, moving ticker, standings, and playoff brackets read from that same source.
   - Calculate standings automatically from games marked `Final`.
   - Support `Scheduled`, `Final`, `Postponed`, and `Cancelled` game states.
-  - Show a public "Last updated" timestamp.
+  - Show a clear live-sheet sync status on public pages.
   - Validate missing teams, duplicate games, invalid scores, and Monday/Thursday scheduling before publishing.
   - Keep the current bundled data as a fallback if the live sheet is temporarily unavailable.
-  - Write a short phone workflow for league leadership and test a complete update from score entry to the public site.
+  - [x] Write a short phone workflow for league leadership and test a complete update from score entry to the public site.
 
 ## Priority 2: Reliability And Maintenance
 

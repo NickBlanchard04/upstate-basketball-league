@@ -380,7 +380,9 @@ function renderDataFreshness() {
   const source = window.UBL_DATA_SOURCE || "bundled fallback";
   const updated = league.lastUpdated ? new Date(league.lastUpdated) : null;
   const validDate = updated && Number.isFinite(updated.getTime());
-  let message = validDate
+  let message = source === "live score feed"
+    ? "Schedule and scores synced from the league sheet."
+    : validDate
     ? `Schedule updated ${new Intl.DateTimeFormat("en-US", { timeZone: league.settings?.timezone || "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(updated)}.`
     : "Using the bundled backup schedule.";
   if (source === "published snapshot") message += " Published snapshot.";

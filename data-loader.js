@@ -3,6 +3,17 @@
   const config = window.UBL_CONFIG || {};
   const core = window.UBL_CORE;
 
+  async function loadScoreFeed() {
+    if (!config.scoreFeedUrl) return null;
+    const separator = config.scoreFeedUrl.includes("?") ? "&" : "?";
+    const response = await fetch(`${config.scoreFeedUrl}${separator}v=${Date.now()}`, {
+      cache: "no-store",
+      headers: { Accept: "text/csv" }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return core.parseScoreFeedCsv(await response.text());
+  }
+
   async function loadFeed() {
     const sources = [
       config.liveFeedUrl && { url: config.liveFeedUrl, label: "Google Sheet" },
@@ -14,6 +25,13 @@
     }
 
     const failures = [];
+    let scoreGames = null;
+    try {
+      scoreGames = await loadScoreFeed();
+    } catch (error) {
+      failures.push(`live score feed: ${error.message}`);
+    }
+
     for (const source of sources) {
       try {
         const separator = source.url.includes("?") ? "&" : "?";
@@ -22,8 +40,10 @@
           headers: { Accept: "application/json" }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const normalized = core.normalizeFeed(await response.json(), fallback);
-        window.UBL_DATA_SOURCE = source.label;
+        const baseFeed = await response.json();
+        const mergedFeed = scoreGames ? core.mergeScoreFeed(baseFeed, scoreGames) : baseFeed;
+        const normalized = core.normalizeFeed(mergedFeed, fallback);
+        window.UBL_DATA_SOURCE = scoreGames ? "live score feed" : source.label;
         window.UBL_DATA_ERROR = failures.join(" ");
         window.UBL_DATA = normalized;
         return normalized;
