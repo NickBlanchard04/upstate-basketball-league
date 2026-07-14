@@ -115,8 +115,14 @@ test("schedule week, division, and map controls work", async ({ page }) => {
   await expect(rows).toHaveCount(2);
   for (const row of await rows.all()) await expect(row).toContainText("Boys Varsity");
   await page.getByRole("button", { name: "All games" }).click();
-  await page.locator("[data-map-address]").first().click();
+  const openArmsLinks = page.locator('[data-week-game-list] [data-map-address="2714 Curry Rd, Schenectady, NY 12303"]');
+  await expect(openArmsLinks).toHaveCount(2);
+  await expect(openArmsLinks.nth(0)).toContainText("2714 Curry Rd, Schenectady, NY 12303");
+  await openArmsLinks.nth(0).click();
   await expect(page.locator(".map-dialog")).toBeVisible();
+  await expect(page.locator("[data-map-dialog-address]")).toHaveText("2714 Curry Rd, Schenectady, NY 12303");
+  await expect(page.getByRole("link", { name: "Apple Maps" })).toHaveAttribute("href", /maps\.apple\.com/);
+  await expect(page.getByRole("link", { name: "Google Maps" })).toHaveAttribute("href", /google\.com\/maps/);
   await expect(page.getByRole("link", { name: "Waze" })).toHaveAttribute("href", /waze\.com/);
 });
 

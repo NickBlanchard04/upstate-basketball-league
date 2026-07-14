@@ -55,7 +55,9 @@ function mapTriggerMarkup(label, address, detail = "") {
 }
 
 function gameLocationMarkup(game) {
-  return mapTriggerMarkup(game.location || "Location TBD", game.locationAddress || "");
+  const homeAddress = game.homeId ? programById(game.homeId)?.homeAddress : "";
+  const address = game.locationAddress || homeAddress || "";
+  return mapTriggerMarkup(game.location || "Location TBD", address, address);
 }
 
 function gameStatusMarkup(game) {
