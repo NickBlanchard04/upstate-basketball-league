@@ -1,4 +1,6 @@
 const { defineConfig, devices } = require("@playwright/test");
+const testPort = process.env.UBL_TEST_PORT || "4174";
+const testOrigin = `http://127.0.0.1:${testPort}`;
 
 module.exports = defineConfig({
   testDir: "./tests/e2e",
@@ -8,7 +10,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: "http://127.0.0.1:4174",
+    baseURL: testOrigin,
     trace: "retain-on-failure",
     screenshot: "only-on-failure"
   },
@@ -17,8 +19,8 @@ module.exports = defineConfig({
     { name: "mobile-chromium", use: { ...devices["iPhone 13"], browserName: "chromium" } }
   ],
   webServer: {
-    command: "python -m http.server 4174 --bind 127.0.0.1",
-    url: "http://127.0.0.1:4174/index.html",
+    command: `python -m http.server ${testPort} --bind 127.0.0.1`,
+    url: `${testOrigin}/index.html`,
     reuseExistingServer: false
   }
 });

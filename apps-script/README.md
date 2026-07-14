@@ -21,3 +21,17 @@ The public website automatically falls back to its published schedule if Google 
 ## Optional Apps Script
 
 `Code.gs` remains as an optional future upgrade for audit logging and automatic clearing of score-entry rows. It is not part of the current production workflow.
+
+## Approved gallery feed
+
+`Gallery.gs` is deployed as a separate Google Apps Script web app under the league business account. It must not be added to the score-feed script project because both files define `doGet()`.
+
+The gallery script:
+
+- Scans only the team and division folders listed in `GALLERY_FOLDERS`
+- Ignores non-image files
+- Gives approved image files public read access for website delivery
+- Returns a JSON feed with responsive preview and fullscreen Drive URLs
+- Caches the result for 60 seconds
+
+Deploy it as a web app that executes as the owner and allows access to anyone. Put the resulting `/exec` URL in `config.js` as `galleryFeedUrl`. Pending upload folders and private form links are never included in the script or public website.

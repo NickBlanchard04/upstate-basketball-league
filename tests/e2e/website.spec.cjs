@@ -145,6 +145,48 @@ test("team profiles and gallery interactions remain usable", async ({ page }) =>
   await page.getByRole("button", { name: "Close fullscreen photo" }).click();
 });
 
+test("approved Drive photos appear only in their matching team and division", async ({ page }) => {
+  await page.route("**/config.js*", (route) => route.fulfill({
+    contentType: "application/javascript",
+    body: `window.UBL_CONFIG = {
+      liveFeedUrl: "",
+      scoreFeedUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTp7iD4G8a9gp67-XCnN4in2fFfAuGJNKqYpKaxHoADZDABGCT_YMP7aFYa8ynhY1Itk6OvdHW6bq5T/pub?gid=1900000003&single=true&output=csv",
+      galleryFeedUrl: "https://example.test/approved-gallery",
+      staticFeedUrl: "league-data.json",
+      refreshMinutes: 1
+    };`
+  }));
+  await page.route("https://example.test/approved-gallery", (route) => route.fulfill({
+    json: {
+      schemaVersion: 1,
+      photos: [{
+        id: "approved-rocks-1",
+        teamId: "hv-rocks",
+        teamName: "HV Rocks",
+        division: "Boys Varsity",
+        season: "2026-27 season",
+        alt: "HV Rocks boys varsity game",
+        previewUrl: "https://drive.google.com/thumbnail?id=approved-rocks-1&sz=w600",
+        fullUrl: "https://drive.google.com/thumbnail?id=approved-rocks-1&sz=w1600"
+      }]
+    }
+  }));
+
+  await page.goto("/gallery.html");
+  const rocksGallery = page.locator('[data-gallery-team="hv-rocks"]');
+  await expect(rocksGallery.locator("[data-gallery-count]")).toHaveText("1 photo");
+  await rocksGallery.locator("summary").click();
+  await expect(rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"]')).toBeVisible();
+
+  await page.getByRole("tab", { name: "Girls Varsity" }).click();
+  await expect(rocksGallery).toBeHidden();
+  await page.getByRole("tab", { name: "Boys Varsity" }).click();
+  await expect(rocksGallery).toBeVisible();
+  await rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"] [data-gallery-full]').click();
+  await expect(page.locator(".gallery-lightbox")).toBeVisible();
+  await expect(page.locator("[data-gallery-lightbox-title]")).toHaveText("Boys Varsity");
+});
+
 test("completed score updates schedule, standings, and bracket seeds", async ({ page }) => {
   const resultFeed = structuredClone(feed);
   Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });

@@ -562,9 +562,104 @@ function openHashProgram() {
 
 window.addEventListener("hashchange", openHashProgram);
 
+const GALLERY_DIVISIONS = new Set(["Boys Varsity", "Girls Varsity"]);
+const GALLERY_IMAGE_HOSTS = new Set(["drive.google.com", "lh3.googleusercontent.com"]);
+
+function galleryImageUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && GALLERY_IMAGE_HOSTS.has(url.hostname) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function updateGallerySections() {
+  document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
+    const photoCount = gallery.querySelectorAll(".gallery-item").length;
+    const count = gallery.querySelector("[data-gallery-count]");
+    const grid = gallery.querySelector("[data-gallery-grid]");
+    const empty = gallery.querySelector("[data-gallery-empty]");
+    if (count) count.textContent = photoCount ? `${photoCount} photo${photoCount === 1 ? "" : "s"}` : "Coming soon";
+    if (grid) grid.hidden = photoCount === 0;
+    if (empty) empty.hidden = photoCount > 0;
+  });
+}
+
+function createGalleryPhoto(photo) {
+  const figure = document.createElement("figure");
+  figure.className = "gallery-item";
+  figure.dataset.galleryDivision = photo.division;
+  figure.dataset.galleryPhotoId = photo.id;
+
+  const button = document.createElement("button");
+  button.className = "gallery-open";
+  button.type = "button";
+  button.dataset.galleryFull = photo.fullUrl;
+
+  const image = document.createElement("img");
+  image.src = photo.previewUrl;
+  image.alt = photo.alt;
+  image.loading = "lazy";
+  button.append(image);
+
+  const caption = document.createElement("figcaption");
+  const title = document.createElement("strong");
+  title.textContent = photo.division;
+  const detail = document.createElement("span");
+  detail.textContent = photo.season;
+  caption.append(title, detail);
+  figure.append(button, caption);
+  return figure;
+}
+
+async function loadApprovedGallery() {
+  const feedUrl = window.UBL_CONFIG?.galleryFeedUrl?.trim();
+  if (!feedUrl) {
+    updateGallerySections();
+    return;
+  }
+
+  try {
+    const response = await fetch(feedUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Gallery feed returned ${response.status}`);
+    const payload = await response.json();
+    if (!Array.isArray(payload.photos)) throw new Error("Gallery feed is malformed");
+
+    const renderedIds = new Set(
+      [...document.querySelectorAll("[data-gallery-photo-id]")].map((item) => item.dataset.galleryPhotoId)
+    );
+
+    payload.photos.forEach((entry) => {
+      const teamId = typeof entry.teamId === "string" ? entry.teamId : "";
+      const division = GALLERY_DIVISIONS.has(entry.division) ? entry.division : "";
+      const id = typeof entry.id === "string" ? entry.id.trim() : "";
+      const previewUrl = galleryImageUrl(entry.previewUrl);
+      const fullUrl = galleryImageUrl(entry.fullUrl);
+      const gallery = document.querySelector(`[data-gallery-team="${CSS.escape(teamId)}"]`);
+      const supportedDivisions = gallery?.dataset.galleryDivisions.split("|") || [];
+      if (!gallery || !id || renderedIds.has(id) || !division || !supportedDivisions.includes(division) || !previewUrl || !fullUrl) return;
+
+      const photo = {
+        id,
+        division,
+        previewUrl,
+        fullUrl,
+        alt: typeof entry.alt === "string" && entry.alt.trim() ? entry.alt.trim() : `${entry.teamName || "UBL"} basketball photo`,
+        season: typeof entry.season === "string" && entry.season.trim() ? entry.season.trim() : "2026-27 season"
+      };
+      gallery.querySelector("[data-gallery-grid]")?.append(createGalleryPhoto(photo));
+      renderedIds.add(id);
+    });
+  } catch (error) {
+    console.warn("Approved gallery feed is temporarily unavailable.", error);
+  }
+
+  updateGallerySections();
+}
+
 function initializeGallery() {
-  const galleryItems = [...document.querySelectorAll("[data-gallery-division]")];
-  if (!galleryItems.length) return;
+  if (!document.querySelector("[data-gallery-team]")) return;
 
   document.querySelectorAll("[data-gallery-filter]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -573,7 +668,7 @@ function initializeGallery() {
         item.classList.toggle("active", item === button);
         item.setAttribute("aria-selected", String(item === button));
       });
-      galleryItems.forEach((item) => {
+      document.querySelectorAll("[data-gallery-division]").forEach((item) => {
         item.hidden = division !== "all" && item.dataset.galleryDivision !== division;
       });
       document.querySelectorAll("[data-gallery-divisions]").forEach((gallery) => {
@@ -706,6 +801,7 @@ async function initializeApp() {
   league = await (window.UBL_DATA_READY || Promise.resolve(window.UBL_DATA));
   renderLeagueData();
   initializeGallery();
+  await loadApprovedGallery();
 }
 
 document.addEventListener("ubl:data-updated", (event) => {
