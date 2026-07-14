@@ -148,6 +148,8 @@ test("team profiles and gallery interactions remain usable", async ({ page }) =>
   await page.locator("[data-map-dialog-close]").click();
 
   await page.goto("/gallery.html");
+  await expect(page.locator(".gallery-lede")).toHaveCount(0);
+  await expect(page.locator(".gallery-recruitment-logo img")).toHaveAttribute("src", "assets/figma-basketball-shield.png");
   await page.locator(".team-gallery").first().locator("summary").click();
   await page.locator("[data-gallery-full]").first().click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
