@@ -61,6 +61,9 @@ test("all public routes render meaningful content without runtime errors", async
 
 test("homepage uses the shared schedule and continuously moving game ticker", async ({ page }) => {
   await page.goto("/index.html");
+  const heroArt = page.locator(".hero-art");
+  await expect(heroArt).toHaveAttribute("src", "assets/ubl-championship-hero.jpg");
+  expect(await heroArt.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero-(?:mobile-768|1600)\.webp$/);
   await expect(page.locator("[data-featured-game]")).toContainText("Next league game");
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");

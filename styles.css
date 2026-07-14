@@ -222,8 +222,8 @@ p {
 
 .hero-art {
   object-fit: cover;
-  object-position: 58% center;
-  filter: saturate(0.9) contrast(1.14);
+  object-position: center;
+  filter: saturate(1.02) contrast(1.1);
 }
 
 .hero-shade {
