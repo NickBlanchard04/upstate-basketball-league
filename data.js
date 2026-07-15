@@ -1,7 +1,7 @@
 window.UBL_DATA = {
   season: "2026–27",
   divisions: ["Boys Varsity", "Girls Varsity"],
-  scheduleNotice: "All listed matchups, times, and locations are placeholders until the schedule is confirmed by the league commissioner.",
+  scheduleNotice: "Boys varsity matchups reflect the commissioner's revised schedule. Game times and locations remain placeholders until confirmed.",
   programs: [
     {
       id: "kings-school",
@@ -127,142 +127,499 @@ window.UBL_DATA = {
     ]
   },
   scheduleWeeks: [
-    {
-      id: "opening-week",
-      label: "Opening Week",
-      range: "Dec 3",
-      type: "regular",
-      note: "Opening night begins the Monday-and-Thursday league schedule.",
-      games: [
-        { iso: "2026-12-03", date: "Thu Dec 3", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2026-12-03", date: "Thu Dec 3", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" }
-      ]
-    },
-    {
-      id: "week-2",
-      label: "Week 2",
-      range: "Dec 7–10",
-      type: "regular",
-      games: [
-        { iso: "2026-12-07", date: "Mon Dec 7", time: "6:00 PM", division: "Boys Varsity", awayId: "kings-school", homeId: "perth", location: "Perth — TBD" },
-        { iso: "2026-12-07", date: "Mon Dec 7", time: "7:30 PM", division: "Girls Varsity", awayId: "hv-flames", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2026-12-10", date: "Thu Dec 10", time: "6:00 PM", division: "Boys Varsity", awayId: "hv-rocks", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2026-12-10", date: "Thu Dec 10", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "kings-school", location: "The King’s School Gym" }
-      ]
-    },
-    {
-      id: "week-3",
-      label: "Week 3",
-      range: "Dec 14–17",
-      type: "regular",
-      games: [
-        { iso: "2026-12-14", date: "Mon Dec 14", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "perth", location: "Perth — TBD" },
-        { iso: "2026-12-14", date: "Mon Dec 14", time: "7:30 PM", division: "Girls Varsity", awayId: "kings-school", homeId: "hv-flames", location: "Open Arms Church" },
-        { iso: "2026-12-17", date: "Thu Dec 17", time: "6:00 PM", division: "Boys Varsity", awayId: "kings-school", homeId: "hv-rocks", location: "Open Arms Church" },
-        { iso: "2026-12-17", date: "Thu Dec 17", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "perth", location: "Perth — TBD" }
-      ]
-    },
-    {
-      id: "christmas-break",
-      label: "Christmas Break",
-      range: "Dec 21–Jan 1",
-      type: "break",
-      note: "No league games planned during The King’s School Christmas Break.",
-      games: []
-    },
-    {
-      id: "week-4",
-      label: "Week 4",
-      range: "Jan 4–7",
-      type: "regular",
-      games: [
-        { iso: "2027-01-04", date: "Mon Jan 4", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2027-01-04", date: "Mon Jan 4", time: "7:30 PM", division: "Girls Varsity", awayId: "hv-flames", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2027-01-07", date: "Thu Jan 7", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "hv-rocks", location: "Open Arms Church" },
-        { iso: "2027-01-07", date: "Thu Jan 7", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" }
-      ]
-    },
-    {
-      id: "week-5",
-      label: "Week 5",
-      range: "Jan 11–14",
-      type: "regular",
-      games: [
-        { iso: "2027-01-11", date: "Mon Jan 11", time: "6:00 PM", division: "Boys Varsity", awayId: "hv-rocks", homeId: "perth", location: "Perth — TBD" },
-        { iso: "2027-01-11", date: "Mon Jan 11", time: "7:30 PM", division: "Girls Varsity", awayId: "kings-school", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-01-14", date: "Thu Jan 14", time: "6:00 PM", division: "Boys Varsity", awayId: "kings-school", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-01-14", date: "Thu Jan 14", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Open Arms Church" }
-      ]
-    },
-    {
-      id: "midterm-week",
-      label: "Midterm Week",
-      range: "Jan 18–25",
-      type: "break",
-      note: "No league games currently planned during Martin Luther King Jr. Day and The King’s School midterm exam period.",
-      games: []
-    },
-    {
-      id: "week-6",
-      label: "Week 6",
-      range: "Jan 28",
-      type: "regular",
-      note: "League play resumes after midterm exams.",
-      games: [
-        { iso: "2027-01-28", date: "Thu Jan 28", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-01-28", date: "Thu Jan 28", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "hv-flames", location: "Open Arms Church" }
-      ]
-    },
-    {
-      id: "week-7",
-      label: "Week 7",
-      range: "Feb 1–4",
-      type: "regular",
-      games: [
-        { iso: "2027-02-01", date: "Mon Feb 1", time: "6:00 PM", division: "Boys Varsity", awayId: "hv-rocks", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2027-02-01", date: "Mon Feb 1", time: "7:30 PM", division: "Girls Varsity", awayId: "hv-flames", homeId: "perth", location: "Perth — TBD" },
-        { iso: "2027-02-04", date: "Thu Feb 4", time: "6:00 PM", division: "Boys Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2027-02-04", date: "Thu Feb 4", time: "7:30 PM", division: "Girls Varsity", awayId: "kings-school", homeId: "perth", location: "Perth — TBD" }
-      ]
-    },
-    {
-      id: "week-8",
-      label: "Final Regular-Season Week",
-      range: "Feb 8–11",
-      type: "regular",
-      note: "Final planned regular-season games before winter break and the postseason.",
-      games: [
-        { iso: "2027-02-08", date: "Mon Feb 8", time: "6:00 PM", division: "Boys Varsity", awayId: "perth", homeId: "hv-rocks", location: "Open Arms Church" },
-        { iso: "2027-02-08", date: "Mon Feb 8", time: "7:30 PM", division: "Girls Varsity", awayId: "wilton-baptist", homeId: "kings-school", location: "The King’s School Gym" },
-        { iso: "2027-02-11", date: "Thu Feb 11", time: "6:00 PM", division: "Boys Varsity", awayId: "hv-rocks", homeId: "wilton-baptist", location: "Wilton Baptist — TBD" },
-        { iso: "2027-02-11", date: "Thu Feb 11", time: "7:30 PM", division: "Girls Varsity", awayId: "perth", homeId: "hv-flames", location: "Open Arms Church" }
-      ]
-    },
-    {
-      id: "playoff-week",
-      label: "Playoff Week",
-      range: "Feb 15–18",
-      type: "playoff",
-      note: "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
-      games: [
-        { iso: "2027-02-15", date: "Mon Feb 15", time: "6:00 PM", division: "Boys Varsity", awayName: "Seed 5", homeName: "Seed 4", location: "Play-in site — TBD", stage: "Play-in" },
-        { iso: "2027-02-15", date: "Mon Feb 15", time: "7:30 PM", division: "Girls Varsity", awayName: "Seed 5", homeName: "Seed 4", location: "Play-in site — TBD", stage: "Play-in" },
-        { iso: "2027-02-18", date: "Thu Feb 18", time: "5:00 PM", division: "Boys Varsity", awayName: "Play-in winner", homeName: "Seed 1", location: "Semifinal Site A — TBD", stage: "Semifinal" },
-        { iso: "2027-02-18", date: "Thu Feb 18", time: "5:00 PM", division: "Girls Varsity", awayName: "Play-in winner", homeName: "Seed 1", location: "Semifinal Site B — TBD", stage: "Semifinal" },
-        { iso: "2027-02-18", date: "Thu Feb 18", time: "7:00 PM", division: "Boys Varsity", awayName: "Seed 3", homeName: "Seed 2", location: "Semifinal Site A — TBD", stage: "Semifinal" },
-        { iso: "2027-02-18", date: "Thu Feb 18", time: "7:00 PM", division: "Girls Varsity", awayName: "Seed 3", homeName: "Seed 2", location: "Semifinal Site B — TBD", stage: "Semifinal" }
-      ]
-    },
-    {
-      id: "championship-week",
-      label: "Championship Night",
-      range: "Feb 22",
-      type: "playoff",
-      note: "Tentative UBL championship date following winter break.",
-      games: [
-        { iso: "2027-02-22", date: "Mon Feb 22", time: "6:00 PM", division: "Girls Varsity", awayName: "Semifinal winner", homeName: "Semifinal winner", location: "Championship site — TBD", stage: "Championship" },
-        { iso: "2027-02-22", date: "Mon Feb 22", time: "7:45 PM", division: "Boys Varsity", awayName: "Semifinal winner", homeName: "Semifinal winner", location: "Championship site — TBD", stage: "Championship" }
-      ]
-    }
-  ]
+  {
+    "id": "opening-week",
+    "label": "Opening Week",
+    "range": "Dec 3",
+    "type": "regular",
+    "note": "The revised boys varsity schedule opens on December 3.",
+    "games": [
+      {
+        "iso": "2026-12-03",
+        "date": "Thu Dec 3",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "kings-school",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      },
+      {
+        "iso": "2026-12-03",
+        "date": "Thu Dec 3",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "wilton-baptist",
+        "homeId": "kings-school",
+        "location": "The King's School Gym"
+      }
+    ]
+  },
+  {
+    "id": "week-2",
+    "label": "Week 2",
+    "range": "Dec 7-10",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2026-12-07",
+        "date": "Mon Dec 7",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "hv-flames",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2026-12-10",
+        "date": "Thu Dec 10",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "wilton-baptist",
+        "homeId": "hv-rocks",
+        "location": "Open Arms Church"
+      },
+      {
+        "iso": "2026-12-10",
+        "date": "Thu Dec 10",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "perth",
+        "homeId": "kings-school",
+        "location": "The King's School Gym"
+      }
+    ]
+  },
+  {
+    "id": "week-3",
+    "label": "Week 3",
+    "range": "Dec 14-17",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2026-12-14",
+        "date": "Mon Dec 14",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "kings-school",
+        "homeId": "hv-flames",
+        "location": "Open Arms Church"
+      },
+      {
+        "iso": "2026-12-17",
+        "date": "Thu Dec 17",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "perth",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2026-12-17",
+        "date": "Thu Dec 17",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "wilton-baptist",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      }
+    ]
+  },
+  {
+    "id": "holiday-week",
+    "label": "Holiday Week",
+    "range": "Dec 22",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2026-12-22",
+        "date": "Tue Dec 22",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "hv-rocks",
+        "location": "Open Arms Church"
+      }
+    ]
+  },
+  {
+    "id": "week-4",
+    "label": "Week 4",
+    "range": "Jan 4-7",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2027-01-04",
+        "date": "Mon Jan 4",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "kings-school",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2027-01-04",
+        "date": "Mon Jan 4",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "hv-flames",
+        "homeId": "kings-school",
+        "location": "The King's School Gym"
+      },
+      {
+        "iso": "2027-01-05",
+        "date": "Tue Jan 5",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "perth",
+        "homeId": "hv-rocks",
+        "location": "Open Arms Church"
+      },
+      {
+        "iso": "2027-01-06",
+        "date": "Wed Jan 6",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "kings-school",
+        "location": "The King's School Gym"
+      },
+      {
+        "iso": "2027-01-07",
+        "date": "Thu Jan 7",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2027-01-07",
+        "date": "Thu Jan 7",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "perth",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      }
+    ]
+  },
+  {
+    "id": "week-5",
+    "label": "Week 5",
+    "range": "Jan 11-14",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2027-01-11",
+        "date": "Mon Jan 11",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "kings-school",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2027-01-12",
+        "date": "Tue Jan 12",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "kings-school",
+        "homeId": "hv-rocks",
+        "location": "Open Arms Church"
+      },
+      {
+        "iso": "2027-01-13",
+        "date": "Wed Jan 13",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      },
+      {
+        "iso": "2027-01-14",
+        "date": "Thu Jan 14",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "hv-rocks",
+        "homeId": "kings-school",
+        "location": "The King's School Gym"
+      },
+      {
+        "iso": "2027-01-14",
+        "date": "Thu Jan 14",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "perth",
+        "homeId": "hv-flames",
+        "location": "Open Arms Church"
+      }
+    ]
+  },
+  {
+    "id": "week-6",
+    "label": "Week 6",
+    "range": "Jan 19-21",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2027-01-19",
+        "date": "Tue Jan 19",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "wilton-baptist",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      },
+      {
+        "iso": "2027-01-20",
+        "date": "Wed Jan 20",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "hv-rocks",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2027-01-21",
+        "date": "Thu Jan 21",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      }
+    ]
+  },
+  {
+    "id": "week-7",
+    "label": "Week 7",
+    "range": "Jan 26-31",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2027-01-26",
+        "date": "Tue Jan 26",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "hv-rocks",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      },
+      {
+        "iso": "2027-01-27",
+        "date": "Wed Jan 27",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      },
+      {
+        "iso": "2027-01-28",
+        "date": "Thu Jan 28",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "kings-school",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      },
+      {
+        "iso": "2027-01-28",
+        "date": "Thu Jan 28",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "wilton-baptist",
+        "homeId": "hv-flames",
+        "location": "Open Arms Church",
+        "note": "League play resumes after midterm exams."
+      },
+      {
+        "iso": "2027-01-29",
+        "date": "Fri Jan 29",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "tbd",
+        "awayName": "Team 5",
+        "homeId": "hv-rocks",
+        "location": "Open Arms Church"
+      },
+      {
+        "iso": "2027-01-31",
+        "date": "Sun Jan 31",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayId": "kings-school",
+        "homeId": "wilton-baptist",
+        "location": "Wilton Baptist - TBD"
+      }
+    ]
+  },
+  {
+    "id": "week-8",
+    "label": "Week 8",
+    "range": "Feb 1-4",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2027-02-01",
+        "date": "Mon Feb 1",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "hv-flames",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      },
+      {
+        "iso": "2027-02-04",
+        "date": "Thu Feb 4",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "kings-school",
+        "homeId": "perth",
+        "location": "Perth - TBD"
+      }
+    ]
+  },
+  {
+    "id": "week-9",
+    "label": "Final Girls Regular-Season Week",
+    "range": "Feb 8-11",
+    "type": "regular",
+    "games": [
+      {
+        "iso": "2027-02-08",
+        "date": "Mon Feb 8",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "wilton-baptist",
+        "homeId": "kings-school",
+        "location": "The King's School Gym",
+        "note": "Final planned regular-season games before winter break and the postseason."
+      },
+      {
+        "iso": "2027-02-11",
+        "date": "Thu Feb 11",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayId": "perth",
+        "homeId": "hv-flames",
+        "location": "Open Arms Church",
+        "note": "Final planned regular-season games before winter break and the postseason."
+      }
+    ]
+  },
+  {
+    "id": "playoff-week",
+    "label": "Playoff Week",
+    "range": "Feb 15-18",
+    "type": "playoff",
+    "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
+    "games": [
+      {
+        "iso": "2027-02-15",
+        "date": "Mon Feb 15",
+        "time": "6:00 PM",
+        "division": "Boys Varsity",
+        "awayName": "Seed 5",
+        "homeName": "Seed 4",
+        "location": "Play-in site - TBD",
+        "stage": "Play-in",
+        "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
+      },
+      {
+        "iso": "2027-02-15",
+        "date": "Mon Feb 15",
+        "time": "7:30 PM",
+        "division": "Girls Varsity",
+        "awayName": "Seed 5",
+        "homeName": "Seed 4",
+        "location": "Play-in site - TBD",
+        "stage": "Play-in",
+        "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
+      },
+      {
+        "iso": "2027-02-18",
+        "date": "Thu Feb 18",
+        "time": "5:00 PM",
+        "division": "Boys Varsity",
+        "awayName": "Play-in winner",
+        "homeName": "Seed 1",
+        "location": "Semifinal Site A - TBD",
+        "stage": "Semifinal",
+        "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
+      },
+      {
+        "iso": "2027-02-18",
+        "date": "Thu Feb 18",
+        "time": "5:00 PM",
+        "division": "Girls Varsity",
+        "awayName": "Play-in winner",
+        "homeName": "Seed 1",
+        "location": "Semifinal Site B - TBD",
+        "stage": "Semifinal",
+        "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
+      },
+      {
+        "iso": "2027-02-18",
+        "date": "Thu Feb 18",
+        "time": "7:00 PM",
+        "division": "Boys Varsity",
+        "awayName": "Seed 3",
+        "homeName": "Seed 2",
+        "location": "Semifinal Site A - TBD",
+        "stage": "Semifinal",
+        "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
+      },
+      {
+        "iso": "2027-02-18",
+        "date": "Thu Feb 18",
+        "time": "7:00 PM",
+        "division": "Girls Varsity",
+        "awayName": "Seed 3",
+        "homeName": "Seed 2",
+        "location": "Semifinal Site B - TBD",
+        "stage": "Semifinal",
+        "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
+      }
+    ]
+  },
+  {
+    "id": "championship-week",
+    "label": "Championship Night",
+    "range": "Feb 22",
+    "type": "playoff",
+    "note": "Tentative UBL championship date following winter break.",
+    "games": [
+      {
+        "iso": "2027-02-22",
+        "date": "Mon Feb 22",
+        "time": "6:00 PM",
+        "division": "Girls Varsity",
+        "awayName": "Semifinal winner",
+        "homeName": "Semifinal winner",
+        "location": "Championship site - TBD",
+        "stage": "Championship",
+        "note": "Tentative UBL championship date following winter break."
+      },
+      {
+        "iso": "2027-02-22",
+        "date": "Mon Feb 22",
+        "time": "7:45 PM",
+        "division": "Boys Varsity",
+        "awayName": "Semifinal winner",
+        "homeName": "Semifinal winner",
+        "location": "Championship site - TBD",
+        "stage": "Championship",
+        "note": "Tentative UBL championship date following winter break."
+      }
+    ]
+  }
+]
 };

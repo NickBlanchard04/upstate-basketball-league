@@ -128,13 +128,13 @@ test("schedule week, division, and map controls work", async ({ page }) => {
   await expect(page.locator("[data-week-heading]")).toContainText("Week 3");
   await page.getByRole("button", { name: "Boys Varsity" }).click();
   const rows = page.locator("[data-week-game-list] .game-row");
-  await expect(rows).toHaveCount(2);
+  await expect(rows).toHaveCount(1);
   for (const row of await rows.all()) await expect(row).toContainText("Boys Varsity");
   await page.getByRole("button", { name: "All games" }).click();
   const openArmsLinks = page.locator('[data-week-game-list] [data-map-address="2714 Curry Rd, Schenectady, NY 12303"]');
-  await expect(openArmsLinks).toHaveCount(2);
-  await expect(openArmsLinks.nth(0)).toContainText("2714 Curry Rd, Schenectady, NY 12303");
-  await openArmsLinks.nth(0).click();
+  await expect(openArmsLinks).toHaveCount(1);
+  await expect(openArmsLinks).toContainText("2714 Curry Rd, Schenectady, NY 12303");
+  await openArmsLinks.click();
   await expect(page.locator(".map-dialog")).toBeVisible();
   await expect(page.locator("[data-map-dialog-address]")).toHaveText("2714 Curry Rd, Schenectady, NY 12303");
   await expect(page.getByRole("link", { name: "Apple Maps" })).toHaveAttribute("href", /maps\.apple\.com/);
@@ -223,10 +223,10 @@ test("completed score updates schedule, standings, and bracket seeds", async ({ 
   await expect(page.locator("[data-game-id='ubl-001']")).toContainText("41 - 50");
   await page.goto("/standings.html");
   const firstRow = page.locator("[data-standings-body] tr").first();
-  await expect(firstRow).toContainText("The King’s School");
+  await expect(firstRow).toContainText("Perth");
   await expect(firstRow).toContainText("1");
   await page.goto("/bracket.html");
-  await expect(page.locator("[data-bracket='Boys Varsity']")).toContainText("The King’s School");
+  await expect(page.locator("[data-bracket='Boys Varsity']")).toContainText("Perth");
 });
 
 test("simultaneous games are all shown during the configured live window", async ({ page }) => {

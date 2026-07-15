@@ -164,10 +164,6 @@
       if (game.awayTeamId && game.awayTeamId === game.homeTeamId) errors.push(`${game.id}: home and away teams match.`);
       if (!game.stage && (!game.awayTeamId || !game.homeTeamId)) errors.push(`${game.id}: regular-season teams are required.`);
       if (!game.venueId) errors.push(`${game.id}: venue is required.`);
-      if (!game.stage && /^\d{4}-\d{2}-\d{2}$/.test(game.date || "")) {
-        const weekday = new Date(`${game.date}T12:00:00Z`).getUTCDay();
-        if (![1, 4].includes(weekday)) errors.push(`${game.id}: regular-season games must be Monday or Thursday.`);
-      }
       for (const score of [game.awayScore, game.homeScore]) {
         const number = numberOrNull(score);
         if (number !== null && (!Number.isInteger(number) || number < 0)) errors.push(`${game.id}: scores must be nonnegative whole numbers.`);

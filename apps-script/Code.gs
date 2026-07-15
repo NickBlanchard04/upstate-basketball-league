@@ -190,8 +190,8 @@ function syncCoachScorePortal_(portal) {
       coachPortalDate_(game.date, feed.settings.timezone || "America/New_York"),
       game.time,
       game.division,
-      teamNames[game.awayTeamId] || game.awayName,
-      teamNames[game.homeTeamId] || game.homeName,
+      game.awayName || teamNames[game.awayTeamId],
+      game.homeName || teamNames[game.homeTeamId],
       published ? "" : prior[6] || "",
       published ? "" : prior[7] || "",
       published ? "" : prior[8] || "",
@@ -212,7 +212,10 @@ function syncCoachScorePortal_(portal) {
     "Game ID", "Date", "Time", "Division", "Away Team", "Home Team",
     "Away Score", "Home Score", "Submitted By", "Submit", "Website Status"
   ]]);
-  if (rows.length) sheet.getRange(5, 1, rows.length, 11).setValues(rows);
+  if (rows.length) {
+    sheet.getRange(5, 2, rows.length, 1).setNumberFormat("@");
+    sheet.getRange(5, 1, rows.length, 11).setValues(rows);
+  }
 
   var dataRows = Math.max(1, rows.length);
   sheet.getRange(5, 10, dataRows, 1).insertCheckboxes();
@@ -252,7 +255,7 @@ function syncCoachScorePortal_(portal) {
 }
 
 function coachPortalDate_(date, timezone) {
-  return Utilities.formatDate(new Date(date + "T12:00:00Z"), timezone, "EEE, MMM d");
+  return Utilities.formatDate(new Date(date + "T12:00:00Z"), timezone, "EEE, MMM d, yyyy");
 }
 
 function handleCoachPortalEdit(event) {
@@ -469,10 +472,6 @@ function validatePublicFeed_(teams, venues, games) {
     if (!validStatuses[game.status]) throw new Error(game.id + " has an invalid status.");
     if (!game.stage && (!game.awayTeamId || !game.homeTeamId)) throw new Error(game.id + " needs both regular-season teams.");
     if (!game.venueId) throw new Error(game.id + " needs a venue.");
-    if (!game.stage) {
-      var weekday = new Date(game.date + "T12:00:00Z").getUTCDay();
-      if (weekday !== 1 && weekday !== 4) throw new Error(game.id + " must be played on Monday or Thursday.");
-    }
     [game.awayScore, game.homeScore].forEach(function (score) {
       if (score !== null && (!isFinite(score) || score < 0 || Math.floor(score) !== score)) {
         throw new Error(game.id + " scores must be nonnegative whole numbers.");

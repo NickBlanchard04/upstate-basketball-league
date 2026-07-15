@@ -17,12 +17,12 @@ test("feed validation rejects unsafe game state", () => {
   assert.match(core.validateFeed(invalid).join(" "), /cannot end tied/);
 });
 
-test("feed validation enforces league weekdays and score shape", () => {
+test("feed validation accepts commissioner-approved weekdays and enforces score shape", () => {
   const invalid = structuredClone(feed);
   invalid.games[0].date = "2026-12-04";
   invalid.games[0].awayScore = -1;
   const errors = core.validateFeed(invalid).join(" ");
-  assert.match(errors, /Monday or Thursday/);
+  assert.doesNotMatch(errors, /Monday or Thursday/);
   assert.match(errors, /nonnegative whole numbers/);
 });
 
@@ -62,7 +62,7 @@ test("normalization connects venues, statuses, and new feed teams", () => {
     scheduleNotice: "Notice"
   };
   const normalized = core.normalizeFeed(feed, fallback);
-  assert.equal(normalized.games[0].location, "The King's School Gym");
+  assert.equal(normalized.games[0].location, "Perth - TBD");
   assert.equal(normalized.games[0].status, "Scheduled");
   assert.equal(normalized.programs.length, feed.teams.length);
   assert.ok(normalized.programs[0].teams["Boys Varsity"].headCoach);
