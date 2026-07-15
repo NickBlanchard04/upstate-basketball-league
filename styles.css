@@ -309,6 +309,42 @@ p {
   background: rgba(2, 15, 34, 0.52);
 }
 
+.hero-actions .button {
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-actions .button:hover {
+    transform: translateY(-3px) scale(1.025);
+  }
+
+  .hero-actions .button-primary:hover {
+    background: #f0193a;
+    box-shadow: 0 0.8rem 1.7rem rgba(227, 19, 49, 0.34);
+  }
+
+  .hero-actions .button-outline:hover {
+    border-color: var(--white);
+    color: var(--navy-950);
+    background: var(--white);
+    box-shadow: 0 0.8rem 1.7rem rgba(2, 15, 34, 0.3);
+  }
+}
+
+.hero-actions .button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px var(--navy-950), 0 0 0 6px var(--white);
+}
+
+.hero-actions .button:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
 .countdown-card {
   padding: 0.72rem 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.48);
@@ -631,19 +667,6 @@ p {
 
 .team-card-open-spot span {
   color: rgba(255, 255, 255, 0.7);
-}
-
-.open-spot-mark {
-  width: 3.8rem;
-  height: 3.8rem;
-  margin-bottom: 0.55rem;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  border-radius: 50%;
-  color: var(--white);
-  background: var(--red);
-  font: 900 2rem/1 var(--display);
 }
 
 .content-grid {
@@ -1360,64 +1383,6 @@ th {
   font-size: 0.72rem;
   text-align: center;
   background: var(--canvas);
-}
-
-.gallery-recruitment {
-  padding: 0.85rem;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 0.75rem;
-  border: 1px dashed rgba(227, 19, 49, 0.55);
-  border-radius: 0.7rem;
-  color: var(--white);
-  background:
-    radial-gradient(circle at 100% 0, rgba(227, 19, 49, 0.58), transparent 45%),
-    var(--navy-900);
-}
-
-.gallery-recruitment-logo {
-  width: 3.25rem;
-  height: 3.25rem;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.48);
-  border-radius: 50%;
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(227, 19, 49, 0.22);
-}
-
-.gallery-recruitment-logo img {
-  width: 2.45rem;
-  height: 2.45rem;
-  object-fit: contain;
-}
-
-.gallery-recruitment strong {
-  font: 800 1.1rem/1 var(--display);
-  text-transform: uppercase;
-}
-
-.gallery-recruitment p {
-  margin: 0.3rem 0 0;
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 0.62rem;
-}
-
-.gallery-recruitment a {
-  grid-column: 1 / -1;
-  min-height: 2.75rem;
-  padding: 0.65rem 0.8rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  border-radius: 0.4rem;
-  color: var(--white);
-  font-size: 0.62rem;
-  font-weight: 800;
-  text-decoration: none;
-  text-transform: uppercase;
 }
 
 .gallery-lightbox {
@@ -2431,14 +2396,6 @@ th {
 
   .program-division-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gallery-recruitment {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-  }
-
-  .gallery-recruitment a {
-    grid-column: auto;
   }
 
 }

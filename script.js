@@ -442,8 +442,8 @@ document.querySelectorAll("[data-standings-filter]").forEach((button) => {
 function teamCardMarkup(program) {
   if (program.id === "tbd") {
     return `
-      <a class="team-card team-card-open-spot" href="teams.html#tbd">
-        <span class="open-spot-mark" aria-hidden="true">+</span>
+      <a class="team-card team-card-open-spot" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL" aria-label="Email UBL about the open league spot">
+        <img src="assets/optimized/ubl-logo-192.webp" alt="">
         <strong>Join the UBL</strong>
         <span>One league spot is open</span>
       </a>

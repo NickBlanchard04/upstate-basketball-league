@@ -59,7 +59,7 @@ test("all public routes render meaningful content without runtime errors", async
   });
 });
 
-test("homepage uses the shared schedule and continuously moving game ticker", async ({ page }) => {
+test("homepage uses the shared schedule and continuously moving game ticker", async ({ page }, testInfo) => {
   await page.goto("/index.html");
   const heroArt = page.locator(".hero-art");
   await expect(heroArt).toHaveAttribute("src", "assets/ubl-championship-hero.jpg");
@@ -68,6 +68,19 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
+  const openSpot = page.locator(".team-card-open-spot");
+  await expect(openSpot.locator("img")).toHaveAttribute("src", "assets/optimized/ubl-logo-192.webp");
+  await expect(openSpot).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
+  if (testInfo.project.name.startsWith("desktop")) {
+    const scheduleButton = page.getByRole("link", { name: "View schedule" });
+    await scheduleButton.hover();
+    await expect.poll(() => scheduleButton.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
+    await expect.poll(() => scheduleButton.evaluate((element) => getComputedStyle(element).boxShadow)).not.toBe("none");
+
+    const standingsButton = page.getByRole("link", { name: "Check standings" });
+    await standingsButton.hover();
+    await expect.poll(() => standingsButton.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe("rgb(255, 255, 255)");
+  }
 });
 
 test("homepage places Coming Up below standings and mixes prior-night finals into the ticker", async ({ page }) => {
@@ -149,7 +162,9 @@ test("team profiles and gallery interactions remain usable", async ({ page }) =>
 
   await page.goto("/gallery.html");
   await expect(page.locator(".gallery-lede")).toHaveCount(0);
-  await expect(page.locator(".gallery-recruitment-logo img")).toHaveAttribute("src", "assets/figma-basketball-shield.png");
+  const galleryOpenSpot = page.locator(".gallery-panel .open-spot-profile");
+  await expect(galleryOpenSpot).toContainText("Bring your program to the UBL");
+  await expect(galleryOpenSpot.getByRole("link", { name: "Start a conversation" })).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
   await page.locator(".team-gallery").first().locator("summary").click();
   await page.locator("[data-gallery-full]").first().click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
