@@ -1,17 +1,19 @@
 # UBL Phone Update Workflow
 
-Control sheet: [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit)
+League leadership control sheet: [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit)
+
+Coach score portal: [UBL Coach Score Entry - 2026-27](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit)
 
 ## Coach final-score entry
 
-1. Open the `Coach Score Entry` tab. It is the only tab visible to team representatives.
+1. Open the separate `UBL Coach Score Entry - 2026-27` workbook shared by league leadership.
 2. Find the game by date, division, and matchup.
 3. Enter Away Score and Home Score in the yellow cells.
 4. Enter your full name under Submitted By.
 5. Check the Submit box.
 6. Wait up to one minute, then refresh the public schedule and standings.
 
-Published results cannot be edited from the coach tab. Corrections go through the commissioner. Every accepted or rejected attempt is recorded in the protected `Score Audit` tab.
+Published results cannot be edited from the coach portal. Corrections go through the commissioner. Every accepted or rejected attempt is recorded privately in the control panel's protected `Score Audit` tab.
 
 ## Postpone, cancel, or reschedule
 

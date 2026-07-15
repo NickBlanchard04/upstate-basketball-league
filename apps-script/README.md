@@ -2,9 +2,11 @@
 
 The production site uses the published `Website Feed` CSV from the UBL League Control Panel. It does not require Google Apps Script.
 
-## In-season workflow
+## Coach-only portal workflow
 
-1. On `Coach Score Entry`, find the completed game.
+Team representatives use the separate [UBL Coach Score Entry - 2026-27](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit) workbook. They never receive access to the private league control panel.
+
+1. On the coach portal's `Coach Score Entry` sheet, find the completed game.
 2. Enter the away score, home score, and your full name.
 3. Check `Submit` only after the result is final.
 4. Confirm `Website Status` changes to `Published to website`.
@@ -18,9 +20,11 @@ The public website automatically falls back to its published schedule if Google 
 - Keep the `Website Feed` publication set to `Comma-separated values (.csv)` with automatic republishing enabled.
 - Do not publish the entire control panel. Only the `Website Feed` tab is public.
 
-## Optional Apps Script
+## Apps Script setup
 
-`Code.gs` remains as an optional future upgrade for audit logging and automatic clearing of score-entry rows. It is not part of the current production workflow.
+Run `setupCoachScorePortal` once as the league business account. It creates the isolated coach workbook, shares it with the configured coach accounts, protects every cell except score/name/submit inputs, and installs the owner-run edit trigger. Run `syncCoachScorePortal` after major schedule changes.
+
+The owner-run trigger validates each result, writes accepted finals to the private `Games` sheet, records the attempt in `Score Audit`, and clears the coach input cells. The private control panel remains restricted to league leadership.
 
 ## Approved gallery feed
 

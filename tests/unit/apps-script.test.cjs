@@ -23,6 +23,12 @@ test("coach score validation rejects missing, tied, and invalid results", () => 
   assert.match(context.coachScoreError_("ubl-001", 41, 50, ""), /full name/);
 });
 
+test("coach portal configuration isolates coach access from the control panel", () => {
+  assert.equal(context.COACH_PORTAL_NAME, "UBL Coach Score Entry - 2026-27");
+  assert.deepEqual(Array.from(context.COACH_PORTAL_EDITORS), ["athletic_director@kingsschool.info"]);
+  assert.equal(context.COACH_PORTAL_SHEET, "Coach Score Entry");
+});
+
 test("pending score publisher processes only checked coach rows", () => {
   const publishedRows = [];
   const toastCalls = [];
