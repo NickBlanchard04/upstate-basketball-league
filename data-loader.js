@@ -14,6 +14,24 @@
     return core.parseScoreFeedCsv(await response.text());
   }
 
+  async function loadBaseFeed(sources) {
+    const failures = [];
+    for (const source of sources) {
+      try {
+        const separator = source.url.includes("?") ? "&" : "?";
+        const response = await fetch(`${source.url}${separator}v=${Date.now()}`, {
+          cache: "no-store",
+          headers: { Accept: "application/json" }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return { feed: await response.json(), label: source.label, failures };
+      } catch (error) {
+        failures.push(`${source.label}: ${error.message}`);
+      }
+    }
+    return { feed: null, label: "", failures };
+  }
+
   async function loadFeed() {
     const sources = [
       config.liveFeedUrl && { url: config.liveFeedUrl, label: "Google Sheet" },
@@ -24,31 +42,25 @@
       return fallback;
     }
 
-    const failures = [];
-    let scoreGames = null;
-    try {
-      scoreGames = await loadScoreFeed();
-    } catch (error) {
-      failures.push(`live score feed: ${error.message}`);
-    }
+    const [scoreResult, baseResult] = await Promise.allSettled([
+      loadScoreFeed(),
+      loadBaseFeed(sources)
+    ]);
+    const failures = baseResult.status === "fulfilled" ? [...baseResult.value.failures] : [];
+    const scoreGames = scoreResult.status === "fulfilled" ? scoreResult.value : null;
+    if (scoreResult.status === "rejected") failures.push(`live score feed: ${scoreResult.reason.message}`);
+    if (baseResult.status === "rejected") failures.push(`published schedule: ${baseResult.reason.message}`);
 
-    for (const source of sources) {
+    if (baseResult.status === "fulfilled" && baseResult.value.feed) {
       try {
-        const separator = source.url.includes("?") ? "&" : "?";
-        const response = await fetch(`${source.url}${separator}v=${Date.now()}`, {
-          cache: "no-store",
-          headers: { Accept: "application/json" }
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const baseFeed = await response.json();
-        const mergedFeed = scoreGames ? core.mergeScoreFeed(baseFeed, scoreGames) : baseFeed;
+        const mergedFeed = scoreGames ? core.mergeScoreFeed(baseResult.value.feed, scoreGames) : baseResult.value.feed;
         const normalized = core.normalizeFeed(mergedFeed, fallback);
-        window.UBL_DATA_SOURCE = scoreGames ? "live score feed" : source.label;
+        window.UBL_DATA_SOURCE = scoreGames ? "live score feed" : baseResult.value.label;
         window.UBL_DATA_ERROR = failures.join(" ");
         window.UBL_DATA = normalized;
         return normalized;
       } catch (error) {
-        failures.push(`${source.label}: ${error.message}`);
+        failures.push(`published schedule: ${error.message}`);
       }
     }
 
@@ -58,6 +70,7 @@
     return fallback;
   }
 
+  window.UBL_DATA_SOURCE = "updating live data";
   window.UBL_DATA_READY = loadFeed();
   window.UBL_RELOAD_DATA = async function () {
     const data = await loadFeed();

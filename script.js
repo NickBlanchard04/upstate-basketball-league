@@ -413,7 +413,9 @@ function renderDataFreshness() {
   const source = window.UBL_DATA_SOURCE || "bundled fallback";
   const updated = league.lastUpdated ? new Date(league.lastUpdated) : null;
   const validDate = updated && Number.isFinite(updated.getTime());
-  let message = source === "live score feed"
+  let message = source === "updating live data"
+    ? "Showing the saved schedule while live updates load."
+    : source === "live score feed"
     ? "Schedule and scores synced from the league sheet."
     : validDate
     ? `Schedule updated ${new Intl.DateTimeFormat("en-US", { timeZone: league.settings?.timezone || "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(updated)}.`
@@ -423,6 +425,7 @@ function renderDataFreshness() {
   document.querySelectorAll("[data-freshness]").forEach((element) => {
     element.textContent = message;
     element.classList.toggle("data-freshness-warning", source === "bundled fallback" || Boolean(window.UBL_DATA_ERROR));
+    element.classList.toggle("data-freshness-loading", source === "updating live data");
   });
 }
 
@@ -616,6 +619,7 @@ function createGalleryPhoto(photo) {
 }
 
 async function loadApprovedGallery() {
+  if (!document.querySelector("[data-gallery-team]")) return;
   const feedUrl = window.UBL_CONFIG?.galleryFeedUrl?.trim();
   if (!feedUrl) {
     updateGallerySections();
@@ -660,8 +664,39 @@ async function loadApprovedGallery() {
   updateGallerySections();
 }
 
+let galleryFeedPromise = null;
+
+function setGalleryLoading(gallery, loading) {
+  if (!gallery) return;
+  gallery.setAttribute("aria-busy", String(loading));
+  const grid = gallery.querySelector("[data-gallery-grid]");
+  if (!grid) return;
+  grid.querySelectorAll(".gallery-skeleton").forEach((item) => item.remove());
+  if (!loading || grid.querySelector(".gallery-item")) return;
+  grid.hidden = false;
+  for (let index = 0; index < 2; index += 1) {
+    const skeleton = document.createElement("div");
+    skeleton.className = "gallery-skeleton";
+    skeleton.setAttribute("aria-hidden", "true");
+    skeleton.innerHTML = '<span class="gallery-skeleton-photo"></span><span class="gallery-skeleton-line"></span>';
+    grid.append(skeleton);
+  }
+}
+
+function ensureApprovedGalleryLoaded(gallery) {
+  if (!galleryFeedPromise) galleryFeedPromise = loadApprovedGallery();
+  setGalleryLoading(gallery, true);
+  return galleryFeedPromise.finally(() => setGalleryLoading(gallery, false));
+}
+
 function initializeGallery() {
   if (!document.querySelector("[data-gallery-team]")) return;
+
+  document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
+    gallery.addEventListener("toggle", () => {
+      if (gallery.open) ensureApprovedGalleryLoaded(gallery);
+    });
+  });
 
   document.querySelectorAll("[data-gallery-filter]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -799,16 +834,37 @@ function renderLeagueData() {
   updateCountdown();
 }
 
-async function initializeApp() {
-  league = await (window.UBL_DATA_READY || Promise.resolve(window.UBL_DATA));
+let renderedLeagueSignature = "";
+
+function leagueSignature(data) {
+  try {
+    return JSON.stringify(data);
+  } catch {
+    return String(Date.now());
+  }
+}
+
+function applyLeagueData(data) {
+  const nextSignature = leagueSignature(data);
+  league = data;
+  if (nextSignature === renderedLeagueSignature) {
+    renderDataFreshness();
+    return;
+  }
+  renderedLeagueSignature = nextSignature;
   renderLeagueData();
+}
+
+function initializeApp() {
+  applyLeagueData(window.UBL_DATA);
   initializeGallery();
-  await loadApprovedGallery();
+  Promise.resolve(window.UBL_DATA_READY || window.UBL_DATA)
+    .then(applyLeagueData)
+    .catch(() => renderDataFreshness());
 }
 
 document.addEventListener("ubl:data-updated", (event) => {
-  league = event.detail.data;
-  renderLeagueData();
+  applyLeagueData(event.detail.data);
 });
 
 initializeApp();

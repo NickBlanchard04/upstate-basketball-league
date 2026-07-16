@@ -1,6 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const feed = require("../../league-data.json");
 const scoreFeedUrlPattern = /docs\.google\.com\/spreadsheets\/d\/e\/2PACX-1vTp7iD4G8a9gp67-XCnN4in2fFfAuGJNKqYpKaxHoADZDABGCT_YMP7aFYa8ynhY1Itk6OvdHW6bq5T\/pub/;
+const galleryFeedUrlPattern = /script\.google\.com\/macros\/s\/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7\/exec/;
 
 function csvCell(value) {
   const text = value === null || value === undefined ? "" : String(value);
@@ -27,6 +28,7 @@ function scoreFeedCsv(sourceFeed) {
 
 test.beforeEach(async ({ page }) => {
   await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(feed) }));
+  await page.route(galleryFeedUrlPattern, (route) => route.fulfill({ json: { schemaVersion: 1, photos: [] } }));
 });
 
 async function expectNoAppErrors(page, action) {
@@ -63,7 +65,7 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await page.goto("/index.html");
   const heroArt = page.locator(".hero-art");
   await expect(heroArt).toHaveAttribute("src", "assets/ubl-championship-hero.jpg");
-  expect(await heroArt.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero-(?:mobile-768|1600)\.webp$/);
+  expect(await heroArt.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero-(?:mobile-768|1600)\.(?:avif|webp)$/);
   await expect(page.locator("[data-featured-game]")).toContainText("Next league game");
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");
@@ -200,8 +202,8 @@ test("approved Drive photos appear only in their matching team and division", as
 
   await page.goto("/gallery.html");
   const rocksGallery = page.locator('[data-gallery-team="hv-rocks"]');
-  await expect(rocksGallery.locator("[data-gallery-count]")).toHaveText("1 photo");
   await rocksGallery.locator("summary").click();
+  await expect(rocksGallery.locator("[data-gallery-count]")).toHaveText("1 photo");
   await expect(rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"]')).toBeVisible();
 
   await page.getByRole("tab", { name: "Girls Varsity" }).click();
@@ -243,4 +245,85 @@ test("malformed live data falls back to the bundled schedule", async ({ page }) 
   await page.goto("/schedule.html");
   await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);
   await expect(page.locator("[data-freshness]")).toContainText("backup schedule");
+});
+
+test("bundled data renders immediately while score and schedule feeds load in parallel", async ({ page }) => {
+  await page.unroute(scoreFeedUrlPattern);
+  const requestTimes = {};
+  await page.route(scoreFeedUrlPattern, async (route) => {
+    requestTimes.score = Date.now();
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    await route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(feed) });
+  });
+  await page.route("**/league-data.json*", async (route) => {
+    requestTimes.schedule = Date.now();
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    await route.fulfill({ json: feed });
+  });
+
+  await page.goto("/schedule.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);
+  await expect(page.locator("[data-freshness]")).toContainText("saved schedule while live updates load");
+  await expect.poll(() => Object.keys(requestTimes).length).toBe(2);
+  expect(Math.abs(requestTimes.score - requestTimes.schedule)).toBeLessThan(150);
+  await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet", { timeout: 3000 });
+});
+
+test("identical live data does not replace already rendered schedule nodes", async ({ page }) => {
+  await page.goto("/schedule.html");
+  await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);
+  const preserved = await page.evaluate(() => {
+    const row = document.querySelector("[data-week-game-list] .game-row");
+    window.__ublTestRow = row;
+    document.dispatchEvent(new CustomEvent("ubl:data-updated", { detail: { data: window.UBL_DATA } }));
+    return window.__ublTestRow === document.querySelector("[data-week-game-list] .game-row");
+  });
+  expect(preserved).toBe(true);
+});
+
+test("fonts and responsive artwork load from optimized local assets", async ({ page }, testInfo) => {
+  const requestedUrls = [];
+  page.on("request", (request) => requestedUrls.push(request.url()));
+  await page.goto("/about.html");
+
+  await expect(page.locator('link[rel="preload"][href="assets/fonts/barlow-condensed-900-latin.woff2"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="preload"][href="assets/fonts/ibm-plex-sans-400-700-latin.woff2"]')).toHaveCount(1);
+  expect(requestedUrls.some((url) => /fonts\.googleapis\.com|fonts\.gstatic\.com/.test(url))).toBe(false);
+
+  const bannerImage = await page.locator(".page-banner").evaluate((element) => getComputedStyle(element).backgroundImage);
+  if (testInfo.project.name.startsWith("mobile")) {
+    expect(bannerImage).toContain("ubl-website-hero-768.webp");
+  } else {
+    expect(bannerImage).toContain("ubl-website-hero-1600.webp");
+  }
+
+  const portrait = page.getByAltText("Chris Webster officiating a basketball game");
+  await expect(portrait).toHaveAttribute("width", "192");
+  await expect(portrait).toHaveAttribute("height", "192");
+  await expect(portrait).toHaveAttribute("loading", "lazy");
+  expect(await portrait.evaluate((image) => image.currentSrc)).toMatch(/chris-webster-192\.(?:avif|webp)$/);
+});
+
+test("approved gallery feed is requested only after an empty team gallery opens", async ({ page }) => {
+  await page.unroute(galleryFeedUrlPattern);
+  let requests = 0;
+  await page.route(galleryFeedUrlPattern, async (route) => {
+    requests += 1;
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await route.fulfill({ json: { schemaVersion: 1, photos: [] } });
+  });
+
+  await page.goto("/gallery.html");
+  await page.waitForTimeout(100);
+  expect(requests).toBe(0);
+
+  const rocksGallery = page.locator('[data-gallery-team="hv-rocks"]');
+  await rocksGallery.locator("summary").click();
+  await expect(rocksGallery.locator(".gallery-skeleton")).toHaveCount(2);
+  await expect.poll(() => requests).toBe(1);
+  await expect(rocksGallery.locator(".gallery-skeleton")).toHaveCount(0, { timeout: 2000 });
+
+  await page.goto("/schedule.html");
+  await page.waitForTimeout(100);
+  expect(requests).toBe(1);
 });
