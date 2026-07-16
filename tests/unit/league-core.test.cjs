@@ -62,7 +62,7 @@ test("normalization connects venues, statuses, and new feed teams", () => {
     scheduleNotice: "Notice"
   };
   const normalized = core.normalizeFeed(feed, fallback);
-  assert.equal(normalized.games[0].location, "Perth - TBD");
+  assert.equal(normalized.games[0].location, "Perth home court");
   assert.equal(normalized.games[0].status, "Scheduled");
   assert.equal(normalized.programs.length, feed.teams.length);
   assert.ok(normalized.programs[0].teams["Boys Varsity"].headCoach);

@@ -231,7 +231,7 @@
   }
 
   function formatGameDate(iso, timeZone = "America/New_York") {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || "")) return "Date TBD";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || "")) return "Date announcement pending";
     return new Intl.DateTimeFormat("en-US", {
       timeZone,
       weekday: "short",
@@ -383,8 +383,8 @@
         short: remote.short,
         logo: safeImageUrl(remote.logo),
         divisions: remote.divisions || [],
-        summary: remote.summary || "Program details are being confirmed.",
-        homeGym: "To be confirmed",
+        summary: remote.summary || "UBL member program.",
+        homeGym: "",
         homeAddress: "",
         representativeEmail: "",
         teams: {}
@@ -399,7 +399,7 @@
         summary: remote.summary || program.summary,
         status: remote.status || "Active",
         teams: Object.fromEntries(divisions.map((division) => [division, program.teams?.[division] || {
-          headCoach: { name: "To be confirmed", experience: "Program information is being confirmed.", photo: "" },
+          headCoach: { name: "", experience: "", photo: "" },
           assistants: []
         }]))
       };
@@ -419,7 +419,7 @@
         awayName: game.awayName || "",
         homeName: game.homeName || "",
         venueId: game.venueId || "",
-        location: venue.mapLabel || venue.name || "Location TBD",
+        location: venue.mapLabel || venue.name || "Venue announcement pending",
         locationAddress: venue.address || "",
         status: game.status || "Scheduled",
         awayScore: numberOrNull(game.awayScore),

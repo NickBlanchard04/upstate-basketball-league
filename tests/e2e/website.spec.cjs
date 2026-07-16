@@ -62,6 +62,14 @@ test("all public routes render meaningful content without runtime errors", async
   });
 });
 
+test("public pages do not expose internal placeholder language", async ({ page }) => {
+  for (const route of ["/schedule.html", "/teams.html", "/bracket.html", "/gallery.html", "/about.html"]) {
+    await page.goto(route);
+    const visibleText = await page.locator("body").innerText();
+    expect(visibleText).not.toMatch(/\bTBD\b|placeholder|to be confirmed|coming soon/i);
+  }
+});
+
 test("homepage uses the shared schedule and continuously moving game ticker", async ({ page }, testInfo) => {
   await page.goto("/index.html");
   const heroArt = page.locator(".hero-art");
@@ -348,7 +356,7 @@ test("about page explains the league, season, culture, testimonial, and leadersh
   await expect(page.locator(".testimonial-break")).toContainText("Founder");
 
   await expect(page.locator(".leadership-section .leader-card")).toHaveCount(2);
-  await expect(page.locator(".leader-monogram")).toHaveAttribute("aria-label", "Andy Walts portrait pending");
+  await expect(page.locator(".leader-monogram")).toHaveAttribute("aria-label", "Andy Walts");
   await expect(page.getByAltText("Chris Webster officiating a basketball game")).toBeVisible();
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);

@@ -20,7 +20,19 @@ test("coach score validation rejects missing, tied, and invalid results", () => 
   assert.match(context.coachScoreError_("ubl-001", 50, 50, "Coach Name"), /cannot be tied/);
   assert.match(context.coachScoreError_("ubl-001", -1, 50, "Coach Name"), /whole numbers/);
   assert.match(context.coachScoreError_("ubl-001", 41.5, 50, "Coach Name"), /whole numbers/);
-  assert.match(context.coachScoreError_("ubl-001", 41, 50, ""), /full name/);
+  assert.match(context.coachScoreError_("ubl-001", 41, 50, ""), /first and last name/);
+  assert.match(context.coachScoreError_("ubl-001", 41, 50, "Coach"), /first and last name/);
+});
+
+test("unusual scores require confirmation of the exact score", () => {
+  assert.equal(context.coachScoreWarning_(72, 65), "");
+  assert.match(context.coachScoreWarning_(131, 65), /above 130/);
+  assert.match(context.coachScoreWarning_(101, 20), /margin is above 80/);
+
+  const warning = context.coachScoreWarning_(131, 65);
+  const status = context.scoreWarningStatus_(131, 65, warning);
+  assert.equal(context.scoreWarningAcknowledged_(status, 131, 65), true);
+  assert.equal(context.scoreWarningAcknowledged_(status, 132, 65), false);
 });
 
 test("coach portal configuration isolates coach access from the control panel", () => {

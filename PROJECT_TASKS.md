@@ -30,6 +30,11 @@
 ## Priority 3: Season Readiness
 
 - [ ] Replace remaining placeholder dates, venues, contacts, coaches, and fifth-team information.
+- [x] Hide or rephrase unconfirmed public details so raw placeholder language is not displayed.
+- [x] Publish coach, commissioner, exception, access-role, and team-onboarding guides.
+- [x] Add a private access roster to the league control workbook.
+- [x] Add incomplete, duplicate, and unusual-score safeguards to the coach workflow.
+- [x] Prepare the `UpstateBasketballLeague.com` launch and rollback checklist.
 - [x] Document provisional tie and forfeit rules for commissioner confirmation.
 - [ ] Confirm final Boys Varsity and Girls Varsity playoff sites and times.
 - [ ] Add the league Facebook link when the page is live.

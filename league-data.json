@@ -102,14 +102,14 @@
       "id": "perth-gym",
       "name": "Perth Home Gym",
       "address": "",
-      "mapLabel": "Perth - TBD",
+      "mapLabel": "Perth home court",
       "status": "Needs confirmation"
     },
     {
       "id": "wilton-baptist-gym",
       "name": "Wilton Baptist Home Gym",
       "address": "",
-      "mapLabel": "Wilton Baptist - TBD",
+      "mapLabel": "Wilton Baptist home court",
       "status": "Needs confirmation"
     },
     {
@@ -123,28 +123,28 @@
       "id": "play-in-site",
       "name": "Play-in Site",
       "address": "",
-      "mapLabel": "Play-in site - TBD",
+      "mapLabel": "League play-in venue",
       "status": "Needs confirmation"
     },
     {
       "id": "semifinal-a",
       "name": "Semifinal Site A",
       "address": "",
-      "mapLabel": "Semifinal Site A - TBD",
+      "mapLabel": "League semifinal venue A",
       "status": "Needs confirmation"
     },
     {
       "id": "semifinal-b",
       "name": "Semifinal Site B",
       "address": "",
-      "mapLabel": "Semifinal Site B - TBD",
+      "mapLabel": "League semifinal venue B",
       "status": "Needs confirmation"
     },
     {
       "id": "championship-site",
       "name": "Championship Site",
       "address": "",
-      "mapLabel": "Championship site - TBD",
+      "mapLabel": "UBL championship venue",
       "status": "Needs confirmation"
     }
   ],

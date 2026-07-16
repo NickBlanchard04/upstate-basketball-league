@@ -1,7 +1,7 @@
 window.UBL_DATA = {
   season: "2026–27",
   divisions: ["Boys Varsity", "Girls Varsity"],
-  scheduleNotice: "Boys varsity matchups reflect the commissioner's revised schedule. Game times and locations remain placeholders until confirmed.",
+  scheduleNotice: "Games reflect the latest commissioner schedule. Times and venues become official after league confirmation.",
   programs: [
     {
       id: "kings-school",
@@ -30,13 +30,13 @@ window.UBL_DATA = {
       short: "PER",
       logo: "assets/optimized/team-perth-192.webp",
       divisions: ["Boys Varsity", "Girls Varsity"],
-      homeGym: "To be confirmed",
+      homeGym: "Perth home court",
       homeAddress: "",
       representativeEmail: "",
       summary: "A founding UBL program with boys and girls varsity participation planned.",
       teams: {
-        "Boys Varsity": { headCoach: { name: "To be confirmed", experience: "Coach information is being collected.", photo: "" }, assistants: [] },
-        "Girls Varsity": { headCoach: { name: "To be confirmed", experience: "Coach information is being collected.", photo: "" }, assistants: [] }
+        "Boys Varsity": { headCoach: { name: "", experience: "", photo: "" }, assistants: [] },
+        "Girls Varsity": { headCoach: { name: "", experience: "", photo: "" }, assistants: [] }
       }
     },
     {
@@ -45,7 +45,7 @@ window.UBL_DATA = {
       short: "WBC",
       logo: "assets/optimized/team-wilton-baptist-192.webp",
       divisions: ["Boys Varsity", "Girls Varsity"],
-      homeGym: "To be confirmed",
+      homeGym: "Wilton Baptist home court",
       homeAddress: "",
       representativeEmail: "",
       summary: "A founding UBL program led by coach Chris Webster.",
@@ -141,7 +141,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "kings-school",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       },
       {
         "iso": "2026-12-03",
@@ -167,7 +167,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayId": "hv-flames",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2026-12-10",
@@ -211,7 +211,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "perth",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2026-12-17",
@@ -220,7 +220,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayId": "wilton-baptist",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       }
     ]
   },
@@ -255,7 +255,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "kings-school",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2027-01-04",
@@ -293,7 +293,7 @@ window.UBL_DATA = {
         "awayId": "tbd",
         "awayName": "Team 5",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2027-01-07",
@@ -302,7 +302,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayId": "perth",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       }
     ]
   },
@@ -319,7 +319,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayId": "kings-school",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2027-01-12",
@@ -338,7 +338,7 @@ window.UBL_DATA = {
         "awayId": "tbd",
         "awayName": "Team 5",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       },
       {
         "iso": "2027-01-14",
@@ -373,7 +373,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "wilton-baptist",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       },
       {
         "iso": "2027-01-20",
@@ -382,7 +382,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "hv-rocks",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2027-01-21",
@@ -392,7 +392,7 @@ window.UBL_DATA = {
         "awayId": "tbd",
         "awayName": "Team 5",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       }
     ]
   },
@@ -409,7 +409,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "hv-rocks",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       },
       {
         "iso": "2027-01-27",
@@ -419,7 +419,7 @@ window.UBL_DATA = {
         "awayId": "tbd",
         "awayName": "Team 5",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       },
       {
         "iso": "2027-01-28",
@@ -428,7 +428,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "kings-school",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       },
       {
         "iso": "2027-01-28",
@@ -457,7 +457,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayId": "kings-school",
         "homeId": "wilton-baptist",
-        "location": "Wilton Baptist - TBD"
+        "location": "Wilton Baptist home court"
       }
     ]
   },
@@ -474,7 +474,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayId": "hv-flames",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       },
       {
         "iso": "2027-02-04",
@@ -483,7 +483,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayId": "kings-school",
         "homeId": "perth",
-        "location": "Perth - TBD"
+        "location": "Perth home court"
       }
     ]
   },
@@ -529,7 +529,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayName": "Seed 5",
         "homeName": "Seed 4",
-        "location": "Play-in site - TBD",
+        "location": "League play-in venue",
         "stage": "Play-in",
         "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
       },
@@ -540,7 +540,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayName": "Seed 5",
         "homeName": "Seed 4",
-        "location": "Play-in site - TBD",
+        "location": "League play-in venue",
         "stage": "Play-in",
         "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
       },
@@ -551,7 +551,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayName": "Play-in winner",
         "homeName": "Seed 1",
-        "location": "Semifinal Site A - TBD",
+        "location": "League semifinal venue A",
         "stage": "Semifinal",
         "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
       },
@@ -562,7 +562,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayName": "Play-in winner",
         "homeName": "Seed 1",
-        "location": "Semifinal Site B - TBD",
+        "location": "League semifinal venue B",
         "stage": "Semifinal",
         "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
       },
@@ -573,7 +573,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayName": "Seed 3",
         "homeName": "Seed 2",
-        "location": "Semifinal Site A - TBD",
+        "location": "League semifinal venue A",
         "stage": "Semifinal",
         "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
       },
@@ -584,7 +584,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayName": "Seed 3",
         "homeName": "Seed 2",
-        "location": "Semifinal Site B - TBD",
+        "location": "League semifinal venue B",
         "stage": "Semifinal",
         "note": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1."
       }
@@ -604,7 +604,7 @@ window.UBL_DATA = {
         "division": "Girls Varsity",
         "awayName": "Semifinal winner",
         "homeName": "Semifinal winner",
-        "location": "Championship site - TBD",
+        "location": "UBL championship venue",
         "stage": "Championship",
         "note": "Tentative UBL championship date following winter break."
       },
@@ -615,7 +615,7 @@ window.UBL_DATA = {
         "division": "Boys Varsity",
         "awayName": "Semifinal winner",
         "homeName": "Semifinal winner",
-        "location": "Championship site - TBD",
+        "location": "UBL championship venue",
         "stage": "Championship",
         "note": "Tentative UBL championship date following winter break."
       }

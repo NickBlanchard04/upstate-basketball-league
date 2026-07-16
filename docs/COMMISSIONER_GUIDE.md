@@ -2,16 +2,21 @@
 
 Use the league account, `info.upstatebasketballleague@gmail.com`, for commissioner work. Coaches should use only their separate score-entry portals.
 
+Quick references: [Coach Final-Score Guide](COACH_SCORE_GUIDE.md), [Game Exceptions And Corrections](GAME_EXCEPTION_WORKFLOW.md), and [Access And Roles](ACCESS_AND_ROLES.md).
+
 ## Before each game day
 
 1. Open the [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit).
 2. Unhide `Games` from **View > Hidden sheets > Games**.
 3. Confirm each game's date, time, home and away teams, Venue ID, and `Scheduled` status.
 4. Verify the public [schedule](https://nickblanchard04.github.io/upstate-basketball-league/schedule.html) after changes publish.
+5. Review the private `Access Roster` tab before granting or removing portal access.
 
 ## Routine final scores
 
 Coaches enter both scores and their full name in their private [coach score portal](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit), then check `Submit`. A successful entry changes the game's status to `Final`, updates the schedule and standings, and records the submission in `Score Audit`.
+
+Scores above 130 or margins above 80 receive a review warning. The coach must verify the exact numbers and check `Submit` a second time. The warning and any accepted result are both recorded in `Score Audit`.
 
 ## Corrections and exceptions
 
@@ -20,6 +25,8 @@ Coaches enter both scores and their full name in their private [coach score port
 - **Cancellation:** Set Status to `Cancelled`. Cancelled games do not affect standings.
 - **Forfeit:** Set Status to `Forfeit` and use the league's configured forfeit score. Final and Forfeit are the only result statuses that affect standings.
 - **Rejected submission:** Check that both scores are nonnegative whole numbers, the score is not tied, and Submitted By contains a full name. Review `Score Audit` before making a correction.
+
+Use [Game Exceptions And Corrections](GAME_EXCEPTION_WORKFLOW.md) for postponements, reschedules, cancellations, forfeits, disputes, unusual scores, duplicate attempts, and feed outages.
 
 Never delete a game row, reuse a Game ID, or type private disciplinary information in public Notes. Published coach entries cannot be changed from the coach portal.
 

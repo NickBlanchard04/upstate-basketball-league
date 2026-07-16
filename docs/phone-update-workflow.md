@@ -2,6 +2,10 @@
 
 Commissioner quick reference: [UBL Commissioner Game-Day Guide](COMMISSIONER_GUIDE.md)
 
+Coach one-page guide: [UBL Coach Final-Score Guide](COACH_SCORE_GUIDE.md)
+
+Exceptions and corrections: [UBL Game Exceptions And Corrections](GAME_EXCEPTION_WORKFLOW.md)
+
 League leadership control sheet: [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit)
 
 Coach score portal: [UBL Coach Score Entry - 2026-27](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit)
@@ -13,7 +17,8 @@ Coach score portal: [UBL Coach Score Entry - 2026-27](https://docs.google.com/sp
 3. Enter Away Score and Home Score in the yellow cells.
 4. Enter your full name under Submitted By.
 5. Check the Submit box.
-6. Wait up to one minute, then refresh the public schedule and standings.
+6. Read Submission Status. If it starts with `Review`, verify the unusual score and check Submit again.
+7. Wait up to one minute, then refresh the public schedule and standings.
 
 Published results cannot be edited from the coach portal. Corrections go through the commissioner. Every accepted or rejected attempt is recorded privately in the control panel's protected `Score Audit` tab.
 

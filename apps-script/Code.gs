@@ -8,6 +8,8 @@ var COACH_PORTAL_PROTECTION = "UBL managed coach-entry protection";
 var PILOT_GAME_PREFIX = "pilot-";
 var PILOT_WEEK_ID = "pilot-test";
 var PILOT_GAME_IDS = ["pilot-kings-01", "pilot-wilton-01"];
+var UNUSUAL_SCORE_LIMIT = 130;
+var UNUSUAL_MARGIN_LIMIT = 80;
 
 function doGet() {
   try {
@@ -247,7 +249,7 @@ function syncCoachScorePortal_(portal) {
   sheet.getRange(1, 1, Math.min(2, sheet.getMaxRows()), 11).breakApart();
   sheet.clear();
   sheet.getRange(1, 1, 1, 11).merge().setValue("UBL FINAL SCORE ENTRY");
-  sheet.getRange(2, 1, 1, 11).merge().setValue("Enter both final scores and your full name, then check Submit. PILOT TEST rows stay private; season rows update the website.");
+  sheet.getRange(2, 1, 1, 11).merge().setValue("Enter both final scores and your full name, then check Submit. If a score warning appears, verify the numbers and check Submit again.");
   sheet.getRange(4, 1, 1, 11).setValues([[
     "Game ID", "Date", "Time", "Division", "Away Team", "Home Team",
     "Away Score", "Home Score", "Submitted By", "Submit", "Submission Status"
@@ -443,6 +445,7 @@ function publishCoachPortalScore_(portal, rowNumber) {
   var homeScore = Number(values[7]);
   var submittedBy = text_(values[8]);
   var error = coachScoreError_(gameId, values[6], values[7], submittedBy);
+  var warning = coachScoreWarning_(values[6], values[7]);
 
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
   var gamesSheet = control.getSheetByName("Games");
@@ -460,6 +463,15 @@ function publishCoachPortalScore_(portal, rowNumber) {
     portalSheet.getRange(rowNumber, 11).setValue("Rejected: " + error);
     appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, "Rejected: " + error);
     portal.toast(error, "Score not submitted", 8);
+    return;
+  }
+
+  if (warning && !scoreWarningAcknowledged_(values[10], values[6], values[7])) {
+    var warningStatus = scoreWarningStatus_(values[6], values[7], warning);
+    portalSheet.getRange(rowNumber, 10).setValue(false);
+    portalSheet.getRange(rowNumber, 11).setValue(warningStatus);
+    appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, "Warning: " + warning);
+    portal.toast(warning + " Verify both scores, then check Submit again to confirm.", "Check this score", 10);
     return;
   }
 
@@ -571,8 +583,30 @@ function coachScoreError_(gameId, rawAwayScore, rawHomeScore, submittedBy) {
   if (rawAwayScore === "" || rawHomeScore === "") return "Enter both final scores before submitting.";
   if (!Number.isInteger(awayScore) || !Number.isInteger(homeScore) || awayScore < 0 || homeScore < 0) return "Scores must be whole numbers of 0 or greater.";
   if (awayScore === homeScore) return "A final basketball score cannot be tied.";
-  if (!text_(submittedBy)) return "Enter your full name before submitting.";
+  if (text_(submittedBy).split(/\s+/).filter(Boolean).length < 2) return "Enter your first and last name before submitting.";
   return "";
+}
+
+function coachScoreWarning_(rawAwayScore, rawHomeScore) {
+  var awayScore = Number(rawAwayScore);
+  var homeScore = Number(rawHomeScore);
+  if (!Number.isInteger(awayScore) || !Number.isInteger(homeScore)) return "";
+  if (awayScore > UNUSUAL_SCORE_LIMIT || homeScore > UNUSUAL_SCORE_LIMIT) {
+    return "One score is above " + UNUSUAL_SCORE_LIMIT + ".";
+  }
+  if (Math.abs(awayScore - homeScore) > UNUSUAL_MARGIN_LIMIT) {
+    return "The scoring margin is above " + UNUSUAL_MARGIN_LIMIT + ".";
+  }
+  return "";
+}
+
+function scoreWarningStatus_(rawAwayScore, rawHomeScore, warning) {
+  return "Review " + Number(rawAwayScore) + "-" + Number(rawHomeScore) + ": " + warning + " Verify both scores, then check Submit again.";
+}
+
+function scoreWarningAcknowledged_(status, rawAwayScore, rawHomeScore) {
+  var prefix = "Review " + Number(rawAwayScore) + "-" + Number(rawHomeScore) + ":";
+  return text_(status).indexOf(prefix) === 0;
 }
 
 function findGameRow_(gamesSheet, gameId) {

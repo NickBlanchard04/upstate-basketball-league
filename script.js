@@ -38,7 +38,7 @@ function programById(id) {
 function gameTeamName(game, side) {
   const directName = game[`${side}Name`];
   if (directName) return directName;
-  return programById(game[`${side}Id`])?.name || "TBD";
+  return programById(game[`${side}Id`])?.name || "Team not assigned";
 }
 
 function safeAttribute(value) {
@@ -57,7 +57,7 @@ function mapTriggerMarkup(label, address, detail = "") {
 function gameLocationMarkup(game) {
   const homeAddress = game.homeId ? programById(game.homeId)?.homeAddress : "";
   const address = game.locationAddress || homeAddress || "";
-  return mapTriggerMarkup(game.location || "Location TBD", address, address);
+  return mapTriggerMarkup(game.location || "Venue announcement pending", address, address);
 }
 
 function gameStatusMarkup(game) {
@@ -74,7 +74,7 @@ function gameStatusMarkup(game) {
 }
 
 function gameMarkup(game) {
-  const dateParts = String(game.date || "Date TBD").split(" ");
+  const dateParts = String(game.date || "Date announcement pending").split(" ");
   return `
     <article class="game-row" data-game-id="${safeAttribute(game.id || "")}">
       <div class="game-date">${escapeHtml(dateParts[0])}<span>${escapeHtml(dateParts.slice(1).join(" "))} &middot; ${escapeHtml(game.time)}</span></div>
@@ -382,19 +382,19 @@ function bracketMarkup(division) {
 
   return `
     <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game">
-      ${bracketSlotMarkup("Seed 5", playInAway, "TBD", playIn, "away", playInWinner)}
-      ${bracketSlotMarkup("Seed 4", playInHome, "TBD", playIn, "home", playInWinner)}
+      ${bracketSlotMarkup("Seed 5", playInAway, "Seed pending", playIn, "away", playInWinner)}
+      ${bracketSlotMarkup("Seed 4", playInHome, "Seed pending", playIn, "home", playInWinner)}
       <p>Winner advances to play Seed 1</p>
     </article></div>
     <div class="bracket-arrow" aria-hidden="true">&rarr;</div>
     <div class="bracket-round"><h3>Semifinals</h3>
       <article class="bracket-game">
-        ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "TBD", semifinalOne, "away", semifinalOneWinner)}
+        ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "Awaiting play-in", semifinalOne, "away", semifinalOneWinner)}
         ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner)}
       </article>
       <article class="bracket-game">
-        ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "TBD", semifinalTwo, "away", semifinalTwoWinner)}
-        ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "TBD", semifinalTwo, "home", semifinalTwoWinner)}
+        ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "Seed pending", semifinalTwo, "away", semifinalTwoWinner)}
+        ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "Seed pending", semifinalTwo, "home", semifinalTwoWinner)}
       </article>
     </div>
     <div class="bracket-arrow" aria-hidden="true">&rarr;</div>
@@ -468,7 +468,6 @@ function renderHomeTeams() {
 }
 
 function coachInitials(name) {
-  if (name === "To be confirmed") return "TBD";
   return name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("");
 }
 
@@ -490,15 +489,17 @@ function coachCardMarkup(coach, role) {
 
 function profileDivisionMarkup(program, division) {
   const team = program.teams[division];
-  const coaches = [
-    coachCardMarkup(team.headCoach, "Head coach"),
-    ...team.assistants.map((coach) => coachCardMarkup(coach, "Assistant coach"))
-  ].join("");
+  const coaches = [];
+  if (team.headCoach?.name && team.headCoach.name !== "To be confirmed") {
+    coaches.push(coachCardMarkup(team.headCoach, "Head coach"));
+  }
+  team.assistants
+    .filter((coach) => coach?.name && coach.name !== "To be confirmed")
+    .forEach((coach) => coaches.push(coachCardMarkup(coach, "Assistant coach")));
   return `
     <section class="program-division">
       <span>${escapeHtml(division)}</span>
-      <div class="coach-list">${coaches}</div>
-      ${team.assistants.length ? "" : `<p class="coach-vacancy">Assistant coach to be confirmed.</p>`}
+      ${coaches.length ? `<div class="coach-list">${coaches.join("")}</div>` : `<p class="coach-vacancy">Coaching staff will be listed after the program approves its profile.</p>`}
     </section>
   `;
 }
@@ -520,9 +521,13 @@ function programProfileMarkup(program) {
     `;
   }
   const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(program.representativeEmail || "") ? program.representativeEmail : "";
-  const contact = email
-    ? `<a href="mailto:${safeAttribute(email)}">${escapeHtml(email)}</a>`
-    : "To be confirmed";
+  const facts = [];
+  if (program.homeGym && program.homeGym !== "To be confirmed") {
+    facts.push(`<div><dt>Home gym</dt><dd>${mapTriggerMarkup(program.homeGym, program.homeAddress, program.homeAddress)}</dd></div>`);
+  }
+  if (email) {
+    facts.push(`<div><dt>Program representative</dt><dd><a href="mailto:${safeAttribute(email)}">${escapeHtml(email)}</a></dd></div>`);
+  }
   return `
     <details class="program-profile" id="${safeAttribute(program.id)}" data-accordion-group="programs">
       <summary>
@@ -532,10 +537,7 @@ function programProfileMarkup(program) {
       <div class="program-profile-content">
         <p class="program-summary">${escapeHtml(program.summary)}</p>
         <div class="program-division-grid">${program.divisions.map((division) => profileDivisionMarkup(program, division)).join("")}</div>
-        <dl class="program-facts">
-          <div><dt>Home gym</dt><dd>${mapTriggerMarkup(program.homeGym, program.homeAddress, program.homeAddress)}</dd></div>
-          <div><dt>Program representative</dt><dd>${contact}</dd></div>
-        </dl>
+        ${facts.length ? `<dl class="program-facts">${facts.join("")}</dl>` : ""}
       </div>
     </details>
   `;
@@ -586,7 +588,7 @@ function updateGallerySections() {
     const count = gallery.querySelector("[data-gallery-count]");
     const grid = gallery.querySelector("[data-gallery-grid]");
     const empty = gallery.querySelector("[data-gallery-empty]");
-    if (count) count.textContent = photoCount ? `${photoCount} photo${photoCount === 1 ? "" : "s"}` : "Coming soon";
+    if (count) count.textContent = photoCount ? `${photoCount} photo${photoCount === 1 ? "" : "s"}` : "No photos published";
     if (grid) grid.hidden = photoCount === 0;
     if (empty) empty.hidden = photoCount > 0;
   });
