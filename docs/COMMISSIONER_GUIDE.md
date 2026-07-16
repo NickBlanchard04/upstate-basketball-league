@@ -32,3 +32,9 @@ Never delete a game row, reuse a Game ID, or type private disciplinary informati
 5. If the site says `Using backup schedule`, do not re-enter results. Contact the site owner and use the control sheet as the source of truth.
 
 League communications: [info.upstatebasketballleague@gmail.com](mailto:info.upstatebasketballleague@gmail.com)
+
+## Closed pilot only
+
+Private pilot rows are labeled `PILOT TEST` in the coach portal and use Game IDs beginning with `pilot-`. They are blocked from the public website by both their Game ID and `pilot-test` week tag. Pilot work can be completed asynchronously; participants do not need to be online together.
+
+Do not rename a pilot Game ID or change its Week ID. The site administrator resets or removes pilot rows after the test.

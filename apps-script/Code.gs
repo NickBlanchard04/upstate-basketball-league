@@ -5,6 +5,9 @@ var COACH_PORTAL_NAME = "UBL Coach Score Entry - 2026-27";
 var COACH_PORTAL_EDITORS = ["athletic_director@kingsschool.info"];
 var COACH_PORTAL_SHEET = "Coach Score Entry";
 var COACH_PORTAL_PROTECTION = "UBL managed coach-entry protection";
+var PILOT_GAME_PREFIX = "pilot-";
+var PILOT_WEEK_ID = "pilot-test";
+var PILOT_GAME_IDS = ["pilot-kings-01", "pilot-wilton-01"];
 
 function doGet() {
   try {
@@ -26,6 +29,14 @@ function doGet() {
 }
 
 function buildPublicFeed_() {
+  return buildLeagueFeed_(false);
+}
+
+function buildCoachFeed_() {
+  return buildLeagueFeed_(true);
+}
+
+function buildLeagueFeed_(includePilotGames) {
   var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   var settingsRows = sheetObjects_(spreadsheet, "Settings");
   var settings = {};
@@ -55,7 +66,9 @@ function buildPublicFeed_() {
     };
   });
 
-  var games = sheetObjects_(spreadsheet, "Games").map(function (row) {
+  var games = sheetObjects_(spreadsheet, "Games").filter(function (row) {
+    return includePilotGames || !isPilotSourceRow_(row);
+  }).map(function (row) {
     return {
       id: text_(row["Game ID"]),
       date: dateText_(row.Date, settings.timezone || "America/New_York"),
@@ -87,7 +100,7 @@ function buildPublicFeed_() {
   };
 }
 
-function onEdit(event) {
+function handleControlGameEdit(event) {
   if (!event || !event.range) return;
   var spreadsheet = event.source;
   var sheet = event.range.getSheet();
@@ -95,7 +108,23 @@ function onEdit(event) {
   var now = new Date().toISOString();
 
   sheet.getRange(event.range.getRow(), 15).setValue(now);
+  var gameId = sheet.getRange(event.range.getRow(), 1).getDisplayValue();
+  var weekId = sheet.getRange(event.range.getRow(), 16).getDisplayValue();
+  if (isPilotIdentifier_(gameId, weekId)) {
+    syncCoachPortalIfConfigured_();
+    return;
+  }
   touchPublication_(spreadsheet, now);
+}
+
+function installControlPanelTrigger_() {
+  ScriptApp.getProjectTriggers().forEach(function (trigger) {
+    if (trigger.getHandlerFunction() === "handleControlGameEdit") ScriptApp.deleteTrigger(trigger);
+  });
+  ScriptApp.newTrigger("handleControlGameEdit")
+    .forSpreadsheet(SPREADSHEET_ID)
+    .onEdit()
+    .create();
 }
 
 function installCoachScoreTrigger() {
@@ -135,6 +164,7 @@ function setupCoachScorePortal() {
 
   syncCoachScorePortal_(portal);
   installCoachPortalTrigger_(portalId);
+  installControlPanelTrigger_();
   Logger.log("Coach portal: " + portal.getUrl());
   return portal.getUrl();
 }
@@ -159,7 +189,7 @@ function installCoachPortalTrigger_(portalId) {
 }
 
 function syncCoachScorePortal_(portal) {
-  var feed = buildPublicFeed_();
+  var feed = buildCoachFeed_();
   var teamNames = {};
   feed.teams.forEach(function (team) {
     teamNames[team.id] = team.name;
@@ -178,16 +208,26 @@ function syncCoachScorePortal_(portal) {
     });
   }
 
-  var rows = feed.games.filter(function (game) {
+  var portalGames = feed.games.filter(function (game) {
     return !game.stage && game.awayTeamId && game.homeTeamId;
-  }).map(function (game) {
+  }).sort(function (left, right) {
+    var leftPilot = isPilotGame_(left) ? 0 : 1;
+    var rightPilot = isPilotGame_(right) ? 0 : 1;
+    if (leftPilot !== rightPilot) return leftPilot - rightPilot;
+    return (left.date + left.time + left.id).localeCompare(right.date + right.time + right.id);
+  });
+
+  var rows = portalGames.map(function (game) {
     var prior = existing[game.id] || [];
     var published = game.status === "Final" || game.status === "Forfeit";
-    var status = published ? "Published to website" : "Ready";
+    var pilot = isPilotGame_(game);
+    var status = pilot
+      ? (published ? "Pilot complete - private" : "Pilot ready - private")
+      : (published ? "Published to website" : "Ready");
     if (!published && text_(prior[10]).indexOf("Rejected:") === 0) status = text_(prior[10]);
     return [
       game.id,
-      coachPortalDate_(game.date, feed.settings.timezone || "America/New_York"),
+      (pilot ? "PILOT TEST - " : "") + coachPortalDate_(game.date, feed.settings.timezone || "America/New_York"),
       game.time,
       game.division,
       game.awayName || teamNames[game.awayTeamId],
@@ -207,10 +247,10 @@ function syncCoachScorePortal_(portal) {
   sheet.getRange(1, 1, Math.min(2, sheet.getMaxRows()), 11).breakApart();
   sheet.clear();
   sheet.getRange(1, 1, 1, 11).merge().setValue("UBL FINAL SCORE ENTRY");
-  sheet.getRange(2, 1, 1, 11).merge().setValue("Enter both final scores and your full name, then check Submit. The website updates within one minute.");
+  sheet.getRange(2, 1, 1, 11).merge().setValue("Enter both final scores and your full name, then check Submit. PILOT TEST rows stay private; season rows update the website.");
   sheet.getRange(4, 1, 1, 11).setValues([[
     "Game ID", "Date", "Time", "Division", "Away Team", "Home Team",
-    "Away Score", "Home Score", "Submitted By", "Submit", "Website Status"
+    "Away Score", "Home Score", "Submitted By", "Submit", "Submission Status"
   ]]);
   if (rows.length) {
     sheet.getRange(5, 2, rows.length, 1).setNumberFormat("@");
@@ -233,6 +273,11 @@ function syncCoachScorePortal_(portal) {
   sheet.setColumnWidth(10, 72);
   sheet.setColumnWidth(11, 160);
   sheet.getRange(5, 2, dataRows, 10).setVerticalAlignment("middle");
+  rows.forEach(function (row, index) {
+    if (!isPilotIdentifier_(row[0], "")) return;
+    sheet.getRange(index + 5, 2, 1, 5).setBackground("#e9eff7").setFontWeight("bold");
+    sheet.getRange(index + 5, 11).setBackground("#d9ead3").setFontColor("#0c591e").setFontWeight("bold");
+  });
 
   sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET).forEach(function (protection) {
     if (protection.getDescription() === COACH_PORTAL_PROTECTION) protection.remove();
@@ -259,6 +304,117 @@ function syncCoachScorePortal_(portal) {
 
 function coachPortalDate_(date, timezone) {
   return Utilities.formatDate(new Date(date + "T12:00:00Z"), timezone, "EEE, MMM d, yyyy");
+}
+
+function setupPilotTestGames() {
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var gamesSheet = control.getSheetByName("Games");
+  var now = new Date().toISOString();
+  removePilotGameRows_(gamesSheet);
+
+  var rows = [
+    ["pilot-kings-01", "2026-07-20", "6:00 PM", "Boys Varsity", "kings-school", "wilton-baptist", "", "", "wilton-baptist-gym", "Scheduled", "", "", "", "PRIVATE PILOT - never published", now, PILOT_WEEK_ID],
+    ["pilot-wilton-01", "2026-07-23", "7:30 PM", "Girls Varsity", "wilton-baptist", "kings-school", "", "", "kings-school-gym", "Scheduled", "", "", "", "PRIVATE PILOT - never published", now, PILOT_WEEK_ID]
+  ];
+  var startRow = gamesSheet.getLastRow() + 1;
+  var sourceRow = Math.max(2, startRow - 1);
+  var source = gamesSheet.getRange(sourceRow, 1, 1, 16);
+  var destination = gamesSheet.getRange(startRow, 1, rows.length, 16);
+  source.copyTo(destination, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  source.copyTo(destination, SpreadsheetApp.CopyPasteType.PASTE_DATA_VALIDATION, false);
+  destination.setValues(rows);
+
+  installPilotPublicationGuard_(control);
+  installControlPanelTrigger_();
+  syncCoachPortalIfConfigured_();
+  var verification = verifyPilotIsolation_(control);
+  control.toast("Two private pilot games are ready. The public website is isolated.", "UBL pilot", 8);
+  Logger.log(JSON.stringify(verification));
+  return JSON.stringify(verification);
+}
+
+function clearPilotTestGames() {
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  removePilotGameRows_(control.getSheetByName("Games"));
+  installPilotPublicationGuard_(control);
+  syncCoachPortalIfConfigured_();
+  control.toast("Pilot games removed. Season data was not changed.", "UBL pilot", 8);
+}
+
+function runPilotIsolationSelfTest() {
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var result = null;
+  setupPilotTestGames();
+  try {
+    var portalId = PropertiesService.getScriptProperties().getProperty(COACH_PORTAL_PROPERTY);
+    if (!portalId) throw new Error("Coach portal is not configured.");
+    var portal = SpreadsheetApp.openById(portalId);
+    var portalSheet = portal.getSheetByName(COACH_PORTAL_SHEET);
+    var portalRow = findGameRow_(portalSheet, PILOT_GAME_IDS[0]);
+    if (!portalRow) throw new Error("King's pilot game is missing from the coach portal.");
+
+    portalSheet.getRange(portalRow, 7, 1, 4).setValues([[48, 52, "Pilot Self Test", false]]);
+    publishCoachPortalScore_(portal, portalRow);
+    SpreadsheetApp.flush();
+
+    var gameRow = findGameRow_(control.getSheetByName("Games"), PILOT_GAME_IDS[0]);
+    var gameValues = control.getSheetByName("Games").getRange(gameRow, 1, 1, 16).getDisplayValues()[0];
+    if (gameValues[9] !== "Final" || gameValues[10] !== "48" || gameValues[11] !== "52") {
+      throw new Error("Pilot score did not reach the private Games table.");
+    }
+    result = verifyPilotIsolation_(control);
+    result.privateSubmissionVerified = true;
+  } finally {
+    setupPilotTestGames();
+  }
+  Logger.log(JSON.stringify(result));
+  return JSON.stringify(result);
+}
+
+function installPilotPublicationGuard_(control) {
+  var feedSheet = control.getSheetByName("Website Feed");
+  var rowCount = Math.max(1, feedSheet.getMaxRows() - 1);
+  feedSheet.getRange(2, 1, rowCount, 11).clearContent();
+  feedSheet.getRange(2, 1).setFormula('=FILTER({Games!A2:F,Games!I2:L,Games!P2:P},Games!A2:A<>"",LEFT(Games!A2:A,6)<>"pilot-",Games!P2:P<>"pilot-test")');
+  SpreadsheetApp.flush();
+}
+
+function removePilotGameRows_(gamesSheet) {
+  var lastRow = gamesSheet.getLastRow();
+  if (lastRow < 2) return;
+  var identifiers = gamesSheet.getRange(2, 1, lastRow - 1, 16).getDisplayValues();
+  for (var index = identifiers.length - 1; index >= 0; index -= 1) {
+    if (isPilotIdentifier_(identifiers[index][0], identifiers[index][15])) gamesSheet.deleteRow(index + 2);
+  }
+}
+
+function verifyPilotIsolation_(control) {
+  SpreadsheetApp.flush();
+  var privateFeed = buildCoachFeed_();
+  var publicFeed = buildPublicFeed_();
+  var privatePilots = privateFeed.games.filter(isPilotGame_);
+  var publicPilots = publicFeed.games.filter(isPilotGame_);
+  if (privatePilots.length !== PILOT_GAME_IDS.length) throw new Error("Expected two private pilot games.");
+  if (publicPilots.length) throw new Error("A pilot game reached the Apps Script public feed.");
+
+  var feedSheet = control.getSheetByName("Website Feed");
+  var lastRow = Math.max(2, feedSheet.getLastRow());
+  var publicIds = feedSheet.getRange(2, 1, lastRow - 1, 1).getDisplayValues();
+  var leakedIds = publicIds.filter(function (row) { return isPilotIdentifier_(row[0], ""); });
+  if (leakedIds.length) throw new Error("A pilot game reached the published Website Feed.");
+
+  return {
+    pilotGamesReady: privatePilots.length,
+    appsScriptPublicPilots: publicPilots.length,
+    websiteFeedPublicPilots: leakedIds.length,
+    publicSeasonGames: publicFeed.games.length
+  };
+}
+
+function syncCoachPortalIfConfigured_() {
+  var portalId = PropertiesService.getScriptProperties().getProperty(COACH_PORTAL_PROPERTY);
+  if (!portalId) return;
+  syncCoachScorePortal_(SpreadsheetApp.openById(portalId));
 }
 
 function handleCoachPortalEdit(event) {
@@ -293,6 +449,7 @@ function publishCoachPortalScore_(portal, rowNumber) {
   var auditSheet = control.getSheetByName("Score Audit");
   var gameRow = findGameRow_(gamesSheet, gameId);
   var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0] : [];
+  var pilotGame = isPilotIdentifier_(gameId, gameValues[15]);
   if (!error && !gameRow) error = "The selected game could not be found.";
   if (!error && (gameValues[9] === "Final" || gameValues[9] === "Forfeit")) {
     error = "This result is already published. Contact the commissioner to make a correction.";
@@ -309,13 +466,17 @@ function publishCoachPortalScore_(portal, rowNumber) {
   var now = new Date().toISOString();
   gamesSheet.getRange(gameRow, 10, 1, 3).setValues([["Final", awayScore, homeScore]]);
   gamesSheet.getRange(gameRow, 15).setValue(now);
-  touchPublication_(control, now);
-  appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, "Published from coach portal");
+  if (!pilotGame) touchPublication_(control, now);
+  appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, pilotGame ? "Private pilot submission" : "Published from coach portal");
   portalSheet.getRange(rowNumber, 7, 1, 3).clearContent();
   portalSheet.getRange(rowNumber, 10).setValue(false);
-  portalSheet.getRange(rowNumber, 11).setValue("Published to website");
+  portalSheet.getRange(rowNumber, 11).setValue(pilotGame ? "Pilot complete - private" : "Published to website");
   SpreadsheetApp.flush();
-  portal.toast("Final score published to the UBL website.", "Score submitted", 8);
+  portal.toast(
+    pilotGame ? "Pilot score recorded privately. The public website was not changed." : "Final score published to the UBL website.",
+    "Score submitted",
+    8
+  );
 }
 
 function publishPendingCoachScores() {
@@ -363,6 +524,7 @@ function publishCoachScore_(spreadsheet, coachRow) {
 
   var gameRow = findGameRow_(gamesSheet, gameId);
   var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0] : [];
+  var pilotGame = isPilotIdentifier_(gameId, gameValues[15]);
   if (!error && !gameRow) error = "The selected game could not be found.";
   if (!error && (gameValues[9] === "Final" || gameValues[9] === "Forfeit")) {
     error = "This result is already published. Contact the commissioner to make a correction.";
@@ -378,12 +540,28 @@ function publishCoachScore_(spreadsheet, coachRow) {
   var now = new Date().toISOString();
   gamesSheet.getRange(gameRow, 10, 1, 3).setValues([["Final", awayScore, homeScore]]);
   gamesSheet.getRange(gameRow, 15).setValue(now);
-  touchPublication_(spreadsheet, now);
-  appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, "Published");
+  if (!pilotGame) touchPublication_(spreadsheet, now);
+  appendScoreAudit_(auditSheet, gameId, values, awayScore, homeScore, submittedBy, pilotGame ? "Private pilot submission" : "Published");
   coachSheet.getRange(coachRow, 7, 1, 3).clearContent();
   coachSheet.getRange(coachRow, 10).setValue(false);
   SpreadsheetApp.flush();
-  spreadsheet.toast("Final score published to the UBL website.", "Score submitted", 8);
+  spreadsheet.toast(
+    pilotGame ? "Pilot score recorded privately. The public website was not changed." : "Final score published to the UBL website.",
+    "Score submitted",
+    8
+  );
+}
+
+function isPilotIdentifier_(gameId, weekId) {
+  return text_(gameId).toLowerCase().indexOf(PILOT_GAME_PREFIX) === 0 || text_(weekId).toLowerCase() === PILOT_WEEK_ID;
+}
+
+function isPilotSourceRow_(row) {
+  return isPilotIdentifier_(row["Game ID"], row["Week ID"]);
+}
+
+function isPilotGame_(game) {
+  return isPilotIdentifier_(game.id, game.weekId);
 }
 
 function coachScoreError_(gameId, rawAwayScore, rawHomeScore, submittedBy) {

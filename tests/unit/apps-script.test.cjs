@@ -29,6 +29,21 @@ test("coach portal configuration isolates coach access from the control panel", 
   assert.equal(context.COACH_PORTAL_SHEET, "Coach Score Entry");
 });
 
+test("pilot identifiers are isolated by both game ID and pilot week tag", () => {
+  assert.equal(context.isPilotIdentifier_("pilot-kings-01", ""), true);
+  assert.equal(context.isPilotIdentifier_("renamed-test", "pilot-test"), true);
+  assert.equal(context.isPilotIdentifier_("ubl-001", "opening-week"), false);
+  assert.equal(context.isPilotSourceRow_({ "Game ID": "pilot-wilton-01", "Week ID": "" }), true);
+  assert.equal(context.isPilotGame_({ id: "ubl-002", weekId: "pilot-test" }), true);
+});
+
+test("pilot setup installs a two-layer Website Feed exclusion", () => {
+  assert.match(source, /LEFT\(Games!A2:A,6\)<>"pilot-"/);
+  assert.match(source, /Games!P2:P<>"pilot-test"/);
+  assert.match(source, /Private pilot submission/);
+  assert.match(source, /Pilot complete - private/);
+});
+
 test("pending score publisher processes only checked coach rows", () => {
   const publishedRows = [];
   const toastCalls = [];

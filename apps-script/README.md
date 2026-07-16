@@ -26,6 +26,18 @@ Run `setupCoachScorePortal` once as the league business account. It creates the 
 
 The owner-run trigger validates each result, writes accepted finals to the private `Games` sheet, records the attempt in `Score Audit`, and clears the coach input cells. The private control panel remains restricted to league leadership.
 
+## Closed pilot workflow
+
+Run `setupPilotTestGames` as the league business account before the closed pilot. It creates two private rows at the top of the coach portal, installs the control-panel trigger, repairs the published `Website Feed` formula, and verifies that pilot rows are excluded from both public feed paths.
+
+- Pilot games use both a `pilot-` Game ID and the `pilot-test` Week ID.
+- The coach portal labels them `PILOT TEST` and reports `Pilot ready - private` or `Pilot complete - private`.
+- Accepted pilot scores are written to `Games` and `Score Audit`, but do not touch public publication timestamps.
+- Run `runPilotIsolationSelfTest` to submit a private test result, verify both public feeds remain clean, and reset the pilot rows.
+- Run `setupPilotTestGames` again to reset the pilot. Run `clearPilotTestGames` after the pilot is finished.
+
+Use [PILOT_TEST_BLUEPRINT.md](../docs/PILOT_TEST_BLUEPRINT.md) for the participant handoff.
+
 ## Approved gallery feed
 
 `Gallery.gs` is deployed as a separate Google Apps Script web app under the league business account. It must not be added to the score-feed script project because both files define `doGet()`.
