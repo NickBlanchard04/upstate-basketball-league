@@ -249,18 +249,9 @@
 
 .lineup-instruction {
   margin: 0.9rem auto 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
   color: rgba(255, 255, 255, 0.86);
   font-size: 0.875rem;
   font-weight: 700;
-}
-
-.lineup-instruction .material-symbols-rounded {
-  font-size: 1.15rem;
-  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 24;
 }
 
 .lineup-stage {
@@ -378,13 +369,18 @@
 }
 
 .roster-expand-cue {
-  font-size: 1.55rem;
-  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 24;
+  width: 0.65rem;
+  height: 0.65rem;
+  margin: -0.2rem 0.15rem 0 0;
+  border-right: 0.14rem solid currentColor;
+  border-bottom: 0.14rem solid currentColor;
+  transform: rotate(45deg);
   transition: transform 180ms ease;
 }
 
 .commitment details[open] .roster-expand-cue {
-  transform: rotate(180deg);
+  margin-top: 0.2rem;
+  transform: rotate(225deg);
 }
 
 .commitment summary:hover .roster-nameplate,
