@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "Material Symbols Rounded";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/material-symbols-rounded-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Teko";
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("assets/fonts/teko-600-700-latin.woff2") format("woff2");
+}
+
 .winning-section,
 .commitments-section {
   --ubl-navy: #020f22;
