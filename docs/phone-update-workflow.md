@@ -42,6 +42,6 @@ League leadership must unhide the protected `Games` tab, then:
 
 - `Final` and `Forfeit` games need both scores.
 - Away and home teams must be different.
-- Dates use `YYYY-MM-DD` and should remain on Monday or Thursday for regular-season games.
+- Dates use `YYYY-MM-DD` and may be scheduled on any commissioner-approved regular-season date.
 - Public schedule notes are visible on the website. Keep private concerns outside the Games Notes column.
 - If the site shows `Using backup schedule`, do not re-enter data. The live feed is unavailable and the website is intentionally showing its last safe snapshot.
