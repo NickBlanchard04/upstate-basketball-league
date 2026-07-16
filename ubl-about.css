@@ -247,13 +247,6 @@
   line-height: 1.55;
 }
 
-.lineup-instruction {
-  margin: 0.9rem auto 0;
-  color: rgba(255, 255, 255, 0.86);
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
 .lineup-stage {
   padding: clamp(1rem, 3vw, 2rem);
   background: rgba(2, 15, 34, 0.58);
@@ -485,10 +478,6 @@
 }
 
 @media (min-width: 768px) {
-  .lineup-instruction {
-    display: none;
-  }
-
   .winning-section {
     grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
   }
