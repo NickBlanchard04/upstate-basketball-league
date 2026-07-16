@@ -73,12 +73,19 @@
 }
 
 .winning-copy h2 {
-  max-width: 8ch;
   margin: 0 0 1rem;
   color: var(--ubl-white);
-  font: 900 clamp(3rem, 13vw, 6.5rem)/0.84 "Barlow Condensed", sans-serif;
+  font: 900 clamp(3rem, 13vw, 4.2rem)/0.84 "Barlow Condensed", sans-serif;
   letter-spacing: -0.025em;
   text-transform: uppercase;
+}
+
+.winning-copy h2 span {
+  display: block;
+}
+
+.winning-copy h2 span:first-child {
+  white-space: nowrap;
 }
 
 .winning-copy > p:last-child {
@@ -93,24 +100,77 @@
 
 .winning-actions {
   margin: 0;
-  padding: 0;
   display: grid;
-  list-style: none;
   background: var(--ubl-red);
 }
 
-.winning-actions li {
-  min-height: 3.8rem;
-  padding: 0.8rem 1.25rem;
-  display: flex;
-  align-items: center;
+.winning-actions details {
   border-top: 1px solid rgba(255, 255, 255, 0.3);
-  font: 800 clamp(1.35rem, 6vw, 2rem)/1 "Barlow Condensed", sans-serif;
-  text-transform: uppercase;
 }
 
-.winning-actions li:first-child {
+.winning-actions details:first-child {
   border-top: 0;
+}
+
+.winning-actions summary {
+  min-height: 3.8rem;
+  padding: 0.8rem 1.25rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  list-style: none;
+  font: 800 clamp(1.35rem, 6vw, 2rem)/1 "Barlow Condensed", sans-serif;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background 160ms ease;
+}
+
+.winning-actions summary::-webkit-details-marker {
+  display: none;
+}
+
+.winning-actions summary:hover,
+.winning-actions summary:focus-visible,
+.winning-actions details[open] summary {
+  background: rgba(2, 15, 34, 0.18);
+}
+
+.scripture-toggle {
+  width: 1.25rem;
+  position: absolute;
+  right: 1.1rem;
+  font: 500 1.45rem/1 "IBM Plex Sans", sans-serif;
+}
+
+.scripture-toggle::before {
+  content: "+";
+}
+
+.winning-actions details[open] .scripture-toggle::before {
+  content: "−";
+}
+
+.winning-actions blockquote {
+  margin: 0;
+  padding: 0.25rem 1.25rem 1.35rem;
+  border: 0;
+  color: var(--ubl-white);
+}
+
+.winning-actions blockquote p {
+  margin: 0 0 0.65rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.winning-actions cite {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 700;
 }
 
 .commitments-section {
@@ -228,13 +288,12 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .winning-actions li {
-    justify-content: center;
+  .winning-actions details {
     border-top: 0;
     border-left: 1px solid rgba(255, 255, 255, 0.3);
   }
 
-  .winning-actions li:first-child {
+  .winning-actions details:first-child {
     border-left: 0;
   }
 
@@ -269,6 +328,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  .winning-copy h2 {
+    font-size: clamp(4rem, 6.5vw, 6.5rem);
   }
 
   .winning-actions {
