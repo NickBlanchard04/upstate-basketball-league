@@ -187,29 +187,32 @@
   font-weight: 700;
 }
 
-.scripture-credit {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 0.85rem 1.25rem 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.875rem;
-  line-height: 1.45;
-}
-
 .commitments-section {
   margin-top: clamp(1.25rem, 3vw, 2.5rem);
   overflow: hidden;
   border-top: 0.4rem solid var(--ubl-red);
   color: var(--ubl-white);
-  background: var(--ubl-navy-mid);
+  background-color: #1a2b3e;
+  background-image: url("assets/ubl-core-commitments-trophy.jpg");
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: multiply;
 }
 
 .commitments-heading {
-  padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3.5rem);
+  padding: clamp(1.75rem, 5vw, 3.25rem) clamp(1.25rem, 5vw, 3.5rem);
   color: var(--ubl-white);
-  background: var(--ubl-navy);
+  background: rgba(2, 15, 34, 0.78);
   border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  text-align: center;
+}
+
+.lineup-eyebrow {
+  margin: 0 0 0.55rem;
+  color: #ff9aac;
+  font: 800 0.875rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .commitments-heading h2 {
@@ -220,73 +223,43 @@
   text-transform: uppercase;
 }
 
-.commitments-heading p {
-  max-width: 38rem;
-  margin: 0;
+.commitments-heading .lineup-intro {
+  max-width: 46rem;
+  margin: 0 auto;
   color: rgba(255, 255, 255, 0.72);
   font-size: clamp(1rem, 2vw, 1.08rem);
+  line-height: 1.55;
 }
 
-.commitment-court {
+.lineup-stage {
+  padding: clamp(1rem, 3vw, 2rem);
+  background: rgba(2, 15, 34, 0.58);
+}
+
+.commitment-lineup {
   margin: 0;
-  padding: 2rem 1.25rem 2rem 3.9rem;
-  position: relative;
+  padding: 0;
   display: grid;
-  gap: 1.8rem;
+  gap: 0.75rem;
   list-style: none;
-  background:
-    repeating-linear-gradient(90deg, transparent 0, transparent 3.7rem, rgba(255, 255, 255, 0.025) 3.7rem, rgba(255, 255, 255, 0.025) 3.78rem),
-    var(--ubl-navy-mid);
-}
-
-.commitment-court::before {
-  content: "";
-  width: 1px;
-  position: absolute;
-  top: 2.8rem;
-  bottom: 2.8rem;
-  left: 2.2rem;
-  background: var(--ubl-red);
-}
-
-.commitment-court::after {
-  content: "";
-  width: 9rem;
-  height: 9rem;
-  position: absolute;
-  right: -4.6rem;
-  bottom: -4.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 50%;
-  pointer-events: none;
 }
 
 .commitment {
   min-width: 0;
-  position: relative;
-}
-
-.commitment::before {
-  content: "";
-  width: 1.7rem;
-  height: 1px;
-  position: absolute;
-  top: 1.35rem;
-  left: -1.7rem;
-  background: var(--ubl-red);
 }
 
 .commitment details {
   position: relative;
-  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(2, 15, 34, 0.92);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .commitment summary {
-  min-height: 2.7rem;
+  min-height: 4.75rem;
+  position: relative;
   display: grid;
-  grid-template-columns: 2.7rem minmax(0, 1fr) 1.25rem;
-  align-items: center;
-  gap: 0.9rem;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
   cursor: pointer;
   list-style: none;
 }
@@ -295,62 +268,162 @@
   display: none;
 }
 
-.commitment-marker {
-  width: 2.7rem;
-  aspect-ratio: 1;
+.roster-portrait {
+  min-height: 4.75rem;
   position: relative;
-  z-index: 1;
   display: grid;
   place-items: center;
-  border: 2px solid var(--ubl-white);
-  border-radius: 50%;
-  color: var(--ubl-navy);
-  background: var(--ubl-white);
-  font: 900 1rem/1 "Barlow Condensed", sans-serif;
-  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.commitment-toggle {
-  width: 1.25rem;
-  color: rgba(255, 255, 255, 0.72);
-  font: 500 1.2rem/1 "IBM Plex Sans", sans-serif;
-  text-align: center;
+.roster-logo-frame {
+  width: 2.8rem;
+  aspect-ratio: 1;
+  padding: 0.18rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: #10243d;
+  box-shadow: inset 0 -0.18rem 0 rgba(227, 19, 49, 0.92), 0 0 0 2px rgba(2, 15, 34, 0.94), 0 0.45rem 0.8rem rgba(0, 0, 0, 0.3);
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.commitment-toggle::before {
-  content: "+";
+.roster-card-icon {
+  color: var(--ubl-white);
+  font-family: "Material Symbols Rounded";
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 24;
+  text-shadow: none;
+  transition: transform 180ms ease;
 }
 
-.commitment details[open] .commitment-toggle::before {
-  content: "−";
+.commitment-character .roster-card-icon {
+  font-size: 1.73rem;
 }
 
-.commitment details[open] .commitment-marker {
-  border-color: var(--ubl-red);
+.commitment-lasting .roster-card-icon {
+  font-size: 1.76rem;
+}
+
+.roster-number {
+  position: absolute;
+  right: 0.3rem;
+  bottom: 0.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  font: 700 1.7rem/0.8 "Teko", sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-shadow: 0 0.16rem 0 rgba(2, 15, 34, 0.95), 0 0.35rem 0.55rem rgba(0, 0, 0, 0.78);
+}
+
+.roster-nameplate {
+  min-width: 0;
+  padding: 0.75rem 0.8rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
   color: var(--ubl-white);
   background: var(--ubl-red);
+  transition: color 160ms ease, background 160ms ease;
 }
 
-.commitment summary:hover h3,
-.commitment summary:focus-visible h3,
-.commitment details[open] h3 {
-  color: #ff9aac;
-}
-
-.commitment h3 {
-  margin: 0;
-  color: var(--ubl-white);
-  font: 800 clamp(1.45rem, 6vw, 2rem)/1 "Barlow Condensed", sans-serif;
+.roster-title {
+  font: 800 clamp(1.25rem, 5.5vw, 1.65rem)/0.95 "Barlow Condensed", sans-serif;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
-  transition: color 160ms ease;
+}
+
+.commitment summary:hover .roster-nameplate,
+.commitment summary:focus-visible .roster-nameplate {
+  color: var(--ubl-white);
+  background: #f51d3d;
+}
+
+.commitment details[open] .roster-nameplate {
+  color: var(--ubl-navy);
+  background: var(--ubl-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .commitment details:hover {
+    z-index: 2;
+    border-color: rgba(255, 255, 255, 0.62);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(227, 19, 49, 0.36);
+    transform: translateY(-0.4rem);
+  }
+
+  .commitment summary:hover .roster-logo-frame,
+  .commitment summary:focus-visible .roster-logo-frame {
+    border-color: var(--ubl-white);
+    background-color: #173453;
+    box-shadow: inset 0 -0.22rem 0 var(--ubl-red), 0 0 0 2px rgba(227, 19, 49, 0.95), 0 0 1.15rem rgba(227, 19, 49, 0.32);
+    transform: translateY(-0.2rem) scale(1.05);
+  }
+
+  .commitment summary:hover .roster-card-icon,
+  .commitment summary:focus-visible .roster-card-icon {
+    transform: translateY(-0.12rem) scale(1.06);
+  }
 }
 
 .commitment p {
-  max-width: 30rem;
-  margin: 0.65rem 0 0 3.6rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
-  line-height: 1.5;
+  margin: 0;
+  padding: 0.9rem 1rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.lineup-footer {
+  max-width: 46rem;
+  margin: 1rem auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 1fr);
+  align-items: center;
+}
+
+.lineup-footer p {
+  min-height: 4.25rem;
+  margin: 0;
+  padding: 0.65rem;
+  display: grid;
+  align-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lineup-footer p span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.lineup-footer p strong {
+  margin-top: 0.2rem;
+  color: var(--ubl-white);
+  font: 800 clamp(0.85rem, 2.8vw, 1rem)/1.1 "Barlow Condensed", sans-serif;
+}
+
+.lineup-footer img {
+  width: 4.5rem;
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  filter: drop-shadow(0 0.4rem 0.7rem rgba(0, 0, 0, 0.45));
 }
 
 @media (min-width: 640px) {
@@ -367,15 +440,8 @@
     border-left: 0;
   }
 
-  .commitments-heading {
-    display: grid;
-    grid-template-columns: minmax(16rem, 0.9fr) minmax(18rem, 1.1fr);
-    align-items: end;
-    gap: 2rem;
-  }
-
-  .commitments-heading h2 {
-    margin-bottom: 0;
+  .commitment-lineup {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -410,112 +476,76 @@
 }
 
 @media (min-width: 1024px) {
-  .commitment-court {
-    min-height: 41rem;
-    padding: 0;
-    display: block;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.32);
-    background:
-      linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(255, 255, 255, 0.2) calc(50% - 0.5px), rgba(255, 255, 255, 0.2) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
-      repeating-linear-gradient(90deg, transparent 0, transparent 7.2rem, rgba(255, 255, 255, 0.025) 7.2rem, rgba(255, 255, 255, 0.025) 7.28rem),
-      var(--ubl-navy-mid);
+  .lineup-stage {
+    padding: clamp(1.5rem, 3vw, 2.75rem);
   }
 
-  .commitment-court::before {
-    width: 12rem;
-    height: 12rem;
-    top: 50%;
-    bottom: auto;
-    left: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 50%;
-    background: transparent;
-    transform: translate(-50%, -50%);
-  }
-
-  .commitment-court::after {
-    width: 24rem;
-    height: 38rem;
-    right: -15rem;
-    bottom: auto;
-    top: 50%;
-    border-color: rgba(255, 255, 255, 0.22);
-    transform: translateY(-50%);
+  .commitment-lineup {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: start;
+    gap: 0.55rem;
   }
 
   .commitment {
-    width: min(27rem, 34%);
-    position: absolute;
+    display: block;
   }
 
-  .commitment::before {
-    display: none;
+  .commitment details {
+    width: 100%;
   }
 
-  .commitment-faith {
-    top: 2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
+  .commitment summary {
+    min-height: 17rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(12rem, 1fr) auto;
   }
 
-  .commitment-excellence {
-    top: 10.5rem;
-    left: 4.5%;
+  .roster-portrait {
+    min-height: 12rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   }
 
-  .commitment-character {
-    top: 10.5rem;
-    right: 4.5%;
+  .roster-logo-frame {
+    width: clamp(5rem, 6vw, 6.5rem);
+    padding: 0.3rem;
   }
 
-  .commitment-communication {
-    bottom: 3.5rem;
-    left: 12%;
+  .roster-card-icon {
+    font-size: clamp(3rem, 4.1vw, 4rem);
   }
 
-  .commitment-lasting {
-    right: 12%;
-    bottom: 3.5rem;
+  .commitment-character .roster-card-icon {
+    font-size: clamp(3.24rem, 4.43vw, 4.32rem);
   }
 
-  .commitment-faith::after,
-  .commitment-excellence::after,
-  .commitment-character::after,
-  .commitment-communication::after {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    border-bottom: 2px dashed rgba(227, 19, 49, 0.72);
-    pointer-events: none;
+  .commitment-lasting .roster-card-icon {
+    font-size: clamp(3.3rem, 4.51vw, 4.4rem);
   }
 
-  .commitment-faith::after {
-    width: 10rem;
-    left: -7rem;
-    bottom: -3.2rem;
-    transform: rotate(145deg);
+  .roster-number {
+    right: 0.55rem;
+    bottom: 0.45rem;
+    font-size: clamp(2.1rem, 2.5vw, 2.75rem);
   }
 
-  .commitment-excellence::after {
-    width: 13rem;
-    right: -11rem;
-    bottom: -5.5rem;
-    transform: rotate(40deg);
+  .roster-nameplate {
+    min-height: 5rem;
+    padding: 0.7rem 0.75rem;
   }
 
-  .commitment-character::after {
-    width: 11rem;
-    left: -9rem;
-    bottom: -6rem;
-    transform: rotate(140deg);
+  .roster-title {
+    font-size: clamp(1rem, 1.45vw, 1.4rem);
   }
 
-  .commitment-communication::after {
-    width: 12rem;
-    right: -9rem;
-    top: -2.5rem;
-    transform: rotate(-13deg);
+  .commitment p {
+    padding: 1rem;
+    font-size: 0.93rem;
+  }
+
+  .lineup-footer {
+    margin-top: 1.5rem;
   }
 }
 
@@ -523,5 +553,6 @@
   .winning-section *,
   .commitments-section * {
     scroll-behavior: auto;
+    transition-duration: 0.01ms !important;
   }
 }
