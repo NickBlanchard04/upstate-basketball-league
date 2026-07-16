@@ -21,8 +21,9 @@ Configure every team form to:
 5. Check for duplicate or near-duplicate photos before approving a submission.
 6. Move each approved image into the matching team's `Approved Photos/Boys Varsity` or `Approved Photos/Girls Varsity` folder. HV Rocks and HV Flames use their single Approved folder.
 7. Leave unapproved files in Pending or delete them after the review decision. Never make a Pending folder public.
-8. The website feed scans only Approved folders. It gives approved image files public view access when they first enter the feed; it never scans or shares Pending files.
-9. Keep the Google Form response as the submission audit record.
+8. The website feed scans only Approved folders. It gives approved image files public view access when they first enter the feed.
+9. If an approved image must be removed, move it back to the team's Pending folder. The next gallery refresh removes its public link permission automatically.
+10. Keep the Google Form response as the submission audit record.
 
 ## Removal requests
 

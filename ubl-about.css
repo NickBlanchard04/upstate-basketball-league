@@ -21,7 +21,7 @@
   --ubl-red: #e31331;
   --ubl-white: #ffffff;
   --ubl-line: #d8dee8;
-  --ubl-muted: #637084;
+  --ubl-muted: #58677a;
   width: min(calc(100% - 1rem), 92rem);
   margin: 0.5rem auto 0;
 }

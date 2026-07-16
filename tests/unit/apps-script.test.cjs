@@ -76,3 +76,46 @@ test("approved gallery feed defines every UBL team and creates safe Drive image 
   assert.match(record.previewUrl, /^https:\/\/drive\.google\.com\/thumbnail\?id=drive%20photo%201&sz=w600$/);
   assert.match(record.fullUrl, /&sz=w1600$/);
 });
+
+test("pending gallery scan recursively revokes public link access", () => {
+  const secured = [];
+  const privateFile = {
+    getSharingAccess: () => "PRIVATE",
+    setSharing: () => assert.fail("private files should not be changed")
+  };
+  const publicFile = {
+    getSharingAccess: () => "ANYONE_WITH_LINK",
+    setSharing: (access, permission) => secured.push([access, permission])
+  };
+  const iterator = (items) => ({
+    hasNext: () => items.length > 0,
+    next: () => items.shift()
+  });
+  const child = {
+    getFiles: () => iterator([publicFile]),
+    getFolders: () => iterator([])
+  };
+  const root = {
+    getFiles: () => iterator([privateFile]),
+    getFolders: () => iterator([child])
+  };
+
+  galleryContext.DriveApp = {
+    Access: { PRIVATE: "PRIVATE" },
+    Permission: { VIEW: "VIEW" }
+  };
+  galleryContext.secureFolderTree_(root);
+
+  assert.deepEqual(secured, [["PRIVATE", "VIEW"]]);
+});
+
+test("analytics accepts only known public pages and bounded values", () => {
+  assert.equal(galleryContext.analyticsPage_("/schedule.html"), "schedule.html");
+  assert.equal(galleryContext.analyticsPage_("https://evil.test"), "");
+  assert.equal(galleryContext.analyticsViewport_("390x844"), "390x844");
+  assert.equal(galleryContext.analyticsViewport_("390 by 844"), "");
+  assert.equal(galleryContext.analyticsNumber_("2500.1234", 120000), 2500.123);
+  assert.equal(galleryContext.analyticsNumber_("-1", 120000), "");
+  assert.equal(galleryContext.analyticsDevice_("DESKTOP"), "desktop");
+  assert.equal(galleryContext.analyticsDevice_("bot"), "unknown");
+});

@@ -48,7 +48,7 @@
   --white: #ffffff;
   --canvas: #eef2f7;
   --ink: #07172d;
-  --muted: #637084;
+  --muted: #58677a;
   --line: #d8dee8;
   --display: "Barlow Condensed", sans-serif;
   --body: "IBM Plex Sans", sans-serif;
@@ -1213,6 +1213,19 @@ th {
   padding-bottom: 2rem;
 }
 
+.not-found-actions {
+  padding: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.not-found-actions .button-outline {
+  border-color: var(--navy-700);
+  color: var(--navy-800);
+  background: var(--white);
+}
+
 .page-banner {
   padding: clamp(2.8rem, 7vw, 5.5rem) var(--page-pad);
   display: grid;
@@ -1747,7 +1760,7 @@ th {
 }
 
 .leader-card span {
-  color: var(--red);
+  color: #c5112d;
   font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.06em;

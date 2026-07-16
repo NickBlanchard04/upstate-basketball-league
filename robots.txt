@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nickblanchard04.github.io/upstate-basketball-league/sitemap.xml

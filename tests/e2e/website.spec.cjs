@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const AxeBuilder = require("@axe-core/playwright").default;
 const feed = require("../../league-data.json");
 const scoreFeedUrlPattern = /docs\.google\.com\/spreadsheets\/d\/e\/2PACX-1vTp7iD4G8a9gp67-XCnN4in2fFfAuGJNKqYpKaxHoADZDABGCT_YMP7aFYa8ynhY1Itk6OvdHW6bq5T\/pub/;
 const galleryFeedUrlPattern = /script\.google\.com\/macros\/s\/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7\/exec/;
@@ -301,7 +302,8 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
   await expect(portrait).toHaveAttribute("width", "192");
   await expect(portrait).toHaveAttribute("height", "192");
   await expect(portrait).toHaveAttribute("loading", "lazy");
-  expect(await portrait.evaluate((image) => image.currentSrc)).toMatch(/chris-webster-192\.(?:avif|webp)$/);
+  await portrait.scrollIntoViewIfNeeded();
+  await expect.poll(() => portrait.evaluate((image) => image.currentSrc)).toMatch(/chris-webster-192\.(?:avif|webp)$/);
 });
 
 test("approved gallery feed is requested only after an empty team gallery opens", async ({ page }) => {
@@ -326,4 +328,82 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   await page.goto("/schedule.html");
   await page.waitForTimeout(100);
   expect(requests).toBe(1);
+});
+
+test("public pages expose complete search and social metadata", async ({ page, request }) => {
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "about.html"];
+  for (const route of routes) {
+    await page.goto(`/${route}`);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index, follow");
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", /UBL|Upstate Basketball League/);
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /^https:\/\//);
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /^https:\/\//);
+    await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "site.webmanifest");
+    await expect(page.locator("h1")).toHaveCount(1);
+  }
+
+  expect((await request.get("/robots.txt")).status()).toBe(200);
+  expect(await (await request.get("/robots.txt")).text()).toContain("sitemap.xml");
+  expect((await request.get("/sitemap.xml")).status()).toBe(200);
+  expect((await request.get("/site.webmanifest")).status()).toBe(200);
+});
+
+test("cookieless analytics sends only bounded anonymous page data", async ({ page }) => {
+  await page.route("**/config.js*", (route) => route.fulfill({
+    contentType: "application/javascript",
+    body: `window.UBL_CONFIG = {
+      analyticsEndpoint: "https://script.google.com/macros/s/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7/exec",
+      analyticsChannel: "ubl-public-v1",
+      analyticsEnabled: true,
+      analyticsAllowedHosts: ["127.0.0.1"],
+      staticFeedUrl: "league-data.json",
+      refreshMinutes: 1
+    };`
+  }));
+  await page.unroute(galleryFeedUrlPattern);
+  let analyticsBody = "";
+  await page.route(galleryFeedUrlPattern, async (route) => {
+    if (route.request().method() === "POST") {
+      analyticsBody = route.request().postData() || "";
+      await route.fulfill({ json: { accepted: true } });
+      return;
+    }
+    await route.fulfill({ json: { schemaVersion: 1, photos: [] } });
+  });
+
+  await page.goto("/schedule.html");
+  await expect.poll(() => analyticsBody, { timeout: 4000 }).toContain("event=pageview");
+  const params = new URLSearchParams(analyticsBody);
+  expect(params.get("page")).toBe("schedule.html");
+  expect(params.get("device")).toMatch(/mobile|desktop/);
+  expect(params.get("viewport")).toMatch(/^\d+x\d+$/);
+  expect(params.has("email")).toBe(false);
+  expect(params.has("name")).toBe(false);
+  expect(await page.context().cookies()).toEqual([]);
+});
+
+test("analytics stays disabled on unapproved preview hosts", async ({ page }) => {
+  await page.unroute(galleryFeedUrlPattern);
+  let analyticsPosts = 0;
+  await page.route(galleryFeedUrlPattern, async (route) => {
+    if (route.request().method() === "POST") analyticsPosts += 1;
+    await route.fulfill({ json: { accepted: true, schemaVersion: 1, photos: [] } });
+  });
+
+  await page.goto("/schedule.html");
+  await page.waitForTimeout(1800);
+  expect(analyticsPosts).toBe(0);
+});
+
+test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "about.html", "404.html"];
+  for (const route of routes) {
+    await page.goto(`/${route}`);
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+    expect(results.violations, `${route} accessibility violations`).toEqual([]);
+  }
 });

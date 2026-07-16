@@ -37,5 +37,8 @@ The gallery script:
 - Gives approved image files public read access for website delivery
 - Returns a JSON feed with responsive preview and fullscreen Drive URLs
 - Caches the result for 60 seconds
+- Accepts bounded, cookieless site analytics events and writes them to the private `Site Analytics` control-panel tab
 
-Deploy it as a web app that executes as the owner and allows access to anyone. Put the resulting `/exec` URL in `config.js` as `galleryFeedUrl`. Pending upload folders and private form links are never included in the script or public website.
+Deploy it as a web app that executes as the owner and allows access to anyone. Put the resulting `/exec` URL in `config.js` as `galleryFeedUrl`. Pending folder IDs are server-side identifiers and do not grant folder access; the folders remain private. Private form links are not included on the public website.
+
+After adding analytics for the first time, run `verifyAnalyticsDestination` once in the Apps Script editor as `nickblanchardbusiness@gmail.com` and approve Google Sheets access. Keep the same `/exec` deployment URL in both `galleryFeedUrl` and `analyticsEndpoint`.

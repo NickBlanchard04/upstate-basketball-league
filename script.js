@@ -144,7 +144,7 @@ function tickerTeam(game, side) {
   };
 }
 
-function tickerGameMarkup(game) {
+function tickerGameMarkup(game, interactive = true) {
   const away = tickerTeam(game, "away");
   const home = tickerTeam(game, "home");
   const shortDate = game.date.split(" ").slice(1).join(" ");
@@ -155,7 +155,7 @@ function tickerGameMarkup(game) {
     ? `Final &middot; ${escapeHtml(game.division)}`
     : `${isLive ? "Live now &middot; " : ""}${escapeHtml(game.division)}${game.stage ? ` &middot; ${escapeHtml(game.stage)}` : ""}`;
   return `
-    <a class="ticker-game" href="schedule.html" data-ticker-state="${state}" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}${isFinal ? ", final" : ""}.">
+    <a class="ticker-game" href="schedule.html"${interactive ? "" : ' tabindex="-1"'} data-ticker-state="${state}" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}${isFinal ? ", final" : ""}.">
       <time><span>${escapeHtml(shortDate)}</span><small>${escapeHtml(game.time)}</small></time>
       <img src="${safeAttribute(away.logo)}" alt="">
       <b>${escapeHtml(away.short)}</b>
@@ -176,12 +176,13 @@ function renderUpcomingTicker() {
     return;
   }
   ticker.hidden = false;
-  const group = games.map(tickerGameMarkup).join("");
+  const group = games.map((game) => tickerGameMarkup(game, true)).join("");
+  const duplicateGroup = games.map((game) => tickerGameMarkup(game, false)).join("");
   ticker.innerHTML = `
     <div class="ticker-window">
       <div class="ticker-track">
         <div class="ticker-group">${group}</div>
-        <div class="ticker-group" aria-hidden="true">${group}</div>
+        <div class="ticker-group" aria-hidden="true">${duplicateGroup}</div>
       </div>
     </div>
   `;

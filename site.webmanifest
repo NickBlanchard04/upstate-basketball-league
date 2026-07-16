@@ -1,0 +1,17 @@
+{
+  "name": "Upstate Basketball League",
+  "short_name": "UBL",
+  "description": "Official website of the Upstate Basketball League.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#00152e",
+  "theme_color": "#00152e",
+  "icons": [
+    {
+      "src": "assets/optimized/ubl-logo-192.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    }
+  ]
+}

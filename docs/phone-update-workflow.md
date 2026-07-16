@@ -1,5 +1,7 @@
 # UBL Phone Update Workflow
 
+Commissioner quick reference: [UBL Commissioner Game-Day Guide](COMMISSIONER_GUIDE.md)
+
 League leadership control sheet: [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit)
 
 Coach score portal: [UBL Coach Score Entry - 2026-27](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit)

@@ -237,11 +237,14 @@ function syncCoachScorePortal_(portal) {
   sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET).forEach(function (protection) {
     if (protection.getDescription() === COACH_PORTAL_PROTECTION) protection.remove();
   });
-  var protection = sheet.protect().setDescription(COACH_PORTAL_PROTECTION);
+  var protection = sheet.protect().setDescription(COACH_PORTAL_PROTECTION).setWarningOnly(false);
   protection.setUnprotectedRanges([sheet.getRange(5, 7, dataRows, 4)]);
   try {
-    protection.removeEditors(protection.getEditors());
     var ownerEmail = Session.getEffectiveUser().getEmail();
+    var removableEditors = protection.getEditors().filter(function (editor) {
+      return editor.getEmail() !== ownerEmail;
+    });
+    if (removableEditors.length) protection.removeEditors(removableEditors);
     if (ownerEmail) protection.addEditor(ownerEmail);
     if (protection.canDomainEdit()) protection.setDomainEdit(false);
   } catch (error) {
