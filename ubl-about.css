@@ -152,10 +152,23 @@
   content: "−";
 }
 
-.winning-actions blockquote {
-  margin: 0;
+.scripture-panel {
   padding: 0.25rem 1.25rem 1.35rem;
+}
+
+.scripture-intro {
+  margin: 0;
+  color: var(--ubl-white);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.winning-actions blockquote {
+  margin: 0.95rem 0 0;
+  padding: 0 0 0 0.85rem;
   border: 0;
+  border-left: 2px solid rgba(255, 255, 255, 0.55);
   color: var(--ubl-white);
 }
 
@@ -163,6 +176,7 @@
   margin: 0 0 0.65rem;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
+  font-style: italic;
   line-height: 1.55;
 }
 
@@ -173,22 +187,34 @@
   font-weight: 700;
 }
 
+.scripture-credit {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.85rem 1.25rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
 .commitments-section {
+  margin-top: clamp(1.25rem, 3vw, 2.5rem);
   overflow: hidden;
+  border-top: 0.4rem solid var(--ubl-red);
   color: var(--ubl-white);
   background: var(--ubl-navy-mid);
 }
 
 .commitments-heading {
   padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3.5rem);
-  color: #07172d;
-  background: var(--ubl-white);
-  border: 1px solid var(--ubl-line);
+  color: var(--ubl-white);
+  background: var(--ubl-navy);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .commitments-heading h2 {
   margin: 0 0 0.45rem;
-  color: var(--ubl-navy-mid);
+  color: var(--ubl-white);
   font: 900 clamp(2.6rem, 10vw, 5rem)/0.9 "Barlow Condensed", sans-serif;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -197,7 +223,7 @@
 .commitments-heading p {
   max-width: 38rem;
   margin: 0;
-  color: var(--ubl-muted);
+  color: rgba(255, 255, 255, 0.72);
   font-size: clamp(1rem, 2vw, 1.08rem);
 }
 
@@ -238,10 +264,6 @@
 .commitment {
   min-width: 0;
   position: relative;
-  display: grid;
-  grid-template-columns: 2.7rem minmax(0, 1fr);
-  align-items: start;
-  gap: 0.9rem;
 }
 
 .commitment::before {
@@ -254,7 +276,26 @@
   background: var(--ubl-red);
 }
 
-.commitment > span {
+.commitment details {
+  position: relative;
+  z-index: 1;
+}
+
+.commitment summary {
+  min-height: 2.7rem;
+  display: grid;
+  grid-template-columns: 2.7rem minmax(0, 1fr) 1.25rem;
+  align-items: center;
+  gap: 0.9rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.commitment summary::-webkit-details-marker {
+  display: none;
+}
+
+.commitment-marker {
   width: 2.7rem;
   aspect-ratio: 1;
   position: relative;
@@ -266,18 +307,47 @@
   color: var(--ubl-navy);
   background: var(--ubl-white);
   font: 900 1rem/1 "Barlow Condensed", sans-serif;
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.commitment-toggle {
+  width: 1.25rem;
+  color: rgba(255, 255, 255, 0.72);
+  font: 500 1.2rem/1 "IBM Plex Sans", sans-serif;
+  text-align: center;
+}
+
+.commitment-toggle::before {
+  content: "+";
+}
+
+.commitment details[open] .commitment-toggle::before {
+  content: "−";
+}
+
+.commitment details[open] .commitment-marker {
+  border-color: var(--ubl-red);
+  color: var(--ubl-white);
+  background: var(--ubl-red);
+}
+
+.commitment summary:hover h3,
+.commitment summary:focus-visible h3,
+.commitment details[open] h3 {
+  color: #ff9aac;
 }
 
 .commitment h3 {
-  margin: 0.05rem 0 0.3rem;
+  margin: 0;
   color: var(--ubl-white);
   font: 800 clamp(1.45rem, 6vw, 2rem)/1 "Barlow Condensed", sans-serif;
   text-transform: uppercase;
+  transition: color 160ms ease;
 }
 
 .commitment p {
   max-width: 30rem;
-  margin: 0;
+  margin: 0.65rem 0 0 3.6rem;
   color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
   line-height: 1.5;

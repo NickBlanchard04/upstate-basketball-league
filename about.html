@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
   <link rel="stylesheet" href="styles.css?v=20260714-3">
-  <link rel="stylesheet" href="ubl-about.css?v=20260715-2">
+  <link rel="stylesheet" href="ubl-about.css?v=20260715-3">
   <script src="config.js?v=20260714-1"></script>
   <script src="league-core.js?v=20260715-1"></script>
   <script src="data.js?v=20260715-1"></script>
@@ -55,25 +55,37 @@
       <div class="winning-actions" aria-label="Scripture behind UBL's approach to competition">
         <details name="winning-scripture">
           <summary><span>Compete hard</span><span class="scripture-toggle" aria-hidden="true"></span></summary>
-          <blockquote>
-            <p>“And whatsoever ye do, do it heartily, as to the Lord, and not unto men.”</p>
-            <cite>Colossians 3:23 · KJV</cite>
-          </blockquote>
+          <div class="scripture-panel">
+            <p class="scripture-intro">We give our best because effort becomes worship when it is offered to God.</p>
+            <blockquote>
+              <p>“Whatever you do, work at it with all your heart, as working for the Lord.”</p>
+              <cite>Colossians 3:23 · NIV®</cite>
+            </blockquote>
+          </div>
         </details>
         <details name="winning-scripture">
           <summary><span>Walk humbly</span><span class="scripture-toggle" aria-hidden="true"></span></summary>
-          <blockquote>
-            <p>“What doth the Lord require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?”</p>
-            <cite>Micah 6:8 · KJV</cite>
-          </blockquote>
+          <div class="scripture-panel">
+            <p class="scripture-intro">Strength and success should always be matched by justice, mercy, and humility.</p>
+            <blockquote>
+              <p>“To act justly and to love mercy and to walk humbly with your God.”</p>
+              <cite>Micah 6:8 · NIV®</cite>
+            </blockquote>
+          </div>
         </details>
         <details name="winning-scripture">
           <summary><span>Honor God</span><span class="scripture-toggle" aria-hidden="true"></span></summary>
-          <blockquote>
-            <p>“Whether therefore ye eat, or drink, or whatsoever ye do, do all to the glory of God.”</p>
-            <cite>1 Corinthians 10:31 · KJV</cite>
-          </blockquote>
+          <div class="scripture-panel">
+            <p class="scripture-intro">Every choice—on the court and away from it—should point beyond ourselves.</p>
+            <blockquote>
+              <p>“Whatever you do, do it all for the glory of God.”</p>
+              <cite>1 Corinthians 10:31 · NIV®</cite>
+            </blockquote>
+          </div>
         </details>
+        <p class="scripture-credit">
+          Scripture quotations taken from the Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.®
+        </p>
       </div>
     </section>
 
@@ -85,24 +97,34 @@
 
       <ol class="commitment-court">
         <li class="commitment commitment-faith">
-          <span aria-hidden="true">01</span>
-          <div><h3>Faith First</h3><p>Honor God in how we prepare, compete, lead, win, and lose.</p></div>
+          <details name="core-commitment" open>
+            <summary><span class="commitment-marker" aria-hidden="true">01</span><h3>Faith First</h3><span class="commitment-toggle" aria-hidden="true"></span></summary>
+            <p>Honor God in how we prepare, compete, lead, win, and lose.</p>
+          </details>
         </li>
         <li class="commitment commitment-excellence">
-          <span aria-hidden="true">02</span>
-          <div><h3>Compete With Excellence</h3><p>Play hard, prepare well, and pursue victory with integrity.</p></div>
+          <details name="core-commitment">
+            <summary><span class="commitment-marker" aria-hidden="true">02</span><h3>Compete With Excellence</h3><span class="commitment-toggle" aria-hidden="true"></span></summary>
+            <p>Play hard, prepare well, and pursue victory with integrity.</p>
+          </details>
         </li>
         <li class="commitment commitment-character">
-          <span aria-hidden="true">03</span>
-          <div><h3>Character in Every Result</h3><p>Respond to both victory and defeat with maturity and humility.</p></div>
+          <details name="core-commitment">
+            <summary><span class="commitment-marker" aria-hidden="true">03</span><h3>Character in Every Result</h3><span class="commitment-toggle" aria-hidden="true"></span></summary>
+            <p>Respond to both victory and defeat with maturity and humility.</p>
+          </details>
         </li>
         <li class="commitment commitment-communication">
-          <span aria-hidden="true">04</span>
-          <div><h3>Clear Communication</h3><p>Build trust through dependable, consistent league leadership.</p></div>
+          <details name="core-commitment">
+            <summary><span class="commitment-marker" aria-hidden="true">04</span><h3>Clear Communication</h3><span class="commitment-toggle" aria-hidden="true"></span></summary>
+            <p>Build trust through dependable, consistent league leadership.</p>
+          </details>
         </li>
         <li class="commitment commitment-lasting">
-          <span aria-hidden="true">05</span>
-          <div><h3>Build Something Lasting</h3><p>Create a foundation that serves athletes and programs for years to come.</p></div>
+          <details name="core-commitment">
+            <summary><span class="commitment-marker" aria-hidden="true">05</span><h3>Build Something Lasting</h3><span class="commitment-toggle" aria-hidden="true"></span></summary>
+            <p>Create a foundation that serves athletes and programs for years to come.</p>
+          </details>
         </li>
       </ol>
     </section>
