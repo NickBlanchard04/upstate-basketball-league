@@ -17,12 +17,12 @@ test("feed validation rejects unsafe game state", () => {
   assert.match(core.validateFeed(invalid).join(" "), /cannot end tied/);
 });
 
-test("feed validation accepts commissioner-approved weekdays and enforces score shape", () => {
+test("feed validation accepts any commissioner-approved game date and enforces score shape", () => {
   const invalid = structuredClone(feed);
   invalid.games[0].date = "2026-12-04";
   invalid.games[0].awayScore = -1;
   const errors = core.validateFeed(invalid).join(" ");
-  assert.doesNotMatch(errors, /Monday or Thursday/);
+  assert.doesNotMatch(errors, /weekday/i);
   assert.match(errors, /nonnegative whole numbers/);
 });
 

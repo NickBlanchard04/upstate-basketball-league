@@ -316,6 +316,44 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
   await expect.poll(() => portrait.evaluate((image) => image.currentSrc)).toMatch(/chris-webster-192\.(?:avif|webp)$/);
 });
 
+test("about page explains the league, season, culture, testimonial, and leadership", async ({ page }) => {
+  await page.goto("/about.html");
+
+  await expect(page.getByRole("heading", { name: "This is UBL" })).toBeVisible();
+  await expect(page.locator(".identity-facts")).toContainText("Smaller high school programs");
+  await expect(page.locator(".identity-facts")).toContainText("Across upstate New York");
+
+  await expect(page.getByRole("heading", { name: "How a UBL season works" })).toBeVisible();
+  await expect(page.locator(".season-path > li")).toHaveCount(4);
+  await expect(page.locator(".season-path")).toContainText("tips off in December");
+  await expect(page.locator(".season-path")).toContainText("end of January");
+  await expect(page.locator(".season-path")).toContainText("playoffs begin in February");
+
+  const cultureDetails = page.locator(".culture-accordion details");
+  await expect(cultureDetails).toHaveCount(3);
+  await expect(page.locator(".culture-accordion details[open]")).toHaveCount(0);
+  await cultureDetails.nth(0).locator("summary").click();
+  await expect(cultureDetails.nth(0)).toHaveAttribute("open", "");
+  await expect(cultureDetails.nth(0)).toContainText("Every athlete, coach, official, and volunteer has value");
+  await cultureDetails.nth(1).locator("summary").click();
+  await expect(cultureDetails.nth(0)).not.toHaveAttribute("open", "");
+  await expect(cultureDetails.nth(1)).toHaveAttribute("open", "");
+
+  const huddle = page.getByAltText("Basketball players gathered shoulder-to-shoulder in a team huddle");
+  await expect(huddle).toHaveAttribute("src", "assets/optimized/ubl-team-huddle-960.webp");
+  await expect(huddle).toHaveAttribute("width", "960");
+  await expect(huddle).toHaveAttribute("height", "640");
+  await expect(huddle).toHaveAttribute("loading", "lazy");
+  await expect(page.locator(".testimonial-break")).toContainText("Nick Blanchard");
+  await expect(page.locator(".testimonial-break")).toContainText("Founder");
+
+  await expect(page.locator(".leadership-section .leader-card")).toHaveCount(2);
+  await expect(page.locator(".leader-monogram")).toHaveAttribute("aria-label", "Andy Walts portrait pending");
+  await expect(page.getByAltText("Chris Webster officiating a basketball game")).toBeVisible();
+
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+});
+
 test("approved gallery feed is requested only after an empty team gallery opens", async ({ page }) => {
   await page.unroute(galleryFeedUrlPattern);
   let requests = 0;

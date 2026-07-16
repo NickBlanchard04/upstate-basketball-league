@@ -11,7 +11,7 @@
   - Calculate standings automatically from games marked `Final`.
   - Support `Scheduled`, `Final`, `Postponed`, and `Cancelled` game states.
   - Show a clear live-sheet sync status on public pages.
-  - Validate missing teams, duplicate games, invalid scores, and Monday/Thursday scheduling before publishing.
+  - Validate missing teams, duplicate games, invalid scores, and commissioner-approved scheduling before publishing.
   - Keep the current bundled data as a fallback if the live sheet is temporarily unavailable.
   - [x] Write a short phone workflow for league leadership and test a complete update from score entry to the public site.
 
