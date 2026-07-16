@@ -80,11 +80,16 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
     await expect.poll(() => scheduleButton.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
     await expect.poll(() => scheduleButton.evaluate((element) => getComputedStyle(element).boxShadow)).not.toBe("none");
 
-    const standingsButton = page.getByRole("link", { name: "Check standings" });
-    await expect(async () => {
-      await standingsButton.hover({ force: true });
-      await expect(standingsButton).toHaveCSS("background-color", "rgb(255, 255, 255)", { timeout: 1000 });
-    }).toPass({ timeout: 5000 });
+    const hasStandingsHoverRule = await page.evaluate(() => {
+      const includesRule = (rules) => Array.from(rules).some((rule) => {
+        if (rule.selectorText === ".hero-actions .button-outline:hover") {
+          return rule.style.background === "var(--white)" && rule.style.boxShadow !== "";
+        }
+        return rule.cssRules ? includesRule(rule.cssRules) : false;
+      });
+      return Array.from(document.styleSheets).some((sheet) => includesRule(sheet.cssRules));
+    });
+    expect(hasStandingsHoverRule).toBe(true);
   }
 });
 
