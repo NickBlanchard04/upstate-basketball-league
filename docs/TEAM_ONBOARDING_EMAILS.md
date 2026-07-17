@@ -24,16 +24,15 @@ UBL Commissioner
 
 Hi [Name],
 
-Your Google account now has access to the UBL Coach Score Portal:
+Your Google account now has access to your program's private UBL score portal:
 
-https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit
+[Paste the Portal URL from this representative's Access Roster row]
 
 After a game is final:
 
 1. Find the game by date, division, and matchup.
 2. Enter the away score and home score.
-3. Enter your first and last name.
-4. Check Submit and read Submission Status.
+3. Check Submit and read Status. Your name is recorded automatically.
 
 If a score is above 130 or the margin is above 80, the portal asks you to verify the numbers and check Submit one more time. Published-score corrections go through the commissioner at info.upstatebasketballleague@gmail.com.
 
@@ -51,7 +50,7 @@ Hi [Name],
 
 Your private practice game is ready. We do not need to meet or be online at the same time.
 
-Open the Coach Score Portal, find the row labeled `PILOT TEST` for [Program], enter the test scores provided below, enter your full name, and check Submit.
+Open your team's score portal, find the row labeled `PILOT TEST`, enter the test scores below, and check Submit. Your name is recorded automatically.
 
 - Away score: [Away score]
 - Home score: [Home score]

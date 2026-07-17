@@ -1,47 +1,35 @@
 # UBL Commissioner Game-Day Guide
 
-Use the league account, `info.upstatebasketballleague@gmail.com`, for commissioner work. Coaches should use only their separate score-entry portals.
+Use the league account, `info.upstatebasketballleague@gmail.com`, for commissioner work. Coaches use only their team-specific portals.
 
 Quick references: [Coach Final-Score Guide](COACH_SCORE_GUIDE.md), [Game Exceptions And Corrections](GAME_EXCEPTION_WORKFLOW.md), and [Access And Roles](ACCESS_AND_ROLES.md).
 
 ## Before each game day
 
 1. Open the [UBL League Control Panel - 2026-27](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit).
-2. Unhide `Games` from **View > Hidden sheets > Games**.
-3. Confirm each game's date, time, home and away teams, Venue ID, and `Scheduled` status.
+2. Use `Commissioner Dashboard` to confirm dates, times, teams, venues, and statuses.
+3. Review the dashboard status line for missing scores or open corrections.
 4. Verify the public [schedule](https://nickblanchard04.github.io/upstate-basketball-league/schedule.html) after changes publish.
-5. Review the private `Access Roster` tab before granting or removing portal access.
+
+Do not unhide or routinely edit the backend `Games` sheet. Dashboard edits update that source, team portals, and the website automatically.
 
 ## Routine final scores
 
-Coaches enter both scores and their full name in their private [coach score portal](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit), then check `Submit`. A successful entry changes the game's status to `Final`, updates the schedule and standings, and records the submission in `Score Audit`.
+Coaches enter the away and home scores in their team portal and check `Submit`. Their name is recorded automatically. Accepted results become `Final`, appear on every public score surface, recalculate standings and seeding, and create a private `Score Audit` entry.
 
-Scores above 130 or margins above 80 receive a review warning. The coach must verify the exact numbers and check `Submit` a second time. The warning and any accepted result are both recorded in `Score Audit`.
+Scores above 130 or margins above 80 require a second confirmation of the exact numbers.
 
 ## Corrections and exceptions
 
-- **Correction:** In `Games`, correct Away Score and Home Score, keep Status as `Final`, and update Last Updated. Record the reason in Notes.
-- **Postponement:** Set Status to `Postponed` and add a short public note. When confirmed, update Date, Time, and Venue ID, then return Status to `Scheduled`.
-- **Cancellation:** Set Status to `Cancelled`. Cancelled games do not affect standings.
-- **Forfeit:** Set Status to `Forfeit` and use the league's configured forfeit score. Final and Forfeit are the only result statuses that affect standings.
-- **Rejected submission:** Check that both scores are nonnegative whole numbers, the score is not tied, and Submitted By contains a full name. Review `Score Audit` before making a correction.
+- Review `Corrections Queue`. Set an accurate request to `Approved`; it becomes `Completed` after publishing. Set an invalid request to `Rejected` and add a short commissioner note.
+- Use `Commissioner Dashboard` for postponements, cancellations, reschedules, venue changes, and forfeits.
+- Keep private discipline, medical, and eligibility details out of public Notes.
+- Never delete a game or reuse a Game ID.
 
-Use [Game Exceptions And Corrections](GAME_EXCEPTION_WORKFLOW.md) for postponements, reschedules, cancellations, forfeits, disputes, unusual scores, duplicate attempts, and feed outages.
+## Automated safeguards
 
-Never delete a game row, reuse a Game ID, or type private disciplinary information in public Notes. Published coach entries cannot be changed from the coach portal.
-
-## Weekly closeout
-
-1. Review `Score Audit` against the week's completed games.
-2. Confirm standings and both playoff brackets reflect accepted results.
-3. Create a dated Drive copy of the control workbook. Keep the backup read-only for the league account.
-4. Review the private `Site Analytics` tab for unusual traffic or performance changes. It contains anonymous page and performance data only.
-5. If the site says `Using backup schedule`, do not re-enter results. Contact the site owner and use the control sheet as the source of truth.
+- An hourly health check records overdue finals and public-feed mismatches in `Operations Alerts`; the Commissioner Dashboard displays the open count.
+- A dated control-panel backup is created automatically each day in `UBL Automated Backups`.
+- `Access Roster` controls team portal permissions. Removing or deactivating a representative and running the portal sync removes that person's access.
 
 League communications: [info.upstatebasketballleague@gmail.com](mailto:info.upstatebasketballleague@gmail.com)
-
-## Closed pilot only
-
-Private pilot rows are labeled `PILOT TEST` in the coach portal and use Game IDs beginning with `pilot-`. They are blocked from the public website by both their Game ID and `pilot-test` week tag. Pilot work can be completed asynchronously; participants do not need to be online together.
-
-Do not rename a pilot Game ID or change its Week ID. The site administrator resets or removes pilot rows after the test.

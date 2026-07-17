@@ -1,34 +1,37 @@
-# UBL Score Feed
+# UBL League Operations Automation
 
-The production site uses the published `Website Feed` CSV from the UBL League Control Panel. It does not require Google Apps Script.
+The production site loads the Apps Script JSON feed first, uses the published `Website Feed` CSV as its live fallback, and keeps `league-data.json` as its last safe snapshot.
 
 ## Coach-only portal workflow
 
-Team representatives use the separate [UBL Coach Score Entry - 2026-27](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit) workbook. They never receive access to the private league control panel.
+Each active program receives a separate, team-specific workbook generated from the private `Access Roster`. Representatives never receive access to the private league control panel or another program's portal.
 
 Participant instructions are in [COACH_SCORE_GUIDE.md](../docs/COACH_SCORE_GUIDE.md). Commissioner exceptions are in [GAME_EXCEPTION_WORKFLOW.md](../docs/GAME_EXCEPTION_WORKFLOW.md).
 
 1. On the coach portal's `Coach Score Entry` sheet, find the completed game.
-2. Enter the away score, home score, and your full name.
+2. Enter the away and home scores. The rostered submitter's name is recorded automatically.
 3. Check `Submit` only after the result is final.
-4. Confirm `Website Status` changes to `Published to website`.
-5. The `Website Feed` tab mirrors only public schedule and result fields. The site refreshes from it every minute.
+4. Confirm `Status` changes to `Published to website`.
+5. Use `Correction Request` for any published result that needs commissioner approval.
 
-Incomplete, tied, negative, decimal, duplicate, and incomplete-name submissions are rejected. Scores above 130 or margins above 80 require the coach to verify the exact numbers and check Submit a second time.
+Incomplete, tied, negative, decimal, unauthorized-team, and duplicate submissions are rejected. Scores above 130 or margins above 80 require the coach to verify the exact numbers and check Submit a second time.
 
 The public website automatically falls back to its published schedule if Google Sheets is temporarily unavailable.
 
 ## Sheet maintenance
 
-- Update dates, times, teams, venues, and game status in the protected `Games` tab. The `Coach Score Entry` and `Website Feed` tabs update from that source.
+- Use `Commissioner Dashboard` for routine dates, times, teams, venues, scores, notes, and statuses. The protected `Games` tab remains the canonical backend table.
+- Review `Corrections Queue` and set valid requests to `Approved`; approved requests publish and become `Completed`.
 - Keep the `Website Feed` publication set to `Comma-separated values (.csv)` with automatic republishing enabled.
 - Do not publish the entire control panel. Only the `Website Feed` tab is public.
 
 ## Apps Script setup
 
-Run `setupCoachScorePortal` once as the league business account. It creates the isolated coach workbook, shares it with the configured coach accounts, protects every cell except score/name/submit inputs, and installs the owner-run edit trigger. Run `syncCoachScorePortal` after major schedule changes.
+Run `installOperationsAutomation` once as the league business account. It creates the commissioner dashboard and correction queue, creates or refreshes each team portal from `Access Roster`, installs edit and time triggers, runs a health check, and creates the first daily backup.
 
-The owner-run trigger validates each result, writes accepted finals to the private `Games` sheet, records the attempt in `Score Audit`, and clears the coach input cells. The private control panel remains restricted to league leadership.
+Run `syncAccessAndCoachPortals` after changing a representative, Google account, team assignment, or access status. Ordinary Games or dashboard edits refresh existing portals automatically.
+
+The owner-run trigger validates each result, enforces team ownership, writes accepted finals to `Games`, records the attempt in `Score Audit`, and clears the coach input cells. An hourly trigger records overdue scores or feed mismatches in `Operations Alerts` and updates the dashboard alert count; a daily trigger copies the control workbook to `UBL Automated Backups`.
 
 ## Closed pilot workflow
 

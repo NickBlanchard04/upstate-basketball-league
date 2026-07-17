@@ -14,54 +14,53 @@
     return core.parseScoreFeedCsv(await response.text());
   }
 
-  async function loadBaseFeed(sources) {
-    const failures = [];
-    for (const source of sources) {
-      try {
-        const separator = source.url.includes("?") ? "&" : "?";
-        const response = await fetch(`${source.url}${separator}v=${Date.now()}`, {
-          cache: "no-store",
-          headers: { Accept: "application/json" }
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return { feed: await response.json(), label: source.label, failures };
-      } catch (error) {
-        failures.push(`${source.label}: ${error.message}`);
-      }
-    }
-    return { feed: null, label: "", failures };
+  async function loadJsonFeed(url) {
+    const separator = url.includes("?") ? "&" : "?";
+    const response = await fetch(`${url}${separator}v=${Date.now()}`, {
+      cache: "no-store",
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
   async function loadFeed() {
-    const sources = [
-      config.liveFeedUrl && { url: config.liveFeedUrl, label: "Google Sheet" },
-      config.staticFeedUrl && { url: config.staticFeedUrl, label: "published snapshot" }
-    ].filter(Boolean);
-    if (!sources.length || !core) {
+    const failures = [];
+    if (!core) {
       window.UBL_DATA_SOURCE = "bundled fallback";
       return fallback;
     }
 
-    const [scoreResult, baseResult] = await Promise.allSettled([
-      loadScoreFeed(),
-      loadBaseFeed(sources)
-    ]);
-    const failures = baseResult.status === "fulfilled" ? [...baseResult.value.failures] : [];
-    const scoreGames = scoreResult.status === "fulfilled" ? scoreResult.value : null;
-    if (scoreResult.status === "rejected") failures.push(`live score feed: ${scoreResult.reason.message}`);
-    if (baseResult.status === "rejected") failures.push(`published schedule: ${baseResult.reason.message}`);
-
-    if (baseResult.status === "fulfilled" && baseResult.value.feed) {
+    if (config.liveFeedUrl) {
       try {
-        const mergedFeed = scoreGames ? core.mergeScoreFeed(baseResult.value.feed, scoreGames) : baseResult.value.feed;
-        const normalized = core.normalizeFeed(mergedFeed, fallback);
-        window.UBL_DATA_SOURCE = scoreGames ? "live score feed" : baseResult.value.label;
-        window.UBL_DATA_ERROR = failures.join(" ");
+        const normalized = core.normalizeFeed(await loadJsonFeed(config.liveFeedUrl), fallback);
+        window.UBL_DATA_SOURCE = "live score feed";
+        window.UBL_DATA_ERROR = "";
         window.UBL_DATA = normalized;
         return normalized;
       } catch (error) {
-        failures.push(`published schedule: ${error.message}`);
+        failures.push(`live league feed: ${error.message}`);
       }
+    }
+
+    const [scoreResult, baseResult] = await Promise.allSettled([
+      loadScoreFeed(),
+      config.staticFeedUrl ? loadJsonFeed(config.staticFeedUrl) : Promise.resolve(null)
+    ]);
+    const scoreGames = scoreResult.status === "fulfilled" ? scoreResult.value : null;
+    if (scoreResult.status === "rejected") failures.push(`live score feed: ${scoreResult.reason.message}`);
+    if (baseResult.status === "rejected") failures.push(`published snapshot: ${baseResult.reason.message}`);
+
+    try {
+      const baseFeed = baseResult.status === "fulfilled" && baseResult.value ? baseResult.value : fallback;
+      const mergedFeed = scoreGames ? core.mergeScoreFeed(baseFeed, scoreGames) : baseFeed;
+      const normalized = core.normalizeFeed(mergedFeed, fallback);
+      window.UBL_DATA_SOURCE = scoreGames ? "live score feed" : baseResult.value ? "published snapshot" : "bundled fallback";
+      window.UBL_DATA_ERROR = failures.join(" ");
+      window.UBL_DATA = normalized;
+      return normalized;
+    } catch (error) {
+      failures.push(`backup schedule: ${error.message}`);
     }
 
     window.UBL_DATA_SOURCE = "bundled fallback";

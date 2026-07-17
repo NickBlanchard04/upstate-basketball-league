@@ -1,26 +1,26 @@
 # UBL Coach Final-Score Guide
 
-Use the private [UBL Coach Score Entry - 2026-27](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit). Do not request access to the commissioner control panel.
+Use the private team-specific score portal sent by league leadership. Each program has its own link and can see only its assigned games. Do not request access to the commissioner control panel or share the portal link publicly.
 
 ## Submit a final score
 
-1. Open the coach score portal after the game is final.
+1. Open your program's portal after the game is final.
 2. Find the game by date, division, and matchup.
-3. Enter the away team's final score under `Away Score`.
-4. Enter the home team's final score under `Home Score`.
-5. Enter your first and last name under `Submitted By`.
-6. Check `Submit` once.
-7. Read `Submission Status` before closing the sheet.
+3. Enter the away and home final scores in the yellow cells.
+4. Check `Submit` once.
+5. Read `Status` before closing the sheet.
+
+Your name is recorded automatically from the league's private access roster.
 
 ## What the status means
 
-- `Published to website`: The result was accepted. The schedule, standings, homepage, and playoff seeding update automatically.
-- `Review ...`: The score is above 130 or the margin is above 80. Verify both numbers, then check `Submit` again if they are correct.
-- `Rejected`: Fix the stated problem and submit again. Missing scores, negative numbers, decimals, ties, incomplete names, and duplicate finals are rejected.
-- `Pilot complete - private`: The closed-pilot result was recorded but did not reach the public website.
+- `Published to website`: The schedule, results, standings, homepage, and playoff seeding were updated.
+- `Review ...`: Verify the unusual score, then check `Submit` again if the numbers are correct.
+- `Rejected`: Fix the stated issue and submit again.
+- `Pilot complete - private`: The practice result was recorded without changing the public website.
 
 ## Corrections
 
-Do not overwrite or resubmit a published score. Email [info.upstatebasketballleague@gmail.com](mailto:info.upstatebasketballleague@gmail.com) with the game date, matchup, incorrect score, correct score, and reason. The commissioner makes the correction and the audit record remains intact.
+Open the portal's `Correction Request` tab, choose the completed game, enter the corrected away and home scores, add a short reason, and check `Submit`. The result changes only after the commissioner approves the request.
 
-Never share the portal link publicly or enter notes about players, discipline, injuries, or eligibility in the score sheet.
+Never enter notes about players, discipline, injuries, or eligibility in the score portal. Operational questions go to [info.upstatebasketballleague@gmail.com](mailto:info.upstatebasketballleague@gmail.com).

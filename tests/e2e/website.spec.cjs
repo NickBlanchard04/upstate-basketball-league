@@ -1,6 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
 const feed = require("../../league-data.json");
+const liveFeedUrlPattern = /script\.google\.com\/macros\/s\/AKfycbzgjDF7Z0LZahvdeFMa3illib1Dc26LsI2lYG_gCn63gXiUgncmExTQoJrUUD94fxzZ\/exec/;
 const scoreFeedUrlPattern = /docs\.google\.com\/spreadsheets\/d\/e\/2PACX-1vTp7iD4G8a9gp67-XCnN4in2fFfAuGJNKqYpKaxHoADZDABGCT_YMP7aFYa8ynhY1Itk6OvdHW6bq5T\/pub/;
 const galleryFeedUrlPattern = /script\.google\.com\/macros\/s\/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7\/exec/;
 
@@ -28,6 +29,7 @@ function scoreFeedCsv(sourceFeed) {
 }
 
 test.beforeEach(async ({ page }) => {
+  await page.route(liveFeedUrlPattern, (route) => route.fulfill({ json: feed }));
   await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(feed) }));
   await page.route(galleryFeedUrlPattern, (route) => route.fulfill({ json: { schemaVersion: 1, photos: [] } }));
 });
@@ -61,6 +63,11 @@ test("all public routes render meaningful content without runtime errors", async
     }
   });
 });
+
+async function useLiveFeed(page, sourceFeed) {
+  await page.unroute(liveFeedUrlPattern);
+  await page.route(liveFeedUrlPattern, (route) => route.fulfill({ json: sourceFeed }));
+}
 
 test("public pages do not expose internal placeholder language", async ({ page }) => {
   for (const route of ["/schedule.html", "/teams.html", "/bracket.html", "/gallery.html", "/about.html"]) {
@@ -105,8 +112,7 @@ test("homepage places Coming Up below standings and mixes prior-night finals int
   const resultFeed = structuredClone(feed);
   Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
   Object.assign(resultFeed.games[1], { status: "Final", awayScore: 44, homeScore: 52 });
-  await page.unroute(scoreFeedUrlPattern);
-  await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(resultFeed) }));
+  await useLiveFeed(page, resultFeed);
   await page.addInitScript(() => {
     Date.now = () => Date.parse("2026-12-04T15:00:00.000Z");
   });
@@ -234,8 +240,7 @@ test("approved Drive photos appear only in their matching team and division", as
 test("completed score updates schedule, standings, and bracket seeds", async ({ page }) => {
   const resultFeed = structuredClone(feed);
   Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
-  await page.unroute(scoreFeedUrlPattern);
-  await page.route(scoreFeedUrlPattern, (route) => route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(resultFeed) }));
+  await useLiveFeed(page, resultFeed);
 
   await page.goto("/schedule.html");
   await expect(page.locator("[data-game-id='ubl-001']")).toContainText("41 - 50");
@@ -257,32 +262,41 @@ test("simultaneous games are all shown during the configured live window", async
 });
 
 test("malformed live data falls back to the bundled schedule", async ({ page }) => {
+  await page.unroute(liveFeedUrlPattern);
+  await page.route(liveFeedUrlPattern, (route) => route.fulfill({ json: { games: "invalid" } }));
   await page.route("**/league-data.json*", (route) => route.fulfill({ json: { games: "invalid" } }));
   await page.goto("/schedule.html");
   await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);
   await expect(page.locator("[data-freshness]")).toContainText("backup schedule");
 });
 
-test("bundled data renders immediately while score and schedule feeds load in parallel", async ({ page }) => {
-  await page.unroute(scoreFeedUrlPattern);
+test("bundled data renders immediately while the primary live feed loads without duplicate requests", async ({ page }) => {
+  await page.unroute(liveFeedUrlPattern);
   const requestTimes = {};
+  let legacyScoreRequests = 0;
+  let snapshotRequests = 0;
+  await page.unroute(scoreFeedUrlPattern);
   await page.route(scoreFeedUrlPattern, async (route) => {
-    requestTimes.score = Date.now();
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    legacyScoreRequests += 1;
     await route.fulfill({ contentType: "text/csv", body: scoreFeedCsv(feed) });
   });
-  await page.route("**/league-data.json*", async (route) => {
-    requestTimes.schedule = Date.now();
+  await page.route(liveFeedUrlPattern, async (route) => {
+    requestTimes.live = Date.now();
     await new Promise((resolve) => setTimeout(resolve, 700));
+    await route.fulfill({ json: feed });
+  });
+  await page.route("**/league-data.json*", async (route) => {
+    snapshotRequests += 1;
     await route.fulfill({ json: feed });
   });
 
   await page.goto("/schedule.html", { waitUntil: "domcontentloaded" });
   await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);
   await expect(page.locator("[data-freshness]")).toContainText("saved schedule while live updates load");
-  await expect.poll(() => Object.keys(requestTimes).length).toBe(2);
-  expect(Math.abs(requestTimes.score - requestTimes.schedule)).toBeLessThan(150);
+  await expect.poll(() => Object.keys(requestTimes).length).toBe(1);
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet", { timeout: 3000 });
+  expect(legacyScoreRequests).toBe(0);
+  expect(snapshotRequests).toBe(0);
 });
 
 test("identical live data does not replace already rendered schedule nodes", async ({ page }) => {

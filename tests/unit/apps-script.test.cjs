@@ -36,9 +36,70 @@ test("unusual scores require confirmation of the exact score", () => {
 });
 
 test("coach portal configuration isolates coach access from the control panel", () => {
-  assert.equal(context.COACH_PORTAL_NAME, "UBL Coach Score Entry - 2026-27");
-  assert.deepEqual(Array.from(context.COACH_PORTAL_EDITORS), ["athletic_director@kingsschool.info"]);
+  assert.equal(context.COACH_PORTAL_NAME, "UBL Team Score Entry - 2026-27");
   assert.equal(context.COACH_PORTAL_SHEET, "Coach Score Entry");
+  assert.equal(context.COMMISSIONER_DASHBOARD_SHEET, "Commissioner Dashboard");
+  assert.equal(context.CORRECTIONS_QUEUE_SHEET, "Corrections Queue");
+  assert.equal(context.OPERATIONS_ALERTS_SHEET, "Operations Alerts");
+  assert.match(source, /activePortalEntries_\(control\)/);
+  assert.match(source, /getRange\(5, 3, dataRows, 2\)\.setNumberFormat\("0"\)/);
+  assert.doesNotMatch(source, /COACH_PORTAL_EDITORS/);
+});
+
+test("verified accounts and team ownership drive portal access", () => {
+  assert.equal(context.isVerifiedEmail_("coach@example.com"), true);
+  assert.equal(context.isVerifiedEmail_("not-an-email"), false);
+  assert.equal(context.portalGameBelongsToTeam_({
+    id: "ubl-001",
+    weekId: "opening-week",
+    awayTeamId: "kings-school",
+    homeTeamId: "perth"
+  }, "kings-school"), true);
+  assert.equal(context.portalGameBelongsToTeam_({
+    id: "ubl-001",
+    weekId: "opening-week",
+    awayTeamId: "kings-school",
+    homeTeamId: "perth"
+  }, "wilton-baptist"), false);
+  assert.equal(context.portalGameBelongsToTeam_({
+    id: "pilot-wilton-01",
+    weekId: "pilot-test",
+    awayTeamId: "kings-school",
+    homeTeamId: "wilton-baptist"
+  }, "wilton-baptist"), true);
+  assert.equal(context.portalGameBelongsToTeam_({
+    id: "pilot-wilton-01",
+    weekId: "pilot-test",
+    awayTeamId: "kings-school",
+    homeTeamId: "wilton-baptist"
+  }, "kings-school"), false);
+});
+
+test("team portals show assigned pilots and only the nearest relevant games", () => {
+  const games = [
+    { id: "pilot-kings-01", weekId: "pilot-test", date: "2026-07-20", time: "6:00 PM", awayTeamId: "kings-school", homeTeamId: "wilton-baptist" },
+    { id: "pilot-wilton-01", weekId: "pilot-test", date: "2026-07-23", time: "7:30 PM", awayTeamId: "wilton-baptist", homeTeamId: "kings-school" },
+    { id: "ubl-001", weekId: "opening-week", date: "2026-12-03", time: "6:00 PM", awayTeamId: "wilton-baptist", homeTeamId: "kings-school" },
+    { id: "ubl-002", weekId: "opening-week", date: "2026-12-07", time: "6:00 PM", awayTeamId: "kings-school", homeTeamId: "perth" },
+    { id: "ubl-003", weekId: "opening-week", date: "2026-12-10", time: "6:00 PM", awayTeamId: "hv-rocks", homeTeamId: "wilton-baptist" }
+  ];
+  const selected = context.selectPortalGames_(games, "kings-school", new Date("2026-07-17T12:00:00-04:00"));
+  assert.deepEqual(Array.from(selected, (game) => game.id), ["pilot-kings-01", "ubl-001", "ubl-002"]);
+  assert.equal(context.valueOrBlank_(0), 0);
+  assert.equal(context.valueOrBlank_(""), "");
+});
+
+test("operations automation installs dashboard, alerts, and backups", () => {
+  assert.match(source, /function installOperationsAutomation\(\)/);
+  assert.match(source, /function runLeagueHealthCheck\(\)/);
+  assert.match(source, /function createDailyControlBackup\(\)/);
+  assert.match(source, /function handleCorrectionsQueueEdit_\(event\)/);
+  assert.match(source, /function syncOperationsAlerts_\(control, alerts\)/);
+  assert.doesNotMatch(source, /MailApp/);
+  assert.doesNotMatch(source, /UrlFetchApp/);
+  assert.match(source, /publicFeed = buildPublicFeed_\(\)/);
+  assert.match(source, /stagedGame = Boolean/);
+  assert.match(source, /portalSheet[\s\S]*syncCoachPortalIfConfigured_\(\);[\s\S]*syncCommissionerDashboard_\(\);/);
 });
 
 test("pilot identifiers are isolated by both game ID and pilot week tag", () => {

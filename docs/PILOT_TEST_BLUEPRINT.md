@@ -14,11 +14,11 @@ No meeting is required. Each person can complete their step on a different day.
 
 ## The five-step pilot
 
-1. Nick confirms that Andy and Chris can open their assigned workbook.
-2. Andy opens the control panel, unhides `Games`, finds `pilot-kings-01`, and changes its time from `6:00 PM` to `6:30 PM`.
-3. Nick opens the coach portal, finds the first `PILOT TEST` row, enters `48` away, `52` home, his full name, and checks `Submit`.
-4. Chris opens the coach portal, finds `pilot-wilton-01`, enters `61` away, `57` home, his full name, and checks `Submit`.
-5. Andy returns to `Games`, changes the first pilot result from `48-52` to `49-52`, and adds `Pilot correction test` to Notes.
+1. Nick confirms that Andy can open the control panel and Chris can open the Wilton Baptist portal.
+2. Andy opens `Commissioner Dashboard`, finds `pilot-kings-01`, and changes its time from `6:00 PM` to `6:30 PM`.
+3. Nick opens the King's portal, finds `PILOT TEST`, enters `48` away and `52` home, then checks `Submit`.
+4. Chris opens the Wilton Baptist portal, finds `pilot-wilton-01`, enters `61` away and `57` home, then checks `Submit`.
+5. Andy returns to `Commissioner Dashboard`, changes the first pilot result from `48-52` to `49-52`, and adds `Pilot correction test` to Notes.
 
 ## What success looks like
 
@@ -31,7 +31,7 @@ No meeting is required. Each person can complete their step on a different day.
 ## Links
 
 - [Commissioner control panel](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit)
-- [Coach score portal](https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit)
+- Team portal links are private and are copied from each active representative's `Access Roster` row.
 - [Public schedule](https://nickblanchard04.github.io/upstate-basketball-league/schedule.html)
 - [Public standings](https://nickblanchard04.github.io/upstate-basketball-league/standings.html)
 
@@ -47,7 +47,7 @@ Hi Andy,
 
 The private UBL pilot is ready. We do not need to meet or be online at the same time.
 
-Open the commissioner control panel, unhide `Games`, find `pilot-kings-01`, and change the time from 6:00 PM to 6:30 PM. Then reply `Worked` or tell me the exact step that was confusing. After I submit that game's test score, I will send you the one correction step.
+Open the commissioner control panel, use `Commissioner Dashboard`, find `pilot-kings-01`, and change the time from 6:00 PM to 6:30 PM. Then reply `Worked` or tell me the exact step that was confusing. After I submit that game's test score, I will send you the one correction step.
 
 Commissioner control panel: https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit
 
@@ -64,11 +64,11 @@ Hi Chris,
 
 The private UBL pilot is ready. We do not need to meet or be online at the same time.
 
-Open the coach score portal, find `pilot-wilton-01` at the top under `PILOT TEST`, enter 61 for the away score and 57 for the home score, enter your full name, and check `Submit`. Then reply `Worked` or tell me the exact step that was confusing.
+Open your Wilton Baptist score portal, find `pilot-wilton-01` under `PILOT TEST`, enter 61 for the away score and 57 for the home score, and check `Submit`. Your name is recorded automatically. Then reply `Worked` or tell me the exact step that was confusing.
 
-Coach score portal: https://docs.google.com/spreadsheets/d/1DScan6FYWXM8w6pmsj6d5jh6CLaoheWl4nKoKscAe-M/edit
+Wilton Baptist portal: [paste Chris's Portal URL from Access Roster]
 
-This test score is private and cannot appear on the public website. I will grant access to the Google email address you want to use before your test.
+This test score is private and cannot appear on the public website. Access is limited to your verified Google account.
 
 Thanks,
 Nick
