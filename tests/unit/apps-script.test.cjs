@@ -102,6 +102,41 @@ test("operations automation installs dashboard, alerts, and backups", () => {
   assert.match(source, /portalSheet[\s\S]*syncCoachPortalIfConfigured_\(\);[\s\S]*syncCommissionerDashboard_\(\);/);
 });
 
+test("backup recovery status applies freshness and drill requirements", () => {
+  assert.equal(context.RECOVERY_STATUS_SHEET, "Recovery Status");
+  assert.equal(context.recoveryAssessment_(12, 7, true).status, "PASS");
+  assert.deepEqual(
+    Array.from(context.recoveryAssessment_(31, 7, true).reasons),
+    ["Latest backup is older than 30 hours."]
+  );
+  assert.match(context.recoveryAssessment_(12, null, true).reasons[0], /No successful recovery drill/);
+  assert.match(context.recoveryAssessment_(12, 32, true).reasons[0], /older than 31 days/);
+  assert.match(context.recoveryAssessment_(12, 7, false).reasons[0], /schema check/);
+});
+
+test("recovery drill is isolated from production source tables", () => {
+  const drillSource = source.match(/function runBackupRecoveryDrill\(\) \{[\s\S]*?\n\}\n\nfunction createRecoveryCandidateFromLatestBackup/)[0];
+  assert.match(drillSource, /backup\.makeCopy\(recoveryCopyName_\(RECOVERY_DRILL_PREFIX/);
+  assert.match(drillSource, /drillBook\.getSheetByName\("Games"\)/);
+  assert.match(drillSource, /getRange\(gameRow, 5\)\.setValue\("tbd"\)/);
+  assert.match(drillSource, /getRange\(gameRow, 11\)\.setValue\(999\)/);
+  assert.match(drillSource, /restoreRecoveryCells_\(gamesSheet, gameRow, originalCells\)/);
+  assert.match(drillSource, /spreadsheetFingerprint_\(control\) === liveBefore/);
+  assert.doesNotMatch(drillSource, /control\.getSheetByName\("(?:Games|Teams|Venues|Settings|Website Feed)"\)/);
+  assert.doesNotMatch(drillSource, /setTrashed|deleteFile|clearContents/);
+});
+
+test("recovery sheet exposes one-click controls without automatic cutover", () => {
+  assert.match(source, /Check backup and recovery status/);
+  assert.match(source, /Run isolated recovery drill/);
+  assert.match(source, /Create recovery candidate/);
+  assert.match(source, /"CHECK STATUS", false, "", "RUN ISOLATED DRILL", false/);
+  assert.match(source, /function handleRecoveryStatusEdit_\(event\)/);
+  assert.match(source, /sheet\.getName\(\) === RECOVERY_STATUS_SHEET/);
+  assert.match(source, /function createRecoveryCandidateFromLatestBackup\(\)/);
+  assert.doesNotMatch(source, /function (?:auto|automatic|replace)RestoreLive/i);
+});
+
 test("pilot identifiers are isolated by both game ID and pilot week tag", () => {
   assert.equal(context.isPilotIdentifier_("pilot-kings-01", ""), true);
   assert.equal(context.isPilotIdentifier_("renamed-test", "pilot-test"), true);

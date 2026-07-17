@@ -10,6 +10,14 @@ var COMMISSIONER_DASHBOARD_SHEET = "Commissioner Dashboard";
 var CORRECTIONS_QUEUE_SHEET = "Corrections Queue";
 var OPERATIONS_ALERTS_SHEET = "Operations Alerts";
 var BACKUP_FOLDER_NAME = "UBL Automated Backups";
+var RECOVERY_STATUS_SHEET = "Recovery Status";
+var BACKUP_NAME_PREFIX = "UBL League Control Panel Backup ";
+var RECOVERY_DRILL_PREFIX = "UBL RECOVERY DRILL ";
+var RECOVERY_CANDIDATE_PREFIX = "UBL RECOVERY CANDIDATE ";
+var MAX_BACKUP_AGE_HOURS = 30;
+var MAX_RECOVERY_DRILL_AGE_DAYS = 31;
+var RECOVERY_REQUIRED_SHEETS = ["Games", "Teams", "Venues", "Settings", "Website Feed"];
+var RECOVERY_FINGERPRINT_SHEETS = ["Games", "Teams", "Venues", "Settings"];
 var HEALTH_ALERT_PROPERTY = "ubl-health-alert-fingerprint";
 var PILOT_GAME_PREFIX = "pilot-";
 var PILOT_WEEK_ID = "pilot-test";
@@ -23,6 +31,17 @@ var PORTAL_FUTURE_DAYS = 8;
 var PORTAL_FALLBACK_GAMES = 4;
 var UNUSUAL_SCORE_LIMIT = 130;
 var UNUSUAL_MARGIN_LIMIT = 80;
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("UBL Operations")
+    .addItem("Check backup and recovery status", "runBackupStatusCheck")
+    .addItem("Run isolated recovery drill", "runBackupRecoveryDrill")
+    .addItem("Create recovery candidate", "createRecoveryCandidateFromLatestBackup")
+    .addSeparator()
+    .addItem("Refresh commissioner dashboard", "syncCommissionerDashboard_")
+    .addToUi();
+}
 
 function doGet() {
   try {
@@ -119,6 +138,10 @@ function handleControlGameEdit(event) {
   if (!event || !event.range) return;
   var spreadsheet = event.source;
   var sheet = event.range.getSheet();
+  if (sheet.getName() === RECOVERY_STATUS_SHEET) {
+    handleRecoveryStatusEdit_(event);
+    return;
+  }
   if (sheet.getName() === COMMISSIONER_DASHBOARD_SHEET) {
     handleCommissionerDashboardEdit_(event);
     return;
@@ -699,11 +722,94 @@ function ensureOperationsAlerts_(control) {
   return sheet;
 }
 
+function ensureRecoveryStatus_(control) {
+  var sheet = control.getSheetByName(RECOVERY_STATUS_SHEET);
+  if (!sheet) sheet = control.insertSheet(RECOVERY_STATUS_SHEET, 4);
+  var headers = [
+    "Run ID", "Run Type", "Started", "Completed", "Backup", "Backup ID",
+    "Backup Age (hours)", "Drill or Candidate", "Damage Detected", "Restore Verified",
+    "Production Unchanged", "Public Feed Verified", "Status", "Details"
+  ];
+  if (sheet.getMaxColumns() < headers.length) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), headers.length - sheet.getMaxColumns());
+  }
+  if (sheet.getMaxRows() < 5) sheet.insertRowsAfter(sheet.getMaxRows(), 5 - sheet.getMaxRows());
+  sheet.getRange(1, 1, 2, headers.length).breakApart();
+  sheet.getRange(1, 1, 1, headers.length).merge().setValue("UBL BACKUP & RECOVERY STATUS");
+  sheet.getRange(2, 1, 1, headers.length).merge();
+  if (!sheet.getRange(2, 1).getDisplayValue()) {
+    sheet.getRange(2, 1).setValue("No recovery check has been recorded yet.");
+  }
+  sheet.getRange(3, 1, 1, 8).setValues([[
+    "CHECK STATUS", false, "", "RUN ISOLATED DRILL", false, "", "CREATE RECOVERY CANDIDATE", false
+  ]]);
+  [2, 5, 8].forEach(function (column) {
+    sheet.getRange(3, column).insertCheckboxes().setValue(false);
+  });
+  sheet.getRange(4, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length)
+    .setBackground("#020f22")
+    .setFontColor("#ffffff")
+    .setFontWeight("bold")
+    .setFontSize(18)
+    .setHorizontalAlignment("center");
+  sheet.getRange(2, 1, 1, headers.length)
+    .setBackground("#fff4cc")
+    .setFontColor("#08284d")
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center")
+    .setWrap(true);
+  sheet.getRange(4, 1, 1, headers.length)
+    .setBackground("#08284d")
+    .setFontColor("#ffffff")
+    .setFontWeight("bold")
+    .setWrap(true);
+  sheet.getRange(3, 1, 1, 8)
+    .setBackground("#e9eff7")
+    .setFontColor("#08284d")
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center")
+    .setVerticalAlignment("middle")
+    .setWrap(true);
+  [2, 5, 8].forEach(function (column) {
+    sheet.getRange(3, column).setBackground("#ef1738").setFontColor("#ffffff");
+  });
+  sheet.setFrozenRows(4);
+  sheet.setRowHeight(3, 42);
+  sheet.setColumnWidth(1, 190);
+  sheet.setColumnWidth(2, 150);
+  sheet.setColumnWidths(3, 2, 155);
+  sheet.setColumnWidth(5, 250);
+  sheet.setColumnWidth(6, 250);
+  sheet.setColumnWidth(7, 110);
+  sheet.setColumnWidth(8, 280);
+  sheet.setColumnWidths(9, 4, 115);
+  sheet.setColumnWidth(13, 110);
+  sheet.setColumnWidth(14, 420);
+  return sheet;
+}
+
+function handleRecoveryStatusEdit_(event) {
+  if (event.range.getRow() !== 3 || event.range.getNumRows() !== 1 || event.range.getNumColumns() !== 1) return;
+  var column = event.range.getColumn();
+  if ([2, 5, 8].indexOf(column) === -1 || event.range.getValue() !== true) return;
+
+  event.range.setValue(false);
+  if (column === 2) {
+    runBackupStatusCheck();
+  } else if (column === 5) {
+    runBackupRecoveryDrill();
+  } else {
+    createRecoveryCandidateFromLatestBackup();
+  }
+}
+
 function ensureOperationsSheets_() {
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
   ensureAccessRosterSchema_(control);
   ensureCorrectionsQueue_(control);
   ensureOperationsAlerts_(control);
+  ensureRecoveryStatus_(control);
   ensureCommissionerDashboard_(control);
   syncCommissionerDashboard_();
   return control.getUrl();
@@ -1062,11 +1168,340 @@ function backupFolder_() {
 function createDailyControlBackup() {
   var timezone = "America/New_York";
   var date = Utilities.formatDate(new Date(), timezone, "yyyy-MM-dd");
-  var name = "UBL League Control Panel Backup " + date;
+  var name = BACKUP_NAME_PREFIX + date;
   var folder = backupFolder_();
   var existing = folder.getFilesByName(name);
   if (existing.hasNext()) return existing.next().getId();
   return DriveApp.getFileById(SPREADSHEET_ID).makeCopy(name, folder).getId();
+}
+
+function latestBackupFile_() {
+  var files = backupFolder_().getFiles();
+  var latest = null;
+  while (files.hasNext()) {
+    var file = files.next();
+    if (file.getName().indexOf(BACKUP_NAME_PREFIX) !== 0) continue;
+    if (!latest || file.getDateCreated().getTime() > latest.getDateCreated().getTime()) latest = file;
+  }
+  if (!latest) throw new Error("No dated UBL control-panel backup was found.");
+  return latest;
+}
+
+function backupAgeHours_(file, now) {
+  return Math.max(0, ((now || new Date()).getTime() - file.getDateCreated().getTime()) / 3600000);
+}
+
+function fingerprintValue_(value) {
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map(fingerprintValue_);
+  if (value && typeof value === "object") {
+    var normalized = {};
+    Object.keys(value).sort().forEach(function (key) {
+      normalized[key] = fingerprintValue_(value[key]);
+    });
+    return normalized;
+  }
+  return value;
+}
+
+function fingerprintObject_(value) {
+  var digest = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    JSON.stringify(fingerprintValue_(value)),
+    Utilities.Charset.UTF_8
+  );
+  return Utilities.base64EncodeWebSafe(digest).replace(/=+$/, "");
+}
+
+function spreadsheetFingerprint_(spreadsheet) {
+  var payload = RECOVERY_FINGERPRINT_SHEETS.map(function (name) {
+    var sheet = spreadsheet.getSheetByName(name);
+    if (!sheet) throw new Error("Missing critical sheet: " + name);
+    var range = sheet.getDataRange();
+    return {
+      name: name,
+      values: range.getValues(),
+      formulas: range.getFormulas()
+    };
+  });
+  return fingerprintObject_(payload);
+}
+
+function publicFeedFingerprint_(feed) {
+  return fingerprintObject_({
+    schemaVersion: feed.schemaVersion,
+    lastUpdated: feed.lastUpdated,
+    settings: feed.settings,
+    teams: feed.teams,
+    venues: feed.venues,
+    games: feed.games
+  });
+}
+
+function recoveryWorkbookInfo_(spreadsheet) {
+  var issues = [];
+  RECOVERY_REQUIRED_SHEETS.forEach(function (name) {
+    var sheet = spreadsheet.getSheetByName(name);
+    if (!sheet) {
+      issues.push("Missing sheet: " + name);
+      return;
+    }
+    if (sheet.getLastRow() < 1 || sheet.getLastColumn() < 1) issues.push(name + " is empty.");
+  });
+  var requiredHeaders = {
+    Games: ["Game ID", "Date", "Time", "Division", "Away Team ID", "Home Team ID", "Venue ID", "Status", "Away Score", "Home Score", "Last Updated", "Week ID"],
+    Teams: ["Team ID", "Name"],
+    Venues: ["Venue ID", "Name", "Address"],
+    Settings: ["Key", "Value"]
+  };
+  Object.keys(requiredHeaders).forEach(function (name) {
+    var sheet = spreadsheet.getSheetByName(name);
+    if (!sheet || sheet.getLastColumn() < 1) return;
+    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
+    requiredHeaders[name].forEach(function (header) {
+      if (headers.indexOf(header) < 0) issues.push(name + " is missing header: " + header);
+    });
+  });
+  return {
+    valid: issues.length === 0,
+    issues: issues,
+    games: spreadsheet.getSheetByName("Games") ? Math.max(0, spreadsheet.getSheetByName("Games").getLastRow() - 1) : 0,
+    teams: spreadsheet.getSheetByName("Teams") ? Math.max(0, spreadsheet.getSheetByName("Teams").getLastRow() - 1) : 0,
+    venues: spreadsheet.getSheetByName("Venues") ? Math.max(0, spreadsheet.getSheetByName("Venues").getLastRow() - 1) : 0
+  };
+}
+
+function recoveryAssessment_(backupAgeHours, lastDrillAgeDays, schemaValid) {
+  var reasons = [];
+  if (!schemaValid) reasons.push("Latest backup failed its workbook schema check.");
+  if (!isFinite(backupAgeHours) || backupAgeHours > MAX_BACKUP_AGE_HOURS) {
+    reasons.push("Latest backup is older than " + MAX_BACKUP_AGE_HOURS + " hours.");
+  }
+  if (lastDrillAgeDays === null || lastDrillAgeDays === undefined || !isFinite(lastDrillAgeDays)) {
+    reasons.push("No successful recovery drill is recorded.");
+  } else if (lastDrillAgeDays > MAX_RECOVERY_DRILL_AGE_DAYS) {
+    reasons.push("Last successful recovery drill is older than " + MAX_RECOVERY_DRILL_AGE_DAYS + " days.");
+  }
+  return { status: reasons.length ? "ACTION NEEDED" : "PASS", reasons: reasons };
+}
+
+function latestSuccessfulRecoveryDrill_(control, now) {
+  var sheet = ensureRecoveryStatus_(control);
+  if (sheet.getLastRow() < 5) return null;
+  var rows = sheet.getRange(5, 1, sheet.getLastRow() - 4, 14).getValues();
+  var completed = null;
+  rows.forEach(function (row) {
+    if (text_(row[1]) !== "Recovery drill" || text_(row[12]) !== "PASS") return;
+    var value = row[3] instanceof Date ? row[3] : new Date(row[3]);
+    if (isFinite(value.getTime()) && (!completed || value.getTime() > completed.getTime())) completed = value;
+  });
+  if (!completed) return null;
+  return {
+    completed: completed,
+    ageDays: Math.max(0, ((now || new Date()).getTime() - completed.getTime()) / 86400000)
+  };
+}
+
+function recordRecoveryStatus_(control, result) {
+  var sheet = ensureRecoveryStatus_(control);
+  var row = [
+    result.runId || "",
+    result.runType || "",
+    result.started || "",
+    result.completed || "",
+    result.backupUrl || "",
+    result.backupId || "",
+    result.backupAgeHours === null || result.backupAgeHours === undefined ? "" : Math.round(result.backupAgeHours * 10) / 10,
+    result.copyUrl || "",
+    result.damageDetected === null || result.damageDetected === undefined ? "" : result.damageDetected,
+    result.restoreVerified === null || result.restoreVerified === undefined ? "" : result.restoreVerified,
+    result.productionUnchanged === null || result.productionUnchanged === undefined ? "" : result.productionUnchanged,
+    result.publicFeedVerified === null || result.publicFeedVerified === undefined ? "" : result.publicFeedVerified,
+    result.status || "",
+    result.details || ""
+  ];
+  sheet.appendRow(row);
+  var lastRow = sheet.getLastRow();
+  sheet.getRange(lastRow, 1, 1, row.length).setWrap(true).setVerticalAlignment("middle");
+  sheet.setRowHeight(lastRow, 48);
+  var pass = result.status === "PASS";
+  var summary = result.summary || (result.status + " | " + (result.details || "Recovery check recorded."));
+  sheet.getRange(2, 1)
+    .setValue(summary)
+    .setBackground(pass ? "#d9ead3" : "#fff4cc")
+    .setFontColor(pass ? "#205623" : "#7f6000");
+  return control.getUrl() + "#gid=" + sheet.getSheetId();
+}
+
+function runBackupStatusCheck() {
+  var now = new Date();
+  var started = now.toISOString();
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var backup = latestBackupFile_();
+  var backupAge = backupAgeHours_(backup, now);
+  var backupBook = SpreadsheetApp.openById(backup.getId());
+  var info = recoveryWorkbookInfo_(backupBook);
+  var lastDrill = latestSuccessfulRecoveryDrill_(control, now);
+  var assessment = recoveryAssessment_(backupAge, lastDrill ? lastDrill.ageDays : null, info.valid);
+  var details = assessment.reasons.length
+    ? assessment.reasons.join(" ")
+    : "Latest backup schema is valid and the most recent isolated restore drill is current.";
+  if (info.issues.length) details += " " + info.issues.join(" ");
+  var result = {
+    runId: "status-" + now.getTime(),
+    runType: "Status check",
+    started: started,
+    completed: new Date().toISOString(),
+    backupUrl: backup.getUrl(),
+    backupId: backup.getId(),
+    backupAgeHours: backupAge,
+    status: assessment.status,
+    details: details,
+    summary: assessment.status + " | Backup age: " + Math.round(backupAge * 10) / 10 + " hours | " + details
+  };
+  result.statusSheetUrl = recordRecoveryStatus_(control, result);
+  control.toast(details, "UBL backup status: " + result.status, 10);
+  return JSON.stringify(result);
+}
+
+function recoveryCopyName_(prefix, now) {
+  return prefix + Utilities.formatDate(now || new Date(), "America/New_York", "yyyy-MM-dd HHmmss");
+}
+
+function firstRecoveryDrillGameRow_(gamesSheet) {
+  if (gamesSheet.getLastRow() < 2) return 0;
+  var rows = gamesSheet.getRange(2, 1, gamesSheet.getLastRow() - 1, 16).getDisplayValues();
+  for (var index = 0; index < rows.length; index += 1) {
+    if (rows[index][0] && !isPilotIdentifier_(rows[index][0], rows[index][15])) return index + 2;
+  }
+  return 0;
+}
+
+function recoveryCellSnapshot_(sheet, row, columns) {
+  return columns.map(function (column) {
+    var cell = sheet.getRange(row, column);
+    return { column: column, value: cell.getValue(), formula: cell.getFormula() };
+  });
+}
+
+function restoreRecoveryCells_(sheet, row, cells) {
+  cells.forEach(function (cellSnapshot) {
+    var cell = sheet.getRange(row, cellSnapshot.column);
+    if (cellSnapshot.formula) {
+      cell.setFormula(cellSnapshot.formula);
+    } else {
+      cell.setValue(cellSnapshot.value);
+    }
+  });
+}
+
+function runBackupRecoveryDrill() {
+  var startedAt = new Date();
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var result = {
+    runId: "drill-" + startedAt.getTime(),
+    runType: "Recovery drill",
+    started: startedAt.toISOString(),
+    completed: "",
+    backupAgeHours: null,
+    damageDetected: false,
+    restoreVerified: false,
+    productionUnchanged: false,
+    publicFeedVerified: false,
+    status: "FAIL",
+    details: ""
+  };
+  try {
+    var backup = latestBackupFile_();
+    result.backupId = backup.getId();
+    result.backupUrl = backup.getUrl();
+    result.backupAgeHours = backupAgeHours_(backup, startedAt);
+    var copy = backup.makeCopy(recoveryCopyName_(RECOVERY_DRILL_PREFIX, startedAt), backupFolder_());
+    result.copyUrl = copy.getUrl();
+    var drillBook = SpreadsheetApp.openById(copy.getId());
+    var info = recoveryWorkbookInfo_(drillBook);
+    if (!info.valid) throw new Error("Recovery copy schema failed: " + info.issues.join(" "));
+
+    var liveBefore = spreadsheetFingerprint_(control);
+    var publicBefore = buildPublicFeed_();
+    var publicBeforeFingerprint = publicFeedFingerprint_(publicBefore);
+    var drillBefore = spreadsheetFingerprint_(drillBook);
+    var gamesSheet = drillBook.getSheetByName("Games");
+    var gameRow = firstRecoveryDrillGameRow_(gamesSheet);
+    if (!gameRow) throw new Error("No non-pilot game row was available for the recovery drill.");
+    // Mutate only schedule and score fields. Rewriting date/time cells can coerce
+    // text-backed dates into serial numbers and would not model a normal repair.
+    var recoveryColumns = [5, 9, 10, 11, 12, 14];
+    var originalCells = recoveryCellSnapshot_(gamesSheet, gameRow, recoveryColumns);
+    gamesSheet.getRange(gameRow, 5).setValue("tbd");
+    gamesSheet.getRange(gameRow, 9).setValue("championship-site");
+    gamesSheet.getRange(gameRow, 10).setValue("Final");
+    gamesSheet.getRange(gameRow, 11).setValue(999);
+    gamesSheet.getRange(gameRow, 12).setValue(1);
+    gamesSheet.getRange(gameRow, 14).setValue("RECOVERY DRILL SIMULATED DAMAGE");
+    SpreadsheetApp.flush();
+    result.damageDetected = spreadsheetFingerprint_(drillBook) !== drillBefore;
+
+    restoreRecoveryCells_(gamesSheet, gameRow, originalCells);
+    SpreadsheetApp.flush();
+    result.restoreVerified = spreadsheetFingerprint_(drillBook) === drillBefore
+      && recoveryWorkbookInfo_(drillBook).valid;
+    result.productionUnchanged = spreadsheetFingerprint_(control) === liveBefore;
+    var publicAfter = buildPublicFeed_();
+    result.publicFeedVerified = publicFeedFingerprint_(publicAfter) === publicBeforeFingerprint
+      && publicAfter.games.every(function (game) { return !isPilotGame_(game); });
+    result.status = result.damageDetected && result.restoreVerified
+      && result.productionUnchanged && result.publicFeedVerified ? "PASS" : "FAIL";
+    result.details = result.status === "PASS"
+      ? "Damage to schedule and score fields was detected and restored in an isolated copy. Production data and the public feed were unchanged."
+      : "One or more drill checks failed. Review the boolean result columns before using this backup for recovery.";
+  } catch (error) {
+    result.details = "Recovery drill error: " + String(error && error.message ? error.message : error);
+  }
+  result.completed = new Date().toISOString();
+  result.summary = result.status + " | " + result.details;
+  result.statusSheetUrl = recordRecoveryStatus_(control, result);
+  control.toast(result.details, "UBL recovery drill: " + result.status, 12);
+  return JSON.stringify(result);
+}
+
+function createRecoveryCandidateFromLatestBackup() {
+  var startedAt = new Date();
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var result = {
+    runId: "candidate-" + startedAt.getTime(),
+    runType: "Recovery candidate",
+    started: startedAt.toISOString(),
+    completed: "",
+    backupAgeHours: null,
+    status: "FAIL",
+    details: ""
+  };
+  try {
+    var liveBefore = spreadsheetFingerprint_(control);
+    var publicBeforeFingerprint = publicFeedFingerprint_(buildPublicFeed_());
+    var backup = latestBackupFile_();
+    result.backupId = backup.getId();
+    result.backupUrl = backup.getUrl();
+    result.backupAgeHours = backupAgeHours_(backup, startedAt);
+    var copy = backup.makeCopy(recoveryCopyName_(RECOVERY_CANDIDATE_PREFIX, startedAt), backupFolder_());
+    result.copyUrl = copy.getUrl();
+    var info = recoveryWorkbookInfo_(SpreadsheetApp.openById(copy.getId()));
+    result.restoreVerified = info.valid;
+    result.productionUnchanged = spreadsheetFingerprint_(control) === liveBefore;
+    result.publicFeedVerified = publicFeedFingerprint_(buildPublicFeed_()) === publicBeforeFingerprint;
+    result.status = info.valid && result.productionUnchanged && result.publicFeedVerified ? "PASS" : "FAIL";
+    result.details = result.status === "PASS"
+      ? "Validated recovery candidate created. No production data was changed. A system owner must approve any manual restore."
+      : "Candidate checks failed: " + (info.issues.length ? info.issues.join(" ") : "production changed during candidate creation.");
+  } catch (error) {
+    result.details = "Recovery candidate error: " + String(error && error.message ? error.message : error);
+  }
+  result.completed = new Date().toISOString();
+  result.summary = result.status + " | " + result.details;
+  result.statusSheetUrl = recordRecoveryStatus_(control, result);
+  control.toast(result.details, "UBL recovery candidate: " + result.status, 12);
+  return JSON.stringify(result);
 }
 
 function installOperationsTriggers_() {

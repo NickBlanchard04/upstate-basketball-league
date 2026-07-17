@@ -29,9 +29,11 @@ The public website automatically falls back to its published schedule if Google 
 
 Run `installOperationsAutomation` once as the league business account. It creates the commissioner dashboard and correction queue, creates or refreshes each team portal from `Access Roster`, installs edit and time triggers, runs a health check, and creates the first daily backup.
 
+The control workbook also receives a `UBL Operations` menu and a private `Recovery Status` sheet. Use `Check backup and recovery status` for the current readiness result, `Run isolated recovery drill` monthly, and `Create recovery candidate` only when diagnosing a possible restore. The automated tools never replace production source tables. Follow [BACKUP_AND_RECOVERY.md](../docs/BACKUP_AND_RECOVERY.md) for the owner procedure.
+
 Run `syncAccessAndCoachPortals` after changing a representative, Google account, team assignment, or access status. Ordinary Games or dashboard edits refresh existing portals automatically.
 
-The owner-run trigger validates each result, enforces team ownership, writes accepted finals to `Games`, records the attempt in `Score Audit`, and clears the coach input cells. An hourly trigger records overdue scores or feed mismatches in `Operations Alerts` and updates the dashboard alert count; a daily trigger copies the control workbook to `UBL Automated Backups`.
+The owner-run trigger validates each result, enforces team ownership, writes accepted finals to `Games`, records the attempt in `Score Audit`, and clears the coach input cells. An hourly trigger records overdue scores or feed mismatches in `Operations Alerts` and updates the dashboard alert count; a daily trigger copies the control workbook to `UBL Automated Backups`. A healthy recovery state requires a backup no more than 30 hours old and a successful isolated drill within 31 days.
 
 ## Closed pilot workflow
 

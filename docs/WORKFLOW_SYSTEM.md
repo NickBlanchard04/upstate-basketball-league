@@ -14,6 +14,7 @@
 6. An hourly health check records overdue finals and recent public-feed mismatches in `Operations Alerts`, resolves cleared items, and updates the dashboard count.
 7. The Commissioner Dashboard provides one visible place for schedule, venue, status, score, and note changes.
 8. Coaches request corrections from their portal; the commissioner approves or rejects them in `Corrections Queue`. A dated control-panel backup runs daily.
+9. `Recovery Status` records backup freshness, isolated restore drills, and validated recovery candidates. Recovery automation never overwrites production source tables.
 
 ## Commissioner routine
 
@@ -22,6 +23,7 @@
 - For a correction: review `Corrections Queue`, add a note when useful, then choose `Approved` or `Rejected`.
 - For an access change: edit `Access Roster`, then run `syncAccessAndCoachPortals`.
 - Weekly: compare completed games, standings, and bracket seeding. Backups are automatic.
+- Monthly: check the red `RUN ISOLATED DRILL` box on `Recovery Status` and confirm all four verification columns are `TRUE`.
 
 ## Coach routine
 
