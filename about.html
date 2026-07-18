@@ -26,7 +26,7 @@
   <link rel="preload" href="assets/fonts/teko-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
   <link rel="stylesheet" href="styles.css?v=20260716-1">
-  <link rel="stylesheet" href="ubl-about.css?v=20260717-5">
+  <link rel="stylesheet" href="ubl-about.css?v=20260717-6">
   <script src="config.js?v=20260717-2" defer></script>
   <script src="analytics.js?v=20260716-1" defer></script>
   <script src="league-core.js?v=20260716-2" defer></script>
@@ -55,14 +55,16 @@
 
     <section class="league-identity section-wrap" aria-labelledby="identity-title">
       <div class="identity-lead">
-        <h2 id="identity-title">This is UBL</h2>
-        <p>UBL is a faith-rooted varsity basketball league built to give smaller programs organized competition, dependable leadership, and a meaningful postseason.</p>
+        <p class="identity-eyebrow"><span>League identity</span><span>Upstate New York</span></p>
+        <h2 id="identity-title"><span>This is</span> <em>UBL</em></h2>
+        <p class="identity-summary">UBL is a faith-rooted varsity basketball league built to give smaller programs organized competition, dependable leadership, and a meaningful postseason.</p>
       </div>
       <dl class="identity-facts" data-identity-accordion>
         <div class="identity-fact">
           <dt>
             <button class="identity-toggle" type="button" aria-expanded="true" aria-controls="identity-who-we-are">
               <span class="identity-index" aria-hidden="true">01</span>
+              <span class="identity-symbol" aria-hidden="true">shield</span>
               <span class="identity-label">Who we are</span>
               <span class="identity-cue" aria-hidden="true"></span>
             </button>
@@ -73,6 +75,11 @@
           <dt>
             <button class="identity-toggle" type="button" aria-expanded="true" aria-controls="identity-who-we-serve">
               <span class="identity-index" aria-hidden="true">02</span>
+              <span class="identity-symbol identity-symbol-svg" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8 0a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM8 13c-3.15 0-5.5 1.58-5.5 3.75V19h11v-2.25C13.5 14.58 11.15 13 8 13Zm8 .25c-.42 0-.83.03-1.22.09.77.91 1.22 2.04 1.22 3.41V19h5.5v-1.75c0-2.32-2.38-4-5.5-4Z"/>
+                </svg>
+              </span>
               <span class="identity-label">Who we serve</span>
               <span class="identity-cue" aria-hidden="true"></span>
             </button>
@@ -83,6 +90,7 @@
           <dt>
             <button class="identity-toggle" type="button" aria-expanded="true" aria-controls="identity-where-we-play">
               <span class="identity-index" aria-hidden="true">03</span>
+              <span class="identity-symbol" aria-hidden="true">location_on</span>
               <span class="identity-label">Where we play</span>
               <span class="identity-cue" aria-hidden="true"></span>
             </button>
@@ -144,7 +152,7 @@
     <section class="season-section section-wrap" aria-labelledby="season-title">
       <div class="season-heading">
         <div>
-          <h2 id="season-title"><span class="season-kicker">How a</span><span class="season-brand">UBL</span><span class="season-title-line">season works</span></h2>
+          <h2 id="season-title" aria-label="How a UBL season works"><span class="season-kicker">How a</span><span class="season-brand season-ink" data-ink="UBL">UBL</span><span class="season-title-line season-ink" data-ink="season works">season works</span></h2>
           <p>One winter season. Clear standards. A meaningful path from opening night to the championship.</p>
         </div>
         <strong>2026–27</strong>
@@ -159,7 +167,7 @@
                 </span>
                 <span class="season-copy">
                   <span class="season-node" aria-hidden="true"></span>
-                  <span class="season-step" aria-hidden="true">1</span>
+                  <span class="season-step season-ink season-number-ink" data-ink="1" aria-hidden="true">1</span>
                   <strong class="season-front-title">Programs enter</strong>
                   <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
                 </span>
@@ -187,7 +195,7 @@
                 </span>
                 <span class="season-copy">
                   <span class="season-node" aria-hidden="true"></span>
-                  <span class="season-step" aria-hidden="true">2</span>
+                  <span class="season-step season-ink season-number-ink" data-ink="2" aria-hidden="true">2</span>
                   <strong class="season-front-title">Teams compete</strong>
                   <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
                 </span>
@@ -209,13 +217,12 @@
               <span class="season-card-face season-card-front" aria-hidden="false">
                 <span class="season-media">
                   <picture>
-                    <source media="(min-width: 768px)" srcset="assets/optimized/ubl-championship-hero-1600.webp">
-                    <img src="assets/optimized/ubl-championship-hero-mobile-768.webp" width="768" height="1024" loading="lazy" decoding="async" alt="The UBL championship trophy under arena lights">
+                    <img src="assets/optimized/ubl-championship-hero-1600.webp" width="1600" height="900" loading="lazy" decoding="async" alt="The UBL championship trophy under arena lights">
                   </picture>
                 </span>
                 <span class="season-copy">
                   <span class="season-node" aria-hidden="true"></span>
-                  <span class="season-step" aria-hidden="true">3</span>
+                  <span class="season-step season-ink season-number-ink" data-ink="3" aria-hidden="true">3</span>
                   <strong class="season-front-title">Standings set the field</strong>
                   <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
                 </span>
@@ -243,7 +250,7 @@
                 </span>
                 <span class="season-copy">
                   <span class="season-node" aria-hidden="true"></span>
-                  <span class="season-step" aria-hidden="true">4</span>
+                  <span class="season-step season-ink season-number-ink" data-ink="4" aria-hidden="true">4</span>
                   <strong class="season-front-title">Champions are crowned</strong>
                   <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
                 </span>

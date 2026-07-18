@@ -350,6 +350,7 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   const identityPanels = page.locator(".identity-panel");
   await expect(identityToggles).toHaveCount(3);
   await expect(identityPanels).toHaveCount(3);
+  await expect(page.locator(".identity-symbol")).toHaveCount(3);
 
   if (testInfo.project.name === "mobile-chromium") {
     await expect(identityToggles.nth(0)).toBeEnabled();
@@ -374,6 +375,9 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(page.locator(".season-node")).toHaveCount(4);
   await expect(page.locator(".season-flip-card")).toHaveCount(4);
   await expect(page.locator('.season-flip-card[aria-pressed="true"]')).toHaveCount(0);
+  await expect(page.locator(".season-brand")).toHaveAttribute("data-ink", "UBL");
+  await expect(page.locator(".season-title-line")).toHaveAttribute("data-ink", "season works");
+  await expect(page.locator(".season-number-ink")).toHaveCount(4);
 
   const routeMarkersOverlap = await page.locator(".season-stage").evaluateAll((stages) => stages.some((stage) => {
     const number = stage.querySelector(".season-step").getBoundingClientRect();
@@ -381,6 +385,19 @@ test("about page explains the league, season, testimonial, and leadership", asyn
     return !(number.right <= node.left || number.left >= node.right || number.bottom <= node.top || number.top >= node.bottom);
   }));
   expect(routeMarkersOverlap).toBe(false);
+
+  if (testInfo.project.name === "mobile-chromium") {
+    const mobileNumbersSitInsidePhotos = await page.locator(".season-stage").evaluateAll((stages) => stages.every((stage) => {
+      const number = stage.querySelector(".season-step").getBoundingClientRect();
+      const photo = stage.querySelector(".season-media").getBoundingClientRect();
+      return number.left >= photo.left
+        && number.left <= photo.left + 80
+        && number.top >= photo.top
+        && number.bottom <= photo.bottom + 2
+        && number.bottom >= photo.bottom - 90;
+    }));
+    expect(mobileNumbersSitInsidePhotos).toBe(true);
+  }
 
   const seasonCards = page.locator(".season-flip-card");
   await seasonCards.nth(0).click();
@@ -402,7 +419,9 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(championshipTrophy).toHaveAttribute("loading", "lazy");
   await expect(playoffHuddle).toHaveAttribute("loading", "lazy");
   await expect.poll(() => liveAction.evaluate((image) => image.currentSrc)).toMatch(/about-season-02-live-action-(?:768|1600)\.webp$/);
-  await expect.poll(() => championshipTrophy.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero(?:-mobile-768|-1600)\.webp$/);
+  await expect(championshipTrophy).toHaveAttribute("width", "1600");
+  await expect(championshipTrophy).toHaveAttribute("height", "900");
+  await expect.poll(() => championshipTrophy.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero-1600\.webp$/);
   await expect.poll(() => playoffHuddle.evaluate((image) => image.currentSrc)).toMatch(/about-season-04-playoffs-huddle-(?:768|1600)\.webp$/);
 
   await expect(page.getByRole("heading", { name: "The culture behind the commitments" })).toHaveCount(0);
