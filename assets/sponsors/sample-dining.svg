@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
-  <title>Sample dining business mark</title>
-  <circle cx="32" cy="32" r="25" fill="#e31331"/>
-  <circle cx="32" cy="32" r="15" fill="#fff"/>
-  <circle cx="32" cy="32" r="10" fill="#f1c34b"/>
-  <path fill="#041a38" d="M8 12h4v17h3V12h4v17h3V12h4v21c0 4-3 7-7 7v17h-7V40c-4 0-7-3-7-7V12zm44 0h7v45h-7V39c-5-2-8-7-8-13 0-7 3-12 8-14z"/>
-</svg>

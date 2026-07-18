@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
-  <title>Sample fitness business mark</title>
-  <path fill="#041a38" d="M5 28h54v8H5z"/>
-  <path fill="#e31331" d="M3 20h8v24H3zm50 0h8v24h-8z"/>
-  <path fill="#073467" d="M12 16h8v32h-8zm32 0h8v32h-8z"/>
-  <circle cx="32" cy="32" r="7" fill="#e9edf4"/>
-  <path fill="#e31331" d="m32 26 2 4h5l-4 3 2 5-5-3-5 3 2-5-4-3h5z"/>
-</svg>

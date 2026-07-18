@@ -1,13 +1,38 @@
-# Sample sponsor logo assets
+# Sponsorship placement preview assets
 
-The `sample-*.svg` files are original, resolution-independent marks created for
-the UBL sponsorship-placement preview. They demonstrate presentation for common
-local sponsor categories without representing real businesses or affiliations.
+Reviewed and retrieved July 17, 2026.
 
-Do not treat a sample mark as confirmed sponsor artwork. When a partnership is
-finalized, replace it only with an approved logo supplied by the sponsor and
-retain the original file rather than recreating or recoloring the brand mark.
+These real-company marks appear only in the sponsorship page's clearly labeled
+layout preview. None of the companies are affiliated with or sponsors of the
+UBL. An asset being publicly available from an official source does not grant
+the league sponsorship rights or imply company approval.
 
-The previous third-party corporate logo examples were removed after an audit of
-the companies' official trademark and media-use guidance. The audit is recorded
-in `docs/SPONSOR_LOGO_AUDIT.md`.
+## Official sources
+
+- `google.png` (3840 x 2100): Google Brand Resource Center, current RGB
+  wordmark download: https://about.google/brand-resource-center/brand-elements/
+- `microsoft.svg`: Microsoft Learn branding asset:
+  https://learn.microsoft.com/en-us/entra/identity-platform/howto-add-branding-in-apps
+- `nvidia.png` (2160 x 1808): NVIDIA Newsroom, current vertical black logo:
+  https://nvidianews.nvidia.com/multimedia/corporate/nvidia-logos
+- `amd.svg`: AMD corporate site header asset:
+  https://www.amd.com/content/dam/code/images/header/amd-header-logo.svg
+- `intel.svg`: Intel Newsroom header asset:
+  https://newsroom.intel.com/wp-content/uploads/2024/10/intel-header-logo.svg
+- `epic-games.svg`: vector Epic Games shield rendered by Epic's official About
+  page: https://www.epicgames.com/site/about?lang=en
+- `rockstar-games.png` (180 x 180): Rockstar Games official site icon:
+  https://media-rockstargames-com.akamaized.net/favicons/rockstar/favicon-180x180.png
+- `chipotle.svg`: Chipotle Newsroom logo asset:
+  https://newsroom.chipotle.com/images/logo.svg
+- `mcdonalds.png` (700 x 400): McDonald's corporate Golden Arches media asset:
+  https://corporate.mcdonalds.com/corpmcd/our-stories/media-assets-library/media-article/golden_arches_logo.html
+- `burger-king.png` (4201 x 3600): Burger King Newsroom primary logo asset:
+  https://news.bk.com/media-assets/logos-fonts
+
+## Production rule
+
+When a partnership is finalized, replace the example with a logo supplied or
+approved in writing by that sponsor. Keep the approved original file, agreed
+placement, sponsorship term, and permission record together. Remove an example
+immediately if the mark owner requests it.

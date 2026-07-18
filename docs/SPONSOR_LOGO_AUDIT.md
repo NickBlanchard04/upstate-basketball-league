@@ -2,24 +2,23 @@
 
 Reviewed July 17, 2026.
 
-## Decision
+## Implementation decision
 
-Do not publish an unaffiliated company's logo inside a sample sponsor rail.
-Public availability, including an official high-resolution download, does not
-grant permission to imply a sponsorship. Use original sample marks until a real
-sponsor provides approved artwork.
+The sponsorship page displays ten real-company marks at the league owner's
+direction as examples of logo placement. Each mark was retrieved from the
+company's own public site or media library and the page states prominently that
+the companies are not affiliated with or sponsors of the UBL.
 
-For approved sponsor artwork, prefer the sponsor's SVG, EPS, or AI master. These
-vector formats are resolution-independent and therefore preferable to a large
-raster image. If the sponsor provides only raster artwork, request the original
-transparent PNG at its largest available dimensions.
+This disclosure reduces confusion but is not the same as trademark permission.
+The lowest-risk public preview remains original fictional marks. For a real
+partnership, use only sponsor-supplied or sponsor-approved artwork.
 
-## Official sources reviewed
+## Official guidance reviewed
 
-- Google Brand Resource Center: https://about.google/brand-resource-center/guidance/
+- Google Brand Resource Center: https://about.google/brand-resource-center/brand-elements/
 - Microsoft trademark and brand guidelines: https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks
-- NVIDIA trademark and logo usage guidelines: https://www.nvidia.com/content/dam/en-zz/Solutions/about-us/documents/NVIDIA-Trademark-and-Logo-Usage-Guidelines.pdf
-- AMD brand asset terms: https://www.amd.com/en/legal/terms-and-conditions/media-library.html
+- NVIDIA logo usage guidance: https://www.nvidia.com/en-us/about-nvidia/legal-info/logo-brand-usage/
+- AMD media library terms: https://www.amd.com/en/legal/terms-and-conditions/media-library.html
 - Intel third-party logo guidance: https://www.intel.com/content/www/us/en/support/articles/000015080/programs.html
 - Epic Games fan content policy: https://legal.epicgames.com/epicgames/fan-art-policy
 - Rockstar Games legal terms: https://www.rockstargames.com/legal?country=us
@@ -30,6 +29,13 @@ transparent PNG at its largest available dimensions.
 ## Sponsor intake rule
 
 Ask every confirmed sponsor to email an approved horizontal and square logo in
-SVG or transparent PNG format, plus written confirmation that UBL may display it
-on the league website and agreed promotional placements for the sponsorship
-term.
+SVG or transparent PNG format, plus written confirmation that the UBL may show
+it on the league website and in agreed promotional placements for the stated
+sponsorship term. Record who approved it and when.
+
+## Funding transparency rule
+
+Public sponsorship goals should cover documented league expenses approved by
+league leadership. A personal payment for website or administrative services is
+not part of the public goal unless the league separately approves a written
+vendor agreement, conflict disclosure, scope, invoice, and payment record.
