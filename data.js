@@ -15,7 +15,7 @@ window.UBL_DATA = {
       summary: "A founding UBL program fielding both boys and girls varsity teams.",
       teams: {
         "Boys Varsity": {
-          headCoach: { name: "Hudson Waters", experience: "Second season as head coach.", photo: "" },
+          headCoach: { name: "Hudson Waters", experience: "Second season as head coach.", photo: "assets/optimized/hudson-waters-192.webp" },
           assistants: [{ name: "Jacob Fischer", experience: "Assistant coach and Class of 2022 alumnus.", photo: "" }]
         },
         "Girls Varsity": {
