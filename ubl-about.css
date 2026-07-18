@@ -414,25 +414,24 @@
 
 .season-kicker {
   color: var(--ubl-white);
-  font: 700 clamp(1.2rem, 5vw, 1.65rem)/0.9 "Teko", sans-serif;
-  letter-spacing: 0.3em;
+  font: 900 clamp(1.2rem, 5vw, 1.65rem)/0.86 "Barlow Condensed", sans-serif;
+  letter-spacing: 0.26em;
 }
 
 .season-brand {
-  margin: 0.18rem 0 0 0.08em;
+  margin: 0.18rem 0 0 0.05em;
   color: var(--ubl-red);
-  font: 700 clamp(5.1rem, 23vw, 7.8rem)/0.7 "Teko", sans-serif;
-  letter-spacing: -0.055em;
-  font-style: italic;
-  transform: skewX(-4deg) scaleX(0.96);
+  font: italic 900 clamp(4.65rem, 21vw, 7.15rem)/0.72 "Barlow Condensed", sans-serif;
+  letter-spacing: -0.08em;
+  transform: skewX(-6deg) scaleX(1.06);
   transform-origin: left center;
 }
 
 .season-title-line {
   margin-top: 0.62rem;
   color: var(--ubl-white);
-  font: 700 clamp(3rem, 13vw, 5.15rem)/0.78 "Teko", sans-serif;
-  letter-spacing: 0.025em;
+  font: 900 clamp(2.8rem, 12vw, 4.85rem)/0.82 "Barlow Condensed", sans-serif;
+  letter-spacing: -0.015em;
 }
 
 .season-heading p {
@@ -625,14 +624,16 @@
 }
 
 .season-step {
-  width: 2.9rem;
+  width: 3.2rem;
   position: absolute;
-  top: -4.05rem;
-  left: 0.85rem;
+  top: auto;
+  bottom: 1.35rem;
+  left: 1.25rem;
   z-index: 3;
+  overflow: visible;
   color: var(--ubl-red);
   background: transparent;
-  font: italic 700 3.55rem/0.72 "Teko", sans-serif;
+  font: italic 700 3.55rem/1 "Teko", sans-serif;
   letter-spacing: -0.08em;
   text-align: center;
   text-shadow:
@@ -1526,12 +1527,12 @@
 
   .season-brand {
     margin-top: 0.18rem;
-    font-size: clamp(7rem, 8.4vw, 8.8rem);
+    font-size: clamp(6.4rem, 7.8vw, 8.15rem);
   }
 
   .season-title-line {
     margin-top: 0.72rem;
-    font-size: clamp(4.25rem, 5.45vw, 5.7rem);
+    font-size: clamp(3.95rem, 5.05vw, 5.3rem);
     white-space: nowrap;
   }
 
@@ -1593,10 +1594,11 @@
   }
 
   .season-step {
-    width: auto;
+    width: 3.65rem;
     padding: 0;
-    top: -4.05rem;
-    left: 1.05rem;
+    top: auto;
+    bottom: 1.45rem;
+    left: 1.3rem;
     font-size: 4.15rem;
   }
 
@@ -1765,16 +1767,16 @@
     grid-column: 1;
     grid-row: 2;
     margin: 0;
-    font-size: clamp(5.7rem, 11vw, 8.7rem);
-    line-height: 0.7;
+    font-size: clamp(5.25rem, 10vw, 8rem);
+    line-height: 0.72;
   }
 
   .season-title-line {
     grid-column: 2;
     grid-row: 2;
     margin: 0 0 -0.04em;
-    font-size: clamp(3.35rem, 6.4vw, 5.55rem);
-    line-height: 0.78;
+    font-size: clamp(3.1rem, 5.9vw, 5.05rem);
+    line-height: 0.82;
     white-space: normal;
   }
 
@@ -1830,9 +1832,10 @@
   }
 
   .season-step {
-    width: auto;
-    top: -4.15rem;
-    left: 1.05rem;
+    width: 3.85rem;
+    top: auto;
+    bottom: 1.5rem;
+    left: 1.35rem;
     font-size: 4.35rem;
   }
 
@@ -2170,6 +2173,12 @@
 
 .season-number-ink {
   --ink-color: var(--ubl-red);
+}
+
+.season-ink.season-number-ink::before,
+.season-ink.season-number-ink::after {
+  inset: -0.22em -0.18em -0.14em -0.28em;
+  padding: 0.22em 0.18em 0.14em 0.28em;
 }
 
 .season-step.season-ink {
