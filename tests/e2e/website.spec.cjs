@@ -306,6 +306,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(page.getByRole("heading", { name: "Hudson Waters" })).toBeVisible();
   await expect(page.getByAltText("Hudson Waters")).toHaveAttribute("src", "assets/optimized/hudson-waters-192.webp");
   await expect(page.getByRole("heading", { name: "Jacob Fischer" })).toBeVisible();
+  await expect(page.getByAltText("Jacob Fischer")).toHaveAttribute("src", "assets/optimized/jacob-fischer-192.webp");
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toHaveCount(0);
 });
 
