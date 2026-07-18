@@ -18,7 +18,7 @@ Use `ubl-kingdom-impact-homepage-clean.webp` for the homepage so headings and th
 
 `ubl-kingdom-impact-huddle.webp` is used by `ubl-about.css` as the Core Commitments background. It replaces the previous CGI championship-trophy scene so the inaugural league is not visually presented as having already completed a championship.
 
-`ubl-kingdom-impact-homepage-wide.webp` is the 2400 x 900 desktop homepage hero. `ubl-kingdom-impact-homepage-mobile.webp` is the 768 x 1200 phone treatment. Both use the same text-free Kingdom Impact illustration with intentional navy breathing room, so the browser does not upscale the art and the complete huddle remains readable across responsive crops. The homepage selects between them with a `<picture>` element while keeping the mission text as accessible HTML.
+`ubl-kingdom-impact-homepage-wide.webp` is the 2400 x 900 desktop homepage hero. On phones, the homepage uses the 1536 x 1024 `ubl-kingdom-impact-homepage-clean.webp` source as a centered full-bleed cover crop so the artwork begins at the top of the hero and fills its full height. The homepage selects between these sources with a `<picture>` element while keeping the mission text as accessible HTML. The older 768 x 1200 padded phone treatment is retained as a source asset but is not used on the site.
 
 ## Shared art direction
 
