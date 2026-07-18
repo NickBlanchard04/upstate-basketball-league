@@ -257,6 +257,34 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-bracket]")).toHaveCount(2);
 });
 
+test("standings board fills more of the page with solid division color and Teko seeds", async ({ page }, testInfo) => {
+  await page.goto("/standings.html");
+  await expect(page.locator(".board-footer, .standings-freshness, .division-field")).toHaveCount(0);
+
+  const heroBackground = await page.locator(".standings-hero").evaluate((element) => getComputedStyle(element).backgroundImage);
+  expect(heroBackground).toContain("linear-gradient");
+  expect(heroBackground).not.toContain("url(");
+
+  if (testInfo.project.name === "desktop-chromium") {
+    const board = await page.locator(".standings-layout").boundingBox();
+    const row = await page.locator(".division-table tbody tr").first().boundingBox();
+    expect(board).not.toBeNull();
+    expect(row).not.toBeNull();
+    expect(board.width).toBeGreaterThan(1200);
+    expect(row.height).toBeGreaterThan(80);
+    await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-family", /Teko/);
+    await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-size", "27.2px");
+  } else {
+    const mobileSeed = page.locator(".division-table td.seed-column").first();
+    await expect(mobileSeed).toBeVisible();
+    await expect(mobileSeed).toHaveCSS("font-family", /Teko/);
+    await expect(mobileSeed).toHaveCSS("font-size", "27.2px");
+  }
+
+  expect(await page.evaluate(() => document.fonts.check('700 27.2px "Teko"'))).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+});
+
 test("team profiles and gallery interactions remain usable", async ({ page }) => {
   await page.goto("/teams.html");
   await page.locator("#hv-rocks summary").click();

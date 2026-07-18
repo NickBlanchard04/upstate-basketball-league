@@ -22,8 +22,9 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/barlow-condensed-900-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/ibm-plex-sans-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/teko-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="ubl-standings.css?v=20260717-2">
+  <link rel="stylesheet" href="ubl-standings.css?v=20260717-3">
   <link rel="stylesheet" href="ubl-header.css?v=20260717-1">
   <script src="config.js?v=20260717-2" defer></script>
   <script src="analytics.js?v=20260716-1" defer></script>
@@ -59,9 +60,6 @@
 
   <main id="main">
     <section class="standings-hero" aria-labelledby="standings-title">
-      <div class="division-field division-field-girls" aria-hidden="true"></div>
-      <div class="division-field division-field-boys" aria-hidden="true"></div>
-
       <div class="standings-content">
         <header class="standings-masthead">
           <p class="season-kicker">2026&ndash;27 regular season</p>
@@ -131,12 +129,6 @@
           </section>
         </div>
 
-        <footer class="board-footer">
-          <p><span>Girls Varsity</span><strong>Left court</strong></p>
-          <img src="assets/optimized/ubl-logo-192.webp" alt="Upstate Basketball League">
-          <p><span>Boys Varsity</span><strong>Right court</strong></p>
-        </footer>
-        <p class="standings-freshness" data-freshness aria-live="polite">Loading current league data…</p>
       </div>
     </section>
 
