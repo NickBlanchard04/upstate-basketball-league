@@ -115,7 +115,7 @@ test("backup recovery status applies freshness and drill requirements", () => {
 });
 
 test("recovery drill is isolated from production source tables", () => {
-  const drillSource = source.match(/function runBackupRecoveryDrill\(\) \{[\s\S]*?\n\}\n\nfunction createRecoveryCandidateFromLatestBackup/)[0];
+  const drillSource = source.match(/function runBackupRecoveryDrill\(\) \{[\s\S]*?\r?\n\}\r?\n\r?\nfunction createRecoveryCandidateFromLatestBackup/)[0];
   assert.match(drillSource, /backup\.makeCopy\(recoveryCopyName_\(RECOVERY_DRILL_PREFIX/);
   assert.match(drillSource, /drillBook\.getSheetByName\("Games"\)/);
   assert.match(drillSource, /getRange\(gameRow, 5\)\.setValue\("tbd"\)/);

@@ -9,6 +9,7 @@ const routes = [
   "bracket.html",
   "rules.html",
   "gallery.html",
+  "sponsors.html",
   "about.html"
 ];
 const budgets = { loadMs: 2000, lcpMs: 2500, cls: 0.1 };

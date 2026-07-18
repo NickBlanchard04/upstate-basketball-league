@@ -53,6 +53,7 @@ test("all public routes render meaningful content without runtime errors", async
     ["/bracket.html", "Playoff brackets"],
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
+    ["/sponsors.html", "Put your business"],
     ["/about.html", "About UBL"]
   ];
   await expectNoAppErrors(page, async () => {
@@ -70,7 +71,7 @@ async function useLiveFeed(page, sourceFeed) {
 }
 
 test("public pages do not expose internal placeholder language", async ({ page }) => {
-  for (const route of ["/schedule.html", "/teams.html", "/bracket.html", "/gallery.html", "/about.html"]) {
+  for (const route of ["/schedule.html", "/teams.html", "/bracket.html", "/gallery.html", "/sponsors.html", "/about.html"]) {
     await page.goto(route);
     const visibleText = await page.locator("body").innerText();
     expect(visibleText).not.toMatch(/\bTBD\b|placeholder|to be confirmed|coming soon/i);
@@ -400,8 +401,37 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
+test("sponsorship page moves through three partner views and labels sample brands", async ({ page }) => {
+  await page.goto("/sponsors.html");
+
+  await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Start a conversation" })).toHaveAttribute(
+    "href",
+    "mailto:Info.upstatebasketballleague@gmail.com?subject=UBL%20Sponsorship%20Inquiry"
+  );
+
+  const story = page.locator("[data-sponsor-story]");
+  await expect(story.locator("[data-sponsor-step]")).toHaveCount(3);
+  await expect(story).toHaveAttribute("data-active-scene", "digital");
+  await expect(story.locator('[data-sponsor-scene="digital"]')).toHaveClass(/is-active/);
+
+  await story.getByRole("button", { name: "02 Game night" }).click();
+  await expect(story).toHaveAttribute("data-active-scene", "gamenight");
+  await expect(story.locator('[data-sponsor-scene="gamenight"]')).toHaveClass(/is-active/);
+  await expect(story.getByRole("button", { name: "02 Game night" })).toHaveAttribute("aria-pressed", "true");
+
+  await story.getByRole("button", { name: "03 Community" }).click();
+  await expect(story).toHaveAttribute("data-active-scene", "community");
+  await expect(story.locator('[data-sponsor-step="community"]')).toHaveClass(/is-active/);
+
+  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li")).toHaveCount(10);
+  await expect(page.locator(".sponsor-logo-track")).toHaveCSS("animation-name", "sponsor-marquee");
+  await expect(page.locator(".sponsor-sample-note")).toContainText("not affiliated with or sponsors of the UBL");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+});
+
 test("public pages expose complete search and social metadata", async ({ page, request }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "about.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S/);
@@ -468,7 +498,7 @@ test("analytics stays disabled on unapproved preview hosts", async ({ page }) =>
 });
 
 test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "about.html", "404.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html", "404.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     const results = await new AxeBuilder({ page })
