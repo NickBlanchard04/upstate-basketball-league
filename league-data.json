@@ -70,7 +70,7 @@
       "id": "hv-flames",
       "name": "HV Flames",
       "short": "HVF",
-      "logo": "assets/team-hv-flames.svg",
+      "logo": "assets/icons/icon-192.png",
       "divisions": [
         "Girls Varsity"
       ],
@@ -81,7 +81,7 @@
       "id": "tbd",
       "name": "Open League Spot",
       "short": "OPEN",
-      "logo": "assets/optimized/ubl-logo-192.webp",
+      "logo": "assets/icons/icon-192.png",
       "divisions": [
         "Boys Varsity",
         "Girls Varsity"

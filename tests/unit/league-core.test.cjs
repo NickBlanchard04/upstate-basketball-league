@@ -96,5 +96,12 @@ test("bracket state advances completed games with assigned participants", () => 
 });
 
 test("image URLs reject executable schemes", () => {
-  assert.equal(core.safeImageUrl("javascript:alert(1)"), "assets/optimized/ubl-logo-192.webp");
+  assert.equal(core.safeImageUrl("javascript:alert(1)"), "assets/icons/icon-192.png");
+});
+
+test("public venue labels replace placeholder language without changing confirmed labels", () => {
+  assert.equal(core.publicVenueLabel("Wilton Baptist - TBD"), "Venue details pending");
+  assert.equal(core.publicVenueLabel("To be confirmed"), "Venue details pending");
+  assert.equal(core.publicVenueLabel("placeholder gym"), "Venue details pending");
+  assert.equal(core.publicVenueLabel("Open Arms Church"), "Open Arms Church");
 });

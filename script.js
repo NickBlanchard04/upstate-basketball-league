@@ -1,6 +1,38 @@
 let league = window.UBL_DATA;
 const core = window.UBL_CORE;
-const { ACTIVE_STATUSES, FINAL_STATUSES, escapeHtml, safeImageUrl } = core;
+const { ACTIVE_STATUSES, FINAL_STATUSES, escapeHtml, publicVenueLabel, safeImageUrl } = core;
+
+const menuToggle = document.querySelector(".menu-toggle");
+const siteNav = document.querySelector(".site-nav");
+const menuToggleLabel = menuToggle?.querySelector(".sr-only");
+siteNav?.querySelector("a.active")?.setAttribute("aria-current", "page");
+
+function closeSiteMenu() {
+  menuToggle?.setAttribute("aria-expanded", "false");
+  if (menuToggleLabel) menuToggleLabel.textContent = "Open menu";
+  siteNav?.classList.remove("open");
+  document.body.classList.remove("menu-open");
+}
+
+menuToggle?.addEventListener("click", () => {
+  const open = menuToggle.getAttribute("aria-expanded") === "true";
+  menuToggle.setAttribute("aria-expanded", String(!open));
+  if (menuToggleLabel) menuToggleLabel.textContent = open ? "Open menu" : "Close menu";
+  siteNav.classList.toggle("open", !open);
+  document.body.classList.toggle("menu-open", !open);
+});
+
+siteNav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", closeSiteMenu);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeSiteMenu();
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth >= 1024) closeSiteMenu();
+});
 
 function setIdentityFactExpanded(item, expanded) {
   const button = item.querySelector(".identity-toggle");
@@ -110,20 +142,28 @@ function programById(id) {
   return league.programs.find((program) => program.id === id);
 }
 
+function teamProfileUrl(programId, division = "") {
+  const params = new URLSearchParams({ program: programId });
+  if (division) params.set("division", division === "Girls Varsity" ? "girls" : "boys");
+  return `team.html?${params.toString()}`;
+}
+
 function gameTeamName(game, side) {
+  const programId = game[`${side}Id`];
+  if (programId === "tbd") return "Open League Spot";
   const directName = game[`${side}Name`];
   if (directName) return directName;
-  return programById(game[`${side}Id`])?.name || "Team not assigned";
+  return programById(programId)?.name || "Team not assigned";
 }
 
 function safeAttribute(value) {
   return escapeHtml(value);
 }
 
-function mapTriggerMarkup(label, address, detail = "") {
+function mapTriggerMarkup(label, address, detail = "", context = "Game location") {
   if (!address) return escapeHtml(label);
   return `
-    <button class="map-trigger" type="button" data-map-label="${safeAttribute(label)}" data-map-address="${safeAttribute(address)}">
+    <button class="map-trigger" type="button" data-map-label="${safeAttribute(label)}" data-map-address="${safeAttribute(address)}" data-map-context="${safeAttribute(context)}">
       <span>${escapeHtml(label)}</span>${detail ? `<small>${escapeHtml(detail)}</small>` : ""}
     </button>
   `;
@@ -132,7 +172,7 @@ function mapTriggerMarkup(label, address, detail = "") {
 function gameLocationMarkup(game) {
   const homeAddress = game.homeId ? programById(game.homeId)?.homeAddress : "";
   const address = game.locationAddress || homeAddress || "";
-  return mapTriggerMarkup(game.location || "Venue announcement pending", address, address);
+  return mapTriggerMarkup(publicVenueLabel(game.location), address, address);
 }
 
 function gameStatusMarkup(game) {
@@ -388,7 +428,7 @@ function standingsRows(division) {
     return `
       <tr>
         <td class="seed-cell">${index + 1}</td>
-        <td><a class="standings-team" href="teams.html#${safeAttribute(program.id)}"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="">${escapeHtml(program.name)}</a></td>
+        <td><a class="standings-team" href="${safeAttribute(teamProfileUrl(program.id, division))}"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="">${escapeHtml(program.name)}</a></td>
         <td>${row.wins}</td>
         <td>${row.losses}</td>
         <td>${pct}</td>
@@ -546,14 +586,14 @@ function teamCardMarkup(program) {
   if (program.id === "tbd") {
     return `
       <a class="team-card team-card-open-spot" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL" aria-label="Email UBL about the open league spot">
-        <img src="assets/optimized/ubl-logo-192.webp" alt="">
+        <img src="assets/icons/icon-192.png" alt="" width="192" height="192">
         <strong>Join the UBL</strong>
         <span>One league spot is open</span>
       </a>
     `;
   }
   return `
-    <a class="team-card" href="teams.html#${safeAttribute(program.id)}">
+    <a class="team-card" href="${safeAttribute(teamProfileUrl(program.id, program.divisions[0]))}">
       <img src="${safeAttribute(safeImageUrl(program.logo))}" alt="">
       <strong>${escapeHtml(program.name)}</strong>
       <span>${program.divisions.map(escapeHtml).join(" &middot; ")}</span>
@@ -669,6 +709,216 @@ function openHashProgram() {
 
 window.addEventListener("hashchange", openHashProgram);
 
+function divisionTeamCardMarkup(program, division, order) {
+  const headCoach = program.teams?.[division]?.headCoach?.name || "";
+  const detail = headCoach && headCoach !== "To be confirmed" ? `Head coach ${headCoach}` : "Open program profile";
+  const href = teamProfileUrl(program.id, division);
+  return `
+    <a class="division-team-card" href="${safeAttribute(href)}" data-program-card="${safeAttribute(program.id)}" style="--card-order:${order}">
+      <span class="team-card-court" aria-hidden="true"><i></i></span>
+      <span class="team-card-view">View team <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      <span class="team-card-logo-stage"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+      <span class="division-team-card-content">
+        <small>${escapeHtml(program.short)} &middot; ${escapeHtml(division)}</small>
+        <strong>${escapeHtml(program.name)}</strong>
+        <span>${escapeHtml(detail)}</span>
+        <b>Meet the program <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b>
+      </span>
+    </a>
+  `;
+}
+
+function initializeTeamCardMotion() {
+  const directory = document.querySelector(".team-directory");
+  const cards = [...document.querySelectorAll(".division-team-card")];
+  if (!directory || !cards.length) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+    cards.forEach((card) => card.classList.add("is-visible"));
+    return;
+  }
+  directory.classList.add("team-card-motion-ready");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.14, rootMargin: "0px 0px -4% 0px" });
+  cards.forEach((card) => observer.observe(card));
+}
+
+function renderTeamDirectory() {
+  let didRender = false;
+  document.querySelectorAll("[data-division-team-grid]").forEach((grid) => {
+    const division = grid.dataset.divisionTeamGrid;
+    const programs = league.programs.filter((program) => program.id !== "tbd" && program.divisions.includes(division));
+    const signature = JSON.stringify(programs.map((program) => ({
+      id: program.id,
+      name: program.name,
+      short: program.short,
+      logo: program.logo,
+      team: program.teams?.[division]
+    })));
+    if (grid.dataset.renderSignature !== signature) {
+      const focusedHref = grid.contains(document.activeElement) ? document.activeElement.getAttribute("href") : "";
+      grid.innerHTML = programs.map((program, index) => divisionTeamCardMarkup(program, division, index)).join("");
+      grid.dataset.renderSignature = signature;
+      if (focusedHref) [...grid.querySelectorAll("a[href]")].find((link) => link.getAttribute("href") === focusedHref)?.focus();
+      didRender = true;
+    }
+    const count = document.querySelector(`[data-division-count="${division}"]`);
+    if (count) count.textContent = `${programs.length} ${programs.length === 1 ? "team" : "teams"}`;
+  });
+  if (didRender) initializeTeamCardMotion();
+}
+
+function requestedProfileDivision(program, value) {
+  const requested = value === "girls" || value === "Girls Varsity" ? "Girls Varsity"
+    : value === "boys" || value === "Boys Varsity" ? "Boys Varsity"
+      : "";
+  return program.divisions.includes(requested) ? requested : program.divisions[0];
+}
+
+function profileCoachMarkup(coach, role) {
+  const portrait = coach.photo
+    ? `<img src="${safeAttribute(safeImageUrl(coach.photo))}" alt="${safeAttribute(coach.name)}" width="192" height="192" loading="lazy" decoding="async">`
+    : `<span aria-hidden="true">${escapeHtml(coachInitials(coach.name))}</span>`;
+  return `
+    <article class="team-profile-coach">
+      <div class="team-profile-coach-photo">${portrait}</div>
+      <div><span>${escapeHtml(role)}</span><h3>${escapeHtml(coach.name)}</h3><p>${escapeHtml(coach.experience || "Program biography not yet published.")}</p></div>
+    </article>
+  `;
+}
+
+function profileCoachesMarkup(program, division) {
+  const team = program.teams?.[division] || {};
+  const coaches = [];
+  if (team.headCoach?.name && team.headCoach.name !== "To be confirmed") coaches.push(profileCoachMarkup(team.headCoach, "Head coach"));
+  (team.assistants || [])
+    .filter((coach) => coach?.name && coach.name !== "To be confirmed")
+    .forEach((coach) => coaches.push(profileCoachMarkup(coach, "Assistant coach")));
+  if (coaches.length) return `<div class="team-profile-coach-grid">${coaches.join("")}</div>`;
+  return `
+    <div class="team-profile-empty">
+      <strong>Coaching staff not yet published</strong>
+      <p>This program's representative has not submitted a public coaching profile yet.</p>
+    </div>
+  `;
+}
+
+function profileDivisionLinks(program, activeDivision) {
+  if (program.divisions.length < 2) return "";
+  return `
+    <nav class="team-profile-division-nav" aria-label="${safeAttribute(program.name)} divisions">
+      ${program.divisions.map((division) => `<a href="${safeAttribute(teamProfileUrl(program.id, division))}"${division === activeDivision ? ' aria-current="page"' : ""}>${escapeHtml(division.replace(" Varsity", ""))}</a>`).join("")}
+    </nav>
+  `;
+}
+
+function validProgramEmail(program) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(program.representativeEmail || "") ? program.representativeEmail : "";
+}
+
+function updateTeamProfileMetadata(program, division) {
+  const title = `${program.name} ${division} | UBL`;
+  const description = `${program.summary} View ${division.toLowerCase()} coaches, home-court information, and program contact details.`;
+  document.title = title;
+  document.querySelector('meta[name="robots"]')?.setAttribute("content", "index, follow");
+  document.querySelector('meta[name="description"]')?.setAttribute("content", description);
+  document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
+  document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", title);
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", description);
+  const canonicalUrl = `https://nickblanchard04.github.io/upstate-basketball-league/${teamProfileUrl(program.id, division)}`;
+  document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonicalUrl);
+  document.querySelector('meta[property="og:url"]')?.setAttribute("content", canonicalUrl);
+}
+
+let renderedTeamProfileSignature = "";
+
+function renderTeamProfile() {
+  const container = document.querySelector("[data-team-profile]");
+  if (!container) return;
+  const params = new URLSearchParams(location.search);
+  const program = programById(params.get("program"));
+  if (!program || program.id === "tbd") {
+    const missingSignature = `missing:${params.get("program") || ""}`;
+    if (renderedTeamProfileSignature === missingSignature) return;
+    renderedTeamProfileSignature = missingSignature;
+    container.innerHTML = `
+      <div class="team-profile-missing section-wrap">
+        <a href="teams.html">Back to all teams</a>
+        <span>UBL program directory</span>
+        <h1>Choose a UBL team.</h1>
+        <p>Open the Teams page to select a girls or boys varsity program.</p>
+        <a class="button button-primary" href="teams.html">Explore teams</a>
+      </div>
+    `;
+    return;
+  }
+
+  const division = requestedProfileDivision(program, params.get("division"));
+  const email = validProgramEmail(program);
+  const hasAddress = Boolean(program.homeAddress);
+  const locationValue = / home court$/i.test(program.homeGym || "")
+    ? "Home-court details not yet published"
+    : program.homeGym || "Home-court information not yet published";
+  const locationMarkup = hasAddress
+    ? mapTriggerMarkup(locationValue, program.homeAddress, program.homeAddress, "Program home court")
+    : `<span>${escapeHtml(locationValue)}</span><small>Street address not yet published</small>`;
+  const contactMarkup = email
+    ? `<a href="mailto:${safeAttribute(email)}">${escapeHtml(email)}</a>`
+    : `<span>Public representative email not yet provided</span><a class="team-profile-fallback-link" href="mailto:Info.upstatebasketballleague@gmail.com?subject=${encodeURIComponent(`${program.name} program contact`)}">Ask UBL for the right contact</a>`;
+  const logoAlt = program.logoStatus ? `${program.name} temporary league mark` : `${program.name} logo`;
+  const logoStatusMarkup = program.logoStatus
+    ? `<div><dt>Team mark</dt><dd><span>${escapeHtml(program.logoStatus)}</span></dd></div>`
+    : "";
+  const profileSignature = JSON.stringify({ program, division });
+
+  updateTeamProfileMetadata(program, division);
+  if (renderedTeamProfileSignature === profileSignature) return;
+  renderedTeamProfileSignature = profileSignature;
+  container.innerHTML = `
+    <section class="team-profile-hero ${division === "Girls Varsity" ? "team-profile-hero-girls" : "team-profile-hero-boys"}">
+      <div class="team-profile-court" aria-hidden="true"><span></span></div>
+      <div class="team-profile-hero-inner">
+        <a class="team-profile-back" href="teams.html"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All teams</a>
+        <div class="team-profile-hero-copy">
+          <span>${escapeHtml(division)}</span>
+          <h1>${escapeHtml(program.name)}</h1>
+          <p>${escapeHtml(program.summary)}</p>
+          ${profileDivisionLinks(program, division)}
+        </div>
+        <div class="team-profile-logo"><span>${escapeHtml(program.short)}</span><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="${safeAttribute(logoAlt)}" width="192" height="192"></div>
+      </div>
+    </section>
+
+    <div class="team-profile-content section-wrap">
+      <section class="team-profile-coaches" aria-labelledby="team-profile-coaches-title">
+        <header><span>On the sideline</span><h2 id="team-profile-coaches-title">${escapeHtml(division.replace(" Varsity", ""))} varsity coaching staff</h2><p>Meet the coaches whose information has been approved for this public program profile.</p></header>
+        ${profileCoachesMarkup(program, division)}
+      </section>
+
+      <aside class="team-profile-facts" aria-labelledby="team-profile-facts-title">
+        <header><span>Program information</span><h2 id="team-profile-facts-title">Plan your next step</h2></header>
+        <dl>
+          <div><dt>Division</dt><dd>${escapeHtml(division)}</dd></div>
+          <div><dt>Home court</dt><dd>${locationMarkup}</dd></div>
+          <div><dt>Program representative</dt><dd>${contactMarkup}</dd></div>
+          ${logoStatusMarkup}
+        </dl>
+        <a class="team-profile-standings-link" href="standings.html">View league standings <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </aside>
+    </div>
+
+    <section class="team-profile-next section-wrap" aria-label="Continue exploring the UBL">
+      <div><span>Keep exploring</span><strong>See where ${escapeHtml(program.name)} fits into the season.</strong></div>
+      <div><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="teams.html">All teams</a></div>
+    </section>
+  `;
+}
+
 const GALLERY_DIVISIONS = new Set(["Boys Varsity", "Girls Varsity"]);
 const GALLERY_IMAGE_HOSTS = new Set(["drive.google.com", "lh3.googleusercontent.com"]);
 
@@ -679,6 +929,20 @@ function galleryImageUrl(value) {
   } catch {
     return "";
   }
+}
+
+function bundledGalleryImageUrl(value) {
+  const url = String(value || "").trim();
+  return /^assets\/gallery\/[a-z0-9][a-z0-9/_-]*\.(?:avif|jpe?g|png|webp)$/i.test(url) ? url : "";
+}
+
+function bundledGallerySrcset(sources) {
+  if (!Array.isArray(sources)) return "";
+  return sources.map((source) => {
+    const url = bundledGalleryImageUrl(source?.url);
+    const width = Number(source?.width);
+    return url && Number.isInteger(width) && width > 0 ? `${url} ${width}w` : "";
+  }).filter(Boolean).join(", ");
 }
 
 function updateGallerySections() {
@@ -706,6 +970,13 @@ function createGalleryPhoto(photo) {
 
   const image = document.createElement("img");
   image.src = photo.previewUrl;
+  const srcset = bundledGallerySrcset(photo.previewSrcset);
+  if (srcset) image.srcset = srcset;
+  if (srcset && typeof photo.sizes === "string" && photo.sizes.trim()) image.sizes = photo.sizes.trim();
+  const width = Number(photo.width);
+  const height = Number(photo.height);
+  if (Number.isInteger(width) && width > 0) image.width = width;
+  if (Number.isInteger(height) && height > 0) image.height = height;
   image.alt = photo.alt;
   image.loading = "lazy";
   button.append(image);
@@ -718,6 +989,40 @@ function createGalleryPhoto(photo) {
   caption.append(title, detail);
   figure.append(button, caption);
   return figure;
+}
+
+function renderBundledGallery() {
+  const photos = Array.isArray(league.galleryPhotos) ? league.galleryPhotos : [];
+  const renderedIds = new Set(
+    [...document.querySelectorAll("[data-gallery-photo-id]")].map((item) => item.dataset.galleryPhotoId)
+  );
+
+  photos.forEach((entry) => {
+    const id = typeof entry.id === "string" ? entry.id.trim() : "";
+    const teamId = typeof entry.teamId === "string" ? entry.teamId.trim() : "";
+    const division = GALLERY_DIVISIONS.has(entry.division) ? entry.division : "";
+    const previewUrl = bundledGalleryImageUrl(entry.previewUrl);
+    const fullUrl = bundledGalleryImageUrl(entry.fullUrl);
+    const alt = typeof entry.alt === "string" ? entry.alt.trim() : "";
+    const season = typeof entry.season === "string" ? entry.season.trim() : "";
+    const gallery = document.querySelector(`[data-gallery-team="${CSS.escape(teamId)}"]`);
+    const supportedDivisions = gallery?.dataset.galleryDivisions.split("|") || [];
+    const grid = gallery?.querySelector("[data-gallery-grid]");
+    if (!grid || !id || renderedIds.has(id) || !division || !supportedDivisions.includes(division) || !previewUrl || !fullUrl || !alt || !season) return;
+
+    grid.append(createGalleryPhoto({
+      ...entry,
+      id,
+      division,
+      previewUrl,
+      fullUrl,
+      alt,
+      season
+    }));
+    renderedIds.add(id);
+  });
+
+  updateGallerySections();
 }
 
 async function loadApprovedGallery() {
@@ -794,6 +1099,8 @@ function ensureApprovedGalleryLoaded(gallery) {
 function initializeGallery() {
   if (!document.querySelector("[data-gallery-team]")) return;
 
+  renderBundledGallery();
+
   document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
     gallery.addEventListener("toggle", () => {
       if (gallery.open) ensureApprovedGalleryLoaded(gallery);
@@ -851,10 +1158,11 @@ function initializeGallery() {
 
 const mapDialog = document.createElement("dialog");
 mapDialog.className = "map-dialog";
+mapDialog.setAttribute("aria-labelledby", "map-dialog-title");
 mapDialog.innerHTML = `
   <div class="map-dialog-card">
     <div class="map-dialog-heading">
-      <div><span>Game location</span><h2 data-map-dialog-label></h2></div>
+      <div><span data-map-dialog-context>Game location</span><h2 id="map-dialog-title" data-map-dialog-label></h2></div>
       <button type="button" data-map-dialog-close aria-label="Close map options"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
     </div>
     <p data-map-dialog-address></p>
@@ -872,6 +1180,7 @@ document.addEventListener("click", (event) => {
   if (!trigger) return;
   const address = trigger.dataset.mapAddress;
   const label = trigger.dataset.mapLabel;
+  mapDialog.querySelector("[data-map-dialog-context]").textContent = trigger.dataset.mapContext || "Game location";
   mapDialog.querySelector("[data-map-dialog-label]").textContent = label;
   mapDialog.querySelector("[data-map-dialog-address]").textContent = address;
   mapDialog.querySelector("[data-map-apple]").href = `https://maps.apple.com/?q=${encodeURIComponent(address)}`;
@@ -927,7 +1236,8 @@ function renderLeagueData() {
   renderSchedulePage();
   renderStandings();
   renderHomeTeams();
-  renderPrograms();
+  renderTeamDirectory();
+  renderTeamProfile();
   renderUpcomingTicker();
   renderFeaturedGame();
   renderBrackets();

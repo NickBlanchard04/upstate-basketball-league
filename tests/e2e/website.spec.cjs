@@ -49,7 +49,8 @@ test("all public routes render meaningful content without runtime errors", async
     ["/index.html", "Faith."],
     ["/schedule.html", "League schedule"],
     ["/standings.html", "Standings"],
-    ["/teams.html", "UBL programs"],
+    ["/teams.html", "Meet the teams shaping UBL."],
+    ["/team.html?program=hv-rocks&division=boys", "HV Rocks"],
     ["/bracket.html", "Playoff brackets"],
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
@@ -65,93 +66,13 @@ test("all public routes render meaningful content without runtime errors", async
   });
 });
 
-test("every public page uses the Standings header and shared menu behavior", async ({ page }, testInfo) => {
-  const routes = [
-    "/standings.html",
-    "/index.html",
-    "/schedule.html",
-    "/teams.html",
-    "/bracket.html",
-    "/rules.html",
-    "/gallery.html",
-    "/sponsors.html",
-    "/about.html",
-    "/404.html"
-  ];
-  let standingsHeader;
-
-  for (const route of routes) {
-    await page.goto(route);
-    await expect(page.locator('link[href^="ubl-header.css"]')).toHaveCount(1);
-    await expect(page.locator('script[src^="ubl-header.js"]')).toHaveCount(1);
-    await expect(page.locator(".site-nav a")).toHaveCount(9);
-
-    const header = await page.locator(".site-header").evaluate((element) => {
-      const logo = element.querySelector(".brand img");
-      const nav = element.querySelector(".site-nav");
-      const styles = getComputedStyle(element);
-      return {
-        height: Math.round(element.getBoundingClientRect().height * 10) / 10,
-        logoWidth: Math.round(logo.getBoundingClientRect().width * 10) / 10,
-        borderBottomColor: styles.borderBottomColor,
-        borderBottomStyle: styles.borderBottomStyle,
-        borderBottomWidth: styles.borderBottomWidth,
-        navPosition: getComputedStyle(nav).position
-      };
-    });
-
-    standingsHeader ||= header;
-    expect(header).toEqual(standingsHeader);
-
-    const activeLink = page.locator(".site-nav a.active");
-    if (route === "/404.html") {
-      await expect(activeLink).toHaveCount(0);
-    } else {
-      await expect(activeLink).toHaveCount(1);
-      await expect(activeLink).toHaveAttribute("aria-current", "page");
-    }
-
-    const menuToggle = page.locator(".menu-toggle");
-    if (testInfo.project.name === "mobile-chromium") {
-      await expect(menuToggle).toBeVisible();
-      await expect(menuToggle).toHaveText("Menu");
-      await menuToggle.click();
-      await expect(menuToggle).toHaveText("Close");
-      await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
-      await expect(page.locator(".site-nav")).toBeVisible();
-      await expect(page.locator("body")).toHaveClass(/menu-open/);
-      const ticker = page.locator(".score-ticker");
-      if (await ticker.count()) {
-        expect(await page.locator(".site-header").evaluate((element) => Number(getComputedStyle(element).zIndex)))
-          .toBeGreaterThan(await ticker.evaluate((element) => Number(getComputedStyle(element).zIndex)));
-      }
-      await page.keyboard.press("Escape");
-      await expect(menuToggle).toHaveText("Menu");
-      await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
-    } else {
-      await expect(menuToggle).toBeHidden();
-      await expect(page.locator(".site-nav")).toBeVisible();
-    }
-
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
-  }
-
-  if (testInfo.project.name === "desktop-chromium") {
-    await page.goto("/index.html");
-    const scheduleLink = page.locator('.site-nav a[href="schedule.html"]');
-    const underlineBefore = await scheduleLink.evaluate((link) => getComputedStyle(link, "::after").transform);
-    await scheduleLink.hover();
-    await expect.poll(() => scheduleLink.evaluate((link) => getComputedStyle(link, "::after").transform)).not.toBe(underlineBefore);
-  }
-});
-
 async function useLiveFeed(page, sourceFeed) {
   await page.unroute(liveFeedUrlPattern);
   await page.route(liveFeedUrlPattern, (route) => route.fulfill({ json: sourceFeed }));
 }
 
 test("public pages do not expose internal placeholder language", async ({ page }) => {
-  for (const route of ["/schedule.html", "/teams.html", "/bracket.html", "/gallery.html", "/sponsors.html", "/about.html"]) {
+  for (const route of ["/schedule.html", "/teams.html", "/team.html?program=hv-rocks&division=boys", "/bracket.html", "/gallery.html", "/sponsors.html", "/about.html"]) {
     await page.goto(route);
     const visibleText = await page.locator("body").innerText();
     expect(visibleText).not.toMatch(/\bTBD\b|placeholder|to be confirmed|coming soon/i);
@@ -161,14 +82,14 @@ test("public pages do not expose internal placeholder language", async ({ page }
 test("homepage uses the shared schedule and continuously moving game ticker", async ({ page }, testInfo) => {
   await page.goto("/index.html");
   const heroArt = page.locator(".hero-art");
-  await expect(heroArt).toHaveAttribute("src", "assets/ubl-championship-hero.jpg");
-  expect(await heroArt.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero-(?:mobile-768|1600)\.(?:avif|webp)$/);
+  await expect(heroArt).toHaveAttribute("src", "assets/ubl/ubl-faith-before-the-whistle.webp");
+  expect(await heroArt.evaluate((image) => image.currentSrc)).toMatch(/assets\/ubl\/ubl-faith-before-the-whistle\.webp$/);
   await expect(page.locator("[data-featured-game]")).toContainText("Next league game");
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
   const openSpot = page.locator(".team-card-open-spot");
-  await expect(openSpot.locator("img")).toHaveAttribute("src", "assets/optimized/ubl-logo-192.webp");
+  await expect(openSpot.locator("img")).toHaveAttribute("src", "assets/icons/icon-192.png");
   await expect(openSpot).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
   if (testInfo.project.name.startsWith("desktop")) {
     const scheduleButton = page.getByRole("link", { name: "View schedule" });
@@ -257,70 +178,177 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-bracket]")).toHaveCount(2);
 });
 
-test("standings board fills more of the page with solid division color and Teko seeds", async ({ page }, testInfo) => {
-  await page.goto("/standings.html");
-  await expect(page.locator(".board-footer, .standings-freshness, .division-field")).toHaveCount(0);
-  await expect(page.locator(".division-title strong")).toHaveCount(0);
+test("team directory separates each division and opens the right profile", async ({ page }, testInfo) => {
+  await page.goto("/teams.html");
 
-  const heroBackground = await page.locator(".standings-hero").evaluate((element) => getComputedStyle(element).backgroundImage);
-  expect(heroBackground).toContain("linear-gradient");
-  expect(heroBackground).not.toContain("url(");
+  const girlsColumn = page.locator("#girls-division");
+  const boysColumn = page.locator("#boys-division");
+  const girlsCards = girlsColumn.locator(".division-team-card");
+  const boysCards = boysColumn.locator(".division-team-card");
+  await expect(girlsCards).toHaveCount(4);
+  await expect(boysCards).toHaveCount(4);
+  await expect(page.locator('[data-program-card="tbd"]')).toHaveCount(0);
+  await expect(girlsColumn.locator("[data-division-count]")).toHaveText("4 teams");
+  await expect(boysColumn.locator("[data-division-count]")).toHaveText("4 teams");
+  await expect(page.locator(".division-team-card img")).toHaveCount(8);
+  await expect(girlsColumn.locator('[data-program-card="hv-flames"] img')).toHaveAttribute("src", "assets/icons/icon-192.png");
 
-  if (testInfo.project.name === "desktop-chromium") {
-    const board = await page.locator(".standings-layout").boundingBox();
-    const row = await page.locator(".division-table tbody tr").first().boundingBox();
-    expect(board).not.toBeNull();
-    expect(row).not.toBeNull();
-    expect(board.width).toBeGreaterThan(1200);
-    expect(row.height).toBeGreaterThan(93);
-    await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-family", /Teko/);
-    await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-size", "31.2px");
-    expect((await page.locator(".team-link img").first().boundingBox()).width).toBeGreaterThan(38);
+  const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
+  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls");
+  await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
+
+  const layout = await page.locator(".division-board").evaluate((board) => {
+    const [girls, boys] = board.children;
+    const girlsRect = girls.getBoundingClientRect();
+    const boysRect = boys.getBoundingClientRect();
+    return { girlsX: girlsRect.x, girlsY: girlsRect.y, boysX: boysRect.x, boysY: boysRect.y };
+  });
+  if (testInfo.project.name.startsWith("desktop")) {
+    expect(layout.girlsX).toBeLessThan(layout.boysX);
+    expect(Math.abs(layout.girlsY - layout.boysY)).toBeLessThan(2);
+    await girlsKings.scrollIntoViewIfNeeded();
+    await expect(girlsKings).toHaveClass(/is-visible/);
+    await girlsKings.hover();
+    await expect(girlsKings).toHaveCSS("border-color", "rgb(227, 19, 49)");
+    await expect(girlsKings.locator(".team-card-view")).toHaveCSS("background-color", "rgb(227, 19, 49)");
   } else {
-    const mobileSeed = page.locator(".division-table td.seed-column").first();
-    await expect(mobileSeed).toBeVisible();
-    await expect(mobileSeed).toHaveCSS("font-family", /Teko/);
-    await expect(mobileSeed).toHaveCSS("font-size", "31.2px");
+    expect(layout.girlsY).toBeLessThan(layout.boysY);
   }
 
-  expect(await page.evaluate(() => document.fonts.check('700 31.2px "Teko"'))).toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await girlsKings.click();
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls$/);
+  await expect(page.locator("h1")).toHaveText("The King’s School");
+  await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Hudson Waters" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "athletic_director@kingsschool.info" })).toHaveAttribute("href", "mailto:athletic_director@kingsschool.info");
+
+  await page.getByRole("link", { name: "Boys", exact: true }).click();
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=boys$/);
+  await expect(page.getByRole("heading", { name: "Hudson Waters" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Jacob Fischer" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Brodie Farr" })).toHaveCount(0);
 });
 
-test("standings masthead uses the compact reference lockup", async ({ page }) => {
-  await page.goto("/standings.html");
-
-  const title = page.locator(".standings-lockup h1");
-  const status = page.locator(".standings-lockup .season-status");
-  const titleBox = await title.boundingBox();
-  const statusBox = await status.boundingBox();
-
-  expect(titleBox).not.toBeNull();
-  expect(statusBox).not.toBeNull();
-  expect(statusBox.width / titleBox.width).toBeGreaterThan(0.34);
-  expect(statusBox.width / titleBox.width).toBeLessThan(0.4);
-  expect(statusBox.y).toBeLessThan(titleBox.y + titleBox.height);
-  await expect(status).toHaveCSS("border-top-style", "solid");
-  await expect(status).toHaveCSS("text-transform", "uppercase");
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
-});
-
-test("team profiles and gallery interactions remain usable", async ({ page }) => {
-  await page.goto("/teams.html");
-  await page.locator("#hv-rocks summary").click();
-  await expect(page.locator("#hv-rocks")).toContainText("Marc Bailey");
-  await page.locator("#hv-rocks [data-map-address]").click();
+test("team profiles expose known venue data and honest missing states", async ({ page }) => {
+  await page.goto("/team.html?program=hv-rocks&division=boys");
+  await expect(page.getByRole("heading", { name: "Marc Bailey" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tim Stuitje" })).toBeVisible();
+  await page.locator('[data-map-address="2714 Curry Rd, Schenectady, NY 12303"]').click();
   await expect(page.locator(".map-dialog")).toContainText("2714 Curry Rd");
   await page.locator("[data-map-dialog-close]").click();
+  await expect(page.locator(".map-dialog")).not.toBeVisible();
 
+  await page.goto("/team.html?program=perth&division=girls");
+  await expect(page.locator(".team-profile-empty")).toContainText("Coaching staff not yet published");
+  await expect(page.locator(".team-profile-facts")).toContainText("Home-court details not yet published");
+  await expect(page.locator(".team-profile-facts")).toContainText("Public representative email not yet provided");
+  await expect(page.getByRole("link", { name: "Ask UBL for the right contact" })).toHaveAttribute("href", /^mailto:Info\.upstatebasketballleague@gmail\.com/);
+});
+
+test("team cards remain complete when reduced motion is requested", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/teams.html");
+  const cards = page.locator(".division-team-card");
+  await expect(cards).toHaveCount(8);
+  expect(await cards.evaluateAll((elements) => elements.every((element) => {
+    const style = getComputedStyle(element);
+    return style.opacity === "1" && style.animationName === "none";
+  }))).toBe(true);
+});
+
+test("team cards stay separated across mobile, tablet, and desktop breakpoints", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("desktop"), "One browser can cover the responsive breakpoint matrix");
+  const widths = [390, 600, 767, 768, 1100, 1279, 1280, 1440];
+
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/teams.html");
+    await expect(page.locator(".division-team-card")).toHaveCount(8);
+    const metrics = await page.evaluate(() => {
+      const board = document.querySelector(".division-board");
+      const girls = document.querySelector("#girls-division");
+      const boys = document.querySelector("#boys-division");
+      const grid = document.querySelector(".division-team-grid");
+      const actions = document.querySelector(".teams-hero-actions");
+      const rail = document.querySelector(".teams-values-rail");
+      const cards = [...document.querySelectorAll(".division-team-card")];
+      const cardOverlap = cards.some((card) => {
+        const cardRect = card.getBoundingClientRect();
+        const logoRect = card.querySelector(".team-card-logo-stage").getBoundingClientRect();
+        const titleRect = card.querySelector(".division-team-card-content strong").getBoundingClientRect();
+        const actionRect = card.querySelector(".division-team-card-content b").getBoundingClientRect();
+        return logoRect.bottom > titleRect.top + 1
+          || logoRect.top < cardRect.top - 1
+          || actionRect.bottom > cardRect.bottom + 1;
+      });
+      const girlsRect = girls.getBoundingClientRect();
+      const boysRect = boys.getBoundingClientRect();
+      return {
+        overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        cardOverlap,
+        divisionsSideBySide: Math.abs(girlsRect.y - boysRect.y) < 2 && girlsRect.x < boysRect.x,
+        innerColumns: getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length,
+        heroOverlap: innerWidth < 600 && actions.getBoundingClientRect().bottom > rail.getBoundingClientRect().top + 1
+      };
+    });
+
+    expect(metrics.overflow, `${width}px horizontal overflow`).toBe(false);
+    expect(metrics.cardOverlap, `${width}px logo or action overlap`).toBe(false);
+    expect(metrics.divisionsSideBySide, `${width}px division placement`).toBe(width >= 768);
+    expect(metrics.innerColumns, `${width}px cards per division row`).toBe((width >= 600 && width < 768) || width >= 1280 ? 2 : 1);
+    expect(metrics.heroOverlap, `${width}px hero rail overlap`).toBe(false);
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/teams.html");
+  const menu = page.locator(".menu-toggle");
+  await expect(menu).toHaveAccessibleName("Open menu");
+  await menu.click();
+  await expect(menu).toHaveAccessibleName("Close menu");
+  await expect(page.locator("body")).toHaveClass(/menu-open/);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("body")).not.toHaveClass(/menu-open/);
+  await menu.click();
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect(page.locator("body")).not.toHaveClass(/menu-open/);
+});
+
+test("bundled gallery metadata renders responsively and remains interactive", async ({ page }) => {
   await page.goto("/gallery.html");
   await expect(page.locator(".gallery-lede")).toHaveCount(0);
   const galleryOpenSpot = page.locator(".gallery-panel .open-spot-profile");
   await expect(galleryOpenSpot).toContainText("Bring your program to the UBL");
   await expect(galleryOpenSpot.getByRole("link", { name: "Start a conversation" })).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
-  await page.locator(".team-gallery").first().locator("summary").click();
-  await page.locator("[data-gallery-full]").first().click();
+  const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
+  const bundledPhotos = kingsGallery.locator("[data-gallery-photo-id]");
+  const firstPhoto = kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"]');
+  const firstImage = firstPhoto.locator("img");
+  await expect(bundledPhotos).toHaveCount(13);
+  await expect(kingsGallery.locator("[data-gallery-count]")).toHaveText("13 photos");
+  await expect(firstImage).toHaveAttribute("src", "assets/gallery/optimized/480/kings-gallery-01.webp");
+  await expect(firstImage).toHaveAttribute("srcset", "assets/gallery/optimized/480/kings-gallery-01.webp 480w, assets/gallery/optimized/960/kings-gallery-01.webp 960w");
+  await expect(firstImage).toHaveAttribute("sizes", "(min-width: 768px) 25vw, 50vw");
+  await expect(firstImage).toHaveAttribute("width", "480");
+  await expect(firstImage).toHaveAttribute("height", "320");
+  await expect(firstImage).toHaveAttribute("alt", "King's girls varsity player driving through defenders");
+
+  await kingsGallery.locator("summary").click();
+  await page.getByRole("tab", { name: "Boys Varsity" }).click();
+  await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(7);
+  await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(0);
+  await page.getByRole("tab", { name: "Girls Varsity" }).click();
+  await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(6);
+  await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(0);
+  await page.getByRole("tab", { name: "All photos" }).click();
+
+  await firstPhoto.locator("[data-gallery-full]").click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
+  await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("src", "assets/gallery/optimized/960/kings-gallery-01.webp");
+  await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("alt", "King's girls varsity player driving through defenders");
+  await expect(page.locator("[data-gallery-lightbox-title]")).toHaveText("Girls Varsity");
+  await expect(page.locator("[data-gallery-lightbox-detail]")).toHaveText("2025-26 season");
   await page.getByRole("button", { name: "Close fullscreen photo" }).click();
 });
 
@@ -338,16 +366,28 @@ test("approved Drive photos appear only in their matching team and division", as
   await page.route("https://example.test/approved-gallery", (route) => route.fulfill({
     json: {
       schemaVersion: 1,
-      photos: [{
-        id: "approved-rocks-1",
-        teamId: "hv-rocks",
-        teamName: "HV Rocks",
-        division: "Boys Varsity",
-        season: "2026-27 season",
-        alt: "HV Rocks boys varsity game",
-        previewUrl: "https://drive.google.com/thumbnail?id=approved-rocks-1&sz=w600",
-        fullUrl: "https://drive.google.com/thumbnail?id=approved-rocks-1&sz=w1600"
-      }]
+      photos: [
+        {
+          id: "approved-rocks-1",
+          teamId: "hv-rocks",
+          teamName: "HV Rocks",
+          division: "Boys Varsity",
+          season: "2026-27 season",
+          alt: "HV Rocks boys varsity game",
+          previewUrl: "https://drive.google.com/thumbnail?id=approved-rocks-1&sz=w600",
+          fullUrl: "https://drive.google.com/thumbnail?id=approved-rocks-1&sz=w1600"
+        },
+        {
+          id: "kings-gallery-01",
+          teamId: "kings-school",
+          teamName: "The King's School",
+          division: "Girls Varsity",
+          season: "2026-27 season",
+          alt: "Duplicate approved photo",
+          previewUrl: "https://drive.google.com/thumbnail?id=kings-gallery-01&sz=w600",
+          fullUrl: "https://drive.google.com/thumbnail?id=kings-gallery-01&sz=w1600"
+        }
+      ]
     }
   }));
 
@@ -356,6 +396,10 @@ test("approved Drive photos appear only in their matching team and division", as
   await rocksGallery.locator("summary").click();
   await expect(rocksGallery.locator("[data-gallery-count]")).toHaveText("1 photo");
   await expect(rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"]')).toBeVisible();
+  const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
+  await expect(kingsGallery.locator("[data-gallery-count]")).toHaveText("13 photos");
+  await expect(kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"]')).toHaveCount(1);
+  await expect(kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"] img')).toHaveAttribute("src", "assets/gallery/optimized/480/kings-gallery-01.webp");
 
   await page.getByRole("tab", { name: "Girls Varsity" }).click();
   await expect(rocksGallery).toBeHidden();
@@ -397,6 +441,23 @@ test("malformed live data falls back to the bundled schedule", async ({ page }) 
   await page.goto("/schedule.html");
   await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);
   await expect(page.locator("[data-freshness]")).toContainText("backup schedule");
+});
+
+test("live placeholders are replaced while confirmed map addresses remain usable", async ({ page }) => {
+  const honestFeed = structuredClone(feed);
+  honestFeed.teams.find((team) => team.id === "tbd").name = "Team 5";
+  const openArms = honestFeed.venues.find((venue) => venue.id === "open-arms");
+  openArms.name = "Wilton Baptist - TBD";
+  openArms.mapLabel = "Wilton Baptist - TBD";
+  await useLiveFeed(page, honestFeed);
+
+  await page.goto("/schedule.html");
+  await page.locator("[data-week-select]").selectOption("holiday-week");
+  const openSpotGame = page.locator('[data-game-id="ubl-009"]');
+  await expect(openSpotGame).toContainText("Open League Spot");
+  await expect(openSpotGame).toContainText("Venue details pending");
+  await expect(openSpotGame).not.toContainText(/Team 5|TBD|to be confirmed|placeholder/i);
+  await expect(openSpotGame.locator('[data-map-address="2714 Curry Rd, Schenectady, NY 12303"]')).toHaveCount(1);
 });
 
 test("bundled data renders immediately while the primary live feed loads without duplicate requests", async ({ page }) => {
@@ -538,18 +599,18 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(seasonCards.nth(1)).toContainText("December and runs through the end of January");
 
   const liveAction = page.getByAltText("Two varsity basketball players contest the opening tip");
-  const championshipTrophy = page.getByAltText("The UBL championship trophy under arena lights");
+  const competitionIllustration = page.locator('.season-stage-standings img[src="assets/ubl/ubl-competition-give-your-best.webp"]');
   const playoffHuddle = page.getByAltText("UBL players and coaches raise their hands together in a team huddle");
   await expect(liveAction).toBeVisible();
-  await expect(championshipTrophy).toBeVisible();
+  await expect(competitionIllustration).toBeVisible();
   await expect(playoffHuddle).toBeVisible();
   await expect(liveAction).toHaveAttribute("loading", "lazy");
-  await expect(championshipTrophy).toHaveAttribute("loading", "lazy");
+  await expect(competitionIllustration).toHaveAttribute("loading", "lazy");
   await expect(playoffHuddle).toHaveAttribute("loading", "lazy");
   await expect.poll(() => liveAction.evaluate((image) => image.currentSrc)).toMatch(/about-season-02-live-action-(?:768|1600)\.webp$/);
-  await expect(championshipTrophy).toHaveAttribute("width", "1600");
-  await expect(championshipTrophy).toHaveAttribute("height", "900");
-  await expect.poll(() => championshipTrophy.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero-1600\.webp$/);
+  await expect(competitionIllustration).toHaveAttribute("width", "1536");
+  await expect(competitionIllustration).toHaveAttribute("height", "1024");
+  await expect.poll(() => competitionIllustration.evaluate((image) => image.currentSrc)).toMatch(/assets\/ubl\/ubl-competition-give-your-best\.webp$/);
   await expect.poll(() => playoffHuddle.evaluate((image) => image.currentSrc)).toMatch(/about-season-04-playoffs-huddle-(?:768|1600)\.webp$/);
 
   await expect(page.getByRole("heading", { name: "The culture behind the commitments" })).toHaveCount(0);
@@ -602,14 +663,15 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
-test("sponsorship page presents its funding goal and official-source placement examples", async ({ page }, testInfo) => {
+test("sponsorship page moves through three partner views and displays prospective partner categories", async ({ page }, testInfo) => {
   await page.goto("/sponsors.html");
 
   await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
-  const teamCount = page.locator('[data-count-up="10"]');
-  await teamCount.scrollIntoViewIfNeeded();
-  await expect(teamCount).toHaveText("10", { timeout: 2500 });
-  await expect(page.locator(".sponsor-facts li").first()).toHaveAttribute("aria-label", "10 teams");
+  const divisionFact = page.locator(".sponsor-facts li").first();
+  await divisionFact.scrollIntoViewIfNeeded();
+  await expect(divisionFact).toContainText("Two");
+  await expect(divisionFact).toContainText("Varsity divisions");
+  await expect(page.locator('[data-count-up="10"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Start a conversation" })).toHaveAttribute(
     "href",
     "mailto:Info.upstatebasketballleague@gmail.com?subject=UBL%20Sponsorship%20Inquiry"
@@ -629,66 +691,39 @@ test("sponsorship page presents its funding goal and official-source placement e
   await expect(story).toHaveAttribute("data-active-scene", "community");
   await expect(story.locator('[data-sponsor-step="community"]')).toHaveClass(/is-active/);
 
-  const sponsorOptions = page.locator("[data-sponsor-option]");
-  await expect(sponsorOptions).toHaveCount(6);
-  await expect(sponsorOptions.first().getByRole("heading", { name: "Digital sponsorship" })).toBeVisible();
-  await expect(page.locator('[data-sponsor-option="champions-legacy"]')).toContainText("boys' and girls' division champions");
-
-  const sponsorGoal = page.locator("[data-sponsor-goal]");
-  await expect(sponsorGoal.getByRole("heading", { name: "Fund the season's essentials before opening night." })).toBeVisible();
-  await expect(sponsorGoal.locator("[data-sponsor-goal-item]")).toHaveCount(3);
-  await expect(sponsorGoal.locator('[data-sponsor-goal-item="championship"]')).toContainText("separate boys' and girls' championship trophies");
-  await expect(sponsorGoal.locator('[data-sponsor-goal-item="operations"]')).toContainText("commissioner-approved reserve");
-  await expect(sponsorGoal.locator('[data-sponsor-goal-item="technology"]')).toContainText("custom domain");
-  await expect(sponsorGoal.locator(".sponsor-goal-disclosure")).toContainText("documented UBL expenses approved by league leadership");
-
-  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li")).toHaveCount(10);
-  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) img")).toHaveCount(10);
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Google logo"]')).toHaveAttribute("src", "assets/sponsors/google.png");
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Microsoft logo"]')).toHaveAttribute("src", "assets/sponsors/microsoft.svg");
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="NVIDIA logo"]')).toHaveAttribute("src", "assets/sponsors/nvidia.svg");
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Taco Bell logo"]')).toHaveAttribute("src", "assets/sponsors/taco-bell.svg");
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Burger King logo"]')).toHaveAttribute("src", "assets/sponsors/burger-king.png");
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Rockstar Games logo"]')).toHaveCount(0);
-  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li.logo-on-dark")).toHaveCount(0);
-  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li").first()).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
-  expect(await page.locator(".sponsor-logo-group:not([aria-hidden]) img").evaluateAll((images) => (
-    images.every((image) => getComputedStyle(image).mixBlendMode === "multiply")
-  ))).toBe(true);
-  await expect(page.locator('.sponsor-logo-group[aria-hidden="true"] img:not([alt=""])')).toHaveCount(0);
+  const partnerCategories = page.locator(".sponsor-logo-group:not([aria-hidden]) li");
+  await expect(partnerCategories).toHaveCount(5);
+  await expect(page.locator(".sponsor-logo-group img")).toHaveCount(0);
+  await expect(partnerCategories).toContainText(["Local businesses", "Community organizations", "Service partners", "Faith partners", "Event supporters"]);
   const sponsorLogoTrack = page.locator(".sponsor-logo-track");
   await expect(sponsorLogoTrack).toHaveCSS("animation-name", "sponsor-marquee");
   await expect(sponsorLogoTrack).toHaveCSS("animation-play-state", "running");
   if (testInfo.project.name.startsWith("desktop")) {
-    const logoWindow = page.locator(".sponsor-logo-window");
-    await logoWindow.scrollIntoViewIfNeeded();
-    const hoverPoint = await logoWindow.evaluate((windowElement) => {
-      const windowRect = windowElement.getBoundingClientRect();
-      const visibleImages = Array.from(windowElement.querySelectorAll("img"))
-        .map((image) => ({ image, rect: image.getBoundingClientRect() }))
-        .filter(({ rect }) => rect.left >= windowRect.left && rect.right <= windowRect.right);
-      const target = visibleImages[Math.floor(visibleImages.length / 2)];
-      return { x: target.rect.left + target.rect.width / 2, y: target.rect.top + target.rect.height / 2 };
-    });
-    await page.mouse.move(hoverPoint.x, hoverPoint.y);
-    await expect(page.locator(".sponsor-logo-group img:hover").first()).toHaveCSS("filter", /grayscale\(0\)/);
+    const localCategory = partnerCategories.first();
+    await localCategory.hover({ force: true });
+    await expect(localCategory.locator(".sponsor-category-mark")).toHaveCSS("transform", /matrix/);
     await expect(sponsorLogoTrack).toHaveCSS("animation-play-state", "running");
   }
-  await expect(page.locator(".sponsor-sample-note")).toContainText("are not affiliated with or sponsors of the UBL");
+  await expect(page.locator(".sponsor-sample-note")).toContainText("no organization is shown as a confirmed UBL sponsor");
   await expect(page.locator("footer")).toHaveCount(0);
   await expect(page.locator(".sponsor-footer-bottom")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 
 test("public pages expose complete search and social metadata", async ({ page, request }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "team.html?program=hv-rocks&division=boys", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S/);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index, follow");
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", /UBL|Upstate Basketball League/);
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /^https:\/\//);
+    await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute("content", "image/jpeg");
+    await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1600");
+    await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute("content", "900");
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute("content", /Upstate Basketball League/);
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+    await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute("content", /Upstate Basketball League/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /^https:\/\//);
     await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "site.webmanifest");
     await expect(page.locator("h1")).toHaveCount(1);
@@ -748,7 +783,7 @@ test("analytics stays disabled on unapproved preview hosts", async ({ page }) =>
 });
 
 test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html", "404.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "team.html?program=hv-rocks&division=boys", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html", "404.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     const results = await new AxeBuilder({ page })

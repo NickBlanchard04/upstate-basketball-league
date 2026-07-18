@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Browse the 2026-27 Upstate Basketball League schedule by week and division.">
-  <meta name="robots" content="index, follow">
+  <meta name="description" content="UBL team profile with coaches, program description, home-court location, and representative contact information.">
+  <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#020f22">
-  <title>Schedule | Upstate Basketball League</title>
-  <link rel="canonical" href="https://nickblanchard04.github.io/upstate-basketball-league/schedule.html">
+  <title>Team Profile | Upstate Basketball League</title>
+  <link rel="canonical" href="https://nickblanchard04.github.io/upstate-basketball-league/team.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Upstate Basketball League">
-  <meta property="og:title" content="2026-27 Schedule | Upstate Basketball League">
-  <meta property="og:description" content="Browse UBL games by week and division, with times, teams, venues, and live results.">
-  <meta property="og:url" content="https://nickblanchard04.github.io/upstate-basketball-league/schedule.html">
+  <meta property="og:title" content="Team Profile | Upstate Basketball League">
+  <meta property="og:description" content="Meet a UBL program, its coaching staff, home court, and program representative.">
+  <meta property="og:url" content="https://nickblanchard04.github.io/upstate-basketball-league/team.html">
   <meta property="og:image" content="https://nickblanchard04.github.io/upstate-basketball-league/assets/social/ubl-social-share.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1600">
   <meta property="og:image:height" content="900">
   <meta property="og:image:alt" content="Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="2026-27 UBL Schedule">
-  <meta name="twitter:description" content="Browse UBL games by week and division, with times, teams, venues, and live results.">
+  <meta name="twitter:title" content="UBL Team Profile">
+  <meta name="twitter:description" content="Meet a UBL program and its varsity coaching staff.">
   <meta name="twitter:image" content="https://nickblanchard04.github.io/upstate-basketball-league/assets/social/ubl-social-share.jpg">
   <meta name="twitter:image:alt" content="Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights">
   <link rel="manifest" href="site.webmanifest">
@@ -37,48 +37,28 @@
   <script src="data-loader.js?v=20260718-1" defer></script>
   <script src="script.js?v=20260718-1" defer></script>
 </head>
-<body>
+<body class="team-detail-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="index.html" aria-label="Upstate Basketball League home"><img src="assets/optimized/ubl-logo-192.webp" alt="" width="192" height="295"><span><strong>Upstate</strong> Basketball League</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a><a class="active" href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
+        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a class="active" href="teams.html">Teams</a>
         <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="sponsors.html">Sponsors</a><a href="about.html">About</a>
       </nav>
     </div>
   </header>
 
-  <main class="subpage-main" id="main">
-    <section class="page-banner">
-      <div><h1>League schedule</h1><p>Follow every regular-season matchup, school-break update, and postseason game from December through February.</p></div>
-      <strong>Dec 3, 2026 &ndash; Feb 22, 2027</strong>
-    </section>
-
-    <section class="panel schedule-page-panel section-wrap" aria-labelledby="schedule-page-title">
-      <div class="section-title section-title-inline">
-        <div><h2 id="schedule-page-title">Choose a week</h2><span>2026-27 preliminary schedule</span></div>
-        <a href="bracket.html">View playoff format</a>
+  <main class="team-detail-main" id="main">
+    <section class="team-profile-shell" data-team-profile>
+      <div class="team-profile-missing section-wrap">
+        <a href="teams.html">Back to all teams</a>
+        <span>UBL program directory</span>
+        <h1>Choose a UBL team.</h1>
+        <p>Open the Teams page to select a girls or boys varsity program.</p>
+        <a class="button button-primary" href="teams.html">Explore teams</a>
       </div>
-      <div class="planning-note"><strong>Preliminary schedule</strong><p>Games shown here reflect the latest commissioner schedule. Times and venues become official after league confirmation.</p></div>
-      <p class="data-freshness" data-freshness aria-live="polite"></p>
-      <div class="week-controls">
-        <button type="button" data-week-step="-1" aria-label="View previous week">Previous week</button>
-        <label><span>Select week</span><select data-week-select aria-label="Select schedule week"></select></label>
-        <button type="button" data-week-step="1" aria-label="View next week">Next week</button>
-      </div>
-      <div class="tabs" role="group" aria-label="Schedule division filters">
-        <button class="active" type="button" data-schedule-filter="all">All games</button>
-        <button type="button" data-schedule-filter="Boys Varsity">Boys Varsity</button>
-        <button type="button" data-schedule-filter="Girls Varsity">Girls Varsity</button>
-      </div>
-      <div class="week-summary">
-        <span>Selected week</span>
-        <h2 data-week-heading>Opening Week · Dec 3</h2>
-        <p data-week-note></p>
-      </div>
-      <div class="game-list" data-week-game-list></div>
     </section>
   </main>
 </body>

@@ -38,14 +38,6 @@
   src: url("assets/fonts/ibm-plex-sans-400-700-latin.woff2") format("woff2");
 }
 
-@font-face {
-  font-family: "Teko";
-  font-style: normal;
-  font-weight: 600 700;
-  font-display: swap;
-  src: url("assets/fonts/teko-600-700-latin.woff2") format("woff2");
-}
-
 :root {
   --navy-950: #020f22;
   --navy-900: #041a38;
@@ -59,9 +51,9 @@
   --body: "IBM Plex Sans", sans-serif;
   --page-pad: clamp(1rem, 3vw, 2.75rem);
   --max: 92rem;
-  --division-title-h: 5rem;
-  --table-head-h: 3.05rem;
-  --standing-row-h: 5.92rem;
+  --division-title-h: 4rem;
+  --table-head-h: 2.5rem;
+  --standing-row-h: 4.65rem;
 }
 
 * {
@@ -227,16 +219,46 @@ p {
 
 .standings-hero {
   min-height: calc(100svh - 5.75rem);
-  padding: clamp(2.25rem, 3.5vw, 3.75rem) clamp(1rem, 2.25vw, 2.5rem) clamp(2.75rem, 4vw, 4rem);
+  padding: clamp(2.25rem, 4vw, 4.5rem) var(--page-pad) clamp(2.5rem, 5vw, 5rem);
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: var(--white);
-  background: linear-gradient(110deg, #7a102b 0 46%, var(--navy-800) 54% 100%);
+  background-color: var(--navy-950);
+  background-image: url("assets/optimized/ubl-website-hero-1600.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+.standings-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: rgba(2, 15, 34, 0.48);
+}
+
+.division-field {
+  position: absolute;
+  z-index: -2;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  opacity: 0.83;
+}
+
+.division-field-girls {
+  left: 0;
+  background: var(--red-dark);
+}
+
+.division-field-boys {
+  right: 0;
+  background: var(--navy-800);
 }
 
 .standings-content {
-  width: min(100%, 115rem);
+  width: min(100%, 86rem);
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -248,7 +270,7 @@ p {
 }
 
 .season-kicker {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.35rem;
   color: var(--white);
   font-size: 0.78rem;
   font-weight: 800;
@@ -256,49 +278,31 @@ p {
   text-transform: uppercase;
 }
 
-.standings-lockup {
-  width: min(100%, 48rem);
-  margin: clamp(0.8rem, 1.2vw, 1rem) auto 0;
-  padding-bottom: clamp(0.9rem, 1.35vw, 1.3rem);
-  position: relative;
-}
-
 .standings-masthead h1 {
   margin: 0;
   color: var(--white);
-  font: 900 clamp(6rem, 11.6vw, 10.85rem)/0.68 var(--display);
-  letter-spacing: -0.055em;
+  font: 900 clamp(5.4rem, 10.5vw, 9.75rem)/0.72 var(--display);
+  letter-spacing: -0.045em;
   text-transform: uppercase;
-  transform: scaleY(1.16);
-  transform-origin: center bottom;
-  -webkit-text-stroke: clamp(0.04rem, 0.08vw, 0.09rem) rgba(2, 15, 34, 0.72);
-  text-shadow: 0.045em 0.055em 0 var(--navy-950);
+  -webkit-text-stroke: 1px rgba(2, 15, 34, 0.72);
+  text-shadow: 0 0.35rem 0 var(--navy-950), 0 0.8rem 2rem rgba(2, 15, 34, 0.55);
 }
 
 .season-status {
-  min-width: 36%;
   width: max-content;
-  max-width: calc(100% - 1rem);
-  margin: 0;
-  padding: 0.2em 0.75em 0.14em;
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
+  max-width: 100%;
+  margin: 0.75rem auto 0;
+  padding: 0.32rem 0.85rem;
   color: var(--white);
   background: var(--navy-950);
-  border: 2px solid var(--white);
-  box-shadow: 0.18rem 0.2rem 0 var(--navy-950);
-  font: 800 clamp(0.63rem, 0.95vw, 0.85rem)/0.9 var(--display);
-  letter-spacing: 0.045em;
-  white-space: nowrap;
+  font: 800 0.78rem/1 var(--display);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .standings-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 5.45rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 4.25rem minmax(0, 1fr);
   align-items: start;
 }
 
@@ -308,7 +312,7 @@ p {
 
 .division-title {
   height: var(--division-title-h);
-  padding: 0.63rem clamp(0.86rem, 1.725vw, 1.44rem);
+  padding: 0.55rem clamp(0.75rem, 1.5vw, 1.25rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -327,8 +331,13 @@ p {
 }
 
 .division-title span {
-  font: 900 clamp(2rem, 3.2vw, 2.93rem)/0.9 var(--display);
+  font: 900 clamp(1.6rem, 2.7vw, 2.4rem)/0.9 var(--display);
   letter-spacing: -0.02em;
+}
+
+.division-title strong {
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
 }
 
 .division-table-wrap {
@@ -360,11 +369,11 @@ p {
 }
 
 .division-table th {
-  padding: 0.52rem 0.35rem;
+  padding: 0.45rem 0.3rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   color: var(--muted-light);
   background: rgba(2, 15, 34, 0.92);
-  font: 800 clamp(0.71rem, 0.98vw, 0.87rem)/1 var(--body);
+  font: 800 clamp(0.62rem, 0.85vw, 0.76rem)/1 var(--body);
   letter-spacing: 0.06em;
   text-align: center;
   text-transform: uppercase;
@@ -372,7 +381,7 @@ p {
 
 .division-table th:nth-child(2) {
   width: 43%;
-  padding-left: 0.98rem;
+  padding-left: 0.85rem;
   text-align: left;
 }
 
@@ -394,11 +403,11 @@ p {
 
 .division-table td {
   height: var(--standing-row-h);
-  padding: 0.52rem 0.35rem;
+  padding: 0.45rem 0.3rem;
   border-top: 0.3rem solid transparent;
   border-bottom: 0.3rem solid transparent;
   background-clip: padding-box;
-  font: 800 clamp(0.94rem, 1.21vw, 1.21rem)/1 var(--display);
+  font: 800 clamp(0.78rem, 1.05vw, 0.98rem)/1 var(--display);
   text-align: center;
 }
 
@@ -421,7 +430,7 @@ p {
 }
 
 .division-table td:nth-child(2) {
-  padding-left: 0.86rem;
+  padding-left: 0.75rem;
   text-align: left;
 }
 
@@ -429,14 +438,14 @@ p {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: clamp(0.52rem, 1.04vw, 0.86rem);
+  gap: clamp(0.45rem, 0.9vw, 0.75rem);
   color: var(--white);
   text-decoration: none;
 }
 
 .team-link img {
-  width: clamp(2.42rem, 3.22vw, 3.05rem);
-  height: clamp(2.42rem, 3.22vw, 3.05rem);
+  width: clamp(2.1rem, 2.8vw, 2.65rem);
+  height: clamp(2.1rem, 2.8vw, 2.65rem);
   flex: 0 0 auto;
   object-fit: contain;
 }
@@ -447,7 +456,7 @@ p {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: clamp(1.13rem, 1.5vw, 1.44rem);
+  font-size: clamp(0.92rem, 1.3vw, 1.18rem);
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
@@ -476,8 +485,8 @@ p {
 }
 
 .seed-brand img {
-  width: 3.16rem;
-  height: 3.8rem;
+  width: 2.75rem;
+  height: 3.3rem;
   object-fit: contain;
 }
 
@@ -488,7 +497,7 @@ p {
   color: var(--white);
   background: var(--navy-950);
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -506,7 +515,7 @@ p {
 }
 
 .seed-rail li span {
-  width: 2.93rem;
+  width: 2.25rem;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -514,6 +523,66 @@ p {
   background: var(--white);
   border: 2px solid var(--navy-950);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+  font: 900 1.45rem/1 var(--display);
+}
+
+.board-footer {
+  max-width: 50rem;
+  margin: clamp(1.6rem, 3vw, 2.5rem) auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr);
+  align-items: center;
+}
+
+.board-footer p {
+  min-height: 4rem;
+  margin: 0;
+  padding: 0.65rem;
+  display: grid;
+  align-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.board-footer p span {
+  color: var(--muted-light);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.board-footer p strong {
+  margin-top: 0.15rem;
+  color: var(--white);
+  font: 800 1rem/1 var(--display);
+}
+
+.board-footer img {
+  width: 4.5rem;
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  filter: drop-shadow(0 0.4rem 0.65rem rgba(2, 15, 34, 0.7));
+}
+
+.standings-freshness {
+  width: max-content;
+  max-width: 100%;
+  margin: 1.1rem auto 0;
+  padding: 0.45rem 0.75rem;
+  color: var(--muted-light);
+  background: rgba(2, 15, 34, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.standings-freshness.data-freshness-warning {
+  color: #ffcad3;
+  border-color: rgba(227, 19, 49, 0.72);
 }
 
 .standings-note {
@@ -590,7 +659,7 @@ button:focus-visible {
 
 @media (max-width: 72rem) {
   :root {
-    --standing-row-h: 5.35rem;
+    --standing-row-h: 4.35rem;
   }
 
   .header-inner {
@@ -618,13 +687,17 @@ button:focus-visible {
     font-size: 0.78rem;
   }
 
+  .division-title strong {
+    display: none;
+  }
+
   .division-table th:nth-child(2) {
     width: 40%;
   }
 
   .team-link img {
-    width: 2.3rem;
-    height: 2.3rem;
+    width: 2rem;
+    height: 2rem;
   }
 }
 
@@ -668,6 +741,23 @@ button:focus-visible {
     padding-top: 2.5rem;
   }
 
+  .division-field {
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+  }
+
+  .division-field-girls {
+    top: 0;
+    bottom: auto;
+  }
+
+  .division-field-boys {
+    top: 50%;
+    bottom: auto;
+  }
+
   .standings-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
@@ -706,14 +796,19 @@ button:focus-visible {
     color: var(--navy-950);
     background-color: var(--white);
     border-right: 0.25rem solid transparent;
+    font-size: 1.25rem;
+  }
+
+  .board-footer {
+    margin-top: 2.25rem;
   }
 }
 
 @media (max-width: 40rem) {
   :root {
-    --division-title-h: 4.2rem;
-    --table-head-h: 2.7rem;
-    --standing-row-h: 4.6rem;
+    --division-title-h: 3.65rem;
+    --table-head-h: 2.35rem;
+    --standing-row-h: 4rem;
   }
 
   .standings-hero {
@@ -721,11 +816,11 @@ button:focus-visible {
   }
 
   .standings-masthead h1 {
-    font-size: clamp(5.4rem, 25vw, 7.5rem);
+    font-size: clamp(4.7rem, 23vw, 7rem);
   }
 
   .division-title span {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .division-table th,
@@ -739,21 +834,21 @@ button:focus-visible {
   }
 
   .division-table th {
-    font-size: 0.67rem;
+    font-size: 0.58rem;
     letter-spacing: 0.025em;
   }
 
   .division-table td {
-    font-size: 0.87rem;
+    font-size: 0.76rem;
   }
 
   .team-link {
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
 
   .team-link img {
-    width: 2.07rem;
-    height: 2.07rem;
+    width: 1.8rem;
+    height: 1.8rem;
   }
 
   .team-name {
@@ -762,7 +857,19 @@ button:focus-visible {
 
   .team-short {
     display: block;
-    font-size: 1.01rem;
+    font-size: 0.88rem;
+  }
+
+  .board-footer {
+    grid-template-columns: minmax(0, 1fr) 4.2rem minmax(0, 1fr);
+  }
+
+  .board-footer img {
+    width: 3.9rem;
+  }
+
+  .board-footer p strong {
+    font-size: 0.86rem;
   }
 
   .standings-note {
@@ -773,15 +880,6 @@ button:focus-visible {
   .standings-note a {
     width: 100%;
   }
-}
-
-.seed-rail li span,
-.division-table td.seed-column {
-  font-family: "Teko", sans-serif;
-  font-weight: 700;
-  font-size: 1.95rem;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {

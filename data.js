@@ -51,11 +51,11 @@ window.UBL_DATA = {
       summary: "A founding UBL program led by coach Chris Webster.",
       teams: {
         "Boys Varsity": {
-          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "assets/chris-webster.jpg" },
+          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "assets/optimized/chris-webster-192.webp" },
           assistants: [{ name: "Rob Newcome", experience: "Coaching for eight seasons.", photo: "" }]
         },
         "Girls Varsity": {
-          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "assets/chris-webster.jpg" },
+          headCoach: { name: "Chris Webster", experience: "Head coach at Wilton Baptist for 10 seasons.", photo: "assets/optimized/chris-webster-192.webp" },
           assistants: []
         }
       }
@@ -81,7 +81,8 @@ window.UBL_DATA = {
       id: "hv-flames",
       name: "HV Flames",
       short: "HVF",
-      logo: "assets/team-hv-flames.svg",
+      logo: "assets/icons/icon-192.png",
+      logoStatus: "Official program logo not yet supplied; the UBL mark is shown temporarily.",
       divisions: ["Girls Varsity"],
       homeGym: "Open Arms Church",
       homeAddress: "2714 Curry Rd, Schenectady, NY 12303",
@@ -98,7 +99,7 @@ window.UBL_DATA = {
       id: "tbd",
       name: "Open League Spot",
       short: "OPEN",
-      logo: "assets/optimized/ubl-logo-192.webp",
+      logo: "assets/icons/icon-192.png",
       divisions: ["Boys Varsity", "Girls Varsity"],
       homeGym: "Your home court",
       homeAddress: "",
@@ -108,6 +109,216 @@ window.UBL_DATA = {
         "Boys Varsity": { headCoach: { name: "Your program", experience: "Applications are open for the 2026–27 season.", photo: "" }, assistants: [] },
         "Girls Varsity": { headCoach: { name: "Your program", experience: "Applications are open for the 2026–27 season.", photo: "" }, assistants: [] }
       }
+    }
+  ],
+  galleryPhotos: [
+    {
+      id: "kings-gallery-01",
+      teamId: "kings-school",
+      division: "Girls Varsity",
+      season: "2025-26 season",
+      alt: "King's girls varsity player driving through defenders",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-01.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-01.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-01.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-01.webp"
+    },
+    {
+      id: "kings-gallery-02",
+      teamId: "kings-school",
+      division: "Girls Varsity",
+      season: "2025-26 season",
+      alt: "King's girls varsity player dribbling up the court",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-02.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-02.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-02.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-02.webp"
+    },
+    {
+      id: "kings-gallery-03",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity player on the court",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-03.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-03.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-03.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-03.webp"
+    },
+    {
+      id: "kings-gallery-04",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity player during a stoppage in play",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-04.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-04.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-04.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-04.webp"
+    },
+    {
+      id: "kings-gallery-05",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity player bringing the ball up the court",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-05.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-05.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-05.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-05.webp"
+    },
+    {
+      id: "kings-gallery-06",
+      teamId: "kings-school",
+      division: "Girls Varsity",
+      season: "2025-26 season",
+      alt: "King's girls varsity player taking a contested shot",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-06.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-06.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-06.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-06.webp"
+    },
+    {
+      id: "kings-gallery-07",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity player holding the basketball",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-07.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-07.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-07.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-07.webp"
+    },
+    {
+      id: "kings-gallery-08",
+      teamId: "kings-school",
+      division: "Girls Varsity",
+      season: "2025-26 season",
+      alt: "King's girls varsity player preparing for a free throw",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-08.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-08.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-08.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-08.webp"
+    },
+    {
+      id: "kings-gallery-09",
+      teamId: "kings-school",
+      division: "Girls Varsity",
+      season: "2025-26 season",
+      alt: "King's girls varsity player protecting the basketball",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-09.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-09.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-09.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-09.webp"
+    },
+    {
+      id: "kings-gallery-10",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity player facing a defender",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-10.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-10.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-10.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-10.webp"
+    },
+    {
+      id: "kings-gallery-11",
+      teamId: "kings-school",
+      division: "Girls Varsity",
+      season: "2025-26 season",
+      alt: "King's girls varsity team celebrating in a huddle",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-11.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-11.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-11.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-11.webp"
+    },
+    {
+      id: "kings-gallery-12",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity team gathered in a huddle",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-12.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-12.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-12.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-12.webp"
+    },
+    {
+      id: "kings-gallery-13",
+      teamId: "kings-school",
+      division: "Boys Varsity",
+      season: "2025-26 season",
+      alt: "King's boys varsity player dribbling against a defender",
+      previewUrl: "assets/gallery/optimized/480/kings-gallery-13.webp",
+      previewSrcset: [
+        { url: "assets/gallery/optimized/480/kings-gallery-13.webp", width: 480 },
+        { url: "assets/gallery/optimized/960/kings-gallery-13.webp", width: 960 }
+      ],
+      sizes: "(min-width: 768px) 25vw, 50vw",
+      width: 480,
+      height: 320,
+      fullUrl: "assets/gallery/optimized/960/kings-gallery-13.webp"
     }
   ],
   standings: {

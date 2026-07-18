@@ -5,13 +5,26 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#00152e",
-  "theme_color": "#00152e",
+  "background_color": "#020f22",
+  "theme_color": "#020f22",
   "icons": [
     {
-      "src": "assets/optimized/ubl-logo-192.webp",
+      "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

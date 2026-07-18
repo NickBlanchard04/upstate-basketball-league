@@ -17,10 +17,16 @@
       .replaceAll("'", "&#39;");
   }
 
-  function safeImageUrl(value, fallback = "assets/optimized/ubl-logo-192.webp") {
+  function safeImageUrl(value, fallback = "assets/icons/icon-192.png") {
     const url = String(value || "");
     if (/^(?:assets\/|https:\/\/)/i.test(url)) return url;
     return fallback;
+  }
+
+  function publicVenueLabel(value, fallback = "Venue details pending") {
+    const label = String(value || "").trim();
+    if (!label || /\b(?:TBD|to\s+be\s+confirmed|placeholder)\b/i.test(label)) return fallback;
+    return label;
   }
 
   function numberOrNull(value) {
@@ -394,7 +400,7 @@
         ...program,
         name: remote.name || program.name,
         short: remote.short || program.short,
-        logo: safeImageUrl(remote.logo, program.logo),
+        logo: program.logoStatus ? safeImageUrl(program.logo) : safeImageUrl(remote.logo, program.logo),
         divisions,
         summary: remote.summary || program.summary,
         status: remote.status || "Active",
@@ -419,7 +425,7 @@
         awayName: game.awayName || "",
         homeName: game.homeName || "",
         venueId: game.venueId || "",
-        location: venue.mapLabel || venue.name || "Venue announcement pending",
+        location: publicVenueLabel(venue.mapLabel || venue.name),
         locationAddress: venue.address || "",
         status: game.status || "Scheduled",
         awayScore: numberOrNull(game.awayScore),
@@ -483,6 +489,7 @@
     normalizeFeed,
     numberOrNull,
     parseScoreFeedCsv,
+    publicVenueLabel,
     safeImageUrl,
     settingsObject,
     slug,

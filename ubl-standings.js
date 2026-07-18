@@ -1,11 +1,41 @@
 let league = window.UBL_DATA;
 
+const menuToggle = document.querySelector(".menu-toggle");
+const siteNav = document.querySelector(".site-nav");
+
+function closeMenu() {
+  menuToggle?.setAttribute("aria-expanded", "false");
+  if (menuToggle) menuToggle.textContent = "Menu";
+  siteNav?.classList.remove("open");
+  document.body.classList.remove("menu-open");
+}
+
+menuToggle?.addEventListener("click", () => {
+  const willOpen = menuToggle.getAttribute("aria-expanded") !== "true";
+  menuToggle.setAttribute("aria-expanded", String(willOpen));
+  menuToggle.textContent = willOpen ? "Close" : "Menu";
+  siteNav?.classList.toggle("open", willOpen);
+  document.body.classList.toggle("menu-open", willOpen);
+});
+
+siteNav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", closeMenu);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeMenu();
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 880) closeMenu();
+});
+
 function programById(id) {
   return league?.programs?.find((program) => program.id === id);
 }
 
 function safeImageUrl(value) {
-  return window.UBL_CORE?.safeImageUrl?.(value) || "assets/optimized/ubl-logo-192.webp";
+  return window.UBL_CORE?.safeImageUrl?.(value) || "assets/icons/icon-192.png";
 }
 
 function formatPercentage(wins, losses) {
@@ -25,7 +55,7 @@ function createCell(text, className = "") {
   return cell;
 }
 
-function createTeamCell(program) {
+function createTeamCell(program, division) {
   const cell = document.createElement("td");
   const link = document.createElement("a");
   const logo = document.createElement("img");
@@ -33,7 +63,8 @@ function createTeamCell(program) {
   const shortName = document.createElement("span");
 
   link.className = "team-link";
-  link.href = `teams.html#${encodeURIComponent(program.id)}`;
+  const divisionSlug = division === "Girls Varsity" ? "girls" : "boys";
+  link.href = `team.html?program=${encodeURIComponent(program.id)}&division=${divisionSlug}`;
   link.setAttribute("aria-label", `View ${program.name} team details`);
 
   logo.src = safeImageUrl(program.logo);
@@ -70,7 +101,7 @@ function renderDivision(division, body) {
 
     tableRow.append(
       seedCell,
-      createTeamCell(program),
+      createTeamCell(program, division),
       recordCell,
       percentageCell,
       pointsForCell,

@@ -6,6 +6,7 @@ const routes = [
   "schedule.html",
   "standings.html",
   "teams.html",
+  "team.html?program=hv-rocks&division=boys",
   "bracket.html",
   "rules.html",
   "gallery.html",
