@@ -13,16 +13,16 @@ the league sponsorship rights or imply company approval.
   wordmark download: https://about.google/brand-resource-center/brand-elements/
 - `microsoft.svg`: Microsoft Learn branding asset:
   https://learn.microsoft.com/en-us/entra/identity-platform/howto-add-branding-in-apps
-- `nvidia.png` (2160 x 1808): NVIDIA Newsroom, current vertical black logo:
-  https://nvidianews.nvidia.com/multimedia/corporate/nvidia-logos
+- `nvidia.svg`: NVIDIA Brand Guidelines, current horizontal two-color logo:
+  https://www.nvidia.com/en-gb/about-nvidia/legal-info/logo-brand-usage/
 - `amd.svg`: AMD corporate site header asset:
   https://www.amd.com/content/dam/code/images/header/amd-header-logo.svg
 - `intel.svg`: Intel Newsroom header asset:
   https://newsroom.intel.com/wp-content/uploads/2024/10/intel-header-logo.svg
 - `epic-games.svg`: vector Epic Games shield rendered by Epic's official About
   page: https://www.epicgames.com/site/about?lang=en
-- `rockstar-games.png` (180 x 180): Rockstar Games official site icon:
-  https://media-rockstargames-com.akamaized.net/favicons/rockstar/favicon-180x180.png
+- `taco-bell.svg`: Taco Bell official newsroom/footer logo:
+  https://www.tacobell.com/_static/images/icons/logo-legal.svg
 - `chipotle.svg`: Chipotle Newsroom logo asset:
   https://newsroom.chipotle.com/images/logo.svg
 - `mcdonalds.png` (700 x 400): McDonald's corporate Golden Arches media asset:
@@ -33,6 +33,7 @@ the league sponsorship rights or imply company approval.
 ## Production rule
 
 When a partnership is finalized, replace the example with a logo supplied or
-approved in writing by that sponsor. Keep the approved original file, agreed
+approved in writing by that sponsor, preferably as SVG or transparent PNG.
+Keep the approved original file, agreed
 placement, sponsorship term, and permission record together. Remove an example
 immediately if the mark owner requests it.

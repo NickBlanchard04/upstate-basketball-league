@@ -1069,6 +1069,7 @@
 .sponsor-logo-track {
   width: max-content;
   display: flex;
+  background: #e7e9ee;
   animation: sponsor-marquee 34s linear infinite;
   will-change: transform;
 }
@@ -1090,12 +1091,6 @@
   place-items: center;
 }
 
-.sponsor-logo-group li.logo-on-dark {
-  padding: 0.55rem 0.7rem;
-  background: #101b2a;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
 .sponsor-logo-group li.logo-wide {
   width: clamp(7.5rem, 13vw, 10rem);
 }
@@ -1105,10 +1100,15 @@
   height: 3.45rem;
   max-height: 100%;
   display: block;
+  mix-blend-mode: multiply;
   object-fit: contain;
   filter: grayscale(1);
   opacity: 0.62;
   transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.sponsor-logo-group li.logo-light img {
+  filter: grayscale(0) brightness(0);
 }
 
 @keyframes sponsor-marquee {
@@ -1143,6 +1143,22 @@
     filter: grayscale(0) saturate(1.15) drop-shadow(0 0.4rem 0.55rem rgba(2, 15, 34, 0.22));
     opacity: 1;
     transform: scale(1.12);
+  }
+
+  .sponsor-logo-group li.logo-amd:hover img {
+    filter: grayscale(0) brightness(0) saturate(100%) invert(18%) sepia(99%) saturate(4168%) hue-rotate(345deg) brightness(96%) contrast(94%);
+  }
+
+  .sponsor-logo-group li.logo-intel:hover img {
+    filter: grayscale(0) brightness(0) saturate(100%) invert(28%) sepia(97%) saturate(1543%) hue-rotate(177deg) brightness(87%) contrast(102%);
+  }
+
+  .sponsor-logo-group li.logo-epic:hover img {
+    filter: grayscale(0) brightness(0) drop-shadow(0 0.4rem 0.55rem rgba(2, 15, 34, 0.22));
+  }
+
+  .sponsor-logo-group li.logo-taco-bell:hover img {
+    filter: grayscale(0) brightness(0) saturate(100%) invert(18%) sepia(33%) saturate(5348%) hue-rotate(269deg) brightness(88%) contrast(96%);
   }
 }
 

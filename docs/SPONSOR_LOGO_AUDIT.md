@@ -21,7 +21,7 @@ partnership, use only sponsor-supplied or sponsor-approved artwork.
 - AMD media library terms: https://www.amd.com/en/legal/terms-and-conditions/media-library.html
 - Intel third-party logo guidance: https://www.intel.com/content/www/us/en/support/articles/000015080/programs.html
 - Epic Games fan content policy: https://legal.epicgames.com/epicgames/fan-art-policy
-- Rockstar Games legal terms: https://www.rockstargames.com/legal?country=us
+- Taco Bell newsroom: https://www.tacobell.com/newsroom
 - Chipotle media kit: https://newsroom.chipotle.com/media-kits
 - McDonald's media asset library: https://corporate.mcdonalds.com/corpmcd/our-stories/media-assets-library/logos.html
 - Burger King media asset terms: https://news.bk.com/terms/terms-conditions

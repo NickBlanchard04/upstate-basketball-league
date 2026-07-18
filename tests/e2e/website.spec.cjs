@@ -627,7 +627,15 @@ test("sponsorship page presents its funding goal and official-source placement e
   await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) img")).toHaveCount(10);
   await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Google logo"]')).toHaveAttribute("src", "assets/sponsors/google.png");
   await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Microsoft logo"]')).toHaveAttribute("src", "assets/sponsors/microsoft.svg");
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="NVIDIA logo"]')).toHaveAttribute("src", "assets/sponsors/nvidia.svg");
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Taco Bell logo"]')).toHaveAttribute("src", "assets/sponsors/taco-bell.svg");
   await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Burger King logo"]')).toHaveAttribute("src", "assets/sponsors/burger-king.png");
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt^="Rockstar Games logo"]')).toHaveCount(0);
+  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li.logo-on-dark")).toHaveCount(0);
+  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li").first()).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  expect(await page.locator(".sponsor-logo-group:not([aria-hidden]) img").evaluateAll((images) => (
+    images.every((image) => getComputedStyle(image).mixBlendMode === "multiply")
+  ))).toBe(true);
   await expect(page.locator('.sponsor-logo-group[aria-hidden="true"] img:not([alt=""])')).toHaveCount(0);
   const sponsorLogoTrack = page.locator(".sponsor-logo-track");
   await expect(sponsorLogoTrack).toHaveCSS("animation-name", "sponsor-marquee");
