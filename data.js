@@ -16,7 +16,7 @@ window.UBL_DATA = {
       teams: {
         "Boys Varsity": {
           headCoach: { name: "Hudson Waters", experience: "Second season as head coach.", photo: "assets/optimized/hudson-waters-192.webp" },
-          assistants: [{ name: "Jacob Fischer", experience: "Assistant coach and Class of 2022 alumnus.", photo: "" }]
+          assistants: [{ name: "Jacob Fischer", experience: "Assistant coach and Class of 2022 alumnus.", photo: "assets/optimized/jacob-fischer-192.webp" }]
         },
         "Girls Varsity": {
           headCoach: { name: "Brodie Farr", experience: "Class of 1992 alumnus; coached the program for four seasons.", photo: "" },
