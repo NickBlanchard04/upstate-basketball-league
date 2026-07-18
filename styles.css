@@ -3151,72 +3151,79 @@ th {
   overflow-x: clip;
 }
 
-.teams-hero {
+.teams-stage {
   position: relative;
-  min-height: clamp(36rem, 76vh, 52rem);
-  padding: clamp(5.5rem, 11vw, 9rem) var(--page-pad) 0;
-  display: grid;
-  place-items: center;
   overflow: hidden;
   isolation: isolate;
   color: var(--white);
   background:
-    radial-gradient(circle at 50% 115%, rgba(227, 19, 49, 0.32), transparent 35%),
-    radial-gradient(circle at 10% 20%, rgba(11, 75, 137, 0.32), transparent 32%),
-    linear-gradient(145deg, #020b18 0%, var(--navy-950) 48%, #061e3f 100%);
+    radial-gradient(circle at 50% 31rem, rgba(227, 19, 49, 0.29), transparent 31rem),
+    radial-gradient(circle at 8% 9rem, rgba(11, 75, 137, 0.46), transparent 30rem),
+    radial-gradient(circle at 92% 82%, rgba(11, 75, 137, 0.26), transparent 34rem),
+    linear-gradient(145deg, #020b18 0%, var(--navy-950) 46%, #061e3f 100%);
 }
 
-.teams-hero::before,
-.teams-hero::after {
+.teams-stage::before,
+.teams-stage::after {
   position: absolute;
   z-index: -2;
   content: "";
   pointer-events: none;
 }
 
-.teams-hero::before {
+.teams-stage::before {
   inset: 0;
-  opacity: 0.34;
+  opacity: 0.42;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 4rem 4rem;
-  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8rem, #000 calc(100% - 8rem), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 8rem, #000 calc(100% - 8rem), transparent);
 }
 
-.teams-hero::after {
-  width: 38rem;
-  height: 38rem;
-  right: -15rem;
-  top: -15rem;
+.teams-stage::after {
+  width: 42rem;
+  height: 42rem;
+  right: -17rem;
+  top: -17rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   box-shadow: 0 0 0 4rem rgba(255, 255, 255, 0.018), 0 0 0 8rem rgba(255, 255, 255, 0.012);
+}
+
+.teams-hero {
+  position: relative;
+  z-index: 1;
+  min-height: clamp(36rem, 76vh, 52rem);
+  padding: clamp(5.5rem, 11vw, 9rem) var(--page-pad) 0;
+  display: grid;
+  place-items: center;
 }
 
 .teams-hero-court {
   position: absolute;
   z-index: -1;
   inset: 0;
-  opacity: 0.38;
+  opacity: 0.34;
   pointer-events: none;
 }
 
 .teams-hero-court::before {
   position: absolute;
   left: 50%;
-  top: -8%;
+  top: 0;
   width: 1px;
-  height: 116%;
+  height: 100%;
   content: "";
-  background: linear-gradient(transparent, rgba(255, 255, 255, 0.28) 18%, rgba(255, 255, 255, 0.28) 82%, transparent);
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.28) 8rem, rgba(255, 255, 255, 0.16) calc(100% - 8rem), transparent);
 }
 
 .teams-hero-court::after,
 .teams-hero-court span {
   position: absolute;
   left: 50%;
-  top: 48%;
+  top: clamp(19rem, 35vw, 28rem);
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 50%;
   content: "";
@@ -3236,12 +3243,11 @@ th {
 .teams-hero-copy {
   width: 100%;
   max-width: 70rem;
-  margin: 0 auto clamp(7rem, 14vw, 10rem);
+  margin: 0 auto;
   text-align: center;
 }
 
 .teams-hero-kicker,
-.directory-kicker,
 .teams-opportunity > div > span,
 .team-profile-coaches header > span,
 .team-profile-facts header > span,
@@ -3278,7 +3284,8 @@ th {
   gap: 0.65rem;
 }
 
-.teams-hero-actions a {
+.teams-hero-actions button {
+  width: 100%;
   min-height: 4.65rem;
   padding: 0.8rem 1rem;
   display: flex;
@@ -3288,83 +3295,41 @@ th {
   border: 1px solid rgba(255, 255, 255, 0.28);
   color: var(--white);
   background: rgba(2, 15, 34, 0.72);
-  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
   transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 
-.teams-hero-actions a:first-child {
+.teams-hero-actions button:first-child {
   border-top-color: var(--red);
 }
 
-.teams-hero-actions a:last-child {
+.teams-hero-actions button:last-child {
   border-top-color: #4a9ce8;
 }
 
-.teams-hero-actions span {
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 0.64rem;
-  font-weight: 700;
-  text-transform: uppercase;
+.teams-hero-actions button[aria-pressed="true"] {
+  border-color: var(--white);
+  background: rgba(7, 52, 103, 0.9);
+  box-shadow: inset 0 -3px 0 currentColor;
 }
 
 .teams-hero-actions strong {
-  margin-top: 0.18rem;
-  font: 800 1.15rem/1 var(--display);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.teams-values-rail {
-  position: absolute;
-  inset: auto 0 0;
-  min-height: 4.9rem;
-  display: grid;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(2, 15, 34, 0.72);
-  backdrop-filter: blur(0.7rem);
-}
-
-.teams-values-rail span {
-  min-height: 3rem;
-  padding: 0.7rem 1rem;
-  display: grid;
-  place-items: center;
-  color: rgba(255, 255, 255, 0.72);
-  font: 700 0.82rem/1 var(--display);
-  letter-spacing: 0.08em;
-  text-align: center;
+  font: 800 1.45rem/1 var(--display);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .team-directory {
+  position: relative;
+  z-index: 1;
   margin-top: 0;
-  padding-block: clamp(5rem, 9vw, 8.5rem);
+  padding-block: clamp(1.5rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
 }
 
-.team-directory-intro {
-  margin-bottom: clamp(2.8rem, 6vw, 5rem);
-  display: grid;
-  gap: 1.2rem;
-}
-
-.directory-kicker {
-  color: var(--red);
-}
-
-.team-directory-intro h2 {
-  max-width: 18ch;
-  margin: 0.65rem 0 0;
-  color: var(--navy-950);
-  font: 900 clamp(2.65rem, 6vw, 5.7rem)/0.88 var(--display);
-  letter-spacing: -0.025em;
-  text-transform: uppercase;
-}
-
-.team-directory-intro p {
-  max-width: 45rem;
-  margin: 0;
-  color: var(--muted);
-  font-size: 1rem;
+.team-directory[hidden],
+.division-column[hidden] {
+  display: none;
 }
 
 .division-board {
@@ -3387,7 +3352,7 @@ th {
   align-items: center;
   gap: 0.85rem;
   border-top: 3px solid var(--division-accent);
-  border-bottom: 1px solid #bdc9d8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .division-column-girls {
@@ -3408,14 +3373,15 @@ th {
   display: grid;
   place-items: center;
   color: var(--white);
-  background: var(--navy-950);
+  background: rgba(2, 15, 34, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: inset 0 -3px 0 var(--division-accent);
   font: 900 1.8rem/1 var(--display);
 }
 
 .division-heading div > span {
   display: block;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.58);
   font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.11em;
@@ -3424,13 +3390,13 @@ th {
 
 .division-heading h2 {
   margin: 0.18rem 0 0;
-  color: var(--navy-950);
+  color: var(--white);
   font: 900 clamp(1.9rem, 4vw, 3.1rem)/0.9 var(--display);
   text-transform: uppercase;
 }
 
 .division-heading > strong {
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.64);
   font-size: 0.64rem;
   text-transform: uppercase;
 }
@@ -3455,7 +3421,7 @@ th {
   background:
     radial-gradient(circle at 50% 20%, var(--division-soft), transparent 37%),
     linear-gradient(155deg, #071f40 0%, var(--navy-950) 72%);
-  box-shadow: 0 0.9rem 2rem rgba(2, 15, 34, 0.2);
+  box-shadow: 0 1.1rem 2.4rem rgba(0, 0, 0, 0.3);
   text-decoration: none;
   transform: translateZ(0);
   transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 300ms ease, box-shadow 300ms ease;
@@ -4216,7 +4182,7 @@ th {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .teams-hero-actions a:hover {
+  .teams-hero-actions button:hover {
     border-color: var(--white);
     background: rgba(7, 52, 103, 0.86);
     transform: translateY(-0.2rem);
@@ -4277,14 +4243,8 @@ th {
 }
 
 @media (min-width: 600px) {
-  .teams-hero-actions,
-  .teams-values-rail {
+  .teams-hero-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .teams-values-rail span:last-child {
-    grid-column: 1 / -1;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .team-profile-coach-grid {
@@ -4292,9 +4252,17 @@ th {
   }
 }
 
-@media (min-width: 600px) and (max-width: 767px) {
+@media (min-width: 600px) and (max-width: 1023px) {
   .division-team-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  .division-team-card:last-child:nth-child(odd) {
+    width: min(100%, 22.5rem);
+    grid-column: 1 / -1;
+    justify-self: center;
   }
 
   .team-card-logo-stage {
@@ -4323,32 +4291,9 @@ th {
 }
 
 @media (min-width: 768px) {
-  .teams-values-rail {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .teams-values-rail span {
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .teams-values-rail span:last-child {
-    grid-column: auto;
-    border-top: 0;
-    border-right: 0;
-  }
-
-  .team-directory-intro {
-    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
-    align-items: end;
-  }
-
-  .team-directory-intro p {
-    justify-self: end;
-  }
-
   .division-board {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(1rem, 2.5vw, 2rem);
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(5rem, 10vw, 9rem);
   }
 
   .teams-opportunity {
@@ -4388,16 +4333,40 @@ th {
   }
 }
 
+@media (min-width: 1024px) {
+  .division-heading {
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  .division-team-grid {
+    max-width: 72rem;
+    margin-inline: auto;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .division-team-card {
+    grid-column: span 2;
+  }
+
+  .division-team-card:nth-last-child(2):nth-child(3n + 1) {
+    grid-column: 2 / span 2;
+  }
+
+  .division-team-card:last-child:nth-child(3n + 2) {
+    grid-column: 4 / span 2;
+  }
+
+  .division-team-card:last-child:nth-child(3n + 1) {
+    grid-column: 3 / span 2;
+  }
+}
+
 @media (min-width: 1100px) {
   .team-profile-content {
     grid-template-columns: minmax(0, 1.6fr) minmax(20rem, 0.7fr);
     gap: 1.25rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .division-team-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -4427,14 +4396,8 @@ th {
   }
 }
 
-@media (max-width: 599px) {
-  .teams-hero-copy {
-    margin-bottom: 10rem;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .teams-hero-actions a,
+  .teams-hero-actions button,
   .division-team-card,
   .team-card-court,
   .team-card-logo-stage,

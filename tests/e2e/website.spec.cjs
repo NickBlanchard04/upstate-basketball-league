@@ -202,38 +202,38 @@ test("standings removes the lower court graphic and explains desktop stat abbrev
 test("team directory separates each division and opens the right profile", async ({ page }, testInfo) => {
   await page.goto("/teams.html");
 
+  const directory = page.locator("[data-team-directory]");
   const girlsColumn = page.locator("#girls-division");
   const boysColumn = page.locator("#boys-division");
   const girlsCards = girlsColumn.locator(".division-team-card");
   const boysCards = boysColumn.locator(".division-team-card");
+
+  await expect(directory).toBeHidden();
+  await expect(page.locator(".division-team-card")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("button", { name: "Boys", exact: true })).toHaveAttribute("aria-pressed", "false");
+
+  await page.getByRole("button", { name: "Girls", exact: true }).click();
+  await expect(directory).toBeVisible();
   await expect(girlsCards).toHaveCount(4);
-  await expect(boysCards).toHaveCount(4);
+  await expect(boysCards).toHaveCount(0);
+  await expect(girlsColumn).toBeVisible();
+  await expect(boysColumn).toBeHidden();
   await expect(page.locator('[data-program-card="tbd"]')).toHaveCount(0);
   await expect(girlsColumn.locator("[data-division-count]")).toHaveText("4 teams");
-  await expect(boysColumn.locator("[data-division-count]")).toHaveText("4 teams");
-  await expect(page.locator(".division-team-card img")).toHaveCount(8);
+  await expect(page.locator(".division-team-card img")).toHaveCount(4);
   await expect(girlsColumn.locator('[data-program-card="hv-flames"] img')).toHaveAttribute("src", "assets/icons/icon-192.png");
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
   await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
 
-  const layout = await page.locator(".division-board").evaluate((board) => {
-    const [girls, boys] = board.children;
-    const girlsRect = girls.getBoundingClientRect();
-    const boysRect = boys.getBoundingClientRect();
-    return { girlsX: girlsRect.x, girlsY: girlsRect.y, boysX: boysRect.x, boysY: boysRect.y };
-  });
   if (testInfo.project.name.startsWith("desktop")) {
-    expect(layout.girlsX).toBeLessThan(layout.boysX);
-    expect(Math.abs(layout.girlsY - layout.boysY)).toBeLessThan(2);
     await girlsKings.scrollIntoViewIfNeeded();
     await expect(girlsKings).toHaveClass(/is-visible/);
     await girlsKings.hover();
     await expect(girlsKings).toHaveCSS("border-color", "rgb(227, 19, 49)");
     await expect(girlsKings.locator(".team-card-view")).toHaveCSS("background-color", "rgb(227, 19, 49)");
-  } else {
-    expect(layout.girlsY).toBeLessThan(layout.boysY);
   }
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
@@ -271,8 +271,10 @@ test("team profiles expose known venue data and honest missing states", async ({
 test("team cards remain complete when reduced motion is requested", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/teams.html");
+  await expect(page.locator("[data-team-directory]")).toBeHidden();
+  await page.getByRole("button", { name: "Girls", exact: true }).click();
   const cards = page.locator(".division-team-card");
-  await expect(cards).toHaveCount(8);
+  await expect(cards).toHaveCount(4);
   expect(await cards.evaluateAll((elements) => elements.every((element) => {
     const style = getComputedStyle(element);
     return style.opacity === "1" && style.animationName === "none";
@@ -286,15 +288,13 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
   for (const width of widths) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/teams.html");
-    await expect(page.locator(".division-team-card")).toHaveCount(8);
+    await expect(page.locator("[data-team-directory]")).toBeHidden();
+    await expect(page.locator(".division-team-card")).toHaveCount(0);
+    await page.getByRole("button", { name: "Boys", exact: true }).click();
+    await expect(page.locator("#boys-division .division-team-card")).toHaveCount(4);
     const metrics = await page.evaluate(() => {
-      const board = document.querySelector(".division-board");
-      const girls = document.querySelector("#girls-division");
-      const boys = document.querySelector("#boys-division");
-      const grid = document.querySelector(".division-team-grid");
-      const actions = document.querySelector(".teams-hero-actions");
-      const rail = document.querySelector(".teams-values-rail");
-      const cards = [...document.querySelectorAll(".division-team-card")];
+      const grid = document.querySelector("#boys-division .division-team-grid");
+      const cards = [...grid.querySelectorAll(".division-team-card")];
       const cardOverlap = cards.some((card) => {
         const cardRect = card.getBoundingClientRect();
         const logoRect = card.querySelector(".team-card-logo-stage").getBoundingClientRect();
@@ -304,22 +304,17 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
           || logoRect.top < cardRect.top - 1
           || actionRect.bottom > cardRect.bottom + 1;
       });
-      const girlsRect = girls.getBoundingClientRect();
-      const boysRect = boys.getBoundingClientRect();
+      const firstRowTop = cards[0].offsetTop;
       return {
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         cardOverlap,
-        divisionsSideBySide: Math.abs(girlsRect.y - boysRect.y) < 2 && girlsRect.x < boysRect.x,
-        innerColumns: getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length,
-        heroOverlap: innerWidth < 600 && actions.getBoundingClientRect().bottom > rail.getBoundingClientRect().top + 1
+        firstRowCards: cards.filter((card) => card.offsetTop === firstRowTop).length
       };
     });
 
     expect(metrics.overflow, `${width}px horizontal overflow`).toBe(false);
     expect(metrics.cardOverlap, `${width}px logo or action overlap`).toBe(false);
-    expect(metrics.divisionsSideBySide, `${width}px division placement`).toBe(width >= 768);
-    expect(metrics.innerColumns, `${width}px cards per division row`).toBe((width >= 600 && width < 768) || width >= 1280 ? 2 : 1);
-    expect(metrics.heroOverlap, `${width}px hero rail overlap`).toBe(false);
+    expect(metrics.firstRowCards, `${width}px cards per division row`).toBe(width >= 1024 ? 3 : width >= 600 ? 2 : 1);
   }
 
   await page.setViewportSize({ width: 390, height: 844 });

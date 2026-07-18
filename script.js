@@ -728,9 +728,9 @@ function divisionTeamCardMarkup(program, division, order) {
   `;
 }
 
-function initializeTeamCardMotion() {
+function initializeTeamCardMotion(scope = document) {
   const directory = document.querySelector(".team-directory");
-  const cards = [...document.querySelectorAll(".division-team-card")];
+  const cards = [...scope.querySelectorAll(".division-team-card")];
   if (!directory || !cards.length) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
     cards.forEach((card) => card.classList.add("is-visible"));
@@ -747,10 +747,17 @@ function initializeTeamCardMotion() {
   cards.forEach((card) => observer.observe(card));
 }
 
+const teamDirectory = document.querySelector("[data-team-directory]");
+const teamDivisionSelectors = [...document.querySelectorAll("[data-team-division-select]")];
+let selectedTeamDivision = "";
+
 function renderTeamDirectory() {
+  if (!selectedTeamDivision) return;
   let didRender = false;
+  let renderedGrid = null;
   document.querySelectorAll("[data-division-team-grid]").forEach((grid) => {
     const division = grid.dataset.divisionTeamGrid;
+    if (division !== selectedTeamDivision) return;
     const programs = league.programs.filter((program) => program.id !== "tbd" && program.divisions.includes(division));
     const signature = JSON.stringify(programs.map((program) => ({
       id: program.id,
@@ -765,11 +772,44 @@ function renderTeamDirectory() {
       grid.dataset.renderSignature = signature;
       if (focusedHref) [...grid.querySelectorAll("a[href]")].find((link) => link.getAttribute("href") === focusedHref)?.focus();
       didRender = true;
+      renderedGrid = grid;
     }
     const count = document.querySelector(`[data-division-count="${division}"]`);
     if (count) count.textContent = `${programs.length} ${programs.length === 1 ? "team" : "teams"}`;
   });
-  if (didRender) initializeTeamCardMotion();
+  if (didRender && renderedGrid) initializeTeamCardMotion(renderedGrid);
+}
+
+function showTeamDivision(division, { scroll = false, updateHash = false } = {}) {
+  if (!teamDirectory || !teamDivisionSelectors.length) return;
+  const activeSection = document.querySelector(`[data-division-column="${division}"]`);
+  if (!activeSection) return;
+
+  selectedTeamDivision = division;
+  teamDirectory.hidden = false;
+  document.querySelectorAll("[data-division-column]").forEach((section) => {
+    section.hidden = section !== activeSection;
+  });
+  teamDivisionSelectors.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.teamDivisionSelect === division));
+  });
+  renderTeamDirectory();
+
+  if (updateHash) history.replaceState(null, "", `#${activeSection.id}`);
+  if (scroll) {
+    requestAnimationFrame(() => activeSection.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start"
+    }));
+  }
+}
+
+teamDivisionSelectors.forEach((button) => {
+  button.addEventListener("click", () => showTeamDivision(button.dataset.teamDivisionSelect, { scroll: true, updateHash: true }));
+});
+
+if (location.hash === "#girls-division" || location.hash === "#boys-division") {
+  history.replaceState(null, "", `${location.pathname}${location.search}`);
 }
 
 function requestedProfileDivision(program, value) {

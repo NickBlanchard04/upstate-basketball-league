@@ -29,13 +29,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260718-4">
-  <script src="config.js?v=20260718-4" defer></script>
-  <script src="analytics.js?v=20260718-4" defer></script>
-  <script src="league-core.js?v=20260718-4" defer></script>
-  <script src="data.js?v=20260718-4" defer></script>
-  <script src="data-loader.js?v=20260718-4" defer></script>
-  <script src="script.js?v=20260718-4" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260718-6">
+  <script src="config.js?v=20260718-6" defer></script>
+  <script src="analytics.js?v=20260718-6" defer></script>
+  <script src="league-core.js?v=20260718-6" defer></script>
+  <script src="data.js?v=20260718-6" defer></script>
+  <script src="data-loader.js?v=20260718-6" defer></script>
+  <script src="script.js?v=20260718-6" defer></script>
 </head>
 <body class="teams-landing-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -51,62 +51,51 @@
   </header>
 
   <main class="teams-main" id="main">
-    <section class="teams-hero" aria-labelledby="teams-page-title">
+    <div class="teams-stage" data-team-stage>
       <div class="teams-hero-court" aria-hidden="true"><span></span></div>
-      <div class="teams-hero-copy">
-        <span class="teams-hero-kicker">2026&ndash;27 program directory</span>
-        <h1 id="teams-page-title">Meet the teams shaping UBL.</h1>
-        <p>Choose a division, find your program, and step inside for coaching staff, home-court details, and the right program contact.</p>
-        <div class="teams-hero-actions" aria-label="Jump to a division">
-          <a href="#girls-division"><span>Girls division</span><strong>Explore teams</strong></a>
-          <a href="#boys-division"><span>Boys division</span><strong>Explore teams</strong></a>
+      <section class="teams-hero" aria-labelledby="teams-page-title">
+        <div class="teams-hero-copy">
+          <span class="teams-hero-kicker">2026&ndash;27 program directory</span>
+          <h1 id="teams-page-title">Meet the teams shaping UBL.</h1>
+          <p>Choose a division, find your program, and step inside for coaching staff, home-court details, and the right program contact.</p>
+          <div class="teams-hero-actions" aria-label="Choose a division">
+            <button type="button" data-team-division-select="Girls Varsity" aria-controls="girls-division" aria-pressed="false"><strong>Girls</strong></button>
+            <button type="button" data-team-division-select="Boys Varsity" aria-controls="boys-division" aria-pressed="false"><strong>Boys</strong></button>
+          </div>
         </div>
-      </div>
-      <div class="teams-values-rail" aria-label="UBL values">
-        <span>Faith in preparation</span>
-        <span>Excellence in competition</span>
-        <span>Character in every result</span>
-      </div>
-    </section>
+      </section>
 
-    <section class="team-directory section-wrap" aria-labelledby="team-directory-title">
-      <header class="team-directory-intro">
+      <section class="team-directory section-wrap" data-team-directory aria-label="Teams by division" hidden>
+        <div class="division-board">
+          <section class="division-column division-column-girls" id="girls-division" data-division-column="Girls Varsity" aria-labelledby="girls-division-title" hidden>
+            <header class="division-heading">
+              <span class="division-letter" aria-hidden="true">G</span>
+              <div><span>Varsity lineup</span><h2 id="girls-division-title">Girls division</h2></div>
+              <strong data-division-count="Girls Varsity">0 teams</strong>
+            </header>
+            <div class="division-team-grid" data-division-team-grid="Girls Varsity"></div>
+          </section>
+
+          <section class="division-column division-column-boys" id="boys-division" data-division-column="Boys Varsity" aria-labelledby="boys-division-title" hidden>
+            <header class="division-heading">
+              <span class="division-letter" aria-hidden="true">B</span>
+              <div><span>Varsity lineup</span><h2 id="boys-division-title">Boys division</h2></div>
+              <strong data-division-count="Boys Varsity">0 teams</strong>
+            </header>
+            <div class="division-team-grid" data-division-team-grid="Boys Varsity"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="teams-opportunity section-wrap" aria-labelledby="teams-opportunity-title">
         <div>
-          <span class="directory-kicker">Choose your side of the court</span>
-          <h2 id="team-directory-title">Find your program. Meet your coaches.</h2>
+          <span>One place remains</span>
+          <h2 id="teams-opportunity-title">Ready to bring your program into the league?</h2>
+          <p>UBL is welcoming one more varsity program committed to organized competition, shared standards, and a meaningful championship path.</p>
         </div>
-        <p>Every card opens a dedicated team page. Programs that compete in both divisions appear in both lineups so families can go straight to the right coaching staff.</p>
-      </header>
-
-      <div class="division-board">
-        <section class="division-column division-column-girls" id="girls-division" aria-labelledby="girls-division-title">
-          <header class="division-heading">
-            <span class="division-letter" aria-hidden="true">G</span>
-            <div><span>Varsity lineup</span><h2 id="girls-division-title">Girls division</h2></div>
-            <strong data-division-count="Girls Varsity">0 teams</strong>
-          </header>
-          <div class="division-team-grid" data-division-team-grid="Girls Varsity"></div>
-        </section>
-
-        <section class="division-column division-column-boys" id="boys-division" aria-labelledby="boys-division-title">
-          <header class="division-heading">
-            <span class="division-letter" aria-hidden="true">B</span>
-            <div><span>Varsity lineup</span><h2 id="boys-division-title">Boys division</h2></div>
-            <strong data-division-count="Boys Varsity">0 teams</strong>
-          </header>
-          <div class="division-team-grid" data-division-team-grid="Boys Varsity"></div>
-        </section>
-      </div>
-    </section>
-
-    <section class="teams-opportunity section-wrap" aria-labelledby="teams-opportunity-title">
-      <div>
-        <span>One place remains</span>
-        <h2 id="teams-opportunity-title">Ready to bring your program into the league?</h2>
-        <p>UBL is welcoming one more varsity program committed to organized competition, shared standards, and a meaningful championship path.</p>
-      </div>
-      <a class="button button-primary" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
-    </section>
+        <a class="button button-primary" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
+      </section>
+    </div>
   </main>
 </body>
 </html>
