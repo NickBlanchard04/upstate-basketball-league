@@ -248,7 +248,7 @@ p {
 }
 
 .season-kicker {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.45rem;
   color: var(--white);
   font-size: 0.78rem;
   font-weight: 800;
@@ -256,25 +256,43 @@ p {
   text-transform: uppercase;
 }
 
+.standings-lockup {
+  width: min(100%, 48rem);
+  margin: clamp(0.8rem, 1.2vw, 1rem) auto 0;
+  padding-bottom: clamp(0.9rem, 1.35vw, 1.3rem);
+  position: relative;
+}
+
 .standings-masthead h1 {
   margin: 0;
   color: var(--white);
-  font: 900 clamp(5.4rem, 10.5vw, 9.75rem)/0.72 var(--display);
-  letter-spacing: -0.045em;
+  font: 900 clamp(6rem, 11.6vw, 10.85rem)/0.68 var(--display);
+  letter-spacing: -0.055em;
   text-transform: uppercase;
-  -webkit-text-stroke: 1px rgba(2, 15, 34, 0.72);
-  text-shadow: 0 0.35rem 0 var(--navy-950), 0 0.8rem 2rem rgba(2, 15, 34, 0.55);
+  transform: scaleY(1.16);
+  transform-origin: center bottom;
+  -webkit-text-stroke: clamp(0.04rem, 0.08vw, 0.09rem) rgba(2, 15, 34, 0.72);
+  text-shadow: 0.045em 0.055em 0 var(--navy-950);
 }
 
 .season-status {
+  min-width: 36%;
   width: max-content;
-  max-width: 100%;
-  margin: 0.75rem auto 0;
-  padding: 0.32rem 0.85rem;
+  max-width: calc(100% - 1rem);
+  margin: 0;
+  padding: 0.2em 0.75em 0.14em;
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
   color: var(--white);
   background: var(--navy-950);
-  font: 800 0.78rem/1 var(--display);
-  letter-spacing: 0.08em;
+  border: 2px solid var(--white);
+  box-shadow: 0.18rem 0.2rem 0 var(--navy-950);
+  font: 800 clamp(0.63rem, 0.95vw, 0.85rem)/0.9 var(--display);
+  letter-spacing: 0.045em;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 
@@ -311,11 +329,6 @@ p {
 .division-title span {
   font: 900 clamp(2rem, 3.2vw, 2.93rem)/0.9 var(--display);
   letter-spacing: -0.02em;
-}
-
-.division-title strong {
-  font-size: 0.78rem;
-  letter-spacing: 0.09em;
 }
 
 .division-table-wrap {
@@ -605,10 +618,6 @@ button:focus-visible {
     font-size: 0.78rem;
   }
 
-  .division-title strong {
-    display: none;
-  }
-
   .division-table th:nth-child(2) {
     width: 40%;
   }
@@ -712,7 +721,7 @@ button:focus-visible {
   }
 
   .standings-masthead h1 {
-    font-size: clamp(4.7rem, 23vw, 7rem);
+    font-size: clamp(5.4rem, 25vw, 7.5rem);
   }
 
   .division-title span {

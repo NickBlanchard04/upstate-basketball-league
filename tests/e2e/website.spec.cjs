@@ -260,6 +260,7 @@ test("standings and separate division brackets render from league data", async (
 test("standings board fills more of the page with solid division color and Teko seeds", async ({ page }, testInfo) => {
   await page.goto("/standings.html");
   await expect(page.locator(".board-footer, .standings-freshness, .division-field")).toHaveCount(0);
+  await expect(page.locator(".division-title strong")).toHaveCount(0);
 
   const heroBackground = await page.locator(".standings-hero").evaluate((element) => getComputedStyle(element).backgroundImage);
   expect(heroBackground).toContain("linear-gradient");
@@ -283,6 +284,24 @@ test("standings board fills more of the page with solid division color and Teko 
   }
 
   expect(await page.evaluate(() => document.fonts.check('700 31.2px "Teko"'))).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+});
+
+test("standings masthead uses the compact reference lockup", async ({ page }) => {
+  await page.goto("/standings.html");
+
+  const title = page.locator(".standings-lockup h1");
+  const status = page.locator(".standings-lockup .season-status");
+  const titleBox = await title.boundingBox();
+  const statusBox = await status.boundingBox();
+
+  expect(titleBox).not.toBeNull();
+  expect(statusBox).not.toBeNull();
+  expect(statusBox.width / titleBox.width).toBeGreaterThan(0.34);
+  expect(statusBox.width / titleBox.width).toBeLessThan(0.4);
+  expect(statusBox.y).toBeLessThan(titleBox.y + titleBox.height);
+  await expect(status).toHaveCSS("border-top-style", "solid");
+  await expect(status).toHaveCSS("text-transform", "uppercase");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 

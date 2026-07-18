@@ -24,7 +24,7 @@
   <link rel="preload" href="assets/fonts/ibm-plex-sans-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/teko-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="ubl-standings.css?v=20260717-4">
+  <link rel="stylesheet" href="ubl-standings.css?v=20260717-5">
   <link rel="stylesheet" href="ubl-header.css?v=20260717-1">
   <script src="config.js?v=20260717-2" defer></script>
   <script src="analytics.js?v=20260716-1" defer></script>
@@ -63,15 +63,16 @@
       <div class="standings-content">
         <header class="standings-masthead">
           <p class="season-kicker">2026&ndash;27 regular season</p>
-          <h1 id="standings-title">Standings</h1>
-          <p class="season-status">League play begins December 3</p>
+          <div class="standings-lockup">
+            <h1 id="standings-title">Standings</h1>
+            <p class="season-status">League play begins December 3</p>
+          </div>
         </header>
 
         <div class="standings-layout">
           <section class="division-panel girls-panel" aria-labelledby="girls-division-title">
             <header class="division-title" id="girls-division-title">
               <span>Girls Division</span>
-              <strong>Varsity standings</strong>
             </header>
             <div class="division-table-wrap">
               <table class="division-table">
@@ -107,7 +108,6 @@
           <section class="division-panel boys-panel" aria-labelledby="boys-division-title">
             <header class="division-title" id="boys-division-title">
               <span>Boys Division</span>
-              <strong>Varsity standings</strong>
             </header>
             <div class="division-table-wrap">
               <table class="division-table">
