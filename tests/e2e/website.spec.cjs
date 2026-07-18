@@ -54,7 +54,7 @@ test("all public routes render meaningful content without runtime errors", async
     ["/bracket.html", "Playoff brackets"],
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
-    ["/sponsors.html", "Partner with the UBL"],
+    ["/sponsors.html", "Put your business"],
     ["/about.html", "About UBL"]
   ];
   await expectNoAppErrors(page, async () => {
@@ -304,11 +304,11 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
           || logoRect.top < cardRect.top - 1
           || actionRect.bottom > cardRect.bottom + 1;
       });
-      const firstRowTop = cards[0].getBoundingClientRect().top;
+      const firstRowTop = cards[0].offsetTop;
       return {
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         cardOverlap,
-        firstRowCards: cards.filter((card) => Math.abs(card.getBoundingClientRect().top - firstRowTop) < 2).length
+        firstRowCards: cards.filter((card) => card.offsetTop === firstRowTop).length
       };
     });
 
@@ -680,38 +680,33 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
-test("sponsorship page presents a focused partner path and prospective partner categories", async ({ page }, testInfo) => {
+test("sponsorship page moves through three partner views and displays prospective partner categories", async ({ page }, testInfo) => {
   await page.goto("/sponsors.html");
 
-  await expect(page.getByRole("heading", { name: "Partner with the UBL." })).toBeVisible();
-  const heroMark = page.locator(".sponsor-hero-lockup img");
-  await expect(heroMark).toHaveAttribute("alt", "Upstate Basketball League");
-  await expect(page.locator(".sponsor-hero-lockup span")).toHaveCount(0);
-  expect(await heroMark.evaluate((mark) => mark.getBoundingClientRect().width)).toBeGreaterThan(80);
-  await expect(heroMark).toHaveCSS("filter", /drop-shadow/);
-  const supportHeadingOffset = await page.getByRole("heading", { name: "What sponsorship supports" }).evaluate((heading) => {
-    const headingRect = heading.getBoundingClientRect();
-    const sectionRect = heading.closest(".sponsor-section-inner").getBoundingClientRect();
-    return Math.abs((headingRect.left + headingRect.width / 2) - (sectionRect.left + sectionRect.width / 2));
-  });
-  expect(supportHeadingOffset).toBeLessThan(1);
-  const supportItems = page.locator(".sponsor-support-grid article");
-  await expect(supportItems).toHaveCount(3);
-  await expect(supportItems).toContainText([
-    "Championship awards",
-    "League operations",
-    "Digital league experience"
-  ]);
-  await expect(page.locator("[data-sponsor-story], .sponsor-option-grid, .sponsor-facts")).toHaveCount(0);
-  await expect(page.locator(".sponsor-preview-art > img")).toHaveAttribute(
-    "src",
-    "assets/ubl/ubl-kingdom-impact-huddle.webp"
-  );
-  await expect(page.getByRole("heading", { name: "Sponsor visibility" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
+  const divisionFact = page.locator(".sponsor-facts li").first();
+  await divisionFact.scrollIntoViewIfNeeded();
+  await expect(divisionFact).toContainText("Two");
+  await expect(divisionFact).toContainText("Varsity divisions");
+  await expect(page.locator('[data-count-up="10"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Start a conversation" })).toHaveAttribute(
     "href",
     "mailto:Info.upstatebasketballleague@gmail.com?subject=UBL%20Sponsorship%20Inquiry"
   );
+
+  const story = page.locator("[data-sponsor-story]");
+  await expect(story.locator("[data-sponsor-step]")).toHaveCount(3);
+  await expect(story).toHaveAttribute("data-active-scene", "digital");
+  await expect(story.locator('[data-sponsor-scene="digital"]')).toHaveClass(/is-active/);
+
+  await story.getByRole("button", { name: "02 Game night" }).click();
+  await expect(story).toHaveAttribute("data-active-scene", "gamenight");
+  await expect(story.locator('[data-sponsor-scene="gamenight"]')).toHaveClass(/is-active/);
+  await expect(story.getByRole("button", { name: "02 Game night" })).toHaveAttribute("aria-pressed", "true");
+
+  await story.getByRole("button", { name: "03 Community" }).click();
+  await expect(story).toHaveAttribute("data-active-scene", "community");
+  await expect(story.locator('[data-sponsor-step="community"]')).toHaveClass(/is-active/);
 
   const partnerCategories = page.locator(".sponsor-logo-group:not([aria-hidden]) li");
   await expect(partnerCategories).toHaveCount(5);
