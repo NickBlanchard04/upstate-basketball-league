@@ -18,7 +18,6 @@
 .winning-section,
 .season-section,
 .commitments-section,
-.culture-section,
 .testimonial-break,
 .leadership-section {
   --ubl-navy: #020f22;
@@ -29,6 +28,10 @@
   --ubl-muted: #58677a;
   width: min(calc(100% - 1rem), 92rem);
   margin: 0.5rem auto 0;
+}
+
+.about-page .page-banner {
+  padding-block: clamp(2.2rem, 8vw, 3.75rem);
 }
 
 .league-identity {
@@ -66,37 +69,139 @@
   display: grid;
 }
 
-.identity-facts > div {
+.identity-fact {
   min-width: 0;
-  padding: 1.2rem 1.25rem;
-  display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr);
-  column-gap: 0.8rem;
   border-top: 1px solid var(--ubl-line);
+  background: var(--ubl-white);
+  transition: box-shadow 180ms ease;
 }
 
-.identity-facts > div:first-child {
+.identity-fact:first-child {
   border-top: 0;
 }
 
+.identity-facts dt {
+  margin: 0;
+}
+
+.identity-toggle {
+  width: 100%;
+  min-height: 4.75rem;
+  padding: 0.7rem 1rem;
+  border: 0;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) 2.75rem;
+  gap: 0.75rem;
+  align-items: center;
+  color: var(--ubl-navy);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.identity-toggle:hover,
+.identity-toggle:focus-visible,
+.identity-fact.is-expanded .identity-toggle {
+  background: #f3f6fa;
+}
+
+.identity-toggle:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 0.18rem solid var(--ubl-red);
+  outline-offset: -0.18rem;
+}
+
+.identity-fact.is-expanded {
+  box-shadow: inset 0.32rem 0 var(--ubl-red);
+}
+
 .identity-index {
-  grid-row: 1 / 3;
   color: var(--ubl-red);
   font: 700 2.1rem/0.9 "Teko", sans-serif;
   text-align: center;
 }
 
-.identity-facts dt {
+.identity-label {
   color: var(--ubl-navy);
   font: 800 1.45rem/1 "Barlow Condensed", sans-serif;
   text-transform: uppercase;
 }
 
-.identity-facts dd {
-  margin: 0.35rem 0 0;
+.identity-cue {
+  width: 2.75rem;
+  height: 2.75rem;
+  position: relative;
+  border: 1px solid rgba(227, 19, 49, 0.5);
+  border-radius: 50%;
+  justify-self: end;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.identity-cue::before,
+.identity-cue::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: var(--ubl-red);
+  transform: translate(-50%, -50%);
+  transition: transform 180ms ease;
+}
+
+.identity-cue::before {
+  width: 0.9rem;
+  height: 0.13rem;
+}
+
+.identity-cue::after {
+  width: 0.13rem;
+  height: 0.9rem;
+}
+
+.identity-toggle[aria-expanded="true"] .identity-cue {
+  border-color: var(--ubl-red);
+  background: rgba(227, 19, 49, 0.08);
+  transform: rotate(180deg);
+}
+
+.identity-toggle[aria-expanded="true"] .identity-cue::after {
+  transform: translate(-50%, -50%) scaleY(0);
+}
+
+.identity-panel {
+  margin: 0;
+  padding: 0 1.25rem 1.3rem 4.75rem;
   color: var(--ubl-muted);
   font-size: 0.98rem;
   line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.identity-facts.is-ready .identity-panel {
+  max-height: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    max-height 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding-bottom 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    visibility 0s linear 280ms;
+}
+
+.identity-facts.is-ready .identity-fact.is-expanded .identity-panel {
+  max-height: 12rem;
+  padding-bottom: 1.3rem;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    max-height 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding-bottom 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease 60ms,
+    visibility 0s linear 0s;
 }
 
 .winning-section {
@@ -281,25 +386,57 @@
   overflow: hidden;
   border-top: 0.4rem solid var(--ubl-red);
   color: var(--ubl-white);
-  background: var(--ubl-navy);
+  background-color: var(--ubl-navy);
+  background-image: url("assets/optimized/ubl-season-playbook-texture.webp");
+  background-position: center;
+  background-size: cover;
 }
 
 .season-heading {
-  padding: clamp(1.5rem, 5vw, 2.75rem) clamp(1.25rem, 5vw, 3.5rem);
+  padding: clamp(1.65rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3.5rem);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(2, 15, 34, 0.76);
 }
 
 .season-heading h2 {
   margin: 0;
-  color: var(--ubl-white);
-  font: 900 clamp(2.6rem, 10vw, 4.8rem)/0.9 "Barlow Condensed", sans-serif;
-  letter-spacing: -0.02em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  scroll-margin-top: 6.5rem;
   text-transform: uppercase;
 }
 
+.season-heading h2 span {
+  display: block;
+}
+
+.season-kicker {
+  color: var(--ubl-white);
+  font: 700 clamp(1.2rem, 5vw, 1.65rem)/0.9 "Teko", sans-serif;
+  letter-spacing: 0.3em;
+}
+
+.season-brand {
+  margin: 0.18rem 0 0 0.08em;
+  color: var(--ubl-red);
+  font: 700 clamp(5.1rem, 23vw, 7.8rem)/0.7 "Teko", sans-serif;
+  letter-spacing: -0.055em;
+  font-style: italic;
+  transform: skewX(-4deg) scaleX(0.96);
+  transform-origin: left center;
+}
+
+.season-title-line {
+  margin-top: 0.62rem;
+  color: var(--ubl-white);
+  font: 700 clamp(3rem, 13vw, 5.15rem)/0.78 "Teko", sans-serif;
+  letter-spacing: 0.025em;
+}
+
 .season-heading p {
-  max-width: 43rem;
-  margin: 0.7rem 0 0;
+  max-width: 34rem;
+  margin: 1rem 0 0;
   color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
   line-height: 1.6;
@@ -315,55 +452,383 @@
 
 .season-path {
   margin: 0;
-  padding: 0;
+  padding: 1.1rem 1rem 1.6rem 3.7rem;
   display: grid;
-  list-style: none;
-}
-
-.season-path li {
-  min-width: 0;
-  padding: 1.2rem 1.25rem 1.4rem;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  list-style: none;
+  background: rgba(2, 15, 34, 0.34);
 }
 
-.season-path li:first-child {
-  border-top: 0;
+.season-path::before {
+  content: "";
+  width: 0.2rem;
+  position: absolute;
+  top: 2rem;
+  bottom: 2.75rem;
+  left: 1.7rem;
+  background: var(--ubl-red);
+  transform-origin: top;
+}
+
+.season-stage {
+  --season-delay: 80ms;
+  min-width: 0;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.season-stage:nth-child(2) {
+  --season-delay: 260ms;
+}
+
+.season-stage:nth-child(3) {
+  --season-delay: 440ms;
+}
+
+.season-stage:nth-child(4) {
+  --season-delay: 620ms;
+}
+
+.season-flip-card {
+  width: 100%;
+  height: clamp(20rem, 100vw, 23rem);
+  padding: 0;
+  display: block;
+  position: relative;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+  perspective: 70rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.season-card-inner {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 720ms cubic-bezier(0.2, 0.72, 0.14, 1);
+}
+
+.season-flip-card.is-flipped .season-card-inner {
+  transform: rotateY(180deg);
+}
+
+.season-card-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.season-card-front {
+  grid-template-rows: minmax(0, 1fr) 7rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--ubl-navy);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.season-flip-card:hover .season-card-front,
+.season-flip-card:focus-visible .season-card-front {
+  border-color: rgba(237, 23, 58, 0.88);
+  box-shadow: 0 0 0.85rem rgba(237, 23, 58, 0.22);
+}
+
+.season-flip-card:focus-visible {
+  outline: none;
+}
+
+.season-flip-card:focus-visible .season-card-face {
+  outline: 0.16rem solid var(--ubl-white);
+  outline-offset: 0.2rem;
+}
+
+.season-media {
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  background: #06172f;
+}
+
+.season-media::after {
+  content: "";
+  height: 0.24rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  background: var(--ubl-red);
+  transform-origin: left;
+}
+
+.season-media picture,
+.season-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.season-media img {
+  object-fit: cover;
+  filter: saturate(0.95) contrast(1.08) brightness(0.78);
+  transition: filter 180ms ease, scale 360ms ease;
+}
+
+.season-flip-card:hover .season-media img {
+  filter: saturate(1.02) contrast(1.08) brightness(0.9);
+  scale: 1.02;
+}
+
+.season-stage-programs .season-media img {
+  object-position: 52% center;
+}
+
+.season-stage-compete .season-media img {
+  object-position: 54% 42%;
+}
+
+.season-stage-standings .season-media img {
+  object-position: 63% center;
+}
+
+.season-stage-championship .season-media img {
+  object-position: 50% 45%;
+}
+
+.season-copy {
+  min-height: 0;
+  padding: 1.45rem 0.9rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  background: var(--ubl-navy);
+}
+
+.season-node {
+  width: 0.58rem;
+  height: 0.58rem;
+  position: absolute;
+  top: -0.46rem;
+  left: -2.38rem;
+  z-index: 3;
+  border: 0.13rem solid var(--ubl-white);
+  border-radius: 50%;
+  background: var(--ubl-red);
+  box-shadow: 0 0 0 0.13rem var(--ubl-red);
 }
 
 .season-step {
-  color: var(--ubl-red);
-  font: 700 2.35rem/0.85 "Teko", sans-serif;
-}
-
-.season-icon {
+  width: 2.9rem;
   position: absolute;
-  top: 1.1rem;
-  right: 1.2rem;
-  color: rgba(255, 255, 255, 0.48);
-  font-family: "Material Symbols Rounded";
-  font-size: 1.7rem;
-  font-weight: 700;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  font-feature-settings: "liga";
-  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 24;
+  top: 0.82rem;
+  left: -3.45rem;
+  color: var(--ubl-red);
+  background: transparent;
+  font: italic 700 3.55rem/0.72 "Teko", sans-serif;
+  letter-spacing: -0.08em;
+  text-align: center;
+  text-shadow:
+    -0.06rem 0 var(--ubl-navy),
+    0.06rem 0 var(--ubl-navy),
+    0 -0.06rem var(--ubl-navy),
+    0 0.06rem var(--ubl-navy),
+    0.2rem 0.24rem 0 rgba(0, 0, 0, 0.78);
+  transform: rotate(-5deg) skewX(-7deg);
+  transform-origin: center bottom;
 }
 
-.season-path h3 {
-  margin: 0.7rem 0 0.35rem;
+.season-stage:nth-child(2) .season-step {
+  transform: rotate(3deg) skewX(-6deg);
+}
+
+.season-stage:nth-child(3) .season-step {
+  transform: rotate(-3deg) skewX(-8deg);
+}
+
+.season-stage:nth-child(4) .season-step {
+  transform: rotate(4deg) skewX(-5deg);
+}
+
+.season-front-title {
+  display: block;
   color: var(--ubl-white);
-  font: 800 1.55rem/1 "Barlow Condensed", sans-serif;
+  font: 900 clamp(1.65rem, 7vw, 2.2rem)/0.92 "Barlow Condensed", sans-serif;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
 }
 
-.season-path p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 0.95rem;
-  line-height: 1.55;
+.season-flip-cue,
+.season-back-cue {
+  min-height: 2.75rem;
+  display: inline-flex;
+  gap: 0.38rem;
+  align-items: center;
+  color: #ff9aac;
+  font: 800 0.78rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.season-back-icon {
+  font-family: "Material Symbols Rounded";
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  font-variation-settings: "FILL" 0, "wght" 700, "GRAD" 0, "opsz" 24;
+}
+
+.season-flip-mark {
+  font: 700 1.15rem/1 "IBM Plex Sans", sans-serif;
+}
+
+.season-card-back {
+  padding: 1.35rem;
+  place-content: center;
+  justify-items: start;
+  overflow: hidden;
+  border: 1px solid rgba(237, 23, 58, 0.95);
+  color: var(--ubl-white);
+  background:
+    linear-gradient(135deg, rgba(237, 23, 58, 0.3), transparent 43%),
+    linear-gradient(315deg, rgba(21, 76, 147, 0.34), transparent 48%),
+    #020f22;
+  box-shadow:
+    inset 0 0 2.8rem rgba(237, 23, 58, 0.18),
+    0 0 1.15rem rgba(237, 23, 58, 0.25);
+  transform: rotateY(180deg);
+}
+
+.season-card-back::before,
+.season-card-back::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.season-card-back::before {
+  inset: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  clip-path: polygon(0 0, 86% 0, 100% 14%, 100% 100%, 14% 100%, 0 86%);
+}
+
+.season-card-back::after {
+  width: 8rem;
+  height: 8rem;
+  right: -3.5rem;
+  bottom: -3.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.4rem rgba(255, 255, 255, 0.04);
+}
+
+.season-back-number {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.95rem;
+  color: rgba(255, 255, 255, 0.1);
+  font: italic 700 7rem/1 "Teko", sans-serif;
+  text-shadow: 0 0 1.2rem rgba(237, 23, 58, 0.42);
+  transform: skewX(-7deg);
+}
+
+.season-back-logo {
+  width: 1.9rem;
+  height: auto;
+  margin-bottom: 0.65rem;
+  display: block;
+  filter: drop-shadow(0 0 0.55rem rgba(237, 23, 58, 0.5));
+}
+
+.season-back-icon {
+  margin-bottom: 0.4rem;
+  color: #ff294c;
+  font-size: 1.9rem;
+}
+
+.season-back-title {
+  max-width: 10ch;
+  display: block;
+  color: var(--ubl-white);
+  font: 900 clamp(1.85rem, 7.5vw, 2.65rem)/0.9 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.season-back-description {
+  max-width: 28rem;
+  margin-top: 0.65rem;
+  display: block;
+  color: rgba(255, 255, 255, 0.82);
+  font: 600 0.95rem/1.55 "IBM Plex Sans", sans-serif;
+}
+
+.season-back-cue {
+  margin-top: 0.65rem;
+}
+
+.season-motion-ready .season-path::before {
+  transform: scaleY(0);
+}
+
+.season-motion-ready .season-flip-card,
+.season-motion-ready .season-step,
+.season-motion-ready .season-node {
+  opacity: 0;
+}
+
+.season-motion-ready .season-flip-card {
+  translate: 0 1rem;
+}
+
+.season-motion-ready .season-step {
+  scale: 0.84;
+  translate: 0 0.65rem;
+}
+
+.season-motion-ready .season-node {
+  scale: 0.25;
+}
+
+.season-motion-ready.season-motion-visible .season-path::before {
+  transform: scaleY(1);
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.season-motion-ready.season-motion-visible .season-flip-card {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 420ms ease var(--season-delay),
+    translate 560ms cubic-bezier(0.22, 1, 0.36, 1) var(--season-delay);
+}
+
+.season-motion-ready.season-motion-visible .season-step {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+  transition:
+    opacity 260ms ease calc(var(--season-delay) + 90ms),
+    scale 420ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--season-delay) + 90ms),
+    translate 420ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--season-delay) + 90ms);
+}
+
+.season-motion-ready.season-motion-visible .season-node {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 180ms ease calc(var(--season-delay) + 170ms),
+    scale 320ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--season-delay) + 170ms);
 }
 
 .commitments-section {
@@ -621,170 +1086,30 @@
   filter: drop-shadow(0 0.4rem 0.7rem rgba(0, 0, 0, 0.45));
 }
 
-.culture-section {
-  margin-top: clamp(1.25rem, 3vw, 2.5rem);
-  overflow: hidden;
-  border: 1px solid var(--ubl-line);
-  border-top: 0.4rem solid var(--ubl-red);
-  background: #f7f8fa;
-}
-
-.culture-heading {
-  padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3.5rem);
-  border-bottom: 1px solid var(--ubl-line);
-}
-
-.culture-heading h2 {
-  max-width: 14ch;
-  margin: 0;
-  color: var(--ubl-navy);
-  font: 900 clamp(2.65rem, 10vw, 4.8rem)/0.9 "Barlow Condensed", sans-serif;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
-.culture-heading p {
-  max-width: 48rem;
-  margin: 0.8rem 0 0;
-  color: var(--ubl-muted);
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.culture-accordion details {
-  border-top: 1px solid var(--ubl-line);
-  background: var(--ubl-white);
-}
-
-.culture-accordion details:first-child {
-  border-top: 0;
-}
-
-.culture-accordion summary {
-  min-height: 4.75rem;
-  padding: 0.75rem 1rem;
-  display: grid;
-  grid-template-columns: 2.8rem minmax(0, 1fr) 2.75rem;
-  gap: 0.75rem;
-  align-items: center;
-  cursor: pointer;
-  list-style: none;
-  color: var(--ubl-navy);
-  font: 800 clamp(1.45rem, 6vw, 1.9rem)/1 "Barlow Condensed", sans-serif;
-  text-transform: uppercase;
-  transition: color 160ms ease, background 160ms ease;
-}
-
-.culture-accordion summary::-webkit-details-marker {
-  display: none;
-}
-
-.culture-number {
-  color: var(--ubl-red);
-  font: 700 2rem/1 "Teko", sans-serif;
-  text-align: center;
-}
-
-.culture-chevron {
-  width: 2.75rem;
-  height: 2.75rem;
-  display: grid;
-  place-items: center;
-  color: var(--ubl-red);
-  font-family: "Material Symbols Rounded";
-  font-size: 1.65rem;
-  font-weight: 700;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  font-feature-settings: "liga";
-  font-variation-settings: "FILL" 0, "wght" 700, "GRAD" 0, "opsz" 24;
-  transition: transform 160ms ease;
-}
-
-.culture-accordion summary:hover,
-.culture-accordion summary:focus-visible,
-.culture-accordion details[open] summary {
-  color: var(--ubl-white);
-  background: var(--ubl-navy);
-}
-
-.culture-accordion details[open] .culture-number,
-.culture-accordion details[open] .culture-chevron {
-  color: #ff9aac;
-}
-
-.culture-accordion details[open] .culture-chevron {
-  transform: rotate(90deg);
-}
-
-.culture-content {
-  padding: 1.1rem 1.25rem 1.45rem;
-  border-top: 1px solid var(--ubl-line);
-}
-
-.culture-content p,
-.culture-content ul {
-  max-width: 62rem;
-}
-
-.culture-content p {
-  margin: 0;
-  color: #2f3b4d;
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.culture-content ul {
-  margin: 0.9rem 0 0;
-  padding-left: 1.15rem;
-  color: var(--ubl-muted);
-}
-
-.culture-content li {
-  margin-top: 0.45rem;
-  padding-left: 0.25rem;
-  line-height: 1.55;
-}
-
 .testimonial-break {
-  min-height: 33rem;
   margin-top: clamp(1.25rem, 3vw, 2.5rem);
-  position: relative;
   overflow: hidden;
+  border-top: 0.35rem solid var(--ubl-red);
   background: var(--ubl-navy);
 }
 
 .testimonial-break > img {
   width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
+  height: auto;
+  aspect-ratio: 3 / 2;
   display: block;
   object-fit: cover;
-  object-position: 51% center;
+  object-position: center;
 }
 
 .testimonial-break::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(2, 15, 34, 0.08) 20%, rgba(2, 15, 34, 0.9) 100%);
+  display: none;
 }
 
 .testimonial-break figcaption {
-  max-width: 42rem;
-  margin: 1rem;
-  padding: 1.25rem 1.25rem 1.3rem;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  border-left: 0.35rem solid var(--ubl-red);
+  padding: 1.4rem 1.25rem 1.5rem;
   color: var(--ubl-white);
-  background: rgba(2, 15, 34, 0.9);
+  background: var(--ubl-navy);
 }
 
 .testimonial-break blockquote {
@@ -981,21 +1306,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .season-path {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .season-path li:nth-child(2) {
-    border-top: 0;
-  }
-
-  .season-path li:nth-child(even) {
-    border-left: 1px solid rgba(255, 255, 255, 0.16);
-  }
-
-  .culture-content {
-    padding-left: 5.85rem;
-  }
 }
 
 @media (min-width: 768px) {
@@ -1007,8 +1317,8 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: end;
-    gap: clamp(2rem, 5vw, 5rem);
-    padding-block: clamp(1.65rem, 3vw, 2.5rem);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    padding-block: clamp(1.35rem, 2.2vw, 1.75rem);
   }
 
   .identity-lead h2 {
@@ -1025,15 +1335,62 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .identity-facts > div {
-    min-height: 10.25rem;
+  .identity-fact {
+    min-height: 9rem;
+    padding: 1rem 1.15rem;
+    display: grid;
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    column-gap: 0.8rem;
     align-content: center;
     border-top: 0;
     border-left: 1px solid var(--ubl-line);
+    box-shadow: none;
   }
 
-  .identity-facts > div:first-child {
+  .identity-fact.is-expanded {
+    box-shadow: none;
+  }
+
+  .identity-fact:first-child {
     border-left: 0;
+  }
+
+  .identity-fact dt {
+    grid-column: 1 / -1;
+  }
+
+  .identity-toggle,
+  .identity-toggle:hover,
+  .identity-toggle:focus-visible,
+  .identity-fact.is-expanded .identity-toggle {
+    min-height: 0;
+    padding: 0;
+    grid-column: 1 / -1;
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    gap: 0.8rem;
+    background: transparent;
+    cursor: default;
+  }
+
+  .identity-toggle:focus-visible {
+    outline: 0;
+  }
+
+  .identity-cue {
+    display: none;
+  }
+
+  .identity-panel,
+  .identity-facts.is-ready .identity-panel,
+  .identity-facts.is-ready .identity-fact.is-expanded .identity-panel {
+    max-height: none;
+    margin-top: 0.35rem;
+    padding: 0;
+    grid-column: 2;
+    overflow: visible;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
   }
 
   .winning-section {
@@ -1080,20 +1437,39 @@
 
   .testimonial-break {
     min-height: 36rem;
+    position: relative;
+    border-top: 0;
     aspect-ratio: 16 / 7;
   }
 
+  .testimonial-break > img {
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    object-position: 51% center;
+  }
+
   .testimonial-break::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    display: block;
     background: linear-gradient(90deg, rgba(2, 15, 34, 0.05) 35%, rgba(2, 15, 34, 0.88) 100%);
   }
 
   .testimonial-break figcaption {
+    max-width: 42rem;
     margin: 0;
     padding: clamp(1.75rem, 4vw, 3rem);
+    position: absolute;
     top: 50%;
     right: clamp(1.5rem, 5vw, 4rem);
     bottom: auto;
     left: auto;
+    z-index: 1;
+    border-left: 0.35rem solid var(--ubl-red);
+    background: rgba(2, 15, 34, 0.9);
     transform: translateY(-50%);
   }
 
@@ -1130,28 +1506,140 @@
 }
 
 @media (min-width: 1024px) {
-  .culture-heading {
-    display: grid;
-    grid-template-columns: minmax(17rem, 0.8fr) minmax(0, 1.2fr);
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: end;
+  .season-heading {
+    min-height: 18rem;
+    padding-top: 2.4rem;
+    padding-bottom: 2.4rem;
+    align-items: center;
   }
 
-  .culture-heading p {
-    margin-top: 0;
+  .season-heading h2 {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .season-kicker {
+    font-size: 1.7rem;
+  }
+
+  .season-brand {
+    margin-top: 0.18rem;
+    font-size: clamp(7rem, 8.4vw, 8.8rem);
+  }
+
+  .season-title-line {
+    margin-top: 0.72rem;
+    font-size: clamp(4.25rem, 5.45vw, 5.7rem);
+    white-space: nowrap;
+  }
+
+  .season-heading p {
+    max-width: 32rem;
   }
 
   .season-path {
+    padding: 0 0 2.1rem;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    isolation: isolate;
   }
 
-  .season-path li,
-  .season-path li:nth-child(2) {
+  .season-path::before {
+    display: none;
+  }
+
+  .season-stage,
+  .season-stage:nth-child(2) {
+    padding-bottom: 0;
     border-top: 0;
   }
 
-  .season-path li + li {
-    border-left: 1px solid rgba(255, 255, 255, 0.16);
+  .season-stage + .season-stage {
+    border-left: 0;
+  }
+
+  .season-flip-card {
+    height: 23.5rem;
+  }
+
+  .season-card-front {
+    grid-template-rows: minmax(0, 1fr) 8.3rem;
+  }
+
+  .season-media::after {
+    height: 0.28rem;
+  }
+
+  .season-stage-programs {
+    z-index: 4;
+  }
+
+  .season-stage-compete {
+    z-index: 3;
+  }
+
+  .season-stage-standings {
+    z-index: 2;
+  }
+
+  .season-stage-championship {
+    z-index: 1;
+  }
+
+  .season-copy {
+    padding: 1.85rem 1rem 0.8rem;
+  }
+
+  .season-step {
+    width: auto;
+    padding: 0;
+    top: -4.05rem;
+    left: 1.05rem;
+    font-size: 4.15rem;
+  }
+
+  .season-node {
+    width: 0.7rem;
+    height: 0.7rem;
+    top: -0.48rem;
+    left: 1rem;
+    border-width: 0.14rem;
+    box-shadow: 0 0 0 0.14rem var(--ubl-red);
+  }
+
+  .season-front-title {
+    min-height: 3.5rem;
+    font-size: clamp(1.45rem, 1.75vw, 1.95rem);
+  }
+
+  .season-flip-cue {
+    min-height: 2.3rem;
+    font-size: clamp(0.66rem, 0.72vw, 0.76rem);
+  }
+
+  .season-card-back {
+    padding: clamp(1.15rem, 1.7vw, 1.65rem);
+  }
+
+  .season-back-number {
+    font-size: clamp(5.5rem, 7vw, 7rem);
+  }
+
+  .season-back-title {
+    font-size: clamp(1.85rem, 2.35vw, 2.5rem);
+  }
+
+  .season-back-description {
+    font-size: clamp(0.82rem, 0.9vw, 0.95rem);
+  }
+
+  .season-motion-ready .season-media::after {
+    transform: scaleX(0);
+  }
+
+  .season-motion-ready.season-motion-visible .season-media::after {
+    transform: scaleX(1);
+    transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1) var(--season-delay);
   }
 
   .lineup-stage {
@@ -1244,15 +1732,234 @@
   }
 }
 
+/* Concept 7 playboard: a square 2x2 season journey built from live controls. */
+@media (min-width: 768px) {
+  .season-section {
+    width: min(calc(100% - 1rem), 76rem);
+  }
+
+  .season-heading {
+    min-height: 14rem;
+    padding: clamp(1.6rem, 3vw, 2.6rem) clamp(1.5rem, 4vw, 3.25rem);
+    align-items: center;
+  }
+
+  .season-heading h2 {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: clamp(0.9rem, 2.2vw, 1.8rem);
+    align-items: end;
+  }
+
+  .season-kicker {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: 0.35rem;
+    font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  }
+
+  .season-brand {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    font-size: clamp(5.7rem, 11vw, 8.7rem);
+    line-height: 0.7;
+  }
+
+  .season-title-line {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0 0 -0.04em;
+    font-size: clamp(3.35rem, 6.4vw, 5.55rem);
+    line-height: 0.78;
+    white-space: normal;
+  }
+
+  .season-heading p {
+    max-width: 28rem;
+    margin-top: 1.15rem;
+  }
+
+  .season-heading strong {
+    align-self: center;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+  }
+
+  .season-path {
+    padding: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(20rem, 1fr));
+    gap: 0.2rem;
+    isolation: isolate;
+  }
+
+  .season-path::before {
+    display: none;
+  }
+
+  .season-stage,
+  .season-stage:nth-child(2) {
+    min-height: 0;
+    padding-bottom: 0;
+    border: 0;
+  }
+
+  .season-stage + .season-stage {
+    border-left: 0;
+  }
+
+  .season-flip-card {
+    height: 100%;
+    min-height: 20rem;
+  }
+
+  .season-card-front {
+    grid-template-rows: minmax(0, 1fr) 7rem;
+    border-color: rgba(255, 255, 255, 0.24);
+  }
+
+  .season-media::after {
+    height: 0.3rem;
+  }
+
+  .season-copy {
+    padding: 1.5rem 1rem 0.75rem;
+  }
+
+  .season-step {
+    width: auto;
+    top: -4.15rem;
+    left: 1.05rem;
+    font-size: 4.35rem;
+  }
+
+  .season-node {
+    width: 0.72rem;
+    height: 0.72rem;
+    top: -0.5rem;
+    left: 1.1rem;
+    border-width: 0.15rem;
+    box-shadow: 0 0 0 0.15rem var(--ubl-red);
+  }
+
+  .season-front-title {
+    min-height: 2.75rem;
+    font-size: clamp(1.55rem, 3vw, 2.35rem);
+  }
+
+  .season-flip-cue {
+    min-height: 1.8rem;
+    font-size: 0.72rem;
+  }
+
+  .season-card-back {
+    padding: clamp(1.35rem, 3vw, 2.25rem);
+  }
+
+  .season-back-number {
+    font-size: clamp(6rem, 10vw, 8.2rem);
+  }
+
+  .season-back-title {
+    max-width: 13ch;
+    font-size: clamp(2.15rem, 4vw, 3.35rem);
+  }
+
+  .season-back-description {
+    max-width: 32rem;
+    font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .season-section {
+    aspect-ratio: 1 / 1;
+    display: grid;
+    grid-template-rows: 23% minmax(0, 77%);
+  }
+
+  .season-heading {
+    min-height: 0;
+    padding-block: clamp(1.65rem, 2.6vw, 2.55rem);
+  }
+
+  .season-heading p {
+    margin-top: 0.85rem;
+  }
+
+  .season-path {
+    min-height: 0;
+    height: 100%;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .season-stage,
+  .season-flip-card,
+  .season-card-inner {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .season-card-front {
+    grid-template-rows: minmax(0, 1fr) clamp(6.6rem, 8.2vw, 7.5rem);
+  }
+
+  .season-front-title {
+    font-size: clamp(1.75rem, 2.45vw, 2.35rem);
+  }
+
+  .season-back-logo {
+    width: clamp(1.6rem, 2.4vw, 2.15rem);
+  }
+
+  .season-back-icon {
+    font-size: clamp(1.65rem, 2.7vw, 2.2rem);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .league-identity *,
   .winning-section *,
   .season-section *,
   .commitments-section *,
-  .culture-section *,
   .testimonial-break *,
   .leadership-section * {
     scroll-behavior: auto;
     transition-duration: 0.01ms !important;
+  }
+
+  .season-motion-ready .season-path::before,
+  .season-motion-ready .season-media::after {
+    transform: none;
+  }
+
+  .season-motion-ready .season-flip-card,
+  .season-motion-ready .season-step,
+  .season-motion-ready .season-node {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+
+  .season-card-inner,
+  .season-flip-card.is-flipped .season-card-inner {
+    transform: none;
+  }
+
+  .season-card-back {
+    opacity: 0;
+    visibility: hidden;
+    transform: none;
+  }
+
+  .season-flip-card.is-flipped .season-card-front {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .season-flip-card.is-flipped .season-card-back {
+    opacity: 1;
+    visibility: visible;
   }
 }

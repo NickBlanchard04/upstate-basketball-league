@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Learn who the Upstate Basketball League serves, how a UBL season works, the culture that guides the league, and the leaders building it.">
+  <meta name="description" content="Learn who the Upstate Basketball League serves, how a UBL season works, the commitments that guide the league, and the leaders building it.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#00152e">
   <title>About UBL | Upstate Basketball League</title>
@@ -26,15 +26,15 @@
   <link rel="preload" href="assets/fonts/teko-600-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
   <link rel="stylesheet" href="styles.css?v=20260716-1">
-  <link rel="stylesheet" href="ubl-about.css?v=20260716-17">
+  <link rel="stylesheet" href="ubl-about.css?v=20260717-5">
   <script src="config.js?v=20260717-2" defer></script>
   <script src="analytics.js?v=20260716-1" defer></script>
   <script src="league-core.js?v=20260716-2" defer></script>
   <script src="data.js?v=20260716-2" defer></script>
   <script src="data-loader.js?v=20260717-3" defer></script>
-  <script src="script.js?v=20260716-2" defer></script>
+  <script src="script.js?v=20260717-3" defer></script>
 </head>
-<body>
+<body class="about-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="header-inner">
@@ -58,21 +58,36 @@
         <h2 id="identity-title">This is UBL</h2>
         <p>UBL is a faith-rooted varsity basketball league built to give smaller programs organized competition, dependable leadership, and a meaningful postseason.</p>
       </div>
-      <dl class="identity-facts">
-        <div>
-          <span class="identity-index" aria-hidden="true">01</span>
-          <dt>Who we are</dt>
-          <dd>A structured league that brings faith, competition, sportsmanship, and clear standards onto the same court.</dd>
+      <dl class="identity-facts" data-identity-accordion>
+        <div class="identity-fact">
+          <dt>
+            <button class="identity-toggle" type="button" aria-expanded="true" aria-controls="identity-who-we-are">
+              <span class="identity-index" aria-hidden="true">01</span>
+              <span class="identity-label">Who we are</span>
+              <span class="identity-cue" aria-hidden="true"></span>
+            </button>
+          </dt>
+          <dd class="identity-panel" id="identity-who-we-are">A structured league that brings faith, competition, sportsmanship, and clear standards onto the same court.</dd>
         </div>
-        <div>
-          <span class="identity-index" aria-hidden="true">02</span>
-          <dt>Who we serve</dt>
-          <dd>Smaller high school programs competing in Boys Varsity and Girls Varsity divisions.</dd>
+        <div class="identity-fact">
+          <dt>
+            <button class="identity-toggle" type="button" aria-expanded="true" aria-controls="identity-who-we-serve">
+              <span class="identity-index" aria-hidden="true">02</span>
+              <span class="identity-label">Who we serve</span>
+              <span class="identity-cue" aria-hidden="true"></span>
+            </button>
+          </dt>
+          <dd class="identity-panel" id="identity-who-we-serve">Smaller high school programs competing in Boys Varsity and Girls Varsity divisions.</dd>
         </div>
-        <div>
-          <span class="identity-index" aria-hidden="true">03</span>
-          <dt>Where we play</dt>
-          <dd>Across upstate New York, with regular-season games hosted in member-program gyms and a shared postseason championship.</dd>
+        <div class="identity-fact">
+          <dt>
+            <button class="identity-toggle" type="button" aria-expanded="true" aria-controls="identity-where-we-play">
+              <span class="identity-index" aria-hidden="true">03</span>
+              <span class="identity-label">Where we play</span>
+              <span class="identity-cue" aria-hidden="true"></span>
+            </button>
+          </dt>
+          <dd class="identity-panel" id="identity-where-we-play">Across upstate New York, with regular-season games hosted in member-program gyms and a shared postseason championship.</dd>
         </div>
       </dl>
     </section>
@@ -129,35 +144,120 @@
     <section class="season-section section-wrap" aria-labelledby="season-title">
       <div class="season-heading">
         <div>
-          <h2 id="season-title">How a UBL season works</h2>
+          <h2 id="season-title"><span class="season-kicker">How a</span><span class="season-brand">UBL</span><span class="season-title-line">season works</span></h2>
           <p>One winter season. Clear standards. A meaningful path from opening night to the championship.</p>
         </div>
         <strong>2026–27</strong>
       </div>
       <ol class="season-path">
-        <li>
-          <span class="season-step" aria-hidden="true">1</span>
-          <span class="season-icon material-symbols-rounded" aria-hidden="true">group_add</span>
-          <h3>Programs enter</h3>
-          <p>Member programs register Boys Varsity, Girls Varsity, or both.</p>
+        <li class="season-stage season-stage-programs">
+          <button class="season-flip-card" type="button" aria-pressed="false" aria-label="Programs enter: show details" data-season-title="Programs enter">
+            <span class="season-card-inner">
+              <span class="season-card-face season-card-front" aria-hidden="false">
+                <span class="season-media">
+                  <img src="assets/optimized/ubl-team-huddle-960.webp" width="960" height="640" loading="lazy" decoding="async" alt="UBL players gathered in a team huddle before a game">
+                </span>
+                <span class="season-copy">
+                  <span class="season-node" aria-hidden="true"></span>
+                  <span class="season-step" aria-hidden="true">1</span>
+                  <strong class="season-front-title">Programs enter</strong>
+                  <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
+                </span>
+              </span>
+              <span class="season-card-face season-card-back" aria-hidden="true">
+                <span class="season-back-number" aria-hidden="true">1</span>
+                <img class="season-back-logo" src="assets/optimized/ubl-logo-64.png" width="40" height="64" alt="">
+                <span class="season-back-icon material-symbols-rounded" aria-hidden="true">event_available</span>
+                <strong class="season-back-title">Programs enter</strong>
+                <span class="season-back-description">Member programs register Boys Varsity, Girls Varsity, or both, confirm league standards, and prepare for opening night.</span>
+                <span class="season-back-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Return to photo</span>
+              </span>
+            </span>
+          </button>
         </li>
-        <li>
-          <span class="season-step" aria-hidden="true">2</span>
-          <span class="season-icon material-symbols-rounded" aria-hidden="true">sports_basketball</span>
-          <h3>Teams compete</h3>
-          <p>The regular season tips off in December and runs through the end of January, with games hosted in member-program gyms.</p>
+        <li class="season-stage season-stage-compete">
+          <button class="season-flip-card" type="button" aria-pressed="false" aria-label="Teams compete: show details" data-season-title="Teams compete">
+            <span class="season-card-inner">
+              <span class="season-card-face season-card-front" aria-hidden="false">
+                <span class="season-media">
+                  <picture>
+                    <source media="(min-width: 768px)" srcset="assets/optimized/about-season-02-live-action-1600.webp">
+                    <img src="assets/optimized/about-season-02-live-action-768.webp" width="768" height="512" loading="lazy" decoding="async" alt="Two varsity basketball players contest the opening tip">
+                  </picture>
+                </span>
+                <span class="season-copy">
+                  <span class="season-node" aria-hidden="true"></span>
+                  <span class="season-step" aria-hidden="true">2</span>
+                  <strong class="season-front-title">Teams compete</strong>
+                  <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
+                </span>
+              </span>
+              <span class="season-card-face season-card-back" aria-hidden="true">
+                <span class="season-back-number" aria-hidden="true">2</span>
+                <img class="season-back-logo" src="assets/optimized/ubl-logo-64.png" width="40" height="64" alt="">
+                <span class="season-back-icon material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                <strong class="season-back-title">Teams compete</strong>
+                <span class="season-back-description">The regular season tips off in December and runs through the end of January, with every result shaping the postseason field.</span>
+                <span class="season-back-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Return to photo</span>
+              </span>
+            </span>
+          </button>
         </li>
-        <li>
-          <span class="season-step" aria-hidden="true">3</span>
-          <span class="season-icon material-symbols-rounded" aria-hidden="true">leaderboard</span>
-          <h3>Standings set the field</h3>
-          <p>League results determine postseason seeds in each varsity division.</p>
+        <li class="season-stage season-stage-standings">
+          <button class="season-flip-card" type="button" aria-pressed="false" aria-label="Standings set the field: show details" data-season-title="Standings set the field">
+            <span class="season-card-inner">
+              <span class="season-card-face season-card-front" aria-hidden="false">
+                <span class="season-media">
+                  <picture>
+                    <source media="(min-width: 768px)" srcset="assets/optimized/ubl-championship-hero-1600.webp">
+                    <img src="assets/optimized/ubl-championship-hero-mobile-768.webp" width="768" height="1024" loading="lazy" decoding="async" alt="The UBL championship trophy under arena lights">
+                  </picture>
+                </span>
+                <span class="season-copy">
+                  <span class="season-node" aria-hidden="true"></span>
+                  <span class="season-step" aria-hidden="true">3</span>
+                  <strong class="season-front-title">Standings set the field</strong>
+                  <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
+                </span>
+              </span>
+              <span class="season-card-face season-card-back" aria-hidden="true">
+                <span class="season-back-number" aria-hidden="true">3</span>
+                <img class="season-back-logo" src="assets/optimized/ubl-logo-64.png" width="40" height="64" alt="">
+                <span class="season-back-icon material-symbols-rounded" aria-hidden="true">account_tree</span>
+                <strong class="season-back-title">Standings set the field</strong>
+                <span class="season-back-description">League results determine seeding in each varsity division and set the path for February's playoffs.</span>
+                <span class="season-back-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Return to photo</span>
+              </span>
+            </span>
+          </button>
         </li>
-        <li>
-          <span class="season-step" aria-hidden="true">4</span>
-          <span class="season-icon material-symbols-rounded" aria-hidden="true">emoji_events</span>
-          <h3>Champions are crowned</h3>
-          <p>Division playoffs begin in February and advance to one Boys Varsity and one Girls Varsity championship.</p>
+        <li class="season-stage season-stage-championship">
+          <button class="season-flip-card" type="button" aria-pressed="false" aria-label="Champions are crowned: show details" data-season-title="Champions are crowned">
+            <span class="season-card-inner">
+              <span class="season-card-face season-card-front" aria-hidden="false">
+                <span class="season-media">
+                  <picture>
+                    <source media="(min-width: 768px)" srcset="assets/optimized/about-season-04-playoffs-huddle-1600.webp">
+                    <img src="assets/optimized/about-season-04-playoffs-huddle-768.webp" width="768" height="512" loading="lazy" decoding="async" alt="UBL players and coaches raise their hands together in a team huddle">
+                  </picture>
+                </span>
+                <span class="season-copy">
+                  <span class="season-node" aria-hidden="true"></span>
+                  <span class="season-step" aria-hidden="true">4</span>
+                  <strong class="season-front-title">Champions are crowned</strong>
+                  <span class="season-flip-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Flip for details</span>
+                </span>
+              </span>
+              <span class="season-card-face season-card-back" aria-hidden="true">
+                <span class="season-back-number" aria-hidden="true">4</span>
+                <img class="season-back-logo" src="assets/optimized/ubl-logo-64.png" width="40" height="64" alt="">
+                <span class="season-back-icon material-symbols-rounded" aria-hidden="true">emoji_events</span>
+                <strong class="season-back-title">Champions are crowned</strong>
+                <span class="season-back-description">February playoffs lead to one Boys champion and one Girls champion—both earning the right to finish the season on top.</span>
+                <span class="season-back-cue"><span class="season-flip-mark" aria-hidden="true">↻</span>Return to photo</span>
+              </span>
+            </span>
+          </button>
         </li>
       </ol>
     </section>
@@ -223,60 +323,6 @@
         <img src="assets/optimized/ubl-logo-192.webp" alt="Upstate Basketball League">
         <p><span>League standard</span><strong>Character · Service</strong></p>
       </div>
-      </div>
-    </section>
-
-    <section class="culture-section section-wrap" aria-labelledby="culture-title">
-      <div class="culture-heading">
-        <h2 id="culture-title">The culture behind the commitments</h2>
-        <p>Our commitments only matter when they shape the way we lead, communicate, prepare, and respond. These are the habits we want every UBL program to experience.</p>
-      </div>
-      <div class="culture-accordion">
-        <details name="ubl-culture">
-          <summary>
-            <span class="culture-number" aria-hidden="true">01</span>
-            <span>How we lead</span>
-            <span class="culture-chevron material-symbols-rounded" aria-hidden="true">chevron_right</span>
-          </summary>
-          <div class="culture-content">
-            <p>Leadership starts with service, keeps the purpose bigger than the final score, and protects the standard for every program.</p>
-            <ul>
-              <li>Every athlete, coach, official, and volunteer has value.</li>
-              <li>Team success never comes at the expense of character.</li>
-              <li>Leadership is an opportunity to serve.</li>
-            </ul>
-          </div>
-        </details>
-        <details name="ubl-culture">
-          <summary>
-            <span class="culture-number" aria-hidden="true">02</span>
-            <span>How we interact</span>
-            <span class="culture-chevron material-symbols-rounded" aria-hidden="true">chevron_right</span>
-          </summary>
-          <div class="culture-content">
-            <p>Trust grows through direct, respectful, and consistent communication before, during, and after competition.</p>
-            <ul>
-              <li>Coaches model composure and address conflict with maturity.</li>
-              <li>Officials are treated as essential partners in the game.</li>
-              <li>Programs communicate early, clearly, and honestly.</li>
-            </ul>
-          </div>
-        </details>
-        <details name="ubl-culture">
-          <summary>
-            <span class="culture-number" aria-hidden="true">03</span>
-            <span>How we work</span>
-            <span class="culture-chevron material-symbols-rounded" aria-hidden="true">chevron_right</span>
-          </summary>
-          <div class="culture-content">
-            <p>We prepare with care, compete with energy, and keep improving the league one dependable decision at a time.</p>
-            <ul>
-              <li>Schedules, standards, and expectations are made clear.</li>
-              <li>Programs arrive prepared to compete with excellence.</li>
-              <li>Each season should leave a stronger foundation for the next.</li>
-            </ul>
-          </div>
-        </details>
       </div>
     </section>
 

@@ -339,28 +339,74 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
   await expect.poll(() => portrait.evaluate((image) => image.currentSrc)).toMatch(/chris-webster-192\.(?:avif|webp)$/);
 });
 
-test("about page explains the league, season, culture, testimonial, and leadership", async ({ page }) => {
+test("about page explains the league, season, testimonial, and leadership", async ({ page }, testInfo) => {
   await page.goto("/about.html");
 
   await expect(page.getByRole("heading", { name: "This is UBL" })).toBeVisible();
   await expect(page.locator(".identity-facts")).toContainText("Smaller high school programs");
   await expect(page.locator(".identity-facts")).toContainText("Across upstate New York");
 
+  const identityToggles = page.locator(".identity-toggle");
+  const identityPanels = page.locator(".identity-panel");
+  await expect(identityToggles).toHaveCount(3);
+  await expect(identityPanels).toHaveCount(3);
+
+  if (testInfo.project.name === "mobile-chromium") {
+    await expect(identityToggles.nth(0)).toBeEnabled();
+    await expect(identityToggles.nth(0)).toHaveAttribute("aria-expanded", "false");
+    await expect(identityPanels.nth(0)).toHaveAttribute("aria-hidden", "true");
+    await identityToggles.nth(0).click();
+    await expect(identityToggles.nth(0)).toHaveAttribute("aria-expanded", "true");
+    await expect(identityPanels.nth(0)).toHaveAttribute("aria-hidden", "false");
+    await identityToggles.nth(1).click();
+    await expect(identityToggles.nth(0)).toHaveAttribute("aria-expanded", "false");
+    await expect(identityToggles.nth(1)).toHaveAttribute("aria-expanded", "true");
+  } else {
+    await expect(identityToggles.nth(0)).toBeDisabled();
+    await expect(identityPanels.nth(0)).toHaveAttribute("aria-hidden", "false");
+    const identityBox = await page.locator(".league-identity").boundingBox();
+    expect(identityBox).not.toBeNull();
+    expect(identityBox.y + identityBox.height).toBeLessThanOrEqual(720);
+  }
+
   await expect(page.getByRole("heading", { name: "How a UBL season works" })).toBeVisible();
   await expect(page.locator(".season-path > li")).toHaveCount(4);
-  await expect(page.locator(".season-path")).toContainText("tips off in December");
-  await expect(page.locator(".season-path")).toContainText("end of January");
-  await expect(page.locator(".season-path")).toContainText("playoffs begin in February");
+  await expect(page.locator(".season-node")).toHaveCount(4);
+  await expect(page.locator(".season-flip-card")).toHaveCount(4);
+  await expect(page.locator('.season-flip-card[aria-pressed="true"]')).toHaveCount(0);
 
-  const cultureDetails = page.locator(".culture-accordion details");
-  await expect(cultureDetails).toHaveCount(3);
-  await expect(page.locator(".culture-accordion details[open]")).toHaveCount(0);
-  await cultureDetails.nth(0).locator("summary").click();
-  await expect(cultureDetails.nth(0)).toHaveAttribute("open", "");
-  await expect(cultureDetails.nth(0)).toContainText("Every athlete, coach, official, and volunteer has value");
-  await cultureDetails.nth(1).locator("summary").click();
-  await expect(cultureDetails.nth(0)).not.toHaveAttribute("open", "");
-  await expect(cultureDetails.nth(1)).toHaveAttribute("open", "");
+  const routeMarkersOverlap = await page.locator(".season-stage").evaluateAll((stages) => stages.some((stage) => {
+    const number = stage.querySelector(".season-step").getBoundingClientRect();
+    const node = stage.querySelector(".season-node").getBoundingClientRect();
+    return !(number.right <= node.left || number.left >= node.right || number.bottom <= node.top || number.top >= node.bottom);
+  }));
+  expect(routeMarkersOverlap).toBe(false);
+
+  const seasonCards = page.locator(".season-flip-card");
+  await seasonCards.nth(0).click();
+  await expect(seasonCards.nth(0)).toHaveAttribute("aria-pressed", "true");
+  await expect(seasonCards.nth(0).locator(".season-card-back")).toHaveAttribute("aria-hidden", "false");
+  await expect(seasonCards.nth(0)).toContainText("Member programs register Boys Varsity");
+  await seasonCards.nth(1).click();
+  await expect(seasonCards.nth(0)).toHaveAttribute("aria-pressed", "false");
+  await expect(seasonCards.nth(1)).toHaveAttribute("aria-pressed", "true");
+  await expect(seasonCards.nth(1)).toContainText("December and runs through the end of January");
+
+  const liveAction = page.getByAltText("Two varsity basketball players contest the opening tip");
+  const championshipTrophy = page.getByAltText("The UBL championship trophy under arena lights");
+  const playoffHuddle = page.getByAltText("UBL players and coaches raise their hands together in a team huddle");
+  await expect(liveAction).toBeVisible();
+  await expect(championshipTrophy).toBeVisible();
+  await expect(playoffHuddle).toBeVisible();
+  await expect(liveAction).toHaveAttribute("loading", "lazy");
+  await expect(championshipTrophy).toHaveAttribute("loading", "lazy");
+  await expect(playoffHuddle).toHaveAttribute("loading", "lazy");
+  await expect.poll(() => liveAction.evaluate((image) => image.currentSrc)).toMatch(/about-season-02-live-action-(?:768|1600)\.webp$/);
+  await expect.poll(() => championshipTrophy.evaluate((image) => image.currentSrc)).toMatch(/ubl-championship-hero(?:-mobile-768|-1600)\.webp$/);
+  await expect.poll(() => playoffHuddle.evaluate((image) => image.currentSrc)).toMatch(/about-season-04-playoffs-huddle-(?:768|1600)\.webp$/);
+
+  await expect(page.getByRole("heading", { name: "The culture behind the commitments" })).toHaveCount(0);
+  await expect(page.locator(".culture-section")).toHaveCount(0);
 
   const huddle = page.getByAltText("Basketball players gathered shoulder-to-shoulder in a team huddle");
   await expect(huddle).toHaveAttribute("src", "assets/optimized/ubl-team-huddle-960.webp");
@@ -369,6 +415,14 @@ test("about page explains the league, season, culture, testimonial, and leadersh
   await expect(huddle).toHaveAttribute("loading", "lazy");
   await expect(page.locator(".testimonial-break")).toContainText("Nick Blanchard");
   await expect(page.locator(".testimonial-break")).toContainText("Founder");
+
+  if (testInfo.project.name === "mobile-chromium") {
+    const imageBox = await huddle.boundingBox();
+    const quoteBox = await page.locator(".testimonial-break figcaption").boundingBox();
+    expect(imageBox).not.toBeNull();
+    expect(quoteBox).not.toBeNull();
+    expect(quoteBox.y).toBeGreaterThanOrEqual(imageBox.y + imageBox.height - 1);
+  }
 
   await expect(page.locator(".leadership-section .leader-card")).toHaveCount(2);
   await expect(page.locator(".leader-monogram")).toHaveAttribute("aria-label", "Andy Walts");

@@ -21,6 +21,100 @@ siteNav?.querySelectorAll("a").forEach((link) => {
   });
 });
 
+function setIdentityFactExpanded(item, expanded) {
+  const button = item.querySelector(".identity-toggle");
+  const panel = item.querySelector(".identity-panel");
+  item.classList.toggle("is-expanded", expanded);
+  button?.setAttribute("aria-expanded", String(expanded));
+  panel?.setAttribute("aria-hidden", String(!expanded));
+}
+
+function initializeIdentityAccordion() {
+  const container = document.querySelector("[data-identity-accordion]");
+  if (!container) return;
+
+  const items = [...container.querySelectorAll(".identity-fact")];
+  const mobileLayout = window.matchMedia("(max-width: 767px)");
+  let previousMobileState = null;
+
+  const applyLayout = () => {
+    const isMobile = mobileLayout.matches;
+    items.forEach((item) => {
+      const button = item.querySelector(".identity-toggle");
+      if (button) button.disabled = !isMobile;
+      setIdentityFactExpanded(item, isMobile ? previousMobileState === true && item.classList.contains("is-expanded") : true);
+    });
+    previousMobileState = isMobile;
+    container.classList.add("is-ready");
+  };
+
+  items.forEach((item) => {
+    item.querySelector(".identity-toggle")?.addEventListener("click", () => {
+      if (!mobileLayout.matches) return;
+      const shouldExpand = !item.classList.contains("is-expanded");
+      items.forEach((candidate) => setIdentityFactExpanded(candidate, candidate === item && shouldExpand));
+    });
+  });
+
+  mobileLayout.addEventListener?.("change", applyLayout);
+  applyLayout();
+}
+
+initializeIdentityAccordion();
+
+function initializeSeasonMotion() {
+  const section = document.querySelector(".season-section");
+  if (!section || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  if (!("IntersectionObserver" in window)) {
+    section.classList.add("season-motion-visible");
+    return;
+  }
+
+  section.classList.add("season-motion-ready");
+  const observer = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    section.classList.add("season-motion-visible");
+    observer.disconnect();
+  }, {
+    threshold: 0.12,
+    rootMargin: "0px 0px -8% 0px"
+  });
+
+  observer.observe(section);
+}
+
+initializeSeasonMotion();
+
+function setSeasonCardFlipped(card, flipped) {
+  const title = card.dataset.seasonTitle || "Season stage";
+  const front = card.querySelector(".season-card-front");
+  const back = card.querySelector(".season-card-back");
+  card.classList.toggle("is-flipped", flipped);
+  card.setAttribute("aria-pressed", String(flipped));
+  card.setAttribute("aria-label", `${title}: ${flipped ? "return to photo" : "show details"}`);
+  front?.setAttribute("aria-hidden", String(flipped));
+  back?.setAttribute("aria-hidden", String(!flipped));
+}
+
+function initializeSeasonFlipCards() {
+  const cards = [...document.querySelectorAll(".season-flip-card")];
+  cards.forEach((card) => {
+    setSeasonCardFlipped(card, false);
+    card.addEventListener("click", () => {
+      const nextState = card.getAttribute("aria-pressed") !== "true";
+      cards.forEach((item) => setSeasonCardFlipped(item, item === card && nextState));
+    });
+    card.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || card.getAttribute("aria-pressed") !== "true") return;
+      event.preventDefault();
+      setSeasonCardFlipped(card, false);
+    });
+  });
+}
+
+initializeSeasonFlipCards();
+
 document.addEventListener("toggle", (event) => {
   const item = event.target;
   if (!(item instanceof HTMLDetailsElement) || !item.open) return;
@@ -341,6 +435,27 @@ function bracketTeamName(programId, fallback) {
   return programById(programId)?.name || fallback;
 }
 
+function bracketTeamRecord(programId, standings) {
+  const row = standings.find((entry) => entry.programId === programId);
+  if (!row || row.wins + row.losses === 0) return "";
+  return `${row.wins}-${row.losses}`;
+}
+
+function bracketLiveTeamMarkup(slotClass, programId, standings, game, side) {
+  if (!programId) return "";
+  const score = game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
+    ? String(game[`${side}Score`])
+    : "";
+  const detail = score || bracketTeamRecord(programId, standings);
+  const detailLabel = score ? `${detail} points` : detail ? `${detail} record` : "";
+  return `
+    <span class="bracket-live-team bracket-live-team-${slotClass}" title="${safeAttribute(`${bracketTeamName(programId, "Team")}${detailLabel ? `, ${detailLabel}` : ""}`)}">
+      <strong>${escapeHtml(bracketTeamName(programId, "Team"))}</strong>
+      ${detail ? `<small>${escapeHtml(detail)}</small>` : ""}
+    </span>
+  `;
+}
+
 function bracketSlotMarkup(label, programId, fallback, game, side, winner) {
   const score = game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
     ? `<b>${game[`${side}Score`]}</b>`
@@ -354,7 +469,7 @@ function bracketSlotMarkup(label, programId, fallback, game, side, winner) {
   `;
 }
 
-function bracketMarkup(division) {
+function bracketMarkup(division, artwork) {
   const standings = league.standings?.[division] || [];
   const standingsStarted = standings.some((row) => row.wins + row.losses > 0);
   const seeds = standingsStarted ? standings.map((row) => row.programId) : [];
@@ -381,32 +496,35 @@ function bracketMarkup(division) {
   const divisionName = division.startsWith("Boys") ? "Boys" : "Girls";
 
   return `
-    <div class="bracket-round"><h3>Play-in</h3><article class="bracket-game">
-      ${bracketSlotMarkup("Seed 5", playInAway, "Seed pending", playIn, "away", playInWinner)}
-      ${bracketSlotMarkup("Seed 4", playInHome, "Seed pending", playIn, "home", playInWinner)}
-      <p>Winner advances to play Seed 1</p>
-    </article></div>
-    <div class="bracket-arrow" aria-hidden="true">&rarr;</div>
-    <div class="bracket-round"><h3>Semifinals</h3>
-      <article class="bracket-game">
-        ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "Awaiting play-in", semifinalOne, "away", semifinalOneWinner)}
-        ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner)}
-      </article>
-      <article class="bracket-game">
-        ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "Seed pending", semifinalTwo, "away", semifinalTwoWinner)}
-        ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "Seed pending", semifinalTwo, "home", semifinalTwoWinner)}
-      </article>
+    <div class="bracket-live-artboard">
+      <img class="bracket-live-art" src="${safeAttribute(safeImageUrl(artwork))}" alt="" width="1672" height="941" decoding="async">
+      ${bracketLiveTeamMarkup("seed-5", playInAway, standings, playIn, "away")}
+      ${bracketLiveTeamMarkup("seed-4", playInHome, standings, playIn, "home")}
+      ${bracketLiveTeamMarkup("play-in-winner", semifinalOneAway, standings, semifinalOne, "away")}
+      ${bracketLiveTeamMarkup("seed-1", semifinalOneHome, standings, semifinalOne, "home")}
+      ${bracketLiveTeamMarkup("seed-3", semifinalTwoAway, standings, semifinalTwo, "away")}
+      ${bracketLiveTeamMarkup("seed-2", semifinalTwoHome, standings, semifinalTwo, "home")}
+      ${champion ? `<span class="bracket-live-champion"><small>2027 ${escapeHtml(divisionName)} champion</small><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></span>` : ""}
     </div>
-    <div class="bracket-arrow" aria-hidden="true">&rarr;</div>
-    <div class="bracket-round championship-round"><h3>Championship</h3><article class="champion-card">
-      <span>2027 UBL ${divisionName}</span><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong><p>${champion ? "Division champion" : "Semifinal winners"}</p>
-    </article></div>
+    <div class="sr-only bracket-accessible-summary">
+      <h3>Play-in</h3>
+      ${bracketSlotMarkup("Seed 5", playInAway, "TBD", playIn, "away", playInWinner)}
+      ${bracketSlotMarkup("Seed 4", playInHome, "TBD", playIn, "home", playInWinner)}
+      <p>Winner advances to play Seed 1</p>
+      <h3>Semifinals</h3>
+      ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "TBD", semifinalOne, "away", semifinalOneWinner)}
+      ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner)}
+      ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "TBD", semifinalTwo, "away", semifinalTwoWinner)}
+      ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "TBD", semifinalTwo, "home", semifinalTwoWinner)}
+      <h3>Championship</h3>
+      <p>2027 UBL ${escapeHtml(divisionName)} champion: ${escapeHtml(bracketTeamName(champion, "TBD"))}</p>
+    </div>
   `;
 }
 
 function renderBrackets() {
   document.querySelectorAll("[data-bracket]").forEach((bracket) => {
-    bracket.innerHTML = bracketMarkup(bracket.dataset.bracket);
+    bracket.innerHTML = bracketMarkup(bracket.dataset.bracket, bracket.dataset.bracketArt);
   });
 }
 
