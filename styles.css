@@ -3344,13 +3344,8 @@ th {
 }
 
 .division-heading {
-  min-height: 5.7rem;
   margin-bottom: 1rem;
   padding: 0.85rem 0;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.85rem;
   border-top: 3px solid var(--division-accent);
   border-bottom: 1px solid rgba(255, 255, 255, 0.22);
 }
@@ -3367,37 +3362,10 @@ th {
   --division-soft: rgba(46, 131, 211, 0.12);
 }
 
-.division-letter {
-  width: 3.25rem;
-  height: 3.25rem;
-  display: grid;
-  place-items: center;
-  color: var(--white);
-  background: rgba(2, 15, 34, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 -3px 0 var(--division-accent);
-  font: 900 1.8rem/1 var(--display);
-}
-
-.division-heading div > span {
-  display: block;
-  color: rgba(255, 255, 255, 0.58);
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
 .division-heading h2 {
-  margin: 0.18rem 0 0;
+  margin: 0;
   color: var(--white);
   font: 900 clamp(1.9rem, 4vw, 3.1rem)/0.9 var(--display);
-  text-transform: uppercase;
-}
-
-.division-heading > strong {
-  color: rgba(255, 255, 255, 0.64);
-  font-size: 0.64rem;
   text-transform: uppercase;
 }
 
@@ -3425,6 +3393,13 @@ th {
   text-decoration: none;
   transform: translateZ(0);
   transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 300ms ease, box-shadow 300ms ease;
+}
+
+.division-team-card-open {
+  border-style: dashed;
+  background:
+    radial-gradient(circle at 50% 20%, var(--division-soft), transparent 37%),
+    linear-gradient(155deg, var(--navy-800) 0%, var(--navy-950) 76%);
 }
 
 .division-team-card::before {
@@ -4239,6 +4214,66 @@ th {
 
   .team-profile-standings-link:hover {
     background: var(--red-dark);
+  }
+}
+
+@media (max-width: 599px) {
+  .division-heading {
+    margin-bottom: 0.75rem;
+    padding-block: 0.7rem;
+  }
+
+  .division-heading h2 {
+    font-size: 2rem;
+  }
+
+  .division-team-grid {
+    max-width: 28rem;
+    margin-inline: auto;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .division-team-card {
+    grid-column: span 2;
+    border-radius: 0.65rem;
+  }
+
+  .division-team-card:nth-last-child(2):nth-child(3n + 1) {
+    grid-column: 2 / span 2;
+  }
+
+  .division-team-card:last-child:nth-child(3n + 2) {
+    grid-column: 4 / span 2;
+  }
+
+  .team-card-view,
+  .division-team-card-content small,
+  .division-team-card-content > span,
+  .division-team-card-content b {
+    display: none;
+  }
+
+  .division-team-card::before {
+    inset: 38% 0 0;
+  }
+
+  .team-card-logo-stage {
+    top: 10%;
+    width: 56%;
+    padding: 0.35rem;
+  }
+
+  .division-team-card-content {
+    padding: 0.55rem 0.35rem 0.7rem;
+    text-align: center;
+  }
+
+  .division-team-card-content strong {
+    margin-top: 0;
+    font-size: clamp(0.875rem, 3.8vw, 1.05rem);
+    line-height: 0.95;
+    overflow-wrap: anywhere;
   }
 }
 

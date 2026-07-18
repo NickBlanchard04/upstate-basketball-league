@@ -710,11 +710,28 @@ function openHashProgram() {
 window.addEventListener("hashchange", openHashProgram);
 
 function divisionTeamCardMarkup(program, division, order) {
+  if (program.id === "tbd") {
+    const inquiryHref = "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL";
+    return `
+      <a class="division-team-card division-team-card-open" href="${inquiryHref}" data-program-card="tbd" style="--card-order:${order}" aria-label="Open UBL program spot in ${safeAttribute(division)} — contact the league">
+        <span class="team-card-court" aria-hidden="true"><i></i></span>
+        <span class="team-card-view">Join UBL <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <span class="team-card-logo-stage"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+        <span class="division-team-card-content">
+          <small>Now recruiting &middot; ${escapeHtml(division)}</small>
+          <strong>Open League Spot</strong>
+          <span>Bring your program into the UBL</span>
+          <b>Start a conversation <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b>
+        </span>
+      </a>
+    `;
+  }
   const headCoach = program.teams?.[division]?.headCoach?.name || "";
   const detail = headCoach && headCoach !== "To be confirmed" ? `Head coach ${headCoach}` : "Open program profile";
   const href = teamProfileUrl(program.id, division);
+  const accessibleName = `View team ${program.short} · ${division} ${program.name} ${detail} Meet the program`;
   return `
-    <a class="division-team-card" href="${safeAttribute(href)}" data-program-card="${safeAttribute(program.id)}" style="--card-order:${order}">
+    <a class="division-team-card" href="${safeAttribute(href)}" data-program-card="${safeAttribute(program.id)}" style="--card-order:${order}" aria-label="${safeAttribute(accessibleName)}">
       <span class="team-card-court" aria-hidden="true"><i></i></span>
       <span class="team-card-view">View team <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
       <span class="team-card-logo-stage"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
@@ -758,7 +775,7 @@ function renderTeamDirectory() {
   document.querySelectorAll("[data-division-team-grid]").forEach((grid) => {
     const division = grid.dataset.divisionTeamGrid;
     if (division !== selectedTeamDivision) return;
-    const programs = league.programs.filter((program) => program.id !== "tbd" && program.divisions.includes(division));
+    const programs = league.programs.filter((program) => program.divisions.includes(division));
     const signature = JSON.stringify(programs.map((program) => ({
       id: program.id,
       name: program.name,
@@ -774,8 +791,6 @@ function renderTeamDirectory() {
       didRender = true;
       renderedGrid = grid;
     }
-    const count = document.querySelector(`[data-division-count="${division}"]`);
-    if (count) count.textContent = `${programs.length} ${programs.length === 1 ? "team" : "teams"}`;
   });
   if (didRender && renderedGrid) initializeTeamCardMotion(renderedGrid);
 }

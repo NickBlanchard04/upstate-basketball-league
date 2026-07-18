@@ -54,7 +54,7 @@ test("all public routes render meaningful content without runtime errors", async
     ["/bracket.html", "Playoff brackets"],
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
-    ["/sponsors.html", "Put your business"],
+    ["/sponsors.html", "Partner with the UBL"],
     ["/about.html", "About UBL"]
   ];
   await expectNoAppErrors(page, async () => {
@@ -82,8 +82,20 @@ test("public pages do not expose internal placeholder language", async ({ page }
 test("homepage uses the shared schedule and continuously moving game ticker", async ({ page }, testInfo) => {
   await page.goto("/index.html");
   const heroArt = page.locator(".hero-art");
-  await expect(heroArt).toHaveAttribute("src", "assets/ubl/ubl-faith-before-the-whistle.webp");
-  expect(await heroArt.evaluate((image) => image.currentSrc)).toMatch(/assets\/ubl\/ubl-faith-before-the-whistle\.webp$/);
+  await expect(heroArt).toHaveAttribute("src", "assets/ubl/ubl-kingdom-impact-homepage-wide.webp");
+  const heroMetrics = await heroArt.evaluate((image) => ({
+    currentSrc: image.currentSrc,
+    naturalWidth: image.naturalWidth,
+    naturalHeight: image.naturalHeight,
+    renderedWidth: image.getBoundingClientRect().width,
+    renderedHeight: image.getBoundingClientRect().height,
+  }));
+  const expectedHeroAsset = testInfo.project.name.startsWith("mobile")
+    ? /assets\/ubl\/ubl-kingdom-impact-homepage-mobile\.webp$/
+    : /assets\/ubl\/ubl-kingdom-impact-homepage-wide\.webp$/;
+  expect(heroMetrics.currentSrc).toMatch(expectedHeroAsset);
+  expect(heroMetrics.naturalWidth).toBeGreaterThanOrEqual(Math.ceil(heroMetrics.renderedWidth));
+  expect(heroMetrics.naturalHeight).toBeGreaterThanOrEqual(Math.ceil(heroMetrics.renderedHeight));
   await expect(page.locator("[data-featured-game]")).toContainText("Next league game");
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");
@@ -255,14 +267,18 @@ test("team directory separates each division and opens the right profile", async
 
   await page.getByRole("button", { name: "Girls", exact: true }).click();
   await expect(directory).toBeVisible();
-  await expect(girlsCards).toHaveCount(4);
+  await expect(girlsCards).toHaveCount(5);
   await expect(boysCards).toHaveCount(0);
   await expect(girlsColumn).toBeVisible();
   await expect(boysColumn).toBeHidden();
-  await expect(page.locator('[data-program-card="tbd"]')).toHaveCount(0);
-  await expect(girlsColumn.locator("[data-division-count]")).toHaveText("4 teams");
-  await expect(page.locator(".division-team-card img")).toHaveCount(4);
+  await expect(girlsColumn.locator(".division-heading")).toHaveText("Girls division");
+  await expect(girlsColumn.locator(".division-heading > :not(h2), [data-division-count]")).toHaveCount(0);
+  await expect(page.locator(".division-team-card img")).toHaveCount(5);
   await expect(girlsColumn.locator('[data-program-card="hv-flames"] img')).toHaveAttribute("src", "assets/icons/icon-192.png");
+
+  const openSpot = girlsColumn.locator('[data-program-card="tbd"]');
+  await expect(openSpot).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
+  await expect(openSpot).toHaveAccessibleName("Open UBL program spot in Girls Varsity — contact the league");
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
   await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls");
@@ -315,7 +331,7 @@ test("team cards remain complete when reduced motion is requested", async ({ pag
   await expect(page.locator("[data-team-directory]")).toBeHidden();
   await page.getByRole("button", { name: "Girls", exact: true }).click();
   const cards = page.locator(".division-team-card");
-  await expect(cards).toHaveCount(4);
+  await expect(cards).toHaveCount(5);
   expect(await cards.evaluateAll((elements) => elements.every((element) => {
     const style = getComputedStyle(element);
     return style.opacity === "1" && style.animationName === "none";
@@ -324,7 +340,7 @@ test("team cards remain complete when reduced motion is requested", async ({ pag
 
 test("team cards stay separated across mobile, tablet, and desktop breakpoints", async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("desktop"), "One browser can cover the responsive breakpoint matrix");
-  const widths = [390, 600, 767, 768, 1100, 1279, 1280, 1440];
+  const widths = [320, 375, 390, 414, 600, 767, 768, 1100, 1279, 1280, 1440];
 
   for (const width of widths) {
     await page.setViewportSize({ width, height: 1000 });
@@ -332,7 +348,7 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
     await expect(page.locator("[data-team-directory]")).toBeHidden();
     await expect(page.locator(".division-team-card")).toHaveCount(0);
     await page.getByRole("button", { name: "Boys", exact: true }).click();
-    await expect(page.locator("#boys-division .division-team-card")).toHaveCount(4);
+    await expect(page.locator("#boys-division .division-team-card")).toHaveCount(5);
     const metrics = await page.evaluate(() => {
       const grid = document.querySelector("#boys-division .division-team-grid");
       const cards = [...grid.querySelectorAll(".division-team-card")];
@@ -345,17 +361,20 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
           || logoRect.top < cardRect.top - 1
           || actionRect.bottom > cardRect.bottom + 1;
       });
-      const firstRowTop = cards[0].offsetTop;
+      const rowCounts = [...cards.reduce((rows, card) => {
+        rows.set(card.offsetTop, (rows.get(card.offsetTop) || 0) + 1);
+        return rows;
+      }, new Map()).values()];
       return {
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         cardOverlap,
-        firstRowCards: cards.filter((card) => card.offsetTop === firstRowTop).length
+        rowCounts
       };
     });
 
     expect(metrics.overflow, `${width}px horizontal overflow`).toBe(false);
     expect(metrics.cardOverlap, `${width}px logo or action overlap`).toBe(false);
-    expect(metrics.firstRowCards, `${width}px cards per division row`).toBe(width >= 1024 ? 3 : width >= 600 ? 2 : 1);
+    expect(metrics.rowCounts, `${width}px cards per division row`).toEqual(width < 600 || width >= 1024 ? [3, 2] : [2, 2, 1]);
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -721,33 +740,38 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
-test("sponsorship page moves through three partner views and displays prospective partner categories", async ({ page }, testInfo) => {
+test("sponsorship page presents a focused partner path and prospective partner categories", async ({ page }, testInfo) => {
   await page.goto("/sponsors.html");
 
-  await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
-  const divisionFact = page.locator(".sponsor-facts li").first();
-  await divisionFact.scrollIntoViewIfNeeded();
-  await expect(divisionFact).toContainText("Two");
-  await expect(divisionFact).toContainText("Varsity divisions");
-  await expect(page.locator('[data-count-up="10"]')).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Partner with the UBL." })).toBeVisible();
+  const heroMark = page.locator(".sponsor-hero-lockup img");
+  await expect(heroMark).toHaveAttribute("alt", "Upstate Basketball League");
+  await expect(page.locator(".sponsor-hero-lockup span")).toHaveCount(0);
+  expect(await heroMark.evaluate((mark) => mark.getBoundingClientRect().width)).toBeGreaterThan(80);
+  await expect(heroMark).toHaveCSS("filter", /drop-shadow/);
+  const supportHeadingOffset = await page.getByRole("heading", { name: "What sponsorship supports" }).evaluate((heading) => {
+    const headingRect = heading.getBoundingClientRect();
+    const sectionRect = heading.closest(".sponsor-section-inner").getBoundingClientRect();
+    return Math.abs((headingRect.left + headingRect.width / 2) - (sectionRect.left + sectionRect.width / 2));
+  });
+  expect(supportHeadingOffset).toBeLessThan(1);
+  const supportItems = page.locator(".sponsor-support-grid article");
+  await expect(supportItems).toHaveCount(3);
+  await expect(supportItems).toContainText([
+    "Championship awards",
+    "League operations",
+    "Digital league experience"
+  ]);
+  await expect(page.locator("[data-sponsor-story], .sponsor-option-grid, .sponsor-facts")).toHaveCount(0);
+  await expect(page.locator(".sponsor-preview-art > img")).toHaveAttribute(
+    "src",
+    "assets/ubl/ubl-kingdom-impact-huddle.webp"
+  );
+  await expect(page.getByRole("heading", { name: "Sponsor visibility" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Start a conversation" })).toHaveAttribute(
     "href",
     "mailto:Info.upstatebasketballleague@gmail.com?subject=UBL%20Sponsorship%20Inquiry"
   );
-
-  const story = page.locator("[data-sponsor-story]");
-  await expect(story.locator("[data-sponsor-step]")).toHaveCount(3);
-  await expect(story).toHaveAttribute("data-active-scene", "digital");
-  await expect(story.locator('[data-sponsor-scene="digital"]')).toHaveClass(/is-active/);
-
-  await story.getByRole("button", { name: "02 Game night" }).click();
-  await expect(story).toHaveAttribute("data-active-scene", "gamenight");
-  await expect(story.locator('[data-sponsor-scene="gamenight"]')).toHaveClass(/is-active/);
-  await expect(story.getByRole("button", { name: "02 Game night" })).toHaveAttribute("aria-pressed", "true");
-
-  await story.getByRole("button", { name: "03 Community" }).click();
-  await expect(story).toHaveAttribute("data-active-scene", "community");
-  await expect(story.locator('[data-sponsor-step="community"]')).toHaveClass(/is-active/);
 
   const partnerCategories = page.locator(".sponsor-logo-group:not([aria-hidden]) li");
   await expect(partnerCategories).toHaveCount(5);
