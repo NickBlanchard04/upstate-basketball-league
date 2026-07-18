@@ -455,10 +455,14 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
-test("sponsorship page moves through three partner views and displays sample brand logos", async ({ page }) => {
+test("sponsorship page moves through three partner views and displays sample brand logos", async ({ page }, testInfo) => {
   await page.goto("/sponsors.html");
 
   await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
+  const teamCount = page.locator('[data-count-up="10"]');
+  await teamCount.scrollIntoViewIfNeeded();
+  await expect(teamCount).toHaveText("10", { timeout: 2500 });
+  await expect(page.locator(".sponsor-facts li").first()).toHaveAttribute("aria-label", "10 teams");
   await expect(page.getByRole("link", { name: "Start a conversation" })).toHaveAttribute(
     "href",
     "mailto:Info.upstatebasketballleague@gmail.com?subject=UBL%20Sponsorship%20Inquiry"
@@ -483,8 +487,18 @@ test("sponsorship page moves through three partner views and displays sample bra
   await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Google logo"]')).toHaveAttribute("src", "assets/sponsors/google.svg");
   await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Microsoft logo"]')).toHaveAttribute("src", "assets/sponsors/microsoft.svg");
   await expect(page.locator('.sponsor-logo-group[aria-hidden="true"] img:not([alt=""])')).toHaveCount(0);
-  await expect(page.locator(".sponsor-logo-track")).toHaveCSS("animation-name", "sponsor-marquee");
+  const sponsorLogoTrack = page.locator(".sponsor-logo-track");
+  await expect(sponsorLogoTrack).toHaveCSS("animation-name", "sponsor-marquee");
+  await expect(sponsorLogoTrack).toHaveCSS("animation-play-state", "running");
+  if (testInfo.project.name.startsWith("desktop")) {
+    const nvidiaLogo = page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="NVIDIA logo"]');
+    await nvidiaLogo.hover({ force: true });
+    await expect(nvidiaLogo).toHaveCSS("filter", /grayscale\(0\)/);
+    await expect(sponsorLogoTrack).toHaveCSS("animation-play-state", "running");
+  }
   await expect(page.locator(".sponsor-sample-note")).toContainText("not affiliated with or sponsors of the UBL");
+  await expect(page.locator("footer")).toHaveCount(0);
+  await expect(page.locator(".sponsor-footer-bottom")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 

@@ -7,7 +7,7 @@ All brand names and marks remain the property of their respective owners.
 Sources retrieved July 17, 2026:
 
 - Google, NVIDIA, AMD, Intel, Epic Games, Rockstar Games, McDonald's, and
-  Burger King: Simple Icons v16 SVG package.
+  Burger King: Simple Icons brand-color SVGs.
 - Microsoft: official Microsoft Learn branding asset.
 - Chipotle: Chipotle Mexican Grill logo file hosted by Wikimedia.
 

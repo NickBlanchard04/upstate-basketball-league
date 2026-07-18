@@ -1,10 +1,35 @@
+const reducedMotionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+const sponsorCounts = [...document.querySelectorAll("[data-count-up]")];
+
+sponsorCounts.forEach((count) => {
+  const target = Number(count.dataset.countUp);
+  if (!Number.isFinite(target) || reducedMotionPreference.matches || !("IntersectionObserver" in window)) return;
+
+  count.textContent = "0";
+  const countObserver = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    countObserver.disconnect();
+    const startedAt = performance.now();
+    const duration = 1100;
+
+    function updateCount(now) {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const easedProgress = 1 - ((1 - progress) ** 3);
+      count.textContent = String(Math.round(target * easedProgress));
+      if (progress < 1) requestAnimationFrame(updateCount);
+    }
+
+    requestAnimationFrame(updateCount);
+  }, { threshold: 0.65 });
+  countObserver.observe(count);
+});
+
 const sponsorStory = document.querySelector("[data-sponsor-story]");
 
 if (sponsorStory) {
   const sponsorSteps = [...sponsorStory.querySelectorAll("[data-sponsor-step]")];
   const sponsorScenes = [...sponsorStory.querySelectorAll("[data-sponsor-scene]")];
   const sponsorControls = [...sponsorStory.querySelectorAll("[data-sponsor-target]")];
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function activateSponsorScene(id) {
     if (!sponsorScenes.some((scene) => scene.dataset.sponsorScene === id)) return;
@@ -23,7 +48,7 @@ if (sponsorStory) {
       const id = control.dataset.sponsorTarget;
       activateSponsorScene(id);
       sponsorSteps.find((step) => step.dataset.sponsorStep === id)?.scrollIntoView({
-        behavior: reducedMotion.matches ? "auto" : "smooth",
+        behavior: reducedMotionPreference.matches ? "auto" : "smooth",
         block: "center"
       });
     });
