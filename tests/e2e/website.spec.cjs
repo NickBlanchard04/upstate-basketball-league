@@ -199,6 +199,46 @@ test("standings removes the lower court graphic and explains desktop stat abbrev
   }
 });
 
+test("standings uses the shared site header on desktop and mobile", async ({ page }) => {
+  const readHeaderStyle = () => page.evaluate(() => {
+    const header = document.querySelector(".site-header");
+    const inner = document.querySelector(".header-inner");
+    const brand = document.querySelector(".brand");
+    const logo = document.querySelector(".brand img");
+    const navLink = document.querySelector(".site-nav a");
+
+    return {
+      headerHeight: header.getBoundingClientRect().height,
+      headerBorder: getComputedStyle(header).borderBottom,
+      innerHeight: inner.getBoundingClientRect().height,
+      brandFont: getComputedStyle(brand).fontFamily,
+      brandSize: getComputedStyle(brand).fontSize,
+      logoWidth: logo.getBoundingClientRect().width,
+      logoHeight: logo.getBoundingClientRect().height,
+      navFont: getComputedStyle(navLink).fontFamily,
+      navSize: getComputedStyle(navLink).fontSize,
+    };
+  });
+
+  await page.goto("/index.html");
+  await page.evaluate(() => document.fonts.ready);
+  const sharedHeaderStyle = await readHeaderStyle();
+
+  await page.goto("/standings.html");
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('link[rel="stylesheet"][href^="styles.css?v="]')).toHaveCount(1);
+  await expect(page.locator(".menu-toggle > span:not(.sr-only)")).toHaveCount(3);
+  expect(await readHeaderStyle()).toEqual(sharedHeaderStyle);
+
+  if (page.viewportSize().width < 1024) {
+    const menuToggle = page.locator(".menu-toggle");
+    await expect(menuToggle).toHaveAccessibleName("Open menu");
+    await menuToggle.click();
+    await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
+    await expect(menuToggle).toHaveAccessibleName("Close menu");
+  }
+});
+
 test("team directory separates each division and opens the right profile", async ({ page }, testInfo) => {
   await page.goto("/teams.html");
 

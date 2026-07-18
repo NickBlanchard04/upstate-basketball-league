@@ -2,20 +2,22 @@ let league = window.UBL_DATA;
 
 const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
+const menuToggleLabel = menuToggle?.querySelector(".sr-only");
+siteNav?.querySelector("a.active")?.setAttribute("aria-current", "page");
 
 function closeMenu() {
   menuToggle?.setAttribute("aria-expanded", "false");
-  if (menuToggle) menuToggle.textContent = "Menu";
+  if (menuToggleLabel) menuToggleLabel.textContent = "Open menu";
   siteNav?.classList.remove("open");
   document.body.classList.remove("menu-open");
 }
 
 menuToggle?.addEventListener("click", () => {
-  const willOpen = menuToggle.getAttribute("aria-expanded") !== "true";
-  menuToggle.setAttribute("aria-expanded", String(willOpen));
-  menuToggle.textContent = willOpen ? "Close" : "Menu";
-  siteNav?.classList.toggle("open", willOpen);
-  document.body.classList.toggle("menu-open", willOpen);
+  const open = menuToggle.getAttribute("aria-expanded") === "true";
+  menuToggle.setAttribute("aria-expanded", String(!open));
+  if (menuToggleLabel) menuToggleLabel.textContent = open ? "Open menu" : "Close menu";
+  siteNav?.classList.toggle("open", !open);
+  document.body.classList.toggle("menu-open", !open);
 });
 
 siteNav?.querySelectorAll("a").forEach((link) => {
@@ -27,7 +29,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("resize", () => {
-  if (window.innerWidth > 880) closeMenu();
+  if (window.innerWidth >= 1024) closeMenu();
 });
 
 function programById(id) {
