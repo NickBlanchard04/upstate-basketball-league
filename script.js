@@ -2,25 +2,6 @@ let league = window.UBL_DATA;
 const core = window.UBL_CORE;
 const { ACTIVE_STATUSES, FINAL_STATUSES, escapeHtml, safeImageUrl } = core;
 
-const menuToggle = document.querySelector(".menu-toggle");
-const siteNav = document.querySelector(".site-nav");
-siteNav?.querySelector("a.active")?.setAttribute("aria-current", "page");
-
-menuToggle?.addEventListener("click", () => {
-  const open = menuToggle.getAttribute("aria-expanded") === "true";
-  menuToggle.setAttribute("aria-expanded", String(!open));
-  siteNav.classList.toggle("open", !open);
-  document.body.classList.toggle("menu-open", !open);
-});
-
-siteNav?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    menuToggle?.setAttribute("aria-expanded", "false");
-    siteNav.classList.remove("open");
-    document.body.classList.remove("menu-open");
-  });
-});
-
 function setIdentityFactExpanded(item, expanded) {
   const button = item.querySelector(".identity-toggle");
   const panel = item.querySelector(".identity-panel");

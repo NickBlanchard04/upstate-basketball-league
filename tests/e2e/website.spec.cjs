@@ -65,6 +65,86 @@ test("all public routes render meaningful content without runtime errors", async
   });
 });
 
+test("every public page uses the Standings header and shared menu behavior", async ({ page }, testInfo) => {
+  const routes = [
+    "/standings.html",
+    "/index.html",
+    "/schedule.html",
+    "/teams.html",
+    "/bracket.html",
+    "/rules.html",
+    "/gallery.html",
+    "/sponsors.html",
+    "/about.html",
+    "/404.html"
+  ];
+  let standingsHeader;
+
+  for (const route of routes) {
+    await page.goto(route);
+    await expect(page.locator('link[href^="ubl-header.css"]')).toHaveCount(1);
+    await expect(page.locator('script[src^="ubl-header.js"]')).toHaveCount(1);
+    await expect(page.locator(".site-nav a")).toHaveCount(9);
+
+    const header = await page.locator(".site-header").evaluate((element) => {
+      const logo = element.querySelector(".brand img");
+      const nav = element.querySelector(".site-nav");
+      const styles = getComputedStyle(element);
+      return {
+        height: Math.round(element.getBoundingClientRect().height * 10) / 10,
+        logoWidth: Math.round(logo.getBoundingClientRect().width * 10) / 10,
+        borderBottomColor: styles.borderBottomColor,
+        borderBottomStyle: styles.borderBottomStyle,
+        borderBottomWidth: styles.borderBottomWidth,
+        navPosition: getComputedStyle(nav).position
+      };
+    });
+
+    standingsHeader ||= header;
+    expect(header).toEqual(standingsHeader);
+
+    const activeLink = page.locator(".site-nav a.active");
+    if (route === "/404.html") {
+      await expect(activeLink).toHaveCount(0);
+    } else {
+      await expect(activeLink).toHaveCount(1);
+      await expect(activeLink).toHaveAttribute("aria-current", "page");
+    }
+
+    const menuToggle = page.locator(".menu-toggle");
+    if (testInfo.project.name === "mobile-chromium") {
+      await expect(menuToggle).toBeVisible();
+      await expect(menuToggle).toHaveText("Menu");
+      await menuToggle.click();
+      await expect(menuToggle).toHaveText("Close");
+      await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
+      await expect(page.locator(".site-nav")).toBeVisible();
+      await expect(page.locator("body")).toHaveClass(/menu-open/);
+      const ticker = page.locator(".score-ticker");
+      if (await ticker.count()) {
+        expect(await page.locator(".site-header").evaluate((element) => Number(getComputedStyle(element).zIndex)))
+          .toBeGreaterThan(await ticker.evaluate((element) => Number(getComputedStyle(element).zIndex)));
+      }
+      await page.keyboard.press("Escape");
+      await expect(menuToggle).toHaveText("Menu");
+      await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+    } else {
+      await expect(menuToggle).toBeHidden();
+      await expect(page.locator(".site-nav")).toBeVisible();
+    }
+
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  }
+
+  if (testInfo.project.name === "desktop-chromium") {
+    await page.goto("/index.html");
+    const scheduleLink = page.locator('.site-nav a[href="schedule.html"]');
+    const underlineBefore = await scheduleLink.evaluate((link) => getComputedStyle(link, "::after").transform);
+    await scheduleLink.hover();
+    await expect.poll(() => scheduleLink.evaluate((link) => getComputedStyle(link, "::after").transform)).not.toBe(underlineBefore);
+  }
+});
+
 async function useLiveFeed(page, sourceFeed) {
   await page.unroute(liveFeedUrlPattern);
   await page.route(liveFeedUrlPattern, (route) => route.fulfill({ json: sourceFeed }));
