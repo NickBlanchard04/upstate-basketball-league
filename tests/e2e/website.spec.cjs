@@ -169,8 +169,8 @@ test("schedule week, division, and map controls work", async ({ page }) => {
 
 test("standings and separate division brackets render from league data", async ({ page }) => {
   await page.goto("/standings.html");
-  await page.getByRole("tab", { name: "Girls Varsity" }).click();
-  await expect(page.locator("[data-standings-body]")).toContainText("HV Flames");
+  await expect(page.locator("[data-standings-division='Girls Varsity']")).toContainText("HV Flames");
+  await expect(page.locator("[data-standings-division='Boys Varsity']")).toContainText("HV Rocks");
   await page.goto("/bracket.html");
   await expect(page.locator("[data-bracket='Boys Varsity']")).toContainText("Winner advances to play Seed 1");
   await expect(page.locator("[data-bracket='Girls Varsity']")).toContainText("Winner advances to play Seed 1");
@@ -246,7 +246,7 @@ test("completed score updates schedule, standings, and bracket seeds", async ({ 
   await page.goto("/schedule.html");
   await expect(page.locator("[data-game-id='ubl-001']")).toContainText("41 - 50");
   await page.goto("/standings.html");
-  const firstRow = page.locator("[data-standings-body] tr").first();
+  const firstRow = page.locator("[data-standings-division='Boys Varsity'] tr").first();
   await expect(firstRow).toContainText("Perth");
   await expect(firstRow).toContainText("1");
   await page.goto("/bracket.html");

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="View Boys Varsity and Girls Varsity Upstate Basketball League standings.">
+  <meta name="description" content="View Girls Varsity and Boys Varsity Upstate Basketball League standings, records, winning percentage, points for, points against, and point differential.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#00152e">
   <title>Standings | Upstate Basketball League</title>
@@ -11,66 +11,143 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Upstate Basketball League">
   <meta property="og:title" content="Standings | Upstate Basketball League">
-  <meta property="og:description" content="Follow live Boys Varsity and Girls Varsity UBL standings throughout the 2026-27 season.">
+  <meta property="og:description" content="Follow live Girls Varsity and Boys Varsity UBL standings throughout the 2026–27 season.">
   <meta property="og:url" content="https://nickblanchard04.github.io/upstate-basketball-league/standings.html">
   <meta property="og:image" content="https://nickblanchard04.github.io/upstate-basketball-league/assets/ubl-championship-hero.jpg">
   <meta property="og:image:alt" content="Upstate Basketball League championship trophy and basketball players">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="UBL Standings">
-  <meta name="twitter:description" content="Follow live Boys Varsity and Girls Varsity UBL standings throughout the 2026-27 season.">
+  <meta name="twitter:description" content="Follow live Girls Varsity and Boys Varsity UBL standings throughout the 2026–27 season.">
   <meta name="twitter:image" content="https://nickblanchard04.github.io/upstate-basketball-league/assets/ubl-championship-hero.jpg">
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/barlow-condensed-900-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/ibm-plex-sans-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
-  <link rel="stylesheet" href="styles.css?v=20260716-1">
+  <link rel="stylesheet" href="ubl-standings.css?v=20260717-2">
   <script src="config.js?v=20260717-2" defer></script>
   <script src="analytics.js?v=20260716-1" defer></script>
   <script src="league-core.js?v=20260716-2" defer></script>
   <script src="data.js?v=20260716-2" defer></script>
   <script src="data-loader.js?v=20260717-3" defer></script>
-  <script src="script.js?v=20260716-2" defer></script>
+  <script src="ubl-standings.js?v=20260717-2" defer></script>
 </head>
-<body>
+<body class="standings-page">
   <a class="skip-link" href="#main">Skip to content</a>
+
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="index.html" aria-label="Upstate Basketball League home"><img src="assets/optimized/ubl-logo-192.webp" alt=""><span><strong>Upstate</strong> Basketball League</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
+      <a class="brand" href="index.html" aria-label="Upstate Basketball League home">
+        <img src="assets/optimized/ubl-logo-192.webp" alt="">
+        <span><strong>Upstate</strong> Basketball League</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a class="active" href="standings.html">Standings</a><a href="teams.html">Teams</a>
-        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="sponsors.html">Sponsors</a><a href="about.html">About</a>
+        <a href="index.html">Home</a>
+        <a href="schedule.html">Schedule</a>
+        <a class="active" href="standings.html" aria-current="page">Standings</a>
+        <a href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a>
+        <a href="rules.html">League standards</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="sponsors.html">Sponsors</a>
+        <a href="about.html">About</a>
       </nav>
     </div>
   </header>
 
-  <main class="subpage-main" id="main">
-    <section class="page-banner">
-      <div><h1>Standings</h1><p>Track each varsity division and see how the five-team postseason field is taking shape.</p></div>
-      <strong>League play is planned to begin Dec 3, 2026</strong>
+  <main id="main">
+    <section class="standings-hero" aria-labelledby="standings-title">
+      <div class="division-field division-field-girls" aria-hidden="true"></div>
+      <div class="division-field division-field-boys" aria-hidden="true"></div>
+
+      <div class="standings-content">
+        <header class="standings-masthead">
+          <p class="season-kicker">2026&ndash;27 regular season</p>
+          <h1 id="standings-title">Standings</h1>
+          <p class="season-status">League play begins December 3</p>
+        </header>
+
+        <div class="standings-layout">
+          <section class="division-panel girls-panel" aria-labelledby="girls-division-title">
+            <header class="division-title" id="girls-division-title">
+              <span>Girls Division</span>
+              <strong>Varsity standings</strong>
+            </header>
+            <div class="division-table-wrap">
+              <table class="division-table">
+                <caption>Girls Varsity standings</caption>
+                <thead>
+                  <tr>
+                    <th class="seed-column" scope="col">Seed</th>
+                    <th scope="col">Team</th>
+                    <th scope="col">W&ndash;L</th>
+                    <th scope="col">PCT</th>
+                    <th scope="col">PF</th>
+                    <th scope="col">PA</th>
+                    <th scope="col">Diff</th>
+                  </tr>
+                </thead>
+                <tbody data-standings-division="Girls Varsity"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="seed-rail" aria-label="Playoff seed positions">
+            <div class="seed-brand"><img src="assets/optimized/ubl-logo-192.webp" alt=""></div>
+            <strong>Seed</strong>
+            <ol>
+              <li><span>1</span></li>
+              <li><span>2</span></li>
+              <li><span>3</span></li>
+              <li><span>4</span></li>
+              <li><span>5</span></li>
+            </ol>
+          </aside>
+
+          <section class="division-panel boys-panel" aria-labelledby="boys-division-title">
+            <header class="division-title" id="boys-division-title">
+              <span>Boys Division</span>
+              <strong>Varsity standings</strong>
+            </header>
+            <div class="division-table-wrap">
+              <table class="division-table">
+                <caption>Boys Varsity standings</caption>
+                <thead>
+                  <tr>
+                    <th class="seed-column" scope="col">Seed</th>
+                    <th scope="col">Team</th>
+                    <th scope="col">W&ndash;L</th>
+                    <th scope="col">PCT</th>
+                    <th scope="col">PF</th>
+                    <th scope="col">PA</th>
+                    <th scope="col">Diff</th>
+                  </tr>
+                </thead>
+                <tbody data-standings-division="Boys Varsity"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <footer class="board-footer">
+          <p><span>Girls Varsity</span><strong>Left court</strong></p>
+          <img src="assets/optimized/ubl-logo-192.webp" alt="Upstate Basketball League">
+          <p><span>Boys Varsity</span><strong>Right court</strong></p>
+        </footer>
+        <p class="standings-freshness" data-freshness aria-live="polite">Loading current league data…</p>
+      </div>
     </section>
 
-    <section class="panel standings-page-panel section-wrap" aria-labelledby="standings-page-title">
-      <div class="section-title section-title-inline">
-        <div><h2 id="standings-page-title">Division standings</h2><span>Records begin with league play</span></div>
-        <a href="bracket.html">How playoffs work</a>
+    <section class="standings-note" aria-labelledby="playoff-path-title">
+      <div>
+        <p>Postseason format</p>
+        <h2 id="playoff-path-title">Five teams. One championship path.</h2>
+        <span>Seed 4 plays Seed 5 in the play-in game. The winner advances to face Seed 1, while Seed 2 meets Seed 3 in the other semifinal.</span>
       </div>
-      <div class="tabs" role="tablist" aria-label="Standings division">
-        <button class="active" type="button" role="tab" aria-selected="true" data-standings-filter="Boys Varsity">Boys Varsity</button>
-        <button type="button" role="tab" aria-selected="false" data-standings-filter="Girls Varsity">Girls Varsity</button>
-      </div>
-      <p class="data-freshness" data-freshness aria-live="polite"></p>
-      <div class="table-wrap standings-table-wrap">
-        <table>
-          <thead><tr><th>Seed</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>PF</th><th>PA</th><th>Diff</th></tr></thead>
-          <tbody data-standings-body></tbody>
-        </table>
-      </div>
-      <div class="standings-explainer">
-        <strong>Five-team playoff path</strong>
-        <p>Seed 4 plays Seed 5 in the play-in game. The winner advances to play Seed 1, while Seed 2 plays Seed 3 in the other semifinal.</p>
-      </div>
+      <a href="bracket.html">See the bracket</a>
     </section>
   </main>
+
+  <noscript><p class="noscript-message">Enable JavaScript to load the current UBL standings.</p></noscript>
 </body>
 </html>
