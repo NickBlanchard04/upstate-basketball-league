@@ -24,7 +24,7 @@
   <link rel="preload" href="assets/fonts/ibm-plex-sans-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="assets/optimized/ubl-logo-64.png">
   <link rel="stylesheet" href="styles.css?v=20260716-1">
-  <link rel="stylesheet" href="sponsors.css?v=20260717-1">
+  <link rel="stylesheet" href="sponsors.css?v=20260717-2">
   <script src="config.js?v=20260717-2" defer></script>
   <script src="analytics.js?v=20260716-1" defer></script>
   <script src="league-core.js?v=20260716-2" defer></script>
@@ -192,21 +192,37 @@
     <section class="sponsor-logo-preview" aria-labelledby="logo-preview-title">
       <div class="sponsor-logo-heading">
         <div><span>Sample sponsor placement</span><h2 id="logo-preview-title">Your business could be here.</h2></div>
-        <p>See how sponsor names can appear together in a clean, season-long partner rail.</p>
+        <p>See how sponsor logos can appear together in a clean, season-long partner rail.</p>
       </div>
-      <div class="sponsor-logo-window">
+      <div class="sponsor-logo-window" id="sponsor-logo-rail">
         <div class="sponsor-logo-track">
-          <ul class="sponsor-logo-group" aria-label="Example sponsor names">
-            <li class="sample-google">Google</li><li class="sample-microsoft">Microsoft</li><li class="sample-nvidia">NVIDIA</li><li class="sample-amd">AMD</li><li class="sample-intel">intel</li>
-            <li class="sample-epic">EPIC GAMES</li><li class="sample-rockstar">ROCKSTAR GAMES</li><li class="sample-chipotle">CHIPOTLE</li><li class="sample-mcdonalds">McDonald&apos;s</li><li class="sample-burgerking">BURGER KING</li>
+          <ul class="sponsor-logo-group" aria-label="Example sponsor logos">
+            <li><img src="assets/sponsors/google.svg" alt="Google logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/microsoft.svg" alt="Microsoft logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/nvidia.svg" alt="NVIDIA logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/amd.svg" alt="AMD logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/intel.svg" alt="Intel logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/epic-games.svg" alt="Epic Games logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/rockstar-games.svg" alt="Rockstar Games logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/chipotle.svg" alt="Chipotle logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/mcdonalds.svg" alt="McDonald&apos;s logo" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/burger-king.svg" alt="Burger King logo" width="64" height="64" decoding="async"></li>
           </ul>
           <ul class="sponsor-logo-group" aria-hidden="true">
-            <li class="sample-google">Google</li><li class="sample-microsoft">Microsoft</li><li class="sample-nvidia">NVIDIA</li><li class="sample-amd">AMD</li><li class="sample-intel">intel</li>
-            <li class="sample-epic">EPIC GAMES</li><li class="sample-rockstar">ROCKSTAR GAMES</li><li class="sample-chipotle">CHIPOTLE</li><li class="sample-mcdonalds">McDonald&apos;s</li><li class="sample-burgerking">BURGER KING</li>
+            <li><img src="assets/sponsors/google.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/microsoft.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/nvidia.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/amd.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/intel.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/epic-games.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/rockstar-games.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/chipotle.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/mcdonalds.svg" alt="" width="64" height="64" decoding="async"></li>
+            <li><img src="assets/sponsors/burger-king.svg" alt="" width="64" height="64" decoding="async"></li>
           </ul>
         </div>
       </div>
-      <p class="sponsor-sample-note">Placement preview only. Example brands are not affiliated with or sponsors of the UBL.</p>
+      <p class="sponsor-sample-note" role="note">Placement preview only. Example brands are not affiliated with or sponsors of the UBL.</p>
     </section>
 
     <div class="sponsor-footer-bottom">

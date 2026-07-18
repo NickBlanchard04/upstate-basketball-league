@@ -455,7 +455,7 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
-test("sponsorship page moves through three partner views and labels sample brands", async ({ page }) => {
+test("sponsorship page moves through three partner views and displays sample brand logos", async ({ page }) => {
   await page.goto("/sponsors.html");
 
   await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
@@ -479,6 +479,10 @@ test("sponsorship page moves through three partner views and labels sample brand
   await expect(story.locator('[data-sponsor-step="community"]')).toHaveClass(/is-active/);
 
   await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li")).toHaveCount(10);
+  await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) img")).toHaveCount(10);
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Google logo"]')).toHaveAttribute("src", "assets/sponsors/google.svg");
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Microsoft logo"]')).toHaveAttribute("src", "assets/sponsors/microsoft.svg");
+  await expect(page.locator('.sponsor-logo-group[aria-hidden="true"] img:not([alt=""])')).toHaveCount(0);
   await expect(page.locator(".sponsor-logo-track")).toHaveCSS("animation-name", "sponsor-marquee");
   await expect(page.locator(".sponsor-sample-note")).toContainText("not affiliated with or sponsors of the UBL");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);

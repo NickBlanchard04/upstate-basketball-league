@@ -956,24 +956,19 @@
 
 .sponsor-logo-group li {
   flex: 0 0 auto;
-  color: #4d535b;
-  filter: grayscale(1);
-  font-size: clamp(1.05rem, 3vw, 1.65rem);
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
+  width: clamp(4.4rem, 8vw, 6.2rem);
+  height: clamp(3.4rem, 6vw, 4.6rem);
+  display: grid;
+  place-items: center;
 }
 
-.sample-google { font-family: Arial, sans-serif; font-weight: 600 !important; letter-spacing: -0.07em; }
-.sample-microsoft { font-family: Arial, sans-serif; font-weight: 600 !important; }
-.sample-nvidia { font-style: italic; letter-spacing: 0.04em; }
-.sample-amd { font-style: italic; letter-spacing: 0.08em; }
-.sample-intel { padding: 0.25rem 0.55rem; border: 2px solid currentColor; border-radius: 50%; font-family: Arial, sans-serif; text-transform: lowercase; }
-.sample-epic { padding: 0.2rem 0.35rem; border: 2px solid currentColor; font-size: clamp(0.8rem, 2.5vw, 1.2rem) !important; }
-.sample-rockstar { font-family: var(--display); letter-spacing: 0.04em; }
-.sample-chipotle { font-family: Georgia, serif; letter-spacing: 0.08em; }
-.sample-mcdonalds { font-family: Arial, sans-serif; font-weight: 700 !important; }
-.sample-burgerking { font-family: var(--display); letter-spacing: -0.02em; }
+.sponsor-logo-group img {
+  width: min(100%, 3.55rem);
+  height: min(100%, 3.55rem);
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.68;
+}
 
 @keyframes sponsor-marquee {
   to { transform: translateX(-50%); }
@@ -988,7 +983,7 @@
   width: min(calc(100% - 2rem), var(--max));
   margin: 2rem auto 0;
   color: #525963;
-  font-size: 0.58rem;
+  font-size: 0.68rem;
 }
 
 .sponsor-footer-bottom {
