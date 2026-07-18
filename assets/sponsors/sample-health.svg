@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Sample health business mark</title>
+  <circle cx="32" cy="32" r="27" fill="#041a38"/>
+  <circle cx="32" cy="32" r="21" fill="#e31331"/>
+  <path fill="#fff" d="M27 17h10v10h10v10H37v10H27V37H17V27h10z"/>
+</svg>

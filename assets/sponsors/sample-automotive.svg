@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Sample automotive business mark</title>
+  <circle cx="32" cy="32" r="27" fill="#041a38"/>
+  <circle cx="32" cy="32" r="19" fill="#e9edf4"/>
+  <circle cx="32" cy="32" r="7" fill="#e31331"/>
+  <path fill="#073467" d="m29 13 6 1 1 11-8 2zm22 16 1 6-11 1-2-8zM35 51l-6-1-1-11 8-2zM13 35l-1-6 11-1 2 8z"/>
+</svg>

@@ -474,7 +474,7 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(1);
 });
 
-test("sponsorship page moves through three partner views and displays sample brand logos", async ({ page }, testInfo) => {
+test("sponsorship page moves through three partner views and displays safe sample marks", async ({ page }, testInfo) => {
   await page.goto("/sponsors.html");
 
   await expect(page.getByRole("heading", { name: "Put your business courtside." })).toBeVisible();
@@ -501,21 +501,26 @@ test("sponsorship page moves through three partner views and displays sample bra
   await expect(story).toHaveAttribute("data-active-scene", "community");
   await expect(story.locator('[data-sponsor-step="community"]')).toHaveClass(/is-active/);
 
+  const sponsorOptions = page.locator("[data-sponsor-option]");
+  await expect(sponsorOptions).toHaveCount(6);
+  await expect(sponsorOptions.first().getByRole("heading", { name: "Digital sponsorship" })).toBeVisible();
+  await expect(page.locator('[data-sponsor-option="champions-legacy"]')).toContainText("boys' and girls' division champions");
+
   await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) li")).toHaveCount(10);
   await expect(page.locator(".sponsor-logo-group:not([aria-hidden]) img")).toHaveCount(10);
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Google logo"]')).toHaveAttribute("src", "assets/sponsors/google.svg");
-  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Microsoft logo"]')).toHaveAttribute("src", "assets/sponsors/microsoft.svg");
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Sample digital business mark"]')).toHaveAttribute("src", "assets/sponsors/sample-digital.svg");
+  await expect(page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Sample financial business mark"]')).toHaveAttribute("src", "assets/sponsors/sample-finance.svg");
   await expect(page.locator('.sponsor-logo-group[aria-hidden="true"] img:not([alt=""])')).toHaveCount(0);
   const sponsorLogoTrack = page.locator(".sponsor-logo-track");
   await expect(sponsorLogoTrack).toHaveCSS("animation-name", "sponsor-marquee");
   await expect(sponsorLogoTrack).toHaveCSS("animation-play-state", "running");
   if (testInfo.project.name.startsWith("desktop")) {
-    const nvidiaLogo = page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="NVIDIA logo"]');
-    await nvidiaLogo.hover({ force: true });
-    await expect(nvidiaLogo).toHaveCSS("filter", /grayscale\(0\)/);
+    const healthMark = page.locator('.sponsor-logo-group:not([aria-hidden]) img[alt="Sample health business mark"]');
+    await healthMark.hover({ force: true });
+    await expect(healthMark).toHaveCSS("filter", /grayscale\(0\)/);
     await expect(sponsorLogoTrack).toHaveCSS("animation-play-state", "running");
   }
-  await expect(page.locator(".sponsor-sample-note")).toContainText("not affiliated with or sponsors of the UBL");
+  await expect(page.locator(".sponsor-sample-note")).toContainText("do not represent real businesses or confirmed UBL sponsors");
   await expect(page.locator("footer")).toHaveCount(0);
   await expect(page.locator(".sponsor-footer-bottom")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);

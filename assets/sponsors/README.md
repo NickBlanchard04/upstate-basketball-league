@@ -1,15 +1,13 @@
 # Sample sponsor logo assets
 
-These logos appear only in the clearly labeled sponsorship-placement preview on
-the UBL sponsorship page. They do not represent UBL sponsors or affiliations.
-All brand names and marks remain the property of their respective owners.
+The `sample-*.svg` files are original, resolution-independent marks created for
+the UBL sponsorship-placement preview. They demonstrate presentation for common
+local sponsor categories without representing real businesses or affiliations.
 
-Sources retrieved July 17, 2026:
+Do not treat a sample mark as confirmed sponsor artwork. When a partnership is
+finalized, replace it only with an approved logo supplied by the sponsor and
+retain the original file rather than recreating or recoloring the brand mark.
 
-- Google, NVIDIA, AMD, Intel, Epic Games, Rockstar Games, McDonald's, and
-  Burger King: Simple Icons brand-color SVGs.
-- Microsoft: official Microsoft Learn branding asset.
-- Chipotle: Chipotle Mexican Grill logo file hosted by Wikimedia.
-
-Do not reuse these examples as confirmed sponsor artwork. Replace an example
-with the sponsor-provided approved logo when a partnership is finalized.
+The previous third-party corporate logo examples were removed after an audit of
+the companies' official trademark and media-use guidance. The audit is recorded
+in `docs/SPONSOR_LOGO_AUDIT.md`.
