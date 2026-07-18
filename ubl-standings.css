@@ -59,9 +59,9 @@
   --body: "IBM Plex Sans", sans-serif;
   --page-pad: clamp(1rem, 3vw, 2.75rem);
   --max: 92rem;
-  --division-title-h: 4.35rem;
-  --table-head-h: 2.65rem;
-  --standing-row-h: 5.15rem;
+  --division-title-h: 5rem;
+  --table-head-h: 3.05rem;
+  --standing-row-h: 5.92rem;
 }
 
 * {
@@ -236,7 +236,7 @@ p {
 }
 
 .standings-content {
-  width: min(100%, 100rem);
+  width: min(100%, 115rem);
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -280,7 +280,7 @@ p {
 
 .standings-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 4.75rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 5.45rem minmax(0, 1fr);
   align-items: start;
 }
 
@@ -290,7 +290,7 @@ p {
 
 .division-title {
   height: var(--division-title-h);
-  padding: 0.55rem clamp(0.75rem, 1.5vw, 1.25rem);
+  padding: 0.63rem clamp(0.86rem, 1.725vw, 1.44rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -309,12 +309,12 @@ p {
 }
 
 .division-title span {
-  font: 900 clamp(1.75rem, 2.8vw, 2.55rem)/0.9 var(--display);
+  font: 900 clamp(2rem, 3.2vw, 2.93rem)/0.9 var(--display);
   letter-spacing: -0.02em;
 }
 
 .division-title strong {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   letter-spacing: 0.09em;
 }
 
@@ -347,11 +347,11 @@ p {
 }
 
 .division-table th {
-  padding: 0.45rem 0.3rem;
+  padding: 0.52rem 0.35rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   color: var(--muted-light);
   background: rgba(2, 15, 34, 0.92);
-  font: 800 clamp(0.62rem, 0.85vw, 0.76rem)/1 var(--body);
+  font: 800 clamp(0.71rem, 0.98vw, 0.87rem)/1 var(--body);
   letter-spacing: 0.06em;
   text-align: center;
   text-transform: uppercase;
@@ -359,7 +359,7 @@ p {
 
 .division-table th:nth-child(2) {
   width: 43%;
-  padding-left: 0.85rem;
+  padding-left: 0.98rem;
   text-align: left;
 }
 
@@ -381,11 +381,11 @@ p {
 
 .division-table td {
   height: var(--standing-row-h);
-  padding: 0.45rem 0.3rem;
+  padding: 0.52rem 0.35rem;
   border-top: 0.3rem solid transparent;
   border-bottom: 0.3rem solid transparent;
   background-clip: padding-box;
-  font: 800 clamp(0.82rem, 1.05vw, 1.05rem)/1 var(--display);
+  font: 800 clamp(0.94rem, 1.21vw, 1.21rem)/1 var(--display);
   text-align: center;
 }
 
@@ -408,7 +408,7 @@ p {
 }
 
 .division-table td:nth-child(2) {
-  padding-left: 0.75rem;
+  padding-left: 0.86rem;
   text-align: left;
 }
 
@@ -416,14 +416,14 @@ p {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: clamp(0.45rem, 0.9vw, 0.75rem);
+  gap: clamp(0.52rem, 1.04vw, 0.86rem);
   color: var(--white);
   text-decoration: none;
 }
 
 .team-link img {
-  width: clamp(2.1rem, 2.8vw, 2.65rem);
-  height: clamp(2.1rem, 2.8vw, 2.65rem);
+  width: clamp(2.42rem, 3.22vw, 3.05rem);
+  height: clamp(2.42rem, 3.22vw, 3.05rem);
   flex: 0 0 auto;
   object-fit: contain;
 }
@@ -434,7 +434,7 @@ p {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: clamp(0.98rem, 1.3vw, 1.25rem);
+  font-size: clamp(1.13rem, 1.5vw, 1.44rem);
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
@@ -463,8 +463,8 @@ p {
 }
 
 .seed-brand img {
-  width: 2.75rem;
-  height: 3.3rem;
+  width: 3.16rem;
+  height: 3.8rem;
   object-fit: contain;
 }
 
@@ -475,7 +475,7 @@ p {
   color: var(--white);
   background: var(--navy-950);
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -493,7 +493,7 @@ p {
 }
 
 .seed-rail li span {
-  width: 2.55rem;
+  width: 2.93rem;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -577,7 +577,7 @@ button:focus-visible {
 
 @media (max-width: 72rem) {
   :root {
-    --standing-row-h: 4.65rem;
+    --standing-row-h: 5.35rem;
   }
 
   .header-inner {
@@ -614,8 +614,8 @@ button:focus-visible {
   }
 
   .team-link img {
-    width: 2rem;
-    height: 2rem;
+    width: 2.3rem;
+    height: 2.3rem;
   }
 }
 
@@ -702,9 +702,9 @@ button:focus-visible {
 
 @media (max-width: 40rem) {
   :root {
-    --division-title-h: 3.65rem;
-    --table-head-h: 2.35rem;
-    --standing-row-h: 4rem;
+    --division-title-h: 4.2rem;
+    --table-head-h: 2.7rem;
+    --standing-row-h: 4.6rem;
   }
 
   .standings-hero {
@@ -716,7 +716,7 @@ button:focus-visible {
   }
 
   .division-title span {
-    font-size: 1.75rem;
+    font-size: 2rem;
   }
 
   .division-table th,
@@ -730,21 +730,21 @@ button:focus-visible {
   }
 
   .division-table th {
-    font-size: 0.58rem;
+    font-size: 0.67rem;
     letter-spacing: 0.025em;
   }
 
   .division-table td {
-    font-size: 0.76rem;
+    font-size: 0.87rem;
   }
 
   .team-link {
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
   .team-link img {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 2.07rem;
+    height: 2.07rem;
   }
 
   .team-name {
@@ -753,7 +753,7 @@ button:focus-visible {
 
   .team-short {
     display: block;
-    font-size: 0.88rem;
+    font-size: 1.01rem;
   }
 
   .standings-note {
@@ -770,7 +770,7 @@ button:focus-visible {
 .division-table td.seed-column {
   font-family: "Teko", sans-serif;
   font-weight: 700;
-  font-size: 1.7rem;
+  font-size: 1.95rem;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }

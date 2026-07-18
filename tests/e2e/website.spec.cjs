@@ -271,17 +271,18 @@ test("standings board fills more of the page with solid division color and Teko 
     expect(board).not.toBeNull();
     expect(row).not.toBeNull();
     expect(board.width).toBeGreaterThan(1200);
-    expect(row.height).toBeGreaterThan(80);
+    expect(row.height).toBeGreaterThan(93);
     await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-family", /Teko/);
-    await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-size", "27.2px");
+    await expect(page.locator(".seed-rail li span").first()).toHaveCSS("font-size", "31.2px");
+    expect((await page.locator(".team-link img").first().boundingBox()).width).toBeGreaterThan(38);
   } else {
     const mobileSeed = page.locator(".division-table td.seed-column").first();
     await expect(mobileSeed).toBeVisible();
     await expect(mobileSeed).toHaveCSS("font-family", /Teko/);
-    await expect(mobileSeed).toHaveCSS("font-size", "27.2px");
+    await expect(mobileSeed).toHaveCSS("font-size", "31.2px");
   }
 
-  expect(await page.evaluate(() => document.fonts.check('700 27.2px "Teko"'))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('700 31.2px "Teko"'))).toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 
