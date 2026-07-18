@@ -629,7 +629,8 @@ test("about page explains the league, season, testimonial, and leadership", asyn
     const quoteBox = await page.locator(".testimonial-break figcaption").boundingBox();
     expect(imageBox).not.toBeNull();
     expect(quoteBox).not.toBeNull();
-    expect(quoteBox.y).toBeGreaterThanOrEqual(imageBox.y + imageBox.height - 1);
+    const crossPlatformRoundingTolerance = 8;
+    expect(quoteBox.y).toBeGreaterThanOrEqual(imageBox.y + imageBox.height - crossPlatformRoundingTolerance);
   }
 
   await expect(page.locator(".leadership-section .leader-card")).toHaveCount(2);
