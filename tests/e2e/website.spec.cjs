@@ -275,14 +275,19 @@ test("team directory separates each division and opens the right profile", async
   await expect(girlsColumn.locator(".division-heading > :not(h2), [data-division-count]")).toHaveCount(0);
   await expect(page.locator(".division-team-card img")).toHaveCount(5);
   await expect(girlsColumn.locator('[data-program-card="hv-flames"] img')).toHaveAttribute("src", "assets/icons/icon-192.png");
+  await expect(girlsColumn).not.toContainText("Girls Varsity");
 
   const openSpot = girlsColumn.locator('[data-program-card="tbd"]');
   await expect(openSpot).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
   await expect(openSpot).toHaveAccessibleName("Open UBL program spot in Girls Varsity — contact the league");
+  await expect(openSpot.locator(".team-card-kicker")).toHaveText("Now recruiting");
+  await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
   await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
+  await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
+  await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
 
   if (testInfo.project.name.startsWith("desktop")) {
     await girlsKings.scrollIntoViewIfNeeded();
@@ -356,9 +361,9 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
       const cardOverlap = cards.some((card) => {
         const cardRect = card.getBoundingClientRect();
         const logoRect = card.querySelector(".team-card-logo-stage").getBoundingClientRect();
-        const titleRect = card.querySelector(".division-team-card-content strong").getBoundingClientRect();
+        const contentRect = card.querySelector(".division-team-card-content").getBoundingClientRect();
         const actionRect = card.querySelector(".division-team-card-content b").getBoundingClientRect();
-        return logoRect.bottom > titleRect.top + 1
+        return logoRect.bottom > contentRect.top + 1
           || logoRect.top < cardRect.top - 1
           || actionRect.bottom > cardRect.bottom + 1;
       });

@@ -716,9 +716,9 @@ function divisionTeamCardMarkup(program, division, order) {
       <a class="division-team-card division-team-card-open" href="${inquiryHref}" data-program-card="tbd" style="--card-order:${order}" aria-label="Open UBL program spot in ${safeAttribute(division)} — contact the league">
         <span class="team-card-court" aria-hidden="true"><i></i></span>
         <span class="team-card-view">Join UBL <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-        <span class="team-card-logo-stage"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+        <span class="team-card-logo-stage team-card-logo-stage-open"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
         <span class="division-team-card-content">
-          <small>Now recruiting &middot; ${escapeHtml(division)}</small>
+          <small class="team-card-kicker">Now recruiting</small>
           <strong>Open League Spot</strong>
           <span>Bring your program into the UBL</span>
           <b>Start a conversation <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b>
@@ -736,7 +736,7 @@ function divisionTeamCardMarkup(program, division, order) {
       <span class="team-card-view">View team <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
       <span class="team-card-logo-stage"><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
       <span class="division-team-card-content">
-        <small>${escapeHtml(program.short)} &middot; ${escapeHtml(division)}</small>
+        <small class="team-card-abbr">${escapeHtml(program.short)}</small>
         <strong>${escapeHtml(program.name)}</strong>
         <span>${escapeHtml(detail)}</span>
         <b>Meet the program <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b>
