@@ -29,7 +29,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="ubl-standings.css?v=20260718-1">
+  <link rel="stylesheet" href="ubl-standings.css?v=20260718-4">
   <script src="config.js?v=20260718-1" defer></script>
   <script src="analytics.js?v=20260718-1" defer></script>
   <script src="league-core.js?v=20260718-1" defer></script>
@@ -77,7 +77,6 @@
           <section class="division-panel girls-panel" aria-labelledby="girls-division-title">
             <header class="division-title" id="girls-division-title">
               <span>Girls Division</span>
-              <strong>Varsity standings</strong>
             </header>
             <div class="division-table-wrap">
               <table class="division-table">
@@ -86,11 +85,11 @@
                   <tr>
                     <th class="seed-column" scope="col">Seed</th>
                     <th scope="col">Team</th>
-                    <th scope="col">W&ndash;L</th>
-                    <th scope="col">PCT</th>
-                    <th scope="col">PF</th>
-                    <th scope="col">PA</th>
-                    <th scope="col">Diff</th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="girls-wl-tooltip">W&ndash;L<span class="stat-tooltip-content" id="girls-wl-tooltip" role="tooltip">Wins&ndash;losses record</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="girls-pct-tooltip">PCT<span class="stat-tooltip-content" id="girls-pct-tooltip" role="tooltip">Winning percentage</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="girls-pf-tooltip">PF<span class="stat-tooltip-content" id="girls-pf-tooltip" role="tooltip">Points for (scored)</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="girls-pa-tooltip">PA<span class="stat-tooltip-content" id="girls-pa-tooltip" role="tooltip">Points against (allowed)</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" data-tooltip-align="end" tabindex="0" aria-describedby="girls-diff-tooltip">Diff<span class="stat-tooltip-content" id="girls-diff-tooltip" role="tooltip">Point differential (PF minus PA)</span></abbr></th>
                   </tr>
                 </thead>
                 <tbody data-standings-division="Girls Varsity"></tbody>
@@ -113,7 +112,6 @@
           <section class="division-panel boys-panel" aria-labelledby="boys-division-title">
             <header class="division-title" id="boys-division-title">
               <span>Boys Division</span>
-              <strong>Varsity standings</strong>
             </header>
             <div class="division-table-wrap">
               <table class="division-table">
@@ -122,11 +120,11 @@
                   <tr>
                     <th class="seed-column" scope="col">Seed</th>
                     <th scope="col">Team</th>
-                    <th scope="col">W&ndash;L</th>
-                    <th scope="col">PCT</th>
-                    <th scope="col">PF</th>
-                    <th scope="col">PA</th>
-                    <th scope="col">Diff</th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="boys-wl-tooltip">W&ndash;L<span class="stat-tooltip-content" id="boys-wl-tooltip" role="tooltip">Wins&ndash;losses record</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="boys-pct-tooltip">PCT<span class="stat-tooltip-content" id="boys-pct-tooltip" role="tooltip">Winning percentage</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="boys-pf-tooltip">PF<span class="stat-tooltip-content" id="boys-pf-tooltip" role="tooltip">Points for (scored)</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" tabindex="0" aria-describedby="boys-pa-tooltip">PA<span class="stat-tooltip-content" id="boys-pa-tooltip" role="tooltip">Points against (allowed)</span></abbr></th>
+                    <th scope="col"><abbr class="stat-tooltip" data-tooltip-align="end" tabindex="0" aria-describedby="boys-diff-tooltip">Diff<span class="stat-tooltip-content" id="boys-diff-tooltip" role="tooltip">Point differential (PF minus PA)</span></abbr></th>
                   </tr>
                 </thead>
                 <tbody data-standings-division="Boys Varsity"></tbody>
@@ -135,12 +133,6 @@
           </section>
         </div>
 
-        <footer class="board-footer">
-          <p><span>Girls Varsity</span><strong>Left court</strong></p>
-          <img src="assets/optimized/ubl-logo-192.webp" alt="Upstate Basketball League" width="192" height="295">
-          <p><span>Boys Varsity</span><strong>Right court</strong></p>
-        </footer>
-        <p class="standings-freshness" data-freshness aria-live="polite">Loading current league data…</p>
       </div>
     </section>
 

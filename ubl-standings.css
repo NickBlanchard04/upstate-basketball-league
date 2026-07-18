@@ -335,9 +335,10 @@ p {
   letter-spacing: -0.02em;
 }
 
-.division-title strong {
-  font-size: 0.68rem;
-  letter-spacing: 0.09em;
+.division-title > strong,
+.board-footer,
+.standings-freshness {
+  display: none !important;
 }
 
 .division-table-wrap {
@@ -377,6 +378,78 @@ p {
   letter-spacing: 0.06em;
   text-align: center;
   text-transform: uppercase;
+}
+
+.stat-tooltip {
+  position: relative;
+  display: inline-flex;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: none;
+}
+
+.stat-tooltip-content {
+  display: none;
+}
+
+.division-table thead {
+  position: relative;
+  z-index: 3;
+}
+
+@media (min-width: 55.01rem) {
+  .stat-tooltip {
+    cursor: help;
+    text-decoration: underline dotted rgba(255, 255, 255, 0.72);
+    text-underline-offset: 0.24em;
+  }
+
+  .stat-tooltip-content {
+    display: block;
+    width: max-content;
+    max-width: 14rem;
+    padding: 0.52rem 0.68rem;
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 0.7rem);
+    left: 50%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    color: var(--white);
+    background: var(--navy-950);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow: 0 0.55rem 1rem rgba(2, 15, 34, 0.45);
+    font: 700 0.72rem/1.2 var(--body);
+    letter-spacing: 0;
+    white-space: nowrap;
+    text-align: left;
+    text-transform: none;
+    transform: translate(-50%, -0.2rem);
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  .stat-tooltip[data-tooltip-align="end"] .stat-tooltip-content {
+    right: -0.2rem;
+    left: auto;
+    transform: translateY(-0.2rem);
+  }
+
+  .stat-tooltip:is(:hover, :focus) .stat-tooltip-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+
+  .stat-tooltip[data-tooltip-align="end"]:is(:hover, :focus) .stat-tooltip-content {
+    transform: translateY(0);
+  }
+
+  .stat-tooltip:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 0.2rem;
+  }
 }
 
 .division-table th:nth-child(2) {
@@ -526,65 +599,6 @@ p {
   font: 900 1.45rem/1 var(--display);
 }
 
-.board-footer {
-  max-width: 50rem;
-  margin: clamp(1.6rem, 3vw, 2.5rem) auto 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr);
-  align-items: center;
-}
-
-.board-footer p {
-  min-height: 4rem;
-  margin: 0;
-  padding: 0.65rem;
-  display: grid;
-  align-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.board-footer p span {
-  color: var(--muted-light);
-  font-size: 0.67rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-.board-footer p strong {
-  margin-top: 0.15rem;
-  color: var(--white);
-  font: 800 1rem/1 var(--display);
-}
-
-.board-footer img {
-  width: 4.5rem;
-  position: relative;
-  z-index: 1;
-  justify-self: center;
-  filter: drop-shadow(0 0.4rem 0.65rem rgba(2, 15, 34, 0.7));
-}
-
-.standings-freshness {
-  width: max-content;
-  max-width: 100%;
-  margin: 1.1rem auto 0;
-  padding: 0.45rem 0.75rem;
-  color: var(--muted-light);
-  background: rgba(2, 15, 34, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1.35;
-  text-align: center;
-}
-
-.standings-freshness.data-freshness-warning {
-  color: #ffcad3;
-  border-color: rgba(227, 19, 49, 0.72);
-}
-
 .standings-note {
   width: min(calc(100% - 2rem), 86rem);
   margin: 1.25rem auto 2rem;
@@ -685,10 +699,6 @@ button:focus-visible {
 
   .site-nav a {
     font-size: 0.78rem;
-  }
-
-  .division-title strong {
-    display: none;
   }
 
   .division-table th:nth-child(2) {
@@ -799,9 +809,6 @@ button:focus-visible {
     font-size: 1.25rem;
   }
 
-  .board-footer {
-    margin-top: 2.25rem;
-  }
 }
 
 @media (max-width: 40rem) {
@@ -858,18 +865,6 @@ button:focus-visible {
   .team-short {
     display: block;
     font-size: 0.88rem;
-  }
-
-  .board-footer {
-    grid-template-columns: minmax(0, 1fr) 4.2rem minmax(0, 1fr);
-  }
-
-  .board-footer img {
-    width: 3.9rem;
-  }
-
-  .board-footer p strong {
-    font-size: 0.86rem;
   }
 
   .standings-note {

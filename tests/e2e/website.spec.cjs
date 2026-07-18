@@ -178,6 +178,27 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-bracket]")).toHaveCount(2);
 });
 
+test("standings removes the lower court graphic and explains desktop stat abbreviations", async ({ page }) => {
+  await page.goto("/standings.html");
+
+  await expect(page.locator(".division-title strong, .board-footer, .standings-freshness")).toHaveCount(0);
+  const tooltips = page.locator(".stat-tooltip");
+  await expect(tooltips).toHaveCount(10);
+  await expect(tooltips.first()).toHaveAttribute("aria-describedby", "girls-wl-tooltip");
+  await expect(page.locator("#girls-wl-tooltip")).toHaveText("Wins–losses record");
+  await expect(page.locator("#girls-diff-tooltip")).toHaveText("Point differential (PF minus PA)");
+
+  const firstTooltip = tooltips.first();
+  if (page.viewportSize().width > 880) {
+    await firstTooltip.hover();
+    await expect(firstTooltip.locator("[role='tooltip']")).toHaveCSS("opacity", "1");
+    await firstTooltip.focus();
+    await expect(firstTooltip.locator("[role='tooltip']")).toHaveCSS("visibility", "visible");
+  } else {
+    await expect(firstTooltip.locator("[role='tooltip']")).toHaveCSS("display", "none");
+  }
+});
+
 test("team directory separates each division and opens the right profile", async ({ page }, testInfo) => {
   await page.goto("/teams.html");
 
