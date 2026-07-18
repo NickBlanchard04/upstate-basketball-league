@@ -508,16 +508,16 @@ function bracketMarkup(division, artwork) {
     </div>
     <div class="sr-only bracket-accessible-summary">
       <h3>Play-in</h3>
-      ${bracketSlotMarkup("Seed 5", playInAway, "TBD", playIn, "away", playInWinner)}
-      ${bracketSlotMarkup("Seed 4", playInHome, "TBD", playIn, "home", playInWinner)}
+      ${bracketSlotMarkup("Seed 5", playInAway, "Regular season seed", playIn, "away", playInWinner)}
+      ${bracketSlotMarkup("Seed 4", playInHome, "Regular season seed", playIn, "home", playInWinner)}
       <p>Winner advances to play Seed 1</p>
       <h3>Semifinals</h3>
-      ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "TBD", semifinalOne, "away", semifinalOneWinner)}
+      ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "Advancing team", semifinalOne, "away", semifinalOneWinner)}
       ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner)}
-      ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "TBD", semifinalTwo, "away", semifinalTwoWinner)}
-      ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "TBD", semifinalTwo, "home", semifinalTwoWinner)}
+      ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "Regular season seed", semifinalTwo, "away", semifinalTwoWinner)}
+      ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "Regular season seed", semifinalTwo, "home", semifinalTwoWinner)}
       <h3>Championship</h3>
-      <p>2027 UBL ${escapeHtml(divisionName)} champion: ${escapeHtml(bracketTeamName(champion, "TBD"))}</p>
+      <p>2027 UBL ${escapeHtml(divisionName)} champion: ${escapeHtml(bracketTeamName(champion, "Crowned after the February playoffs"))}</p>
     </div>
   `;
 }
