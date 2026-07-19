@@ -14,16 +14,17 @@ Configure every team form to:
 
 ## Review process
 
-1. Open `UBL Team Photo Workflow - 2026-27` in the league Google Drive.
-2. Review new files in the team's private `Pending Photos/Incoming Uploads (Google Form)` folder.
-3. Confirm the responder is identifiable and the images are UBL-related.
-4. Reject images containing inappropriate, unrelated, private, or unsafe material. Do not forward rejected files.
-5. Check for duplicate or near-duplicate photos before approving a submission.
-6. Move each approved image into the matching team's `Approved Photos/Boys Varsity` or `Approved Photos/Girls Varsity` folder. HV Rocks and HV Flames use their single Approved folder.
-7. Leave unapproved files in Pending or delete them after the review decision. Never make a Pending folder public.
-8. The website feed scans only Approved folders. It gives approved image files public view access when they first enter the feed.
-9. If an approved image must be removed, move it back to the team's Pending folder. The next gallery refresh removes its public link permission automatically.
-10. Keep the Google Form response as the submission audit record.
+1. Run `syncGalleryModerationDashboard` or open the private `Gallery Moderation` tab after its scheduled refresh.
+2. Review the thumbnail, filename, team, division, uploader metadata, and duplicate status.
+3. Confirm the photo is UBL-related and may be published, especially when a student-athlete is identifiable.
+4. Select the correct division. Single-division programs are filled automatically.
+5. Choose `Approve` or `Reject` in `Decision`.
+6. Approval moves the file into the matching Approved folder, gives that file public view access, and refreshes the gallery cache.
+7. Rejection keeps the file private and moves it into the private `UBL Rejected Gallery Uploads` archive.
+
+The dashboard blocks exact file duplicates using a SHA-256 content fingerprint. It cannot reliably detect different crops, screenshots, or visually similar photos, so the reviewer still checks near-duplicates manually.
+
+Run `installGalleryModerationAutomation` once as the league business account to create the dashboard and its owner-run edit trigger. Pending folders and rejected files remain private at all times.
 
 ## Removal requests
 
@@ -31,4 +32,4 @@ Send removal requests to Info.upstatebasketballleague@gmail.com. Remove the publ
 
 ## Publishing behavior
 
-The public gallery refreshes from the approved-photo feed whenever the page loads. Feed failures leave the bundled gallery photos in place. Team upload form links and private Drive folder links must not be committed to the public website repository.
+The public gallery refreshes from the approved-photo feed whenever the page loads. Feed failures leave the bundled gallery photos in place. Team upload form links, moderation rows, uploader metadata, fingerprints, and private Drive folder links must not be committed to the public website repository.

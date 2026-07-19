@@ -1,46 +1,59 @@
-# Standings shared header restoration design QA
+# UBL Schedule dark command center — design QA
 
-- Source visual truth: `C:/Users/lblan/AppData/Local/Temp/codex-clipboard-ae5d6d78-459a-4bd3-898b-7e5ec54a9912.png`
-- Drift reference: `C:/Users/lblan/AppData/Local/Temp/codex-clipboard-563af6b2-89ef-4ea1-9c33-0f5f96fb5d04.png`
-- Desktop implementation screenshot: `C:/Users/lblan/.codex/visualizations/2026/07/18/019f72d0-0f51-7990-b928-97ea0fba6bc6/ubl-standings-header-restored-desktop.png`
-- Mobile implementation screenshot: `C:/Users/lblan/.codex/visualizations/2026/07/18/019f72d0-0f51-7990-b928-97ea0fba6bc6/ubl-standings-header-restored-mobile.png`
-- Reference comparison: `C:/Users/lblan/.codex/visualizations/2026/07/18/019f72d0-0f51-7990-b928-97ea0fba6bc6/ubl-standings-header-reference-vs-restored.png`
-- Shared-page comparison: `C:/Users/lblan/.codex/visualizations/2026/07/18/019f72d0-0f51-7990-b928-97ea0fba6bc6/ubl-shared-header-vs-standings.png`
-- Viewports: 1440 x 300 desktop and 390 x 844 mobile.
-- State: Home and Standings headers captured after fonts loaded; desktop navigation visible; mobile menu tested closed, open, and closed again.
+## Comparison target
 
-## Full-view comparison evidence
-
-The normalized reference comparison shows the Standings page using the same tall logo lockup, two-line metallic brand wordmark, compact IBM Plex Sans navigation, midnight header field, thin divider, and active red underline as image 1. The shared-page comparison confirms that the Home and Standings header geometry is identical at the same browser viewport; only the correct active navigation item changes.
-
-## Focused region comparison evidence
-
-The header region was inspected independently because the target is a narrow navigation crop. At desktop, Home and Standings both measured a 92.1875px header, a 91.1875px inner row, a 57.59375 x 72px logo, an 11.2px IBM Plex Sans navigation label, and the same 1px translucent divider. At mobile, both measured an 81px header with a 48px menu target and a 46.390625 x 57.59375px logo.
+- Source visual truth: `C:\Users\lblan\.codex\generated_images\019f72d0-0f51-7990-b928-97ea0fba6bc6\exec-e72c012d-c7d0-4f5c-8c15-df7d0279fb03.png`
+- Desktop implementation: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-qa-desktop-1148x1024.png`
+- Mobile implementation: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-qa-mobile-390x1024.png`
+- Desktop full-view comparison: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-desktop-comparison.png`
+- Mobile/focused comparison: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-mobile-comparison.png`
+- Viewports: 1148 × 1024 desktop and 390 × 1024 mobile.
+- State: Opening Week, All Games, mobile menu closed, local production-shaped schedule data loaded.
 
 ## Findings
 
-- No remaining P0/P1/P2 mismatch.
-- Fonts and typography: the Standings header now inherits the shared Barlow Condensed brand lockup and IBM Plex Sans navigation roles. It no longer uses the larger Standings-only navigation treatment.
-- Spacing and layout rhythm: desktop and mobile header height, container width, logo placement, navigation spacing, and menu target match the Home page at the same viewport.
-- Colors and visual tokens: the shared midnight navy field, metallic white wordmark treatment, red active underline, and thin translucent divider match image 1 and the rest of the site.
-- Image quality and asset fidelity: the supplied optimized UBL logo remains the only logo asset; it is not redrawn or replaced.
-- Copy and content: brand and navigation labels are unchanged. Standings remains the active destination on the Standings page.
-- Responsive behavior: no horizontal overflow was detected at desktop or 390px mobile.
-- Interaction and accessibility: the mobile control uses the same three-line hamburger structure as the rest of the site, has a 48px target, updates its accessible name between `Open menu` and `Close menu`, and toggles `aria-expanded` correctly. Browser console errors: none.
+- No actionable P0, P1, or P2 differences remain.
+- The implementation matches the selected no-hero direction: midnight court field, season rail, compact week command deck, red active filter, blue slate header, date rail, real team marks, Teko date/time numerals, and dark matchup rows.
+- The desktop header is intentionally shorter and uses the existing shared UBL header rather than the concept's taller two-row navigation. This follows the user's explicit requirement that Schedule use the same header as the other pages.
+- The implementation shows source-backed venue copy (`Perth home court`) instead of the concept's illustrative `Venue details pending`. This is expected production content, not design drift.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. Barlow Condensed provides the display hierarchy, IBM Plex Sans handles operational UI copy, and Teko is limited to scoreboard numerals. Weights, uppercase treatment, wrapping, and tabular number alignment remain consistent across both viewports.
+- Spacing and layout rhythm: passed. The season rail, title block, planning notice, controls, filters, and game board preserve the reference hierarchy. The Upcoming Games board begins inside the first mobile viewport, with no clipped or overlapping controls.
+- Colors and visual tokens: passed. The implementation maps directly to the UBL midnight navy, league blue, UBL red, white, and muted blue-gray tokens. Selected, disabled, hover, and focus states remain distinct.
+- Image quality and asset fidelity: passed. The supplied optimized UBL logo, team logos, and playbook texture are used directly; no logo, team mark, or decorative image was redrawn or approximated in code.
+- Copy and content: passed. Static Schedule labels match the selected direction while teams, dates, times, divisions, and venues remain data-driven.
+- Icons: passed. Calendar and directional controls use the bundled Material Symbols font. Final directional arrows match the reference's navigation intent without exposing ligature text.
+- Accessibility and responsive behavior: passed. Controls retain at least 44px targets, semantic labels and `aria-pressed`/`aria-expanded` states are present, keyboard focus remains visible, reduced motion is supported, and browser measurements found no horizontal overflow.
+
+## Interaction and browser verification
+
+- Mobile menu opened and closed; `aria-expanded`, the visible navigation state, and body scroll lock updated correctly.
+- Boys Varsity filtering reduced Opening Week to the boys matchup and set the correct pressed state.
+- Next Week advanced the heading to Week 2 and enabled the Previous Week control.
+- The native week selector jumped directly to Week 5 and rendered that week's games.
+- All Games restored both divisions and the correct pressed state.
+- Previous Week is disabled at the opening-week boundary.
+- All images and local fonts loaded successfully.
+- Browser console warnings/errors checked: none.
+- Desktop and mobile browser measurements found no horizontal overflow.
 
 ## Comparison history
 
-1. Initial P1 mismatch: the Standings page owned a separate header stylesheet and a text-only mobile menu, producing the larger Barlow navigation, thick red bottom border, different logo sizing, and different responsive breakpoint shown in image 2.
-2. Fix: loaded the shared site stylesheet on Standings, removed the duplicate header rules from the Standings stylesheet, matched the shared hamburger markup and menu behavior, and aligned the desktop breakpoint to 1024px.
-3. Post-fix evidence: desktop and mobile measurements match the Home page, the focused reference comparison matches image 1's design language, the menu works in both states, and no overflow or console errors remain.
+### Iteration 1
 
-## Implementation checklist
+- Evidence: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-desktop-pass1.png` and `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-mobile-pass1.png`.
+- [P2] The previous/next controls used curved undo/redo symbols while the source uses direct left/right navigation arrows. The playoff link also used a start-line arrow, creating visible icon drift.
+- Fix: replaced all three with the bundled east-arrow icon and rotated the Previous Week instance 180 degrees.
 
-- [x] Use the same header stylesheet as the rest of the public site
-- [x] Remove Standings-only header and navigation overrides
-- [x] Restore the shared desktop logo, wordmark, navigation, underline, and divider
-- [x] Restore the shared mobile hamburger button and accessible label behavior
-- [x] Add a desktop/mobile regression check against the Home header
-- [x] Verify desktop and mobile layouts, menu behavior, overflow, and console
+### Iteration 2
+
+- Post-fix evidence: the final desktop and mobile comparison files listed above.
+- The controls now use direct directional arrows, the mobile board remains within the first viewport, and no actionable P0/P1/P2 differences remain.
+
+## Follow-up polish
+
+- [P3] The implementation uses the approved UBL playbook texture more quietly than the concept's dotted halftone clusters. This keeps the page consistent with the existing brand asset library and does not reduce hierarchy or usability.
 
 final result: passed

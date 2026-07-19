@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "npm run test:unit && npm run test:workflow && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.cjs",
+    "test:workflow": "node scripts/workflow-simulation.cjs",
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",
     "audit:performance": "node scripts/performance-audit.cjs",
     "build:release": "node scripts/build-release.cjs",
     "validate:release": "node scripts/validate-release.cjs",
-    "test:release": "npm run test:unit && npm run build:release && npm run validate:release"
+    "test:release": "npm run test:unit && npm run test:workflow && npm run build:release && npm run validate:release"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
