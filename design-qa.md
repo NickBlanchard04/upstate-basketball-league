@@ -1,65 +1,59 @@
-# UBL Schedule design QA
+# UBL Schedule dark command center — design QA
 
 ## Comparison target
 
-- Source visual truth: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-selected-concept.png`
-- Desktop implementation: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-build-desktop-v2.png`
-- Mobile implementation: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-build-mobile-full.png`
-- Full-view comparison: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-comparison.png`
-- Focused comparison: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-focused-comparison.png`
-- Viewports: 1440 × 1024 desktop and 390 × 844 mobile.
-- State: Opening Week, All Games, bundled production schedule loaded.
+- Source visual truth: `C:\Users\lblan\.codex\generated_images\019f72d0-0f51-7990-b928-97ea0fba6bc6\exec-e72c012d-c7d0-4f5c-8c15-df7d0279fb03.png`
+- Desktop implementation: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-qa-desktop-1148x1024.png`
+- Mobile implementation: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-qa-mobile-390x1024.png`
+- Desktop full-view comparison: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-desktop-comparison.png`
+- Mobile/focused comparison: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-mobile-comparison.png`
+- Viewports: 1148 × 1024 desktop and 390 × 1024 mobile.
+- State: Opening Week, All Games, mobile menu closed, local production-shaped schedule data loaded.
 
 ## Findings
 
 - No actionable P0, P1, or P2 differences remain.
-- The implementation preserves the selected concept's shared header, wide Schedule banner, preliminary-season treatment, navy week panel, accessible week/division controls, strong date rail, rectangular matchup rows, team logos, Teko time/date numerals, and red/blue UBL hierarchy.
-- The implementation intentionally shows the two commissioner-published opening-week games rather than the three illustrative games in the generated mock. Recent Results and Schedule Updates are conditional and remain hidden until real final, postponed, or cancelled data exists. This is an expected data-honesty constraint, not design drift.
-- Mobile controls are slightly taller than the generated mock so every interactive target remains at least 44px. This is an intentional accessibility constraint.
+- The implementation matches the selected no-hero direction: midnight court field, season rail, compact week command deck, red active filter, blue slate header, date rail, real team marks, Teko date/time numerals, and dark matchup rows.
+- The desktop header is intentionally shorter and uses the existing shared UBL header rather than the concept's taller two-row navigation. This follows the user's explicit requirement that Schedule use the same header as the other pages.
+- The implementation shows source-backed venue copy (`Perth home court`) instead of the concept's illustrative `Venue details pending`. This is expected production content, not design drift.
 
 ## Required fidelity surfaces
 
-- Fonts and typography: passed. Barlow Condensed remains the display face, IBM Plex Sans remains the operational UI face, and the supplied local Teko variable font is used for broadcast numerals. Heading hierarchy, uppercase treatment, tabular numerals, and wrapping match the source direction.
-- Spacing and layout rhythm: passed. Desktop and mobile preserve the source's header-to-banner-to-week-panel sequence. The final mobile banner was reduced from the first implementation so the Upcoming Games bar reaches the first viewport without clipping controls.
-- Colors and visual tokens: passed. Midnight navy, league blue, UBL red, white, and light canvas map directly to `DESIGN.md`; contrast and active-state emphasis remain clear.
-- Image quality and asset fidelity: passed. The implementation uses the supplied optimized UBL and team logo assets with `object-fit: contain`; no logos or icons were approximated in code.
-- Copy and content: passed. Key Schedule labels match the selected design while production teams, dates, venues, results, and status sections remain source-backed.
+- Fonts and typography: passed. Barlow Condensed provides the display hierarchy, IBM Plex Sans handles operational UI copy, and Teko is limited to scoreboard numerals. Weights, uppercase treatment, wrapping, and tabular number alignment remain consistent across both viewports.
+- Spacing and layout rhythm: passed. The season rail, title block, planning notice, controls, filters, and game board preserve the reference hierarchy. The Upcoming Games board begins inside the first mobile viewport, with no clipped or overlapping controls.
+- Colors and visual tokens: passed. The implementation maps directly to the UBL midnight navy, league blue, UBL red, white, and muted blue-gray tokens. Selected, disabled, hover, and focus states remain distinct.
+- Image quality and asset fidelity: passed. The supplied optimized UBL logo, team logos, and playbook texture are used directly; no logo, team mark, or decorative image was redrawn or approximated in code.
+- Copy and content: passed. Static Schedule labels match the selected direction while teams, dates, times, divisions, and venues remain data-driven.
+- Icons: passed. Calendar and directional controls use the bundled Material Symbols font. Final directional arrows match the reference's navigation intent without exposing ligature text.
+- Accessibility and responsive behavior: passed. Controls retain at least 44px targets, semantic labels and `aria-pressed`/`aria-expanded` states are present, keyboard focus remains visible, reduced motion is supported, and browser measurements found no horizontal overflow.
 
 ## Interaction and browser verification
 
-- Mobile menu opened and closed with the correct `aria-expanded` state.
-- Week selection changed the heading and game groups.
-- Boys, Girls, and All Games filters updated rows and `aria-pressed` states.
-- Confirmed venue controls opened the map dialog and exposed Apple Maps, Google Maps, and Waze actions.
-- Previous/next controls disable correctly at season boundaries.
-- No horizontal page overflow at mobile width.
-- Browser console errors checked: none.
-- Automated WCAG A/AA browser checks passed on desktop and mobile.
+- Mobile menu opened and closed; `aria-expanded`, the visible navigation state, and body scroll lock updated correctly.
+- Boys Varsity filtering reduced Opening Week to the boys matchup and set the correct pressed state.
+- Next Week advanced the heading to Week 2 and enabled the Previous Week control.
+- The native week selector jumped directly to Week 5 and rendered that week's games.
+- All Games restored both divisions and the correct pressed state.
+- Previous Week is disabled at the opening-week boundary.
+- All images and local fonts loaded successfully.
+- Browser console warnings/errors checked: none.
+- Desktop and mobile browser measurements found no horizontal overflow.
 
 ## Comparison history
 
 ### Iteration 1
 
-- Earlier evidence: `ubl-schedule-build-desktop-v1.png` and `ubl-schedule-build-mobile-v1.png`.
-- [P2] The first mobile banner and setup stack pushed the game slate below the initial viewport, weakening the selected broadcast-slate pacing.
-- Fix: reduced Schedule-only banner height and spacing, compacted the panel heading and planning notice, tightened the date rail and mobile matchup rows, and kept 44px controls.
+- Evidence: `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-desktop-pass1.png` and `C:\Users\lblan\.codex\visualizations\2026\07\18\019f72d0-0f51-7990-b928-97ea0fba6bc6\ubl-schedule-design-qa-mobile-pass1.png`.
+- [P2] The previous/next controls used curved undo/redo symbols while the source uses direct left/right navigation arrows. The playoff link also used a start-line arrow, creating visible icon drift.
+- Fix: replaced all three with the bundled east-arrow icon and rotated the Previous Week instance 180 degrees.
 
 ### Iteration 2
 
-- Post-fix evidence: `ubl-schedule-build-desktop-v2.png`, `ubl-schedule-build-mobile-full.png`, and both comparison images listed above.
-- Result: the hero/panel proportions now follow the selected concept closely; the Upcoming Games bar reaches the first mobile viewport; no actionable P0/P1/P2 differences remain.
-
-## Implementation checklist
-
-- [x] Shared header unchanged on desktop and mobile.
-- [x] Responsive broadcast slate implemented with production schedule data.
-- [x] Week, division, menu, and map interactions verified.
-- [x] Focus, reduced-motion, contrast, and touch targets preserved.
-- [x] Desktop and mobile source-to-build comparisons completed.
-- [x] Full browser regression and WCAG checks passed.
+- Post-fix evidence: the final desktop and mobile comparison files listed above.
+- The controls now use direct directional arrows, the mobile board remains within the first viewport, and no actionable P0/P1/P2 differences remain.
 
 ## Follow-up polish
 
-- [P3] Revisit row density after the league publishes additional opening-week games; the current two-game slate correctly leaves more open canvas than the illustrative mock.
+- [P3] The implementation uses the approved UBL playbook texture more quietly than the concept's dotted halftone clusters. This keeps the page consistent with the existing brand asset library and does not reduce hierarchy or usability.
 
 final result: passed

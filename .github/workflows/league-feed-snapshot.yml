@@ -1,0 +1,80 @@
+name: Validate league feed snapshot
+
+on:
+  schedule:
+    - cron: "17 09 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: league-feed-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Retrieve and validate public feed
+        run: node scripts/snapshot-live-feed.cjs
+
+      - name: Verify snapshot with unit tests
+        run: node --test tests/unit/league-core.test.cjs
+
+      - name: Open or update snapshot pull request
+        id: snapshot-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if git diff --quiet -- league-data.json; then
+            echo "No validated snapshot change."
+            exit 0
+          fi
+
+          branch="automation/league-data-snapshot"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add league-data.json
+          git commit -m "Refresh validated league data snapshot"
+          git push --force origin "$branch"
+
+          existing="$(gh pr list --head "$branch" --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$existing" ]; then
+            gh pr create \
+              --base main \
+              --head "$branch" \
+              --title "Refresh validated league data snapshot" \
+              --body "Automated fallback snapshot only. The feed passed schema, pilot-isolation, and unit validation. Review and merge manually; this workflow never deploys the website."
+          else
+            echo "Updated existing snapshot pull request #$existing."
+          fi
+
+      - name: Alert repository owner on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          title="UBL league feed snapshot failed"
+          existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty' || true)"
+          if [ -z "$existing" ]; then
+            gh issue create \
+              --title "$title" \
+              --assignee NickBlanchard04 \
+              --body "The scheduled public-feed validation failed. Review workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" || true
+          fi
+
+# This workflow intentionally has no Pages environment, deployment action, or production cutover step.

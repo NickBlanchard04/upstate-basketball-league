@@ -71,23 +71,39 @@ async function measureRoute(browser, baseUrl, route) {
     }).observe({ type: "largest-contentful-paint", buffered: true });
   });
 
-  await page.goto(`${baseUrl}/${route}`, { waitUntil: "load", timeout: 30000 });
-  await page.locator("h1").waitFor({ state: "visible", timeout: 5000 });
-  await page.waitForTimeout(800);
+  try {
+    await page.goto(`${baseUrl}/${route}`, { waitUntil: "load", timeout: 30000 });
+    await page.locator("h1").waitFor({ state: "visible", timeout: 5000 });
+    await page.waitForTimeout(800);
 
-  const metrics = await page.evaluate(() => {
-    const navigation = performance.getEntriesByType("navigation")[0];
-    const paint = performance.getEntriesByName("first-contentful-paint")[0];
-    return {
-      loadMs: navigation?.loadEventEnd || 0,
-      fcpMs: paint?.startTime || 0,
-      lcpMs: window.__ublVitals?.lcp || 0,
-      cls: window.__ublVitals?.cls || 0
-    };
-  });
+    const metrics = await page.evaluate(() => {
+      const navigation = performance.getEntriesByType("navigation")[0];
+      const paint = performance.getEntriesByName("first-contentful-paint")[0];
+      return {
+        loadMs: navigation?.loadEventEnd || 0,
+        fcpMs: paint?.startTime || 0,
+        lcpMs: window.__ublVitals?.lcp || 0,
+        cls: window.__ublVitals?.cls || 0
+      };
+    });
 
-  await context.close();
-  return { ...metrics, requests, transferredKb: transferredBytes / 1024 };
+    return { ...metrics, requests, transferredKb: transferredBytes / 1024 };
+  } finally {
+    await context.close();
+  }
+}
+
+async function measureRouteWithRetry(browser, baseUrl, route) {
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      return await measureRoute(browser, baseUrl, route);
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) console.warn(`Retrying ${route} after a transient audit failure: ${error.message}`);
+    }
+  }
+  throw lastError;
 }
 
 async function main() {
@@ -100,7 +116,7 @@ async function main() {
     for (const route of routes) {
       const samples = [];
       for (let run = 0; run < runCount; run += 1) {
-        samples.push(await measureRoute(browser, baseUrl, route));
+        samples.push(await measureRouteWithRetry(browser, baseUrl, route));
       }
       results.push({
         route,

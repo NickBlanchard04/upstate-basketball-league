@@ -23,6 +23,10 @@
     return fallback;
   }
 
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+  }
+
   function publicVenueLabel(value, fallback = "Venue details pending") {
     const label = String(value || "").trim();
     if (!label || /\b(?:TBD|to\s+be\s+confirmed|placeholder)\b/i.test(label)) return fallback;
@@ -139,6 +143,7 @@
     for (const key of ["games", "teams", "venues"]) {
       if (!Array.isArray(feed[key])) errors.push(`${key} must be an array.`);
     }
+    if (feed.profiles !== undefined && !Array.isArray(feed.profiles)) errors.push("profiles must be an array when provided.");
     if (errors.length) return errors;
 
     const teamIds = new Set();
@@ -146,6 +151,17 @@
       if (!team.id) errors.push("Every team requires an id.");
       if (teamIds.has(team.id)) errors.push(`Duplicate team id: ${team.id}`);
       teamIds.add(team.id);
+    }
+
+    const profileIds = new Set();
+    for (const profile of feed.profiles || []) {
+      const id = profile.id || `${profile.teamId}:${profile.division}`;
+      if (!profile.teamId || !teamIds.has(profile.teamId)) errors.push(`${id}: unknown profile team.`);
+      if (!profile.division || !["Boys Varsity", "Girls Varsity"].includes(profile.division)) errors.push(`${id}: invalid profile division.`);
+      if (profileIds.has(id)) errors.push(`Duplicate profile id: ${id}`);
+      profileIds.add(id);
+      if (profile.representativeEmail && !validEmail(profile.representativeEmail)) errors.push(`${id}: invalid representative email.`);
+      if (profile.assistants !== undefined && !Array.isArray(profile.assistants)) errors.push(`${id}: assistants must be an array.`);
     }
 
     const venueIds = new Set();
@@ -170,6 +186,10 @@
       if (game.awayTeamId && game.awayTeamId === game.homeTeamId) errors.push(`${game.id}: home and away teams match.`);
       if (!game.stage && (!game.awayTeamId || !game.homeTeamId)) errors.push(`${game.id}: regular-season teams are required.`);
       if (!game.venueId) errors.push(`${game.id}: venue is required.`);
+      if (game.scoreReporterTeamId && !teamIds.has(game.scoreReporterTeamId)) errors.push(`${game.id}: unknown score reporter.`);
+      if (!game.stage && game.scoreReporterTeamId && ![game.awayTeamId, game.homeTeamId].includes(game.scoreReporterTeamId)) {
+        errors.push(`${game.id}: score reporter must be a participating team.`);
+      }
       for (const score of [game.awayScore, game.homeScore]) {
         const number = numberOrNull(score);
         if (number !== null && (!Number.isInteger(number) || number < 0)) errors.push(`${game.id}: scores must be nonnegative whole numbers.`);
@@ -381,6 +401,27 @@
     settings.gameDurationMinutes = Number(settings.gameDurationMinutes || 90);
     settings.showSimultaneousLiveGames = String(settings.showSimultaneousLiveGames) !== "false";
 
+    const venues = new Map(feed.venues.map((venue) => [venue.id, venue]));
+    const normalizedProfiles = (feed.profiles || []).map((profile) => ({
+      id: profile.id || `${profile.teamId}:${profile.division}`,
+      teamId: String(profile.teamId || ""),
+      division: String(profile.division || ""),
+      summary: String(profile.summary || "").slice(0, 500),
+      representativeEmail: validEmail(profile.representativeEmail) ? String(profile.representativeEmail).trim() : "",
+      homeVenueId: venues.has(profile.homeVenueId) ? profile.homeVenueId : "",
+      headCoach: {
+        name: String(profile.headCoach?.name || "").slice(0, 100),
+        experience: String(profile.headCoach?.experience || "").slice(0, 240),
+        photo: safeImageUrl(profile.headCoach?.photo, "")
+      },
+      assistants: (profile.assistants || []).slice(0, 5).map((coach) => ({
+        name: String(coach?.name || "").slice(0, 100),
+        experience: String(coach?.experience || "").slice(0, 240),
+        photo: safeImageUrl(coach?.photo, "")
+      })).filter((coach) => coach.name),
+      lastUpdated: String(profile.lastUpdated || "")
+    }));
+    const profilesByKey = new Map(normalizedProfiles.map((profile) => [`${profile.teamId}:${profile.division}`, profile]));
     const fallbackTeams = new Map(fallback.programs.map((program) => [program.id, program]));
     const programs = feed.teams.map((remote) => {
       const program = fallbackTeams.get(remote.id) || {
@@ -396,22 +437,34 @@
         teams: {}
       };
       const divisions = remote.divisions?.length ? remote.divisions : program.divisions;
+      const profiles = divisions.map((division) => profilesByKey.get(`${remote.id}:${division}`)).filter(Boolean);
+      const primaryProfile = profiles[0];
+      const homeVenue = venues.get(primaryProfile?.homeVenueId) || {};
       return {
         ...program,
         name: remote.name || program.name,
         short: remote.short || program.short,
         logo: program.logoStatus ? safeImageUrl(program.logo) : safeImageUrl(remote.logo, program.logo),
         divisions,
-        summary: remote.summary || program.summary,
+        summary: primaryProfile?.summary || remote.summary || program.summary,
+        homeGym: primaryProfile ? publicVenueLabel(homeVenue.mapLabel || homeVenue.name, program.homeGym || "Venue details pending") : program.homeGym,
+        homeAddress: primaryProfile ? String(homeVenue.address || "") : program.homeAddress,
+        representativeEmail: primaryProfile ? primaryProfile.representativeEmail : program.representativeEmail,
         status: remote.status || "Active",
-        teams: Object.fromEntries(divisions.map((division) => [division, program.teams?.[division] || {
-          headCoach: { name: "", experience: "", photo: "" },
-          assistants: []
-        }]))
+        teams: Object.fromEntries(divisions.map((division) => {
+          const profile = profilesByKey.get(`${remote.id}:${division}`);
+          const fallbackTeam = program.teams?.[division] || {
+            headCoach: { name: "", experience: "", photo: "" },
+            assistants: []
+          };
+          return [division, profile ? {
+            headCoach: profile.headCoach,
+            assistants: profile.assistants
+          } : fallbackTeam];
+        }))
       };
     });
 
-    const venues = new Map(feed.venues.map((venue) => [venue.id, venue]));
     const normalizedGames = feed.games.map((game) => {
       const venue = venues.get(game.venueId) || {};
       return {
@@ -433,7 +486,8 @@
         stage: game.stage || "",
         note: game.notes || "",
         lastUpdated: game.lastUpdated || feed.lastUpdated || "",
-        weekId: game.weekId || ""
+        weekId: game.weekId || "",
+        scoreReporterTeamId: game.scoreReporterTeamId || game.homeTeamId || ""
       };
     });
 
@@ -467,6 +521,7 @@
       scheduleWeeks,
       games: normalizedGames,
       venues: feed.venues,
+      profiles: normalizedProfiles,
       settings,
       lastUpdated: feed.lastUpdated || "",
       standings: {
@@ -491,6 +546,7 @@
     parseScoreFeedCsv,
     publicVenueLabel,
     safeImageUrl,
+    validEmail,
     settingsObject,
     slug,
     mergeScoreFeed,

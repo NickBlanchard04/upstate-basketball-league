@@ -68,6 +68,57 @@ test("normalization connects venues, statuses, and new feed teams", () => {
   assert.ok(normalized.programs[0].teams["Boys Varsity"].headCoach);
 });
 
+test("live public profiles override team pages while missing profiles keep bundled data", () => {
+  const profileFeed = structuredClone(feed);
+  profileFeed.profiles = [{
+    id: "kings-school:Boys Varsity",
+    teamId: "kings-school",
+    division: "Boys Varsity",
+    summary: "Live approved summary.",
+    representativeEmail: "rep@example.com",
+    homeVenueId: "kings-school-gym",
+    headCoach: { name: "Live Coach", experience: "Five seasons", photo: "https://example.com/coach.webp" },
+    assistants: [{ name: "Live Assistant", experience: "Two seasons", photo: "javascript:alert(1)" }]
+  }];
+  const fallback = {
+    programs: [{
+      id: "kings-school",
+      name: "The King's School",
+      divisions: ["Boys Varsity", "Girls Varsity"],
+      summary: "Bundled summary.",
+      homeGym: "Bundled gym",
+      homeAddress: "Bundled address",
+      representativeEmail: "bundled@example.com",
+      teams: {
+        "Boys Varsity": { headCoach: { name: "Bundled Coach", experience: "", photo: "" }, assistants: [] },
+        "Girls Varsity": { headCoach: { name: "Girls Fallback", experience: "", photo: "" }, assistants: [] }
+      }
+    }],
+    scheduleWeeks: []
+  };
+  const normalized = core.normalizeFeed(profileFeed, fallback);
+  const kings = normalized.programs.find((program) => program.id === "kings-school");
+  assert.equal(kings.summary, "Live approved summary.");
+  assert.equal(kings.representativeEmail, "rep@example.com");
+  assert.equal(kings.homeAddress, profileFeed.venues.find((venue) => venue.id === "kings-school-gym").address);
+  assert.equal(kings.teams["Boys Varsity"].headCoach.name, "Live Coach");
+  assert.equal(kings.teams["Boys Varsity"].assistants[0].photo, "");
+  assert.equal(kings.teams["Girls Varsity"].headCoach.name, "Girls Fallback");
+});
+
+test("profile validation rejects unknown teams, duplicate rows, and invalid emails", () => {
+  const invalid = structuredClone(feed);
+  invalid.profiles = [
+    { id: "bad", teamId: "unknown", division: "Boys Varsity", representativeEmail: "not-an-email", assistants: [] },
+    { id: "bad", teamId: "unknown", division: "Other", assistants: {} }
+  ];
+  const errors = core.validateFeed(invalid).join(" ");
+  assert.match(errors, /unknown profile team/);
+  assert.match(errors, /Duplicate profile id/);
+  assert.match(errors, /invalid representative email/);
+  assert.match(errors, /assistants must be an array/);
+});
+
 test("published score CSV safely replaces schedule and result fields", () => {
   const csv = [
     "Game ID,Date,Time,Division,Away Team ID,Home Team ID,Venue ID,Status,Away Score,Home Score,Week ID",

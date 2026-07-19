@@ -3,6 +3,12 @@ var ANALYTICS_SPREADSHEET_ID = "1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE";
 var ANALYTICS_SHEET = "Site Analytics";
 var ANALYTICS_CHANNEL = "ubl-public-v1";
 var ANALYTICS_DAILY_LIMIT = 5000;
+var GALLERY_MODERATION_SHEET = "Gallery Moderation";
+var GALLERY_REJECTED_FOLDER = "UBL Rejected Gallery Uploads";
+var GALLERY_MODERATION_HEADERS = [
+  "File ID", "Thumbnail", "Filename", "Team ID", "Team", "Division", "Submitted By",
+  "Uploaded At", "Fingerprint", "Duplicate Of", "Decision", "Status", "Processed At", "File URL"
+];
 var ANALYTICS_PAGES = {
   "index.html": true,
   "schedule.html": true,
@@ -11,15 +17,16 @@ var ANALYTICS_PAGES = {
   "bracket.html": true,
   "rules.html": true,
   "gallery.html": true,
+  "sponsors.html": true,
   "about.html": true,
   "404.html": true
 };
 var PENDING_GALLERY_FOLDERS = [
-  "16RKC0BChYXUveLqSrnppuWmXkDTXrDLI",
-  "1Yy_zD5T_AaKsWnXxL9GvUFx2QkpyUnFw",
-  "1TUJltYF_2Ff_nruVjzXMzMH9dYoWgvdI",
-  "1gkkKBm5a5rZ3zMS-ksPk0Y-TmiRB2Zfy",
-  "1gh19kCFvEgZvG-63IkyppW1Y82GqEgRT"
+  { id: "16RKC0BChYXUveLqSrnppuWmXkDTXrDLI", teamId: "kings-school", teamName: "The King's School" },
+  { id: "1Yy_zD5T_AaKsWnXxL9GvUFx2QkpyUnFw", teamId: "perth", teamName: "Perth" },
+  { id: "1TUJltYF_2Ff_nruVjzXMzMH9dYoWgvdI", teamId: "wilton-baptist", teamName: "Wilton Baptist" },
+  { id: "1gkkKBm5a5rZ3zMS-ksPk0Y-TmiRB2Zfy", teamId: "hv-rocks", teamName: "HV Rocks" },
+  { id: "1gh19kCFvEgZvG-63IkyppW1Y82GqEgRT", teamId: "hv-flames", teamName: "HV Flames" }
 ];
 var GALLERY_FOLDERS = [
   {
@@ -187,9 +194,247 @@ function analyticsIncrementDailyCount_() {
   properties.setProperty(key, String(Number(properties.getProperty(key) || 0) + 1));
 }
 
+function installGalleryModerationAutomation() {
+  var control = SpreadsheetApp.openById(ANALYTICS_SPREADSHEET_ID);
+  ensureGalleryModerationDashboard_(control);
+  ScriptApp.getProjectTriggers().forEach(function (trigger) {
+    if (trigger.getHandlerFunction() === "handleGalleryModerationEdit") ScriptApp.deleteTrigger(trigger);
+  });
+  ScriptApp.newTrigger("handleGalleryModerationEdit")
+    .forSpreadsheet(ANALYTICS_SPREADSHEET_ID)
+    .onEdit()
+    .create();
+  return syncGalleryModerationDashboard();
+}
+
+function ensureGalleryModerationDashboard_(control) {
+  var sheet = control.getSheetByName(GALLERY_MODERATION_SHEET);
+  if (!sheet) sheet = control.insertSheet(GALLERY_MODERATION_SHEET);
+  if (sheet.getMaxColumns() < GALLERY_MODERATION_HEADERS.length) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), GALLERY_MODERATION_HEADERS.length - sheet.getMaxColumns());
+  }
+  sheet.getRange(1, 1, 1, GALLERY_MODERATION_HEADERS.length).setValues([GALLERY_MODERATION_HEADERS]);
+  sheet.getRange(1, 1, 1, GALLERY_MODERATION_HEADERS.length)
+    .setBackground("#020f22")
+    .setFontColor("#ffffff")
+    .setFontWeight("bold")
+    .setWrap(true);
+  sheet.setFrozenRows(1);
+  var dataRows = Math.max(1, sheet.getMaxRows() - 1);
+  sheet.getRange(2, 6, dataRows, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(["Boys Varsity", "Girls Varsity"], true).setAllowInvalid(false).build()
+  );
+  sheet.getRange(2, 11, dataRows, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(["Pending", "Approve", "Reject"], true).setAllowInvalid(false).build()
+  );
+  sheet.hideColumns(1);
+  sheet.hideColumns(9, 2);
+  sheet.setColumnWidth(2, 150);
+  sheet.setColumnWidth(3, 260);
+  sheet.setColumnWidth(4, 130);
+  sheet.setColumnWidth(5, 160);
+  sheet.setColumnWidth(6, 115);
+  sheet.setColumnWidth(7, 210);
+  sheet.setColumnWidth(8, 165);
+  sheet.setColumnWidth(11, 100);
+  sheet.setColumnWidth(12, 150);
+  sheet.setColumnWidth(13, 165);
+  sheet.setColumnWidth(14, 260);
+  return sheet;
+}
+
+function galleryTeamConfig_(teamId) {
+  for (var index = 0; index < GALLERY_FOLDERS.length; index += 1) {
+    if (GALLERY_FOLDERS[index].teamId === teamId) return GALLERY_FOLDERS[index];
+  }
+  return null;
+}
+
+function galleryDivisionFolder_(teamId, division) {
+  var team = galleryTeamConfig_(teamId);
+  if (!team) return null;
+  for (var index = 0; index < team.folders.length; index += 1) {
+    if (team.folders[index].division === division) return team.folders[index];
+  }
+  return null;
+}
+
+function galleryFingerprint_(file) {
+  var bytes = file.getBlob().getBytes();
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, bytes);
+  return Utilities.base64EncodeWebSafe(digest).replace(/=+$/, "");
+}
+
+function gallerySubmitter_(file) {
+  try {
+    return file.getOwner().getEmail() || "";
+  } catch (error) {
+    return "Uploader metadata unavailable";
+  }
+}
+
+function collectPendingGalleryFiles_(folderConfig, folder, output) {
+  var files = folder.getFiles();
+  while (files.hasNext()) {
+    var file = files.next();
+    if (!/^image\//i.test(file.getMimeType())) continue;
+    securePendingPhoto_(file);
+    output.push({ config: folderConfig, file: file });
+  }
+  var children = folder.getFolders();
+  while (children.hasNext()) collectPendingGalleryFiles_(folderConfig, children.next(), output);
+}
+
+function approvedGalleryFingerprintIndex_() {
+  var index = {};
+  GALLERY_FOLDERS.forEach(function (team) {
+    team.folders.forEach(function (folderConfig) {
+      var files = DriveApp.getFolderById(folderConfig.id).getFiles();
+      while (files.hasNext()) {
+        var file = files.next();
+        if (!/^image\//i.test(file.getMimeType())) continue;
+        try {
+          index[galleryFingerprint_(file)] = file.getId();
+        } catch (error) {
+          console.error("Unable to fingerprint approved photo", file.getId(), error);
+        }
+      }
+    });
+  });
+  return index;
+}
+
+function moderationRowsByFileId_(sheet) {
+  var rows = {};
+  if (sheet.getLastRow() < 2) return rows;
+  sheet.getRange(2, 1, sheet.getLastRow() - 1, GALLERY_MODERATION_HEADERS.length).getValues().forEach(function (row, index) {
+    if (String(row[0] || "").trim()) rows[String(row[0]).trim()] = { rowNumber: index + 2, values: row };
+  });
+  return rows;
+}
+
+function syncGalleryModerationDashboard() {
+  var control = SpreadsheetApp.openById(ANALYTICS_SPREADSHEET_ID);
+  var sheet = ensureGalleryModerationDashboard_(control);
+  var existing = moderationRowsByFileId_(sheet);
+  var fingerprints = approvedGalleryFingerprintIndex_();
+  Object.keys(existing).forEach(function (fileId) {
+    var row = existing[fileId].values;
+    if (String(row[8] || "") && String(row[11] || "") !== "Rejected") fingerprints[String(row[8])] = fileId;
+  });
+  var pending = [];
+  PENDING_GALLERY_FOLDERS.forEach(function (folderConfig) {
+    collectPendingGalleryFiles_(folderConfig, DriveApp.getFolderById(folderConfig.id), pending);
+  });
+  var added = 0;
+  var duplicates = 0;
+  pending.forEach(function (item) {
+    var file = item.file;
+    var fileId = file.getId();
+    var prior = existing[fileId];
+    var fingerprint = prior ? String(prior.values[8] || "") : "";
+    if (!fingerprint) fingerprint = galleryFingerprint_(file);
+    var duplicateOf = fingerprints[fingerprint] && fingerprints[fingerprint] !== fileId ? fingerprints[fingerprint] : "";
+    if (duplicateOf) duplicates += 1;
+    if (prior) {
+      if (String(prior.values[11] || "") === "Pending review" || String(prior.values[11] || "") === "Duplicate review") {
+        sheet.getRange(prior.rowNumber, 9, 1, 4).setValues([[
+          fingerprint,
+          duplicateOf,
+          prior.values[10] || "Pending",
+          duplicateOf ? "Duplicate review" : "Pending review"
+        ]]);
+      }
+    } else {
+      var team = galleryTeamConfig_(item.config.teamId);
+      var defaultDivision = team && team.folders.length === 1 ? team.folders[0].division : "";
+      sheet.appendRow([
+        fileId,
+        "",
+        file.getName(),
+        item.config.teamId,
+        item.config.teamName,
+        defaultDivision,
+        gallerySubmitter_(file),
+        file.getDateCreated().toISOString(),
+        fingerprint,
+        duplicateOf,
+        "Pending",
+        duplicateOf ? "Duplicate review" : "Pending review",
+        "",
+        file.getUrl()
+      ]);
+      var rowNumber = sheet.getLastRow();
+      sheet.getRange(rowNumber, 2).setFormula('=IMAGE("https://drive.google.com/thumbnail?id=' + fileId + '&sz=w160")');
+      sheet.setRowHeight(rowNumber, 105);
+      added += 1;
+    }
+    if (!fingerprints[fingerprint]) fingerprints[fingerprint] = fileId;
+  });
+  if (sheet.getLastRow() >= 2) {
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, GALLERY_MODERATION_HEADERS.length).setWrap(true).setVerticalAlignment("middle");
+  }
+  return JSON.stringify({ pending: pending.length, added: added, duplicates: duplicates });
+}
+
+function rejectedGalleryFolder_(teamId) {
+  var roots = DriveApp.getFoldersByName(GALLERY_REJECTED_FOLDER);
+  var root = roots.hasNext() ? roots.next() : DriveApp.createFolder(GALLERY_REJECTED_FOLDER);
+  root.setSharing(DriveApp.Access.PRIVATE, DriveApp.Permission.VIEW);
+  var children = root.getFoldersByName(teamId);
+  var folder = children.hasNext() ? children.next() : root.createFolder(teamId);
+  folder.setSharing(DriveApp.Access.PRIVATE, DriveApp.Permission.VIEW);
+  return folder;
+}
+
+function processGalleryModerationRow_(control, rowNumber) {
+  var sheet = ensureGalleryModerationDashboard_(control);
+  var row = sheet.getRange(rowNumber, 1, 1, GALLERY_MODERATION_HEADERS.length).getValues()[0];
+  var fileId = String(row[0] || "").trim();
+  var decision = String(row[10] || "").trim();
+  if (!fileId || (decision !== "Approve" && decision !== "Reject")) return "No decision";
+  var file = DriveApp.getFileById(fileId);
+  var processedAt = new Date().toISOString();
+  if (decision === "Reject") {
+    securePendingPhoto_(file);
+    file.moveTo(rejectedGalleryFolder_(String(row[3] || "").trim()));
+    sheet.getRange(rowNumber, 12, 1, 2).setValues([["Rejected", processedAt]]);
+    CacheService.getScriptCache().remove(GALLERY_CACHE_KEY);
+    return "Rejected";
+  }
+  if (String(row[9] || "").trim()) {
+    sheet.getRange(rowNumber, 12).setValue("Duplicate blocked");
+    return "Duplicate blocked";
+  }
+  var folderConfig = galleryDivisionFolder_(String(row[3] || "").trim(), String(row[5] || "").trim());
+  if (!folderConfig) {
+    sheet.getRange(rowNumber, 12).setValue("Choose a valid division");
+    return "Choose a valid division";
+  }
+  file.moveTo(DriveApp.getFolderById(folderConfig.id));
+  ensureApprovedPhotoIsPublic_(file);
+  sheet.getRange(rowNumber, 12, 1, 2).setValues([["Approved", processedAt]]);
+  CacheService.getScriptCache().remove(GALLERY_CACHE_KEY);
+  return "Approved";
+}
+
+function handleGalleryModerationEdit(event) {
+  if (!event || !event.range || !event.source) return;
+  var range = event.range;
+  if (range.getSheet().getName() !== GALLERY_MODERATION_SHEET) return;
+  if (range.getRow() < 2 || range.getColumn() !== 11 || range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    processGalleryModerationRow_(event.source, range.getRow());
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function securePendingGalleryPhotos_() {
-  PENDING_GALLERY_FOLDERS.forEach(function (folderId) {
-    secureFolderTree_(DriveApp.getFolderById(folderId));
+  PENDING_GALLERY_FOLDERS.forEach(function (folderConfig) {
+    secureFolderTree_(DriveApp.getFolderById(folderConfig.id));
   });
 }
 

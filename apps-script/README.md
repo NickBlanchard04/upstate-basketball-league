@@ -6,7 +6,7 @@ The production site loads the Apps Script JSON feed first, uses the published `W
 
 Each active program receives a separate, team-specific workbook generated from the private `Access Roster`. Representatives never receive access to the private league control panel or another program's portal.
 
-Participant instructions are in [COACH_SCORE_GUIDE.md](../docs/COACH_SCORE_GUIDE.md). Commissioner exceptions are in [GAME_EXCEPTION_WORKFLOW.md](../docs/GAME_EXCEPTION_WORKFLOW.md).
+Participant instructions are in [COACH_SCORE_GUIDE.md](../docs/COACH_SCORE_GUIDE.md). Commissioner instructions are in [COMMISSIONER_GUIDE.md](../docs/COMMISSIONER_GUIDE.md), and system maintenance is in [SYSTEM_OWNER_RUNBOOK.md](../docs/SYSTEM_OWNER_RUNBOOK.md).
 
 1. On the coach portal's `Coach Score Entry` sheet, find the completed game.
 2. Enter the away and home scores. The rostered submitter's name is recorded automatically.
@@ -27,13 +27,17 @@ The public website automatically falls back to its published schedule if Google 
 
 ## Apps Script setup
 
-Run `installOperationsAutomation` once as the league business account. It creates the commissioner dashboard and correction queue, creates or refreshes each team portal from `Access Roster`, installs edit and time triggers, runs a health check, and creates the first daily backup.
+Run `installOperationsAutomation` once as the league business account. It creates the commissioner dashboard, correction queue, notification log, reporting settings, public team profiles, and score-reporter assignments; creates or refreshes each team portal from `Access Roster`; installs edit and time triggers; runs a health check; and creates the first daily backup.
 
 The control workbook also receives a `UBL Operations` menu and a private `Recovery Status` sheet. Use `Check backup and recovery status` for the current readiness result, `Run isolated recovery drill` monthly, and `Create recovery candidate` only when diagnosing a possible restore. The automated tools never replace production source tables. Follow [BACKUP_AND_RECOVERY.md](../docs/BACKUP_AND_RECOVERY.md) for the owner procedure.
 
-Run `syncAccessAndCoachPortals` after changing a representative, Google account, team assignment, or access status. Ordinary Games or dashboard edits refresh existing portals automatically.
+For routine onboarding, enter a representative's full name, verified Google email, and Team ID in `Access Roster`, then check `Provision and Send`. The owner-run trigger provisions access, records the portal URL and timestamps, and logs or sends the invitation. `operationsTestMode` defaults to `true`, so no email is sent until the system owner explicitly changes that setting after testing.
 
-The owner-run trigger validates each result, enforces team ownership, writes accepted finals to `Games`, records the attempt in `Score Audit`, and clears the coach input cells. An hourly trigger records overdue scores or feed mismatches in `Operations Alerts` and updates the dashboard alert count; a daily trigger copies the control workbook to `UBL Automated Backups`. A healthy recovery state requires a backup no more than 30 hours old and a successful isolated drill within 31 days.
+Use `syncAccessAndCoachPortals` for a full access repair or refresh. Ordinary Games or dashboard edits refresh existing portals automatically.
+
+The owner-run trigger validates each result, enforces team ownership, writes accepted finals to `Games`, records the attempt in `Score Audit`, and clears the coach input cells. `Score Reporter Team ID` defaults to the home team. Keep `scoreReporterEnforced` set to `false` until the commissioner approves that policy; when enabled, the designated team submits while the opponent verifies and may request a correction.
+
+An hourly trigger records overdue scores or feed mismatches in `Operations Alerts`. `coachReminderMinutes` defaults to `90`; `commissionerEscalationMinutes` defaults to `150`. Notifications are deduplicated in `Notification Log`. A daily trigger copies the control workbook to `UBL Automated Backups`. A healthy recovery state requires a backup no more than 30 hours old and a successful isolated drill within 31 days.
 
 ## Closed pilot workflow
 
@@ -45,7 +49,7 @@ Run `setupPilotTestGames` as the league business account before the closed pilot
 - Run `runPilotIsolationSelfTest` to submit a private test result, verify both public feeds remain clean, and reset the pilot rows.
 - Run `setupPilotTestGames` again to reset the pilot. Run `clearPilotTestGames` after the pilot is finished.
 
-Use [PILOT_TEST_BLUEPRINT.md](../docs/PILOT_TEST_BLUEPRINT.md) for the participant handoff.
+Use [PILOT_TEST_BLUEPRINT.md](../docs/PILOT_TEST_BLUEPRINT.md) as the only participant handoff.
 
 ## Approved gallery feed
 
@@ -59,6 +63,8 @@ The gallery script:
 - Returns a JSON feed with responsive preview and fullscreen Drive URLs
 - Caches the result for 60 seconds
 - Accepts bounded, cookieless site analytics events and writes them to the private `Site Analytics` control-panel tab
+
+Run `installGalleryModerationAutomation` once in the gallery Apps Script project. It creates the private thumbnail dashboard and its edit trigger. Run `syncGalleryModerationDashboard` to discover uploads; an `Approve` or `Reject` decision moves the file automatically. Exact duplicate files are blocked by a SHA-256 fingerprint.
 
 Deploy it as a web app that executes as the owner and allows access to anyone. Put the resulting `/exec` URL in `config.js` as `galleryFeedUrl`. Pending folder IDs are server-side identifiers and do not grant folder access; the folders remain private. Private form links are not included on the public website.
 
