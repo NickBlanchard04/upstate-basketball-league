@@ -280,10 +280,12 @@ test("team directory separates each division and opens the right profile", async
   const directory = page.locator("[data-team-directory]");
   const girlsColumn = page.locator("#girls-division");
   const boysColumn = page.locator("#boys-division");
+  const resultsSwitcher = page.getByRole("navigation", { name: "Switch team division" });
   const girlsCards = girlsColumn.locator(".division-team-card");
   const boysCards = boysColumn.locator(".division-team-card");
 
   await expect(directory).toBeHidden();
+  await expect(resultsSwitcher).toBeHidden();
   await expect(page.locator(".division-team-card")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "false");
   await expect(page.getByRole("button", { name: "Boys", exact: true })).toHaveAttribute("aria-pressed", "false");
@@ -296,7 +298,11 @@ test("team directory separates each division and opens the right profile", async
   await expect(boysCards).toHaveCount(0);
   await expect(girlsColumn).toBeVisible();
   await expect(boysColumn).toBeHidden();
+  await expect(resultsSwitcher).toBeVisible();
+  await expect(resultsSwitcher.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(resultsSwitcher.getByRole("button", { name: "Boys", exact: true })).toHaveAttribute("aria-pressed", "false");
   await expect(girlsColumn.locator(".division-heading")).toHaveText("Girls division");
+  await expect(girlsColumn.locator(".division-heading")).toHaveCSS("text-align", "center");
   await expect(girlsColumn.locator(".division-heading > :not(h2), [data-division-count]")).toHaveCount(0);
   await expect(page.locator(".division-team-card img")).toHaveCount(5);
   await expect(girlsColumn.locator('[data-program-card="hv-flames"] img')).toHaveAttribute("src", "assets/icons/icon-192.png");
@@ -304,7 +310,7 @@ test("team directory separates each division and opens the right profile", async
 
   const openSpot = girlsColumn.locator('[data-program-card="tbd"]');
   await expect(openSpot).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
-  await expect(openSpot).toHaveAccessibleName("Open UBL program spot in Girls Varsity — contact the league");
+  await expect(openSpot).toHaveAccessibleName("Open UBL program spot in Girls Varsity, contact the league");
   await expect(openSpot.locator(".team-card-kicker")).toHaveText("Now recruiting");
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
@@ -313,6 +319,15 @@ test("team directory separates each division and opens the right profile", async
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
+  expect(await girlsCards.evaluateAll((cards) => cards.every((card) => !/[\u00e2\u00c2\u00c3\ufffd]/u.test(card.getAttribute("aria-label") || "")))).toBe(true);
+
+  await resultsSwitcher.getByRole("button", { name: "Boys", exact: true }).click();
+  await expect(girlsColumn).toBeHidden();
+  await expect(boysColumn).toBeVisible();
+  await expect(resultsSwitcher.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(resultsSwitcher.getByRole("button", { name: "Boys", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await resultsSwitcher.getByRole("button", { name: "Girls", exact: true }).click();
+  await expect(girlsColumn).toBeVisible();
 
   if (testInfo.project.name.startsWith("desktop")) {
     await girlsKings.scrollIntoViewIfNeeded();
@@ -399,16 +414,38 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
       return {
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         cardOverlap,
-        rowCounts
+        rowCounts,
+        switcherPosition: getComputedStyle(document.querySelector(".teams-results-switcher")).position
       };
     });
 
     expect(metrics.overflow, `${width}px horizontal overflow`).toBe(false);
     expect(metrics.cardOverlap, `${width}px logo or action overlap`).toBe(false);
-    expect(metrics.rowCounts, `${width}px cards per division row`).toEqual(width < 600 || width >= 1024 ? [3, 2] : [2, 2, 1]);
+    expect(metrics.rowCounts, `${width}px cards per division row`).toEqual(width >= 1024 ? [3, 2] : [2, 2, 1]);
+    expect(metrics.switcherPosition, `${width}px results switcher positioning`).toBe(width < 600 ? "sticky" : "relative");
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/teams.html");
+  await page.getByRole("button", { name: "Girls", exact: true }).click();
+  await page.waitForTimeout(700);
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo({ top: document.querySelector(".team-directory").offsetTop + 600, left: 0, behavior: "instant" });
+  });
+  const stickyMetrics = await page.evaluate(() => {
+    const header = document.querySelector(".site-header").getBoundingClientRect();
+    const switcher = document.querySelector(".teams-results-switcher").getBoundingClientRect();
+    return {
+      headerBottom: Math.round(header.bottom),
+      switcherTop: Math.round(switcher.top),
+      stageOverflow: getComputedStyle(document.querySelector(".teams-stage")).overflow
+    };
+  });
+  expect(stickyMetrics.stageOverflow).toBe("clip");
+  expect(stickyMetrics.switcherTop).toBeGreaterThanOrEqual(stickyMetrics.headerBottom);
+  expect(stickyMetrics.switcherTop).toBeLessThanOrEqual(stickyMetrics.headerBottom + 12);
+
   await page.goto("/teams.html");
   const menu = page.locator(".menu-toggle");
   await expect(menu).toHaveAccessibleName("Open menu");
