@@ -474,6 +474,7 @@ function renderSchedulePage() {
     const direction = Number(button.dataset.weekStep);
     button.disabled = direction < 0 ? weekIndex <= 0 : weekIndex >= league.scheduleWeeks.length - 1;
   });
+  syncWeekPicker();
   renderScheduleSupport();
 }
 
@@ -492,9 +493,98 @@ document.querySelectorAll("[data-schedule-filter]").forEach((button) => {
 });
 
 const weekSelect = document.querySelector("[data-week-select]");
+const weekPicker = document.querySelector("[data-week-picker]");
+const weekPickerTrigger = document.querySelector("[data-week-picker-trigger]");
+const weekPickerValue = document.querySelector("[data-week-picker-value]");
+const weekPickerPopover = document.querySelector("[data-week-picker-popover]");
+const weekPickerList = document.querySelector("[data-week-picker-list]");
+
+function formatWeekPickerRange(value) {
+  return String(value || "").replace(/(\d)-(\d)/g, "$1\u2013$2");
+}
+
+function weekPickerMonth(week) {
+  return String(week.range || "").slice(0, 3).toUpperCase();
+}
+
+function weekPickerOptionMarkup(week) {
+  const label = `${week.label} \u00b7 ${formatWeekPickerRange(week.range)}`;
+  return `
+    <button class="week-picker-option${week.type === "playoff" ? " is-postseason" : ""}" type="button" role="option" aria-selected="false" tabindex="-1" data-week-option="${safeAttribute(week.id)}">
+      <span class="week-picker-node" aria-hidden="true"></span>
+      <span class="week-picker-option-copy">${escapeHtml(label)}</span>
+      <span class="week-picker-option-status" aria-hidden="true">Selected</span>
+    </button>
+  `;
+}
+
+function populateWeekPicker() {
+  if (!weekPickerList) return;
+  const monthGroups = new Map();
+  league.scheduleWeeks.forEach((week) => {
+    const month = weekPickerMonth(week);
+    if (!monthGroups.has(month)) monthGroups.set(month, []);
+    monthGroups.get(month).push(week);
+  });
+
+  weekPickerList.innerHTML = [...monthGroups.entries()].map(([month, weeks]) => {
+    const monthId = `week-picker-month-${month.toLowerCase()}`;
+    return `
+      <div class="week-picker-month" role="group" aria-labelledby="${monthId}">
+        <h3 id="${monthId}">${escapeHtml(month)}</h3>
+        <div class="week-picker-month-options">${weeks.map(weekPickerOptionMarkup).join("")}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function weekPickerOptions() {
+  return weekPickerList ? [...weekPickerList.querySelectorAll("[data-week-option]")] : [];
+}
+
+function syncWeekPicker() {
+  if (!weekPickerTrigger || !weekPickerValue) return;
+  const week = league.scheduleWeeks.find((item) => item.id === selectedWeekId) || league.scheduleWeeks[0];
+  if (!week) return;
+  weekPickerValue.textContent = `${week.label} \u00b7 ${formatWeekPickerRange(week.range)}`;
+  weekPickerOptions().forEach((option) => {
+    const selected = option.dataset.weekOption === week.id;
+    option.setAttribute("aria-selected", String(selected));
+    option.classList.toggle("is-selected", selected);
+  });
+}
+
+function positionWeekPicker() {
+  if (!weekPicker || !weekPickerPopover) return;
+  const triggerBounds = weekPickerTrigger.getBoundingClientRect();
+  const headerBottom = document.querySelector(".site-header")?.getBoundingClientRect().bottom || 0;
+  const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
+  const spaceAbove = triggerBounds.top - headerBottom - 12;
+  const placeAbove = spaceBelow < 560 && spaceAbove > spaceBelow;
+  weekPickerPopover.dataset.placement = placeAbove ? "above" : "below";
+  weekPickerPopover.style.setProperty("--week-picker-space", `${Math.max(280, placeAbove ? spaceAbove : spaceBelow)}px`);
+}
+
+function setWeekPickerOpen(open, focusSelected = false) {
+  if (!weekPicker || !weekPickerTrigger || !weekPickerPopover) return;
+  weekPicker.dataset.open = String(open);
+  weekPickerTrigger.setAttribute("aria-expanded", String(open));
+  weekPickerPopover.hidden = !open;
+  if (!open) return;
+  positionWeekPicker();
+  weekPickerPopover.scrollTop = 0;
+  if (focusSelected) {
+    requestAnimationFrame(() => {
+      (weekPickerOptions().find((option) => option.classList.contains("is-selected")) || weekPickerOptions()[0])?.focus();
+    });
+  }
+}
+
 function populateWeekOptions() {
   if (!weekSelect) return;
   weekSelect.innerHTML = league.scheduleWeeks.map((week) => `<option value="${safeAttribute(week.id)}">${escapeHtml(week.label)} &middot; ${escapeHtml(week.range)}</option>`).join("");
+  populateWeekPicker();
+  syncWeekPicker();
 }
 
 if (weekSelect) {
@@ -504,12 +594,82 @@ if (weekSelect) {
   });
 }
 
+weekPickerTrigger?.addEventListener("click", () => {
+  const open = weekPickerTrigger.getAttribute("aria-expanded") !== "true";
+  setWeekPickerOpen(open);
+});
+
+weekPickerTrigger?.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && weekPickerTrigger.getAttribute("aria-expanded") === "true") {
+    event.preventDefault();
+    setWeekPickerOpen(false);
+    return;
+  }
+  if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+  event.preventDefault();
+  setWeekPickerOpen(true);
+  const options = weekPickerOptions();
+  const selectedIndex = Math.max(0, options.findIndex((option) => option.classList.contains("is-selected")));
+  const nextIndex = event.key === "End"
+    ? options.length - 1
+    : event.key === "Home"
+      ? 0
+      : Math.min(options.length - 1, Math.max(0, selectedIndex + (event.key === "ArrowUp" ? -1 : 1)));
+  requestAnimationFrame(() => options[nextIndex]?.focus());
+});
+
+weekPickerList?.addEventListener("click", (event) => {
+  const option = event.target.closest("[data-week-option]");
+  if (!option || !weekSelect) return;
+  weekSelect.value = option.dataset.weekOption;
+  weekSelect.dispatchEvent(new Event("change", { bubbles: true }));
+  setWeekPickerOpen(false);
+  weekPickerTrigger?.focus();
+});
+
+weekPickerList?.addEventListener("keydown", (event) => {
+  const options = weekPickerOptions();
+  const currentIndex = options.indexOf(event.target.closest("[data-week-option]"));
+  if (event.key === "Escape") {
+    event.preventDefault();
+    setWeekPickerOpen(false);
+    weekPickerTrigger?.focus();
+    return;
+  }
+  if (event.key === "Tab") {
+    setWeekPickerOpen(false);
+    return;
+  }
+  if ((event.key === "Enter" || event.key === " ") && currentIndex >= 0) {
+    event.preventDefault();
+    options[currentIndex].click();
+    return;
+  }
+  if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+  event.preventDefault();
+  const nextIndex = event.key === "Home"
+    ? 0
+    : event.key === "End"
+      ? options.length - 1
+      : Math.min(options.length - 1, Math.max(0, currentIndex + (event.key === "ArrowUp" ? -1 : 1)));
+  options[nextIndex]?.focus();
+});
+
+document.addEventListener("click", (event) => {
+  if (!weekPicker?.contains(event.target)) setWeekPickerOpen(false);
+});
+
+window.addEventListener("resize", () => {
+  if (weekPickerTrigger?.getAttribute("aria-expanded") === "true") positionWeekPicker();
+});
+
 document.querySelectorAll("[data-week-step]").forEach((button) => {
   button.addEventListener("click", () => {
     const currentIndex = league.scheduleWeeks.findIndex((week) => week.id === selectedWeekId);
     const direction = Number(button.dataset.weekStep);
     const nextIndex = Math.min(league.scheduleWeeks.length - 1, Math.max(0, currentIndex + direction));
     selectedWeekId = league.scheduleWeeks[nextIndex].id;
+    setWeekPickerOpen(false);
     renderSchedulePage();
   });
 });

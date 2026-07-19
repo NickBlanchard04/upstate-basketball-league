@@ -4696,12 +4696,14 @@ th {
   gap: 0.65rem;
 }
 
-.schedule-page .week-controls label {
+.schedule-page .week-picker-field {
+  position: relative;
+  z-index: 20;
   min-width: 0;
   grid-area: select;
 }
 
-.schedule-page .week-controls label span {
+.schedule-page .week-picker-label {
   margin-bottom: 0.45rem;
   display: block;
   color: #b9c6d8;
@@ -4711,8 +4713,19 @@ th {
   text-transform: uppercase;
 }
 
-.schedule-page .week-controls button,
-.schedule-page .week-controls select {
+.schedule-page .week-select-native {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.schedule-page .week-controls [data-week-step] {
   width: 100%;
   min-height: 2.9rem;
   border: 1px solid rgba(142, 174, 211, 0.52);
@@ -4725,12 +4738,7 @@ th {
   transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease, transform 160ms ease;
 }
 
-.schedule-page .week-controls select {
-  padding-inline: 1rem 2.5rem;
-  color-scheme: dark;
-}
-
-.schedule-page .week-controls button {
+.schedule-page .week-controls [data-week-step] {
   padding: 0.65rem;
   display: inline-flex;
   align-items: center;
@@ -4739,24 +4747,250 @@ th {
   cursor: pointer;
 }
 
-.schedule-page .week-controls button:first-of-type { grid-area: previous; }
-.schedule-page .week-controls button:last-of-type { grid-area: next; }
-.schedule-page .week-controls button .material-symbols-rounded { font-size: 1rem; }
-.schedule-page .week-controls button:first-of-type .material-symbols-rounded { transform: rotate(180deg); }
+.schedule-page .week-controls [data-week-step="-1"] { grid-area: previous; }
+.schedule-page .week-controls [data-week-step="1"] { grid-area: next; }
+.schedule-page .week-controls [data-week-step] .material-symbols-rounded { font-size: 1rem; }
+.schedule-page .week-controls [data-week-step="-1"] .material-symbols-rounded { transform: rotate(180deg); }
 
-.schedule-page .week-controls button:hover:not(:disabled),
-.schedule-page .week-controls button:focus-visible,
-.schedule-page .week-controls select:focus-visible {
+.schedule-page .week-controls [data-week-step]:hover:not(:disabled),
+.schedule-page .week-controls [data-week-step]:focus-visible {
   border-color: #ff3150;
   color: var(--white);
   background: rgba(7, 52, 103, 0.58);
   transform: translateY(-1px);
 }
 
-.schedule-page .week-controls button:disabled {
+.schedule-page .week-controls [data-week-step]:disabled {
   color: #69778c;
   background: rgba(3, 19, 41, 0.48);
   cursor: not-allowed;
+}
+
+.schedule-page .week-picker {
+  position: relative;
+}
+
+.schedule-page .week-picker-trigger {
+  width: 100%;
+  min-height: 3.35rem;
+  padding: 0.72rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(185, 198, 216, 0.62);
+  border-radius: 0.35rem;
+  color: var(--white);
+  background: rgba(3, 19, 41, 0.94);
+  font: 800 1rem/1 var(--display);
+  letter-spacing: 0.025em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.schedule-page .week-picker-trigger .material-symbols-rounded {
+  flex: 0 0 auto;
+  font-size: 1.35rem;
+  transform: rotate(90deg);
+  transition: transform 160ms ease;
+}
+
+.schedule-page .week-picker-trigger:hover,
+.schedule-page .week-picker-trigger:focus-visible,
+.schedule-page .week-picker[data-open="true"] .week-picker-trigger {
+  border-color: #ff3150;
+  background: rgba(4, 26, 56, 0.98);
+}
+
+.schedule-page .week-picker-trigger:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+.schedule-page .week-picker[data-open="true"] .week-picker-trigger .material-symbols-rounded {
+  transform: rotate(90deg);
+}
+
+.week-picker-popover {
+  --week-picker-label-width: 5.25rem;
+  --week-picker-node-width: 2.6rem;
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  width: 100%;
+  max-height: min(48rem, var(--week-picker-space, 70vh));
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(185, 198, 216, 0.62);
+  border-radius: 0.4rem;
+  color: var(--white);
+  background: var(--navy-950);
+  box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.42);
+  scrollbar-color: #0b4b89 #020f22;
+}
+
+.week-picker-popover[data-placement="above"] {
+  top: auto;
+  bottom: calc(100% + 0.35rem);
+}
+
+.week-picker-popover[hidden] {
+  display: none;
+}
+
+.week-picker-list {
+  min-width: 0;
+}
+
+.week-picker-month {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: var(--week-picker-label-width) minmax(0, 1fr);
+  border-bottom: 1px solid rgba(142, 174, 211, 0.25);
+}
+
+.week-picker-month::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 1.05rem;
+  bottom: -1.05rem;
+  left: calc(var(--week-picker-label-width) + (var(--week-picker-node-width) / 2));
+  width: 2px;
+  background: #0d6dbf;
+}
+
+.week-picker-month:first-child::after {
+  background: var(--red);
+}
+
+.week-picker-month:last-child::after {
+  bottom: -2.5rem;
+}
+
+.week-picker-month h3 {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  margin: 0;
+  padding: 1.1rem 0.65rem;
+  color: #f4f7fb;
+  font: 700 2.5rem/0.85 "Teko", var(--display);
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.week-picker-month-options {
+  min-width: 0;
+  padding: 0.55rem 0.7rem 0.55rem 0;
+}
+
+.schedule-page .week-controls .week-picker-option {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.45rem 0.75rem 0.45rem 0;
+  display: grid;
+  grid-template-columns: var(--week-picker-node-width) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.2rem;
+  border: 1px solid transparent;
+  border-radius: 0.28rem;
+  color: #e9f1fb;
+  background: transparent;
+  font: 700 0.88rem/1.05 var(--display);
+  letter-spacing: 0.025em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+
+.schedule-page .week-controls .week-picker-option:hover {
+  color: var(--white);
+  background: rgba(7, 76, 144, 0.68);
+}
+
+.schedule-page .week-controls .week-picker-option:focus-visible {
+  outline: none;
+  border-color: var(--white);
+  color: var(--white);
+  background: rgba(4, 26, 56, 0.98);
+}
+
+.schedule-page .week-controls .week-picker-option.is-selected {
+  color: var(--white);
+  background: rgba(7, 52, 103, 0.42);
+}
+
+.week-picker-option-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.week-picker-node {
+  position: relative;
+  z-index: 2;
+  width: 0.72rem;
+  height: 0.72rem;
+  justify-self: center;
+  border: 2px solid #0d6dbf;
+  background: var(--navy-950);
+}
+
+.week-picker-month:first-child .week-picker-node {
+  border-color: var(--red);
+}
+
+.week-picker-option.is-selected .week-picker-node {
+  border-color: #ff3150;
+  background: #ff3150;
+  box-shadow: 0 0 0 0.34rem rgba(227, 19, 49, 0.14);
+}
+
+.week-picker-option-status {
+  min-width: 4.75rem;
+  color: #ff3150;
+  font: 800 0.64rem/1 var(--body);
+  letter-spacing: 0.06em;
+  text-align: right;
+  visibility: hidden;
+}
+
+.week-picker-option.is-selected .week-picker-option-status {
+  visibility: visible;
+}
+
+.week-picker-option.is-postseason .week-picker-option-copy {
+  color: #c8d9ed;
+}
+
+.week-picker-postseason-note {
+  min-height: 3.2rem;
+  padding: 0.7rem 0.8rem;
+  display: grid;
+  grid-template-columns: calc(var(--week-picker-label-width) + var(--week-picker-node-width)) minmax(0, 1fr);
+  align-items: center;
+  border-top: 1px solid rgba(142, 174, 211, 0.34);
+  background: rgba(4, 26, 56, 0.78);
+  text-transform: uppercase;
+}
+
+.week-picker-postseason-note strong {
+  font: 800 0.8rem/1 var(--display);
+  letter-spacing: 0.02em;
+}
+
+.week-picker-postseason-note span {
+  color: #a9b8cb;
+  font: 700 0.72rem/1 var(--display);
+  letter-spacing: 0.04em;
 }
 
 .schedule-page .tabs {
@@ -5078,6 +5312,45 @@ th {
   }
 }
 
+@media (max-width: 479px) {
+  .week-picker-popover {
+    --week-picker-label-width: 4.35rem;
+    --week-picker-node-width: 2.15rem;
+  }
+
+  .week-picker-month h3 {
+    padding-inline: 0.35rem;
+    font-size: 2.15rem;
+  }
+
+  .week-picker-month-options {
+    padding-right: 0.4rem;
+  }
+
+  .schedule-page .week-controls .week-picker-option {
+    min-height: 3.15rem;
+    padding-right: 0.45rem;
+    grid-template-columns: var(--week-picker-node-width) minmax(0, 1fr);
+    font-size: 0.82rem;
+  }
+
+  .week-picker-option-status {
+    display: none;
+    grid-column: 2;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .week-picker-option.is-selected .week-picker-option-status {
+    display: block;
+  }
+
+  .week-picker-postseason-note {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}
+
 @media (min-width: 768px) {
   .schedule-page .subpage-main { padding-top: 1.7rem; }
 
@@ -5124,8 +5397,50 @@ th {
     gap: 1rem;
   }
 
-  .schedule-page .week-controls button,
-  .schedule-page .week-controls select { min-height: 3.35rem; }
+  .schedule-page .week-controls [data-week-step],
+  .schedule-page .week-picker-trigger { min-height: 4rem; }
+
+  .schedule-page .week-picker-label {
+    font-size: 0.78rem;
+  }
+
+  .schedule-page .week-picker-trigger {
+    padding-inline: 1.2rem;
+    font-size: 1.5rem;
+  }
+
+  .week-picker-popover {
+    --week-picker-label-width: 8.25rem;
+    --week-picker-node-width: 3.4rem;
+  }
+
+  .week-picker-month h3 {
+    padding-top: 1.35rem;
+    font-size: 3.45rem;
+  }
+
+  .week-picker-month-options {
+    padding: 0.7rem 0.9rem 0.7rem 0;
+  }
+
+  .schedule-page .week-controls .week-picker-option {
+    min-height: 3.55rem;
+    padding-right: 1rem;
+    font-size: 1.16rem;
+  }
+
+  .week-picker-option-status {
+    min-width: 5.5rem;
+    font-size: 0.76rem;
+  }
+
+  .week-picker-postseason-note strong {
+    font-size: 0.98rem;
+  }
+
+  .week-picker-postseason-note span {
+    font-size: 0.86rem;
+  }
 
   .schedule-page .tabs { margin-bottom: 1.25rem; }
   .schedule-slate-heading { min-height: 3.15rem; padding-inline: 1.1rem; }
@@ -5195,13 +5510,15 @@ th {
 
 @media (prefers-reduced-motion: reduce) {
   .schedule-command-header a .material-symbols-rounded,
-  .schedule-page .week-controls button,
+  .schedule-page .week-controls [data-week-step],
+  .schedule-page .week-picker-trigger,
+  .schedule-page .week-picker-option,
   .schedule-page .tabs button,
   .schedule-page .schedule-game-row { transition: none !important; }
 
   .schedule-command-header a:hover .material-symbols-rounded,
   .schedule-command-header a:focus-visible .material-symbols-rounded,
-  .schedule-page .week-controls button:hover:not(:disabled),
+  .schedule-page .week-controls [data-week-step]:hover:not(:disabled),
   .schedule-page .tabs button:hover,
   .schedule-page .schedule-game-row:hover { transform: none; }
 }

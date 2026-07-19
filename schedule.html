@@ -30,13 +30,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260718-13">
-  <script src="config.js?v=20260718-13" defer></script>
-  <script src="analytics.js?v=20260718-13" defer></script>
-  <script src="league-core.js?v=20260718-13" defer></script>
-  <script src="data.js?v=20260718-13" defer></script>
-  <script src="data-loader.js?v=20260718-13" defer></script>
-  <script src="script.js?v=20260718-13" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260719-2">
+  <script src="config.js?v=20260719-2" defer></script>
+  <script src="analytics.js?v=20260719-2" defer></script>
+  <script src="league-core.js?v=20260719-2" defer></script>
+  <script src="data.js?v=20260719-2" defer></script>
+  <script src="data-loader.js?v=20260719-2" defer></script>
+  <script src="script.js?v=20260719-2" defer></script>
 </head>
 <body class="schedule-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -73,7 +73,20 @@
       </div>
       <p class="data-freshness" data-freshness aria-live="polite"></p>
       <div class="week-controls">
-        <label><span>Select week</span><select data-week-select aria-label="Select schedule week"></select></label>
+        <div class="week-picker-field">
+          <span class="week-picker-label" id="week-picker-label">Select week</span>
+          <select class="week-select-native" data-week-select aria-label="Select schedule week" aria-hidden="true" tabindex="-1"></select>
+          <div class="week-picker" data-week-picker>
+            <button class="week-picker-trigger" type="button" role="combobox" aria-controls="week-picker-list" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="week-picker-label week-picker-value" data-week-picker-trigger>
+              <span id="week-picker-value" data-week-picker-value>Opening Week &middot; Dec 3</span>
+              <span class="material-symbols-rounded" aria-hidden="true">east</span>
+            </button>
+            <div class="week-picker-popover" data-week-picker-popover hidden>
+              <div class="week-picker-list" id="week-picker-list" role="listbox" aria-labelledby="week-picker-label" data-week-picker-list></div>
+              <div class="week-picker-postseason-note" aria-hidden="true"><strong>Postseason</strong><span>Playoffs &amp; championship</span></div>
+            </div>
+          </div>
+        </div>
         <button type="button" data-week-step="-1" aria-label="View previous week"><span class="material-symbols-rounded" aria-hidden="true">east</span>Previous week</button>
         <button type="button" data-week-step="1" aria-label="View next week">Next week<span class="material-symbols-rounded" aria-hidden="true">east</span></button>
       </div>
