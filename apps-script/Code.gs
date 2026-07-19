@@ -16,8 +16,8 @@ var RECOVERY_DRILL_PREFIX = "UBL RECOVERY DRILL ";
 var RECOVERY_CANDIDATE_PREFIX = "UBL RECOVERY CANDIDATE ";
 var MAX_BACKUP_AGE_HOURS = 30;
 var MAX_RECOVERY_DRILL_AGE_DAYS = 31;
-var RECOVERY_REQUIRED_SHEETS = ["Games", "Teams", "Venues", "Settings", "Website Feed"];
-var RECOVERY_FINGERPRINT_SHEETS = ["Games", "Teams", "Venues", "Settings"];
+var RECOVERY_REQUIRED_SHEETS = ["Games", "Teams", "Venues", "Settings", "Public Team Profiles", "Website Feed"];
+var RECOVERY_FINGERPRINT_SHEETS = ["Games", "Teams", "Venues", "Settings", "Public Team Profiles"];
 var HEALTH_ALERT_PROPERTY = "ubl-health-alert-fingerprint";
 var PILOT_GAME_PREFIX = "pilot-";
 var PILOT_WEEK_ID = "pilot-test";
@@ -31,6 +31,42 @@ var PORTAL_FUTURE_DAYS = 8;
 var PORTAL_FALLBACK_GAMES = 4;
 var UNUSUAL_SCORE_LIMIT = 130;
 var UNUSUAL_MARGIN_LIMIT = 80;
+var GAME_COLUMN_COUNT = 17;
+var GAME_REPORTER_COLUMN = 17;
+var PUBLIC_TEAM_PROFILES_SHEET = "Public Team Profiles";
+var NOTIFICATION_LOG_SHEET = "Notification Log";
+var DEFAULT_COMMISSIONER_EMAIL = "info.upstatebasketballleague@gmail.com";
+var WORKFLOW_SETTING_DEFAULTS = {
+  scoreReporterEnforced: false,
+  coachReminderMinutes: 90,
+  commissionerEscalationMinutes: 150,
+  operationsTestMode: true,
+  commissionerEmail: DEFAULT_COMMISSIONER_EMAIL,
+  notificationTestEmail: "athletic_director@kingsschool.info"
+};
+var ACCESS_ROSTER_HEADERS = [
+  "Role", "Person", "Program", "Google account / email", "Access level", "Status",
+  "Last verified", "Operational responsibility", "Team ID", "Invite sent",
+  "Access tested", "Pilot completed", "Ready for rollout", "Portal URL",
+  "Provision and Send", "Provisioned At", "Invitation Sent At", "Provisioning Status"
+];
+var PUBLIC_TEAM_PROFILE_HEADERS = [
+  "Team ID", "Division", "Program Summary", "Representative Email", "Home Venue ID",
+  "Head Coach", "Head Coach Experience", "Head Coach Photo URL", "Assistants JSON",
+  "Published", "Last Updated"
+];
+var PUBLIC_TEAM_PROFILE_SEED = [
+  ["kings-school", "Boys Varsity", "A founding UBL program fielding both boys and girls varsity teams.", "athletic_director@kingsschool.info", "kings-school-gym", "Hudson Waters", "Second season as head coach.", "assets/optimized/hudson-waters-192.webp", '[{"name":"Jacob Fischer","experience":"Assistant coach and Class of 2022 alumnus.","photo":"assets/optimized/jacob-fischer-192.webp"}]', true],
+  ["kings-school", "Girls Varsity", "A founding UBL program fielding both boys and girls varsity teams.", "athletic_director@kingsschool.info", "kings-school-gym", "Brodie Farr", "Class of 1992 alumnus; coached the program for four seasons.", "", '[{"name":"Todd Brown","experience":"Coached alongside Brodie Farr for four seasons.","photo":""}]', true],
+  ["perth", "Boys Varsity", "A founding UBL program with boys and girls varsity participation planned.", "", "perth-gym", "", "", "", "[]", true],
+  ["perth", "Girls Varsity", "A founding UBL program with boys and girls varsity participation planned.", "", "perth-gym", "", "", "", "[]", true],
+  ["wilton-baptist", "Boys Varsity", "A founding UBL program led by coach Chris Webster.", "", "wilton-baptist-gym", "Chris Webster", "Head coach at Wilton Baptist for 10 seasons.", "assets/optimized/chris-webster-192.webp", '[{"name":"Rob Newcome","experience":"Coaching for eight seasons.","photo":""}]', true],
+  ["wilton-baptist", "Girls Varsity", "A founding UBL program led by coach Chris Webster.", "", "wilton-baptist-gym", "Chris Webster", "Head coach at Wilton Baptist for 10 seasons.", "assets/optimized/chris-webster-192.webp", "[]", true],
+  ["hv-rocks", "Boys Varsity", "HV Rocks has competed for nearly 30 years.", "", "open-arms", "Marc Bailey", "Head coach with 15 seasons of coaching experience.", "", '[{"name":"Tim Stuitje","experience":"Assistant coach for three seasons, entering his fourth.","photo":""}]', true],
+  ["hv-flames", "Girls Varsity", "HV Flames competes in the UBL Girls Varsity division.", "", "open-arms", "Rebekah Johnson", "Additional coach information is being collected.", "", "[]", true],
+  ["tbd", "Boys Varsity", "UBL is recruiting a fifth program ready for structured varsity competition, shared standards, and a meaningful championship experience.", DEFAULT_COMMISSIONER_EMAIL, "", "Your program", "Applications are open for the 2026-27 season.", "", "[]", true],
+  ["tbd", "Girls Varsity", "UBL is recruiting a fifth program ready for structured varsity competition, shared standards, and a meaningful championship experience.", DEFAULT_COMMISSIONER_EMAIL, "", "Your program", "Applications are open for the 2026-27 season.", "", "[]", true]
+];
 
 function onOpen() {
   SpreadsheetApp.getUi()
@@ -40,6 +76,8 @@ function onOpen() {
     .addItem("Create recovery candidate", "createRecoveryCandidateFromLatestBackup")
     .addSeparator()
     .addItem("Refresh commissioner dashboard", "syncCommissionerDashboard_")
+    .addItem("Provision checked representatives", "provisionCheckedRepresentatives")
+    .addItem("Run notification self-test", "runNotificationSelfTest")
     .addToUi();
 }
 
@@ -72,11 +110,7 @@ function buildCoachFeed_() {
 
 function buildLeagueFeed_(includePilotGames) {
   var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var settingsRows = sheetObjects_(spreadsheet, "Settings");
-  var settings = {};
-  settingsRows.forEach(function (row) {
-    settings[row.Key] = typedSetting_(row.Value);
-  });
+  var settings = workflowSettings_(spreadsheet);
 
   var teams = sheetObjects_(spreadsheet, "Teams").map(function (row) {
     return {
@@ -119,18 +153,22 @@ function buildLeagueFeed_(includePilotGames) {
       stage: text_(row.Stage),
       notes: text_(row.Notes),
       lastUpdated: isoText_(row["Last Updated"]),
-      weekId: text_(row["Week ID"])
+      weekId: text_(row["Week ID"]),
+      scoreReporterTeamId: text_(row["Score Reporter Team ID"]) || text_(row["Home Team ID"])
     };
   });
 
-  validatePublicFeed_(teams, venues, games);
+  var profiles = publicTeamProfiles_(spreadsheet, teams, venues);
+  validatePublicFeed_(teams, venues, games, profiles);
+  var responseSettings = includePilotGames ? settings : publicWorkflowSettings_(settings);
   return {
     schemaVersion: Number(settings.dataVersion || 1),
     lastUpdated: text_(settings.lastUpdated) || new Date().toISOString(),
-    settings: settings,
+    settings: responseSettings,
     teams: teams,
     venues: venues,
-    games: games
+    games: games,
+    profiles: profiles
   };
 }
 
@@ -148,6 +186,10 @@ function handleControlGameEdit(event) {
   }
   if (sheet.getName() === CORRECTIONS_QUEUE_SHEET) {
     handleCorrectionsQueueEdit_(event);
+    return;
+  }
+  if (sheet.getName() === "Access Roster") {
+    handleAccessRosterEdit_(event);
     return;
   }
   if (sheet.getName() !== "Games" || event.range.getRow() <= 1) return;
@@ -261,6 +303,7 @@ function syncCoachScorePortal_(portal, entry, team) {
 
   var existing = coachPortalExistingRows_(sheet);
   var portalGames = selectPortalGames_(feed.games, entry.teamId, new Date());
+  var reporterEnforced = feed.settings.scoreReporterEnforced === true;
 
   var rows = portalGames.map(function (game) {
     var prior = existing[game.id] || {};
@@ -269,6 +312,9 @@ function syncCoachScorePortal_(portal, entry, team) {
     var status = pilot
       ? (published ? "Pilot complete - private" : "Pilot ready - private")
       : (published ? "Published to website" : "Ready");
+    if (!published && !portalCanReportGame_(game, entry.teamId, feed.settings)) {
+      status = "Verification only - designated team reports";
+    }
     if (!published && /^(Rejected:|Review )/.test(text_(prior.status))) status = text_(prior.status);
     var gameLabel = (pilot ? "PILOT TEST\n" : "")
       + coachPortalDate_(game.date, feed.settings.timezone || "America/New_York")
@@ -294,7 +340,11 @@ function syncCoachScorePortal_(portal, entry, team) {
   sheet.getRange(1, 1, Math.min(2, sheet.getMaxRows()), sheet.getMaxColumns()).breakApart();
   sheet.clear();
   sheet.getRange(1, 1, 1, 7).merge().setValue("UBL " + team.name.toUpperCase() + " SCORE ENTRY");
-  sheet.getRange(2, 1, 1, 7).merge().setValue("Enter the away and home final scores, then check Submit. Your name is recorded automatically.");
+  sheet.getRange(2, 1, 1, 7).merge().setValue(
+    reporterEnforced
+      ? "The designated reporting team enters the final. Other listed games are available for result verification."
+      : "Enter the away and home final scores, then check Submit. Your name is recorded automatically."
+  );
   sheet.getRange(4, 1, 1, 7).setValues([[
     "Game ID", "GAME", "AWAY", "HOME", "SUBMIT", "STATUS", "Submitted By"
   ]]);
@@ -322,12 +372,23 @@ function syncCoachScorePortal_(portal, entry, team) {
     sheet.getRange(index + 5, 2).setBackground("#e9eff7").setFontWeight("bold");
     sheet.getRange(index + 5, 6).setBackground("#d9ead3").setFontColor("#0c591e").setFontWeight("bold");
   });
+  portalGames.forEach(function (game, index) {
+    if (portalCanReportGame_(game, entry.teamId, feed.settings)) return;
+    sheet.getRange(index + 5, 3, 1, 3).setBackground("#e9eff7").clearContent();
+    sheet.getRange(index + 5, 6).setBackground("#e9eff7").setFontColor("#637084");
+  });
 
   sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET).forEach(function (protection) {
     if (protection.getDescription() === COACH_PORTAL_PROTECTION) protection.remove();
   });
   var protection = sheet.protect().setDescription(COACH_PORTAL_PROTECTION).setWarningOnly(false);
-  protection.setUnprotectedRanges([sheet.getRange(5, 3, dataRows, 3)]);
+  var editableRanges = [];
+  portalGames.forEach(function (game, index) {
+    if (portalCanReportGame_(game, entry.teamId, feed.settings)) {
+      editableRanges.push(sheet.getRange(index + 5, 3, 1, 3));
+    }
+  });
+  protection.setUnprotectedRanges(editableRanges);
   try {
     var ownerEmail = Session.getEffectiveUser().getEmail();
     var removableEditors = protection.getEditors().filter(function (editor) {
@@ -356,14 +417,179 @@ function isVerifiedEmail_(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text_(value));
 }
 
+function workflowSettings_(control) {
+  var settings = {};
+  sheetObjects_(control, "Settings").forEach(function (row) {
+    settings[text_(row.Key)] = typedSetting_(row.Value);
+  });
+  Object.keys(WORKFLOW_SETTING_DEFAULTS).forEach(function (key) {
+    if (settings[key] === "" || settings[key] === null || settings[key] === undefined) {
+      settings[key] = WORKFLOW_SETTING_DEFAULTS[key];
+    }
+  });
+  settings.coachReminderMinutes = positiveMinutes_(settings.coachReminderMinutes, WORKFLOW_SETTING_DEFAULTS.coachReminderMinutes);
+  settings.commissionerEscalationMinutes = positiveMinutes_(settings.commissionerEscalationMinutes, WORKFLOW_SETTING_DEFAULTS.commissionerEscalationMinutes);
+  if (settings.commissionerEscalationMinutes < settings.coachReminderMinutes) {
+    settings.commissionerEscalationMinutes = settings.coachReminderMinutes;
+  }
+  settings.scoreReporterEnforced = settings.scoreReporterEnforced === true;
+  settings.operationsTestMode = settings.operationsTestMode !== false;
+  return settings;
+}
+
+function publicWorkflowSettings_(settings) {
+  var allowed = [
+    "timezone", "dataVersion", "lastUpdated", "gameDurationMinutes", "showSimultaneousLiveGames",
+    "scoreReporterEnforced", "coachReminderMinutes", "commissionerEscalationMinutes"
+  ];
+  var result = {};
+  allowed.forEach(function (key) {
+    if (settings[key] !== undefined) result[key] = settings[key];
+  });
+  return result;
+}
+
+function positiveMinutes_(value, fallback) {
+  var number = Number(value);
+  return isFinite(number) && number >= 1 ? Math.round(number) : fallback;
+}
+
+function ensureWorkflowSettings_(control) {
+  var sheet = control.getSheetByName("Settings");
+  if (!sheet) sheet = control.insertSheet("Settings");
+  if (sheet.getMaxColumns() < 2) sheet.insertColumnsAfter(sheet.getMaxColumns(), 2 - sheet.getMaxColumns());
+  sheet.getRange(1, 1, 1, 2).setValues([["Key", "Value"]]);
+  var existing = {};
+  if (sheet.getLastRow() >= 2) {
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getDisplayValues().forEach(function (row) {
+      if (text_(row[0])) existing[text_(row[0])] = true;
+    });
+  }
+  Object.keys(WORKFLOW_SETTING_DEFAULTS).forEach(function (key) {
+    if (!existing[key]) sheet.appendRow([key, WORKFLOW_SETTING_DEFAULTS[key]]);
+  });
+  sheet.getRange(1, 1, 1, 2).setBackground("#020f22").setFontColor("#ffffff").setFontWeight("bold");
+  sheet.setFrozenRows(1);
+  return sheet;
+}
+
+function ensureGameReporterAssignments_(control) {
+  var sheet = control.getSheetByName("Games");
+  if (!sheet) throw new Error("Missing sheet: Games");
+  if (sheet.getMaxColumns() < GAME_COLUMN_COUNT) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), GAME_COLUMN_COUNT - sheet.getMaxColumns());
+  }
+  sheet.getRange(1, GAME_REPORTER_COLUMN).setValue("Score Reporter Team ID");
+  if (sheet.getLastRow() < 2) return sheet;
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, GAME_COLUMN_COUNT).getValues();
+  var changed = false;
+  values.forEach(function (row) {
+    if (!text_(row[16]) && text_(row[5])) {
+      row[16] = text_(row[5]);
+      changed = true;
+    }
+  });
+  if (changed) sheet.getRange(2, 1, values.length, GAME_COLUMN_COUNT).setValues(values);
+  return sheet;
+}
+
+function safeProfileImageUrl_(value) {
+  var url = text_(value);
+  return /^(?:assets\/|https:\/\/)/i.test(url) ? url : "";
+}
+
+function safeAssistants_(value) {
+  var rows = [];
+  try {
+    rows = Array.isArray(value) ? value : JSON.parse(text_(value) || "[]");
+  } catch (error) {
+    rows = [];
+  }
+  return rows.slice(0, 5).map(function (row) {
+    return {
+      name: text_(row && row.name).slice(0, 100),
+      experience: text_(row && row.experience).slice(0, 240),
+      photo: safeProfileImageUrl_(row && row.photo)
+    };
+  }).filter(function (row) { return row.name; });
+}
+
+function ensurePublicTeamProfiles_(control) {
+  var sheet = control.getSheetByName(PUBLIC_TEAM_PROFILES_SHEET);
+  if (!sheet) sheet = control.insertSheet(PUBLIC_TEAM_PROFILES_SHEET);
+  if (sheet.getMaxColumns() < PUBLIC_TEAM_PROFILE_HEADERS.length) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), PUBLIC_TEAM_PROFILE_HEADERS.length - sheet.getMaxColumns());
+  }
+  sheet.getRange(1, 1, 1, PUBLIC_TEAM_PROFILE_HEADERS.length).setValues([PUBLIC_TEAM_PROFILE_HEADERS]);
+  if (sheet.getLastRow() < 2) {
+    var now = new Date().toISOString();
+    var seedRows = PUBLIC_TEAM_PROFILE_SEED.map(function (row) { return row.concat([now]); });
+    sheet.getRange(2, 1, seedRows.length, PUBLIC_TEAM_PROFILE_HEADERS.length).setValues(seedRows);
+  }
+  sheet.getRange(1, 1, 1, PUBLIC_TEAM_PROFILE_HEADERS.length)
+    .setBackground("#020f22")
+    .setFontColor("#ffffff")
+    .setFontWeight("bold")
+    .setWrap(true);
+  sheet.setFrozenRows(1);
+  var dataRows = Math.max(1, sheet.getMaxRows() - 1);
+  sheet.getRange(2, 2, dataRows, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(["Boys Varsity", "Girls Varsity"], true).setAllowInvalid(false).build()
+  );
+  sheet.getRange(2, 10, dataRows, 1).insertCheckboxes();
+  sheet.setColumnWidth(1, 130);
+  sheet.setColumnWidth(2, 115);
+  sheet.setColumnWidth(3, 330);
+  sheet.setColumnWidth(4, 210);
+  sheet.setColumnWidth(5, 140);
+  sheet.setColumnWidths(6, 2, 175);
+  sheet.setColumnWidth(8, 260);
+  sheet.setColumnWidth(9, 380);
+  sheet.setColumnWidth(10, 90);
+  sheet.setColumnWidth(11, 170);
+  return sheet;
+}
+
+function publicTeamProfiles_(control, teams, venues) {
+  var sheet = control.getSheetByName(PUBLIC_TEAM_PROFILES_SHEET);
+  if (!sheet) return [];
+  var teamIds = {};
+  (teams || []).forEach(function (team) { teamIds[team.id] = team; });
+  var venueIds = {};
+  (venues || []).forEach(function (venue) { venueIds[venue.id] = true; });
+  return sheetObjects_(control, PUBLIC_TEAM_PROFILES_SHEET).filter(function (row) {
+    return row.Published === true || text_(row.Published).toLowerCase() === "true";
+  }).map(function (row) {
+    var teamId = text_(row["Team ID"]);
+    var division = text_(row.Division);
+    var email = text_(row["Representative Email"]);
+    var venueId = text_(row["Home Venue ID"]);
+    if (!teamIds[teamId]) throw new Error("Public Team Profiles has an unknown Team ID: " + teamId);
+    if (teamIds[teamId].divisions.indexOf(division) < 0) throw new Error(teamId + " has an invalid public profile division.");
+    if (email && !isVerifiedEmail_(email)) throw new Error(teamId + " has an invalid representative email.");
+    if (venueId && !venueIds[venueId]) throw new Error(teamId + " has an unknown home venue.");
+    return {
+      id: teamId + ":" + division,
+      teamId: teamId,
+      division: division,
+      summary: text_(row["Program Summary"]).slice(0, 500),
+      representativeEmail: email,
+      homeVenueId: venueId,
+      headCoach: {
+        name: text_(row["Head Coach"]).slice(0, 100),
+        experience: text_(row["Head Coach Experience"]).slice(0, 240),
+        photo: safeProfileImageUrl_(row["Head Coach Photo URL"])
+      },
+      assistants: safeAssistants_(row["Assistants JSON"]),
+      lastUpdated: isoText_(row["Last Updated"])
+    };
+  });
+}
+
 function ensureAccessRosterSchema_(control) {
   var sheet = control.getSheetByName("Access Roster");
   if (!sheet) throw new Error("Missing sheet: Access Roster");
-  var headers = [
-    "Role", "Person", "Program", "Google account / email", "Access level", "Status",
-    "Last verified", "Operational responsibility", "Team ID", "Invite sent",
-    "Access tested", "Pilot completed", "Ready for rollout", "Portal URL"
-  ];
+  var headers = ACCESS_ROSTER_HEADERS;
   if (sheet.getMaxColumns() < headers.length) {
     sheet.insertColumnsAfter(sheet.getMaxColumns(), headers.length - sheet.getMaxColumns());
   }
@@ -374,13 +600,16 @@ function ensureAccessRosterSchema_(control) {
     .setFontWeight("bold")
     .setWrap(true);
   sheet.setFrozenRows(1);
+  var dataRows = Math.max(1, sheet.getMaxRows() - 1);
+  sheet.getRange(2, 15, dataRows, 1).insertCheckboxes();
+  sheet.getRange(2, 18, dataRows, 1).setWrap(true);
   return sheet;
 }
 
 function activePortalEntries_(control) {
   var sheet = ensureAccessRosterSchema_(control);
   if (sheet.getLastRow() < 2) return [];
-  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14).getDisplayValues();
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, ACCESS_ROSTER_HEADERS.length).getDisplayValues();
   var grouped = {};
   values.forEach(function (row, index) {
     var accessLevel = text_(row[4]).toLowerCase();
@@ -475,10 +704,82 @@ function writeAccessRosterPortalUrl_(control, rowNumbers, portalUrl) {
   (Array.isArray(rowNumbers) ? rowNumbers : [rowNumbers]).forEach(function (rowNumber) {
     if (rowNumber < 2) return;
     sheet.getRange(rowNumber, 14).setValue(portalUrl);
-    if (!text_(sheet.getRange(rowNumber, 10).getDisplayValue())) {
-      sheet.getRange(rowNumber, 10).setValue(Utilities.formatDate(new Date(), "America/New_York", "yyyy-MM-dd"));
-    }
   });
+}
+
+function accessRosterRow_(sheet, rowNumber) {
+  var values = sheet.getRange(rowNumber, 1, 1, ACCESS_ROSTER_HEADERS.length).getValues()[0];
+  return {
+    rowNumber: rowNumber,
+    role: text_(values[0]),
+    person: text_(values[1]),
+    program: text_(values[2]),
+    email: text_(values[3]).toLowerCase(),
+    accessLevel: text_(values[4]),
+    status: text_(values[5]),
+    teamId: text_(values[8]),
+    portalUrl: text_(values[13]),
+    provision: values[14] === true
+  };
+}
+
+function handleAccessRosterEdit_(event) {
+  var range = event.range;
+  if (range.getRow() < 2 || range.getColumn() !== 15 || range.getNumRows() !== 1 || range.getNumColumns() !== 1) return;
+  if (range.getValue() !== true) return;
+  try {
+    provisionRepresentativeRow_(event.source, range.getRow());
+  } finally {
+    range.setValue(false);
+  }
+}
+
+function provisionCheckedRepresentatives() {
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ensureAccessRosterSchema_(control);
+  var completed = 0;
+  if (sheet.getLastRow() < 2) return "No representatives are listed.";
+  var checks = sheet.getRange(2, 15, sheet.getLastRow() - 1, 1).getValues();
+  checks.forEach(function (row, index) {
+    if (row[0] !== true) return;
+    provisionRepresentativeRow_(control, index + 2);
+    sheet.getRange(index + 2, 15).setValue(false);
+    completed += 1;
+  });
+  control.toast(completed + " representative(s) provisioned.", "UBL access", 8);
+  return completed + " representative(s) provisioned.";
+}
+
+function provisionRepresentativeRow_(control, rowNumber) {
+  var sheet = ensureAccessRosterSchema_(control);
+  var entry = accessRosterRow_(sheet, rowNumber);
+  if (entry.person.split(/\s+/).filter(Boolean).length < 2) throw new Error("Enter the representative's first and last name.");
+  if (!isVerifiedEmail_(entry.email)) throw new Error("Enter a verified Google account email.");
+  if (!entry.teamId || !teamRecordsById_(control)[entry.teamId]) throw new Error("Choose a valid Team ID.");
+
+  sheet.getRange(rowNumber, 5).setValue("Coach score portal editor");
+  sheet.getRange(rowNumber, 6).setValue("Active");
+  sheet.getRange(rowNumber, 7).setValue(new Date().toISOString());
+  var urls = syncAccessAndCoachPortals();
+  var portalUrl = urls[entry.teamId];
+  if (!portalUrl) throw new Error("The team portal could not be created.");
+
+  var now = new Date().toISOString();
+  sheet.getRange(rowNumber, 14).setValue(portalUrl);
+  sheet.getRange(rowNumber, 16).setValue(now);
+  var notification = sendOperationsNotification_(control, {
+    key: "representative-invite:" + entry.teamId + ":" + entry.email,
+    type: "Representative invitation",
+    to: entry.email,
+    subject: "Your UBL team score portal",
+    body: "Hi " + entry.person + ",\n\nYour private UBL score portal is ready: " + portalUrl
+      + "\n\nUse this portal only for " + (entry.program || entry.teamId)
+      + ". Do not share the link publicly.\n\nUBL Operations"
+  });
+  if (notification.status === "Sent") sheet.getRange(rowNumber, 17).setValue(now);
+  sheet.getRange(rowNumber, 10).setValue(notification.status === "Sent" ? now : notification.status);
+  sheet.getRange(rowNumber, 18).setValue("Provisioned; " + notification.status.toLowerCase());
+  return { portalUrl: portalUrl, notification: notification };
 }
 
 function portalConfigById_(portalId) {
@@ -535,6 +836,17 @@ function portalGameBelongsToTeam_(game, teamId) {
   return game.awayTeamId === teamId || game.homeTeamId === teamId;
 }
 
+function scoreReporterTeamId_(game) {
+  return text_(game && game.scoreReporterTeamId) || text_(game && game.homeTeamId);
+}
+
+function portalCanReportGame_(game, teamId, settings) {
+  if (!game || !teamId) return false;
+  if (isPilotGame_(game)) return PILOT_PORTAL_ASSIGNMENTS[game.id] === teamId;
+  if (!settings || settings.scoreReporterEnforced !== true) return portalGameBelongsToTeam_(game, teamId);
+  return scoreReporterTeamId_(game) === teamId;
+}
+
 function selectPortalGames_(games, teamId, now) {
   var nowTime = (now || new Date()).getTime();
   var pastLimit = nowTime - PORTAL_PAST_DAYS * 86400000;
@@ -576,7 +888,8 @@ function gameValuesObject_(values) {
     stage: text_(values[12]),
     notes: text_(values[13]),
     lastUpdated: isoText_(values[14]),
-    weekId: text_(values[15])
+    weekId: text_(values[15]),
+    scoreReporterTeamId: text_(values[16]) || text_(values[5])
   };
 }
 
@@ -602,7 +915,6 @@ function syncCorrectionRequestSheet_(portal, entry, team, feed, teamNames) {
   var existing = correctionExistingRows_(sheet);
   var games = feed.games.filter(function (game) {
     return portalGameBelongsToTeam_(game, entry.teamId)
-      && !isPilotGame_(game)
       && (game.status === "Final" || game.status === "Forfeit");
   }).sort(function (a, b) { return gameTimestamp_(b) - gameTimestamp_(a); }).slice(0, 8);
   var rows = games.map(function (game) {
@@ -722,6 +1034,104 @@ function ensureOperationsAlerts_(control) {
   return sheet;
 }
 
+function ensureNotificationLog_(control) {
+  var sheet = control.getSheetByName(NOTIFICATION_LOG_SHEET);
+  if (!sheet) sheet = control.insertSheet(NOTIFICATION_LOG_SHEET, 4);
+  var headers = ["Notification Key", "Created", "To", "Type", "Subject", "Status", "Details"];
+  if (sheet.getMaxColumns() < headers.length) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), headers.length - sheet.getMaxColumns());
+  }
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sheet.getRange(1, 1, 1, headers.length)
+    .setBackground("#020f22")
+    .setFontColor("#ffffff")
+    .setFontWeight("bold")
+    .setWrap(true);
+  sheet.setFrozenRows(1);
+  sheet.hideColumns(1);
+  sheet.setColumnWidth(2, 165);
+  sheet.setColumnWidth(3, 220);
+  sheet.setColumnWidth(4, 160);
+  sheet.setColumnWidth(5, 300);
+  sheet.setColumnWidth(6, 105);
+  sheet.setColumnWidth(7, 300);
+  return sheet;
+}
+
+function priorNotificationStatus_(sheet, key) {
+  if (!sheet || sheet.getLastRow() < 2) return "";
+  var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getDisplayValues();
+  for (var index = rows.length - 1; index >= 0; index -= 1) {
+    if (text_(rows[index][0]) === key) return text_(rows[index][5]);
+  }
+  return "";
+}
+
+function sendOperationsNotification_(control, notification) {
+  var to = text_(notification && notification.to).toLowerCase();
+  var key = text_(notification && notification.key);
+  if (!key) throw new Error("Notification key is required.");
+  if (!isVerifiedEmail_(to)) return { status: "No verified recipient", duplicate: false };
+  var settings = workflowSettings_(control);
+  var sheet = ensureNotificationLog_(control);
+  var prior = priorNotificationStatus_(sheet, key);
+  if (prior === "Sent" || (settings.operationsTestMode && prior === "Test logged")) {
+    return { status: prior, duplicate: true };
+  }
+  var status = "Test logged";
+  var details = settings.operationsTestMode ? "No email sent because operationsTestMode is enabled." : "Email sent by Apps Script.";
+  if (!settings.operationsTestMode) {
+    try {
+      MailApp.sendEmail({
+        to: to,
+        subject: text_(notification.subject).slice(0, 160),
+        body: text_(notification.body).slice(0, 10000),
+        name: "Upstate Basketball League"
+      });
+      status = "Sent";
+    } catch (error) {
+      status = "Failed";
+      details = text_(error && error.message ? error.message : error).slice(0, 500);
+    }
+  }
+  sheet.appendRow([
+    key,
+    new Date().toISOString(),
+    to,
+    text_(notification.type),
+    text_(notification.subject).slice(0, 160),
+    status,
+    details
+  ]);
+  return { status: status, duplicate: false };
+}
+
+function notificationRecipientForTeam_(control, teamId) {
+  var sheet = ensureAccessRosterSchema_(control);
+  if (sheet.getLastRow() < 2) return "";
+  var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, ACCESS_ROSTER_HEADERS.length).getDisplayValues();
+  for (var index = 0; index < rows.length; index += 1) {
+    if (text_(rows[index][8]) !== teamId || text_(rows[index][5]).toLowerCase() !== "active") continue;
+    if (isVerifiedEmail_(rows[index][3])) return text_(rows[index][3]).toLowerCase();
+  }
+  return "";
+}
+
+function runNotificationSelfTest() {
+  var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  ensureWorkflowSettings_(control);
+  var settings = workflowSettings_(control);
+  var result = sendOperationsNotification_(control, {
+    key: "self-test:" + Utilities.formatDate(new Date(), settings.timezone || "America/New_York", "yyyy-MM-dd"),
+    type: "Notification self-test",
+    to: settings.notificationTestEmail,
+    subject: "UBL notification self-test",
+    body: "This is a UBL operations notification test. Test mode should log this message without sending it."
+  });
+  control.toast(result.status, "UBL notification self-test", 8);
+  return JSON.stringify(result);
+}
+
 function ensureRecoveryStatus_(control) {
   var sheet = control.getSheetByName(RECOVERY_STATUS_SHEET);
   if (!sheet) sheet = control.insertSheet(RECOVERY_STATUS_SHEET, 4);
@@ -806,9 +1216,13 @@ function handleRecoveryStatusEdit_(event) {
 
 function ensureOperationsSheets_() {
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  ensureWorkflowSettings_(control);
+  ensureGameReporterAssignments_(control);
   ensureAccessRosterSchema_(control);
+  ensurePublicTeamProfiles_(control);
   ensureCorrectionsQueue_(control);
   ensureOperationsAlerts_(control);
+  ensureNotificationLog_(control);
   ensureRecoveryStatus_(control);
   ensureCommissionerDashboard_(control);
   syncCommissionerDashboard_();
@@ -861,7 +1275,7 @@ function syncCommissionerDashboard_() {
       if (row[0] === "Open") openCorrections += 1;
     });
   }
-  var missingScores = missingFinalGames_(feed.games, new Date()).length;
+  var missingScores = missingFinalGames_(feed.games, new Date(), feed.settings.coachReminderMinutes).length;
   var alertsSheet = ensureOperationsAlerts_(control);
   var openAlerts = 0;
   if (alertsSheet.getLastRow() >= 2) {
@@ -943,13 +1357,15 @@ function handleCommissionerDashboardEdit_(event) {
     return;
   }
   var dashboardValues = dashboard.getRange(range.getRow(), 1, 1, 10).getValues()[0];
-  var gameValues = gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0];
+  var gameValues = gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).getValues()[0];
   var teamRows = sheetObjects_(control, "Teams");
   var venueRows = sheetObjects_(control, "Venues");
   var awayId = lookupIdByLabel_(teamRows, "Team ID", ["Name", "Abbreviation"], dashboardValues[3]);
   var homeId = lookupIdByLabel_(teamRows, "Team ID", ["Name", "Abbreviation"], dashboardValues[4]);
   var venueId = lookupIdByLabel_(venueRows, "Venue ID", ["Name", "Map Label"], dashboardValues[5]);
   var stagedGame = Boolean(text_(gameValues[12]));
+  var priorHomeId = text_(gameValues[5]);
+  var priorReporterId = text_(gameValues[16]);
   if ((!stagedGame && (!awayId || !homeId)) || !venueId) {
     control.toast("Choose teams and a venue from the provided lists.", "Dashboard not saved", 8);
     syncCommissionerDashboard_();
@@ -969,6 +1385,7 @@ function handleCommissionerDashboardEdit_(event) {
   gameValues[3] = text_(dashboardValues[2]);
   gameValues[4] = awayId;
   gameValues[5] = homeId;
+  if (!priorReporterId || priorReporterId === priorHomeId) gameValues[16] = homeId;
   gameValues[6] = awayId ? "" : text_(dashboardValues[3]);
   gameValues[7] = homeId ? "" : text_(dashboardValues[4]);
   gameValues[8] = venueId;
@@ -978,7 +1395,7 @@ function handleCommissionerDashboardEdit_(event) {
   gameValues[13] = text_(dashboardValues[9]);
   var now = new Date().toISOString();
   gameValues[14] = now;
-  gamesSheet.getRange(gameRow, 1, 1, 16).setValues([gameValues]);
+  gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).setValues([gameValues]);
   if (!isPilotIdentifier_(gameId, gameValues[15])) touchPublication_(control, now);
   syncCoachPortalIfConfigured_();
   syncCommissionerDashboard_();
@@ -993,7 +1410,15 @@ function handleCorrectionsQueueEdit_(event) {
   var row = sheet.getRange(range.getRow(), 1, 1, 11).getValues()[0];
   var decision = text_(row[8]);
   if (decision === "Rejected") {
-    sheet.getRange(range.getRow(), 11).setValue(new Date().toISOString());
+    var rejectedAt = new Date().toISOString();
+    sheet.getRange(range.getRow(), 11).setValue(rejectedAt);
+    sendOperationsNotification_(control, {
+      key: "correction-rejected:" + text_(row[0]),
+      type: "Correction decision",
+      to: notificationRecipientForTeam_(control, text_(row[4])),
+      subject: "UBL score correction was not approved",
+      body: "The correction request for " + text_(row[2]) + " was rejected. Commissioner note: " + (text_(row[9]) || "No note supplied.")
+    });
     syncCommissionerDashboard_();
     return;
   }
@@ -1012,13 +1437,13 @@ function handleCorrectionsQueueEdit_(event) {
     control.toast("The correction's game could not be found.", "Correction not applied", 8);
     return;
   }
-  var gameValues = gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0];
+  var gameValues = gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).getValues()[0];
   var now = new Date().toISOString();
   gameValues[9] = "Final";
   gameValues[10] = Number(result[1]);
   gameValues[11] = Number(result[2]);
   gameValues[14] = now;
-  gamesSheet.getRange(gameRow, 1, 1, 16).setValues([gameValues]);
+  gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).setValues([gameValues]);
   appendScoreAudit_(
     control.getSheetByName("Score Audit"),
     gameId,
@@ -1030,6 +1455,13 @@ function handleCorrectionsQueueEdit_(event) {
   );
   sheet.getRange(range.getRow(), 9).setValue("Completed");
   sheet.getRange(range.getRow(), 11).setValue(now);
+  sendOperationsNotification_(control, {
+    key: "correction-completed:" + text_(row[0]),
+    type: "Correction decision",
+    to: notificationRecipientForTeam_(control, text_(row[4])),
+    subject: "UBL score correction completed",
+    body: "The correction for " + gameId + " was approved and the result is now " + text_(row[6]) + "."
+  });
   if (!isPilotIdentifier_(gameId, gameValues[15])) touchPublication_(control, now);
   syncCoachPortalIfConfigured_();
   syncCommissionerDashboard_();
@@ -1044,15 +1476,30 @@ function gameDateTime_(game, timezone) {
   }
 }
 
-function missingFinalGames_(games, now) {
+function missingFinalGames_(games, now, delayMinutes) {
   var nowTime = (now || new Date()).getTime();
-  var overdue = nowTime - 150 * 60000;
+  var overdue = nowTime - positiveMinutes_(delayMinutes, WORKFLOW_SETTING_DEFAULTS.commissionerEscalationMinutes) * 60000;
   var recent = nowTime - 2 * 86400000;
   return (games || []).filter(function (game) {
     if (isPilotGame_(game) || (game.status !== "Scheduled" && game.status !== "Live")) return false;
     var timestamp = gameTimestamp_(game);
     return timestamp >= recent && timestamp <= overdue;
   });
+}
+
+function scoreDeadlineState_(game, now, settings) {
+  if (!game || isPilotGame_(game) || (game.status !== "Scheduled" && game.status !== "Live")) return "";
+  settings = settings || WORKFLOW_SETTING_DEFAULTS;
+  var elapsedMinutes = ((now || new Date()).getTime() - gameTimestamp_(game)) / 60000;
+  var coachMinutes = positiveMinutes_(settings.coachReminderMinutes, WORKFLOW_SETTING_DEFAULTS.coachReminderMinutes);
+  var commissionerMinutes = positiveMinutes_(settings.commissionerEscalationMinutes, WORKFLOW_SETTING_DEFAULTS.commissionerEscalationMinutes);
+  if (elapsedMinutes >= commissionerMinutes) return "commissioner-escalation";
+  if (elapsedMinutes >= coachMinutes) return "coach-reminder";
+  return "";
+}
+
+function scoreNotificationKey_(prefix, game) {
+  return prefix + ":" + text_(game.id) + ":" + text_(game.date) + ":" + text_(game.time).replace(/\s+/g, "-");
 }
 
 function publishedFeedIssues_(games, now) {
@@ -1126,9 +1573,12 @@ function syncOperationsAlerts_(control, alerts) {
 
 function runLeagueHealthCheck() {
   var feed = buildCoachFeed_();
+  var settings = feed.settings || WORKFLOW_SETTING_DEFAULTS;
   var teamNames = {};
   feed.teams.forEach(function (team) { teamNames[team.id] = team.name; });
-  var missing = missingFinalGames_(feed.games, new Date());
+  var now = new Date();
+  var missing = missingFinalGames_(feed.games, now, settings.coachReminderMinutes);
+  var escalated = missingFinalGames_(feed.games, now, settings.commissionerEscalationMinutes);
   var alerts = missing.map(function (game) {
     return {
       key: "missing-final:" + game.id,
@@ -1138,7 +1588,7 @@ function runLeagueHealthCheck() {
         + (game.homeName || teamNames[game.homeTeamId] || game.homeTeamId)
     };
   });
-  publishedFeedIssues_(feed.games, new Date()).forEach(function (issue) {
+  publishedFeedIssues_(feed.games, now).forEach(function (issue) {
     alerts.push({
       key: "feed:" + healthAlertFingerprint_([issue]),
       type: "Public feed mismatch",
@@ -1147,6 +1597,28 @@ function runLeagueHealthCheck() {
     });
   });
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
+  missing.forEach(function (game) {
+    var reporterTeamId = scoreReporterTeamId_(game);
+    var recipient = notificationRecipientForTeam_(control, reporterTeamId);
+    sendOperationsNotification_(control, {
+      key: scoreNotificationKey_("score-reminder", game),
+      type: "Score reminder",
+      to: recipient,
+      subject: "UBL final score needed: " + (game.awayName || teamNames[game.awayTeamId] || game.awayTeamId)
+        + " at " + (game.homeName || teamNames[game.homeTeamId] || game.homeTeamId),
+      body: "The final score for " + game.id + " has not been received. Please use your private UBL team portal to submit both final scores."
+    });
+  });
+  escalated.forEach(function (game) {
+    sendOperationsNotification_(control, {
+      key: scoreNotificationKey_("commissioner-score-escalation", game),
+      type: "Commissioner score escalation",
+      to: settings.commissionerEmail,
+      subject: "UBL overdue final score: " + game.id,
+      body: "The final score for " + game.id + " remains missing after " + settings.commissionerEscalationMinutes
+        + " minutes. The designated reporting team is " + scoreReporterTeamId_(game) + "."
+    });
+  });
   var alertCount = syncOperationsAlerts_(control, alerts);
   var properties = PropertiesService.getScriptProperties();
   if (!alerts.length) {
@@ -1234,7 +1706,8 @@ function publicFeedFingerprint_(feed) {
     settings: feed.settings,
     teams: feed.teams,
     venues: feed.venues,
-    games: feed.games
+    games: feed.games,
+    profiles: feed.profiles || []
   });
 }
 
@@ -1249,10 +1722,11 @@ function recoveryWorkbookInfo_(spreadsheet) {
     if (sheet.getLastRow() < 1 || sheet.getLastColumn() < 1) issues.push(name + " is empty.");
   });
   var requiredHeaders = {
-    Games: ["Game ID", "Date", "Time", "Division", "Away Team ID", "Home Team ID", "Venue ID", "Status", "Away Score", "Home Score", "Last Updated", "Week ID"],
+    Games: ["Game ID", "Date", "Time", "Division", "Away Team ID", "Home Team ID", "Venue ID", "Status", "Away Score", "Home Score", "Last Updated", "Week ID", "Score Reporter Team ID"],
     Teams: ["Team ID", "Name"],
     Venues: ["Venue ID", "Name", "Address"],
-    Settings: ["Key", "Value"]
+    Settings: ["Key", "Value"],
+    "Public Team Profiles": PUBLIC_TEAM_PROFILE_HEADERS
   };
   Object.keys(requiredHeaders).forEach(function (name) {
     var sheet = spreadsheet.getSheetByName(name);
@@ -1370,7 +1844,7 @@ function recoveryCopyName_(prefix, now) {
 
 function firstRecoveryDrillGameRow_(gamesSheet) {
   if (gamesSheet.getLastRow() < 2) return 0;
-  var rows = gamesSheet.getRange(2, 1, gamesSheet.getLastRow() - 1, 16).getDisplayValues();
+  var rows = gamesSheet.getRange(2, 1, gamesSheet.getLastRow() - 1, GAME_COLUMN_COUNT).getDisplayValues();
   for (var index = 0; index < rows.length; index += 1) {
     if (rows[index][0] && !isPilotIdentifier_(rows[index][0], rows[index][15])) return index + 2;
   }
@@ -1529,18 +2003,19 @@ function installOperationsAutomation() {
 
 function setupPilotTestGames() {
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
-  var gamesSheet = control.getSheetByName("Games");
+  ensureWorkflowSettings_(control);
+  var gamesSheet = ensureGameReporterAssignments_(control);
   var now = new Date().toISOString();
   removePilotGameRows_(gamesSheet);
 
   var rows = [
-    ["pilot-kings-01", "2026-07-20", "6:00 PM", "Boys Varsity", "kings-school", "wilton-baptist", "", "", "wilton-baptist-gym", "Scheduled", "", "", "", "PRIVATE PILOT - never published", now, PILOT_WEEK_ID],
-    ["pilot-wilton-01", "2026-07-23", "7:30 PM", "Girls Varsity", "wilton-baptist", "kings-school", "", "", "kings-school-gym", "Scheduled", "", "", "", "PRIVATE PILOT - never published", now, PILOT_WEEK_ID]
+    ["pilot-kings-01", "2026-07-20", "6:00 PM", "Boys Varsity", "kings-school", "wilton-baptist", "", "", "wilton-baptist-gym", "Scheduled", "", "", "", "PRIVATE PILOT - never published", now, PILOT_WEEK_ID, "kings-school"],
+    ["pilot-wilton-01", "2026-07-23", "7:30 PM", "Girls Varsity", "wilton-baptist", "kings-school", "", "", "kings-school-gym", "Scheduled", "", "", "", "PRIVATE PILOT - never published", now, PILOT_WEEK_ID, "wilton-baptist"]
   ];
   var startRow = gamesSheet.getLastRow() + 1;
   var sourceRow = Math.max(2, startRow - 1);
-  var source = gamesSheet.getRange(sourceRow, 1, 1, 16);
-  var destination = gamesSheet.getRange(startRow, 1, rows.length, 16);
+  var source = gamesSheet.getRange(sourceRow, 1, 1, GAME_COLUMN_COUNT);
+  var destination = gamesSheet.getRange(startRow, 1, rows.length, GAME_COLUMN_COUNT);
   source.copyTo(destination, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
   source.copyTo(destination, SpreadsheetApp.CopyPasteType.PASTE_DATA_VALIDATION, false);
   destination.setValues(rows);
@@ -1579,7 +2054,7 @@ function runPilotIsolationSelfTest() {
     SpreadsheetApp.flush();
 
     var gameRow = findGameRow_(control.getSheetByName("Games"), PILOT_GAME_IDS[0]);
-    var gameValues = control.getSheetByName("Games").getRange(gameRow, 1, 1, 16).getDisplayValues()[0];
+    var gameValues = control.getSheetByName("Games").getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).getDisplayValues()[0];
     if (gameValues[9] !== "Final" || gameValues[10] !== "48" || gameValues[11] !== "52") {
       throw new Error("Pilot score did not reach the private Games table.");
     }
@@ -1603,7 +2078,7 @@ function installPilotPublicationGuard_(control) {
 function removePilotGameRows_(gamesSheet) {
   var lastRow = gamesSheet.getLastRow();
   if (lastRow < 2) return;
-  var identifiers = gamesSheet.getRange(2, 1, lastRow - 1, 16).getDisplayValues();
+  var identifiers = gamesSheet.getRange(2, 1, lastRow - 1, GAME_COLUMN_COUNT).getDisplayValues();
   for (var index = identifiers.length - 1; index >= 0; index -= 1) {
     if (isPilotIdentifier_(identifiers[index][0], identifiers[index][15])) gamesSheet.deleteRow(index + 2);
   }
@@ -1680,12 +2155,17 @@ function publishCoachPortalScore_(portal, rowNumber, portalConfig) {
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
   var gamesSheet = control.getSheetByName("Games");
   var auditSheet = control.getSheetByName("Score Audit");
+  var settings = workflowSettings_(control);
   var gameRow = findGameRow_(gamesSheet, gameId);
-  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0] : [];
+  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).getValues()[0] : [];
+  var game = gameValuesObject_(gameValues);
   var pilotGame = isPilotIdentifier_(gameId, gameValues[15]);
   if (!error && !gameRow) error = "The selected game could not be found.";
-  if (!error && !portalGameBelongsToTeam_(gameValuesObject_(gameValues), portalConfig.teamId)) {
+  if (!error && !portalGameBelongsToTeam_(game, portalConfig.teamId)) {
     error = "This game is not assigned to your program.";
+  }
+  if (!error && !portalCanReportGame_(game, portalConfig.teamId, settings)) {
+    error = "The designated reporting team must submit this final score.";
   }
   if (!error && (gameValues[9] === "Final" || gameValues[9] === "Forfeit")) {
     error = "This result is already published. Contact the commissioner to make a correction.";
@@ -1739,7 +2219,7 @@ function publishCorrectionRequest_(portal, rowNumber, portalConfig) {
   var control = SpreadsheetApp.openById(SPREADSHEET_ID);
   var gamesSheet = control.getSheetByName("Games");
   var gameRow = findGameRow_(gamesSheet, gameId);
-  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0] : [];
+  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).getValues()[0] : [];
   if (!error && !gameRow) error = "The selected game could not be found.";
   if (!error && !portalGameBelongsToTeam_(gameValuesObject_(gameValues), portalConfig.teamId)) error = "This game is not assigned to your program.";
   if (!error && gameValues[9] !== "Final" && gameValues[9] !== "Forfeit") error = "Only a published result can be corrected.";
@@ -1768,6 +2248,14 @@ function publishCorrectionRequest_(portal, rowNumber, portalConfig) {
     "",
     ""
   ]);
+  var settings = workflowSettings_(control);
+  sendOperationsNotification_(control, {
+    key: "correction-request:" + requestId,
+    type: "Correction request",
+    to: settings.commissionerEmail,
+    subject: "UBL score correction needs review: " + gameId,
+    body: submittedBy + " requested " + awayScore + "-" + homeScore + " for " + gameId + ". Reason: " + reason
+  });
   sheet.getRange(rowNumber, 2, 1, 3).clearContent();
   sheet.getRange(rowNumber, 5).setValue(false);
   sheet.getRange(rowNumber, 6).setValue("Submitted to commissioner");
@@ -1817,9 +2305,12 @@ function publishCoachScore_(spreadsheet, coachRow) {
   var submittedBy = text_(values[8]);
 
   var error = coachScoreError_(gameId, values[6], values[7], submittedBy);
+  if (!error && workflowSettings_(spreadsheet).scoreReporterEnforced === true) {
+    error = "Use the assigned team portal when score-reporter enforcement is active.";
+  }
 
   var gameRow = findGameRow_(gamesSheet, gameId);
-  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, 16).getValues()[0] : [];
+  var gameValues = gameRow ? gamesSheet.getRange(gameRow, 1, 1, GAME_COLUMN_COUNT).getValues()[0] : [];
   var pilotGame = isPilotIdentifier_(gameId, gameValues[15]);
   if (!error && !gameRow) error = "The selected game could not be found.";
   if (!error && (gameValues[9] === "Final" || gameValues[9] === "Forfeit")) {
@@ -1954,7 +2445,7 @@ function sheetObjects_(spreadsheet, name) {
   });
 }
 
-function validatePublicFeed_(teams, venues, games) {
+function validatePublicFeed_(teams, venues, games, profiles) {
   var teamIds = uniqueIds_(teams, "team");
   var venueIds = uniqueIds_(venues, "venue");
   var gameIds = {};
@@ -1971,6 +2462,10 @@ function validatePublicFeed_(teams, venues, games) {
     if (!validStatuses[game.status]) throw new Error(game.id + " has an invalid status.");
     if (!game.stage && (!game.awayTeamId || !game.homeTeamId)) throw new Error(game.id + " needs both regular-season teams.");
     if (!game.venueId) throw new Error(game.id + " needs a venue.");
+    if (game.scoreReporterTeamId && !teamIds[game.scoreReporterTeamId]) throw new Error(game.id + " has an unknown score reporter.");
+    if (!game.stage && game.scoreReporterTeamId !== game.awayTeamId && game.scoreReporterTeamId !== game.homeTeamId) {
+      throw new Error(game.id + " score reporter must be a participating team.");
+    }
     [game.awayScore, game.homeScore].forEach(function (score) {
       if (score !== null && (!isFinite(score) || score < 0 || Math.floor(score) !== score)) {
         throw new Error(game.id + " scores must be nonnegative whole numbers.");
@@ -1982,6 +2477,14 @@ function validatePublicFeed_(teams, venues, games) {
     if ((game.status === "Final" || game.status === "Forfeit") && game.awayScore === game.homeScore) {
       throw new Error(game.id + " cannot have a tied final score.");
     }
+  });
+  var profileIds = {};
+  (profiles || []).forEach(function (profile) {
+    if (!profile.id || profileIds[profile.id]) throw new Error("Duplicate or missing public profile ID: " + profile.id);
+    profileIds[profile.id] = true;
+    if (!teamIds[profile.teamId]) throw new Error(profile.id + " has an unknown team.");
+    if (["Boys Varsity", "Girls Varsity"].indexOf(profile.division) < 0) throw new Error(profile.id + " has an invalid division.");
+    if (profile.representativeEmail && !isVerifiedEmail_(profile.representativeEmail)) throw new Error(profile.id + " has an invalid email.");
   });
 }
 
