@@ -55,7 +55,7 @@ test("all public routes render meaningful content without runtime errors", async
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
     ["/sponsors.html", "Partner with the UBL"],
-    ["/about.html", "About UBL"]
+    ["/about.html", "How a UBL season works"]
   ];
   await expectNoAppErrors(page, async () => {
     for (const [route, heading] of routes) {
@@ -620,11 +620,16 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
   expect(await page.evaluate(() => document.fonts.check('700 16px "Material Symbols Rounded"'))).toBe(true);
   expect(requestedUrls.some((url) => /fonts\.googleapis\.com|fonts\.gstatic\.com/.test(url))).toBe(false);
 
-  const bannerImage = await page.locator(".page-banner").evaluate((element) => getComputedStyle(element).backgroundImage);
+  const pageBackground = await page.locator("body.about-page").evaluate((element) => getComputedStyle(element).backgroundImage);
+  expect(pageBackground).toContain("ubl-about-playbook-texture.webp");
+
+  const seasonArtwork = page.locator(".season-card-front picture img").first();
+  await seasonArtwork.scrollIntoViewIfNeeded();
+  const seasonArtworkSource = await seasonArtwork.evaluate((image) => image.currentSrc);
   if (testInfo.project.name.startsWith("mobile")) {
-    expect(bannerImage).toContain("ubl-website-hero-768.webp");
+    expect(seasonArtworkSource).toContain("about-season-01-programs-illustrated-768.webp");
   } else {
-    expect(bannerImage).toContain("ubl-website-hero-1600.webp");
+    expect(seasonArtworkSource).toContain("about-season-01-programs-illustrated-1536.webp");
   }
 
   const portrait = page.getByAltText("Chris Webster officiating a basketball game");
@@ -638,35 +643,13 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
 test("about page explains the league, season, testimonial, and leadership", async ({ page }, testInfo) => {
   await page.goto("/about.html");
 
-  await expect(page.getByRole("heading", { name: "This is UBL" })).toBeVisible();
-  await expect(page.locator(".identity-facts")).toContainText("Smaller high school programs");
-  await expect(page.locator(".identity-facts")).toContainText("Across upstate New York");
-
-  const identityToggles = page.locator(".identity-toggle");
-  const identityPanels = page.locator(".identity-panel");
-  await expect(identityToggles).toHaveCount(3);
-  await expect(identityPanels).toHaveCount(3);
-  await expect(page.locator(".identity-symbol")).toHaveCount(3);
-
-  if (testInfo.project.name === "mobile-chromium") {
-    await expect(identityToggles.nth(0)).toBeEnabled();
-    await expect(identityToggles.nth(0)).toHaveAttribute("aria-expanded", "false");
-    await expect(identityPanels.nth(0)).toHaveAttribute("aria-hidden", "true");
-    await identityToggles.nth(0).click();
-    await expect(identityToggles.nth(0)).toHaveAttribute("aria-expanded", "true");
-    await expect(identityPanels.nth(0)).toHaveAttribute("aria-hidden", "false");
-    await identityToggles.nth(1).click();
-    await expect(identityToggles.nth(0)).toHaveAttribute("aria-expanded", "false");
-    await expect(identityToggles.nth(1)).toHaveAttribute("aria-expanded", "true");
-  } else {
-    await expect(identityToggles.nth(0)).toBeDisabled();
-    await expect(identityPanels.nth(0)).toHaveAttribute("aria-hidden", "false");
-    const identityBox = await page.locator(".league-identity").boundingBox();
-    expect(identityBox).not.toBeNull();
-    expect(identityBox.y + identityBox.height).toBeLessThanOrEqual(720);
-  }
-
   await expect(page.getByRole("heading", { name: "How a UBL season works" })).toBeVisible();
+  await expect(page.locator("main > .season-section")).toHaveCount(1);
+  await expect(page.locator(".page-banner, .league-identity")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Built for growing programs." })).toBeVisible();
+  await expect(page.locator(".league-brief-facts")).toContainText("Smaller high school programs");
+  await expect(page.locator(".league-brief-facts")).toContainText("Across upstate New York");
+  await expect(page.locator("body")).toHaveCSS("background-image", /ubl-about-playbook-texture\.webp/);
   await expect(page.locator(".season-path > li")).toHaveCount(4);
   await expect(page.locator(".season-node")).toHaveCount(4);
   await expect(page.locator(".season-flip-card")).toHaveCount(4);
@@ -704,21 +687,23 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(seasonCards.nth(0)).toHaveAttribute("aria-pressed", "false");
   await expect(seasonCards.nth(1)).toHaveAttribute("aria-pressed", "true");
   await expect(seasonCards.nth(1)).toContainText("December and runs through the end of January");
+  await expect(page.locator(".season-back-icon")).toHaveCount(0);
+  await expect(seasonCards.nth(1).locator(".season-card-back")).toHaveCSS("text-align", "center");
 
-  const liveAction = page.getByAltText("Two varsity basketball players contest the opening tip");
-  const competitionIllustration = page.locator('.season-stage-standings img[src="assets/ubl/ubl-competition-give-your-best.webp"]');
-  const playoffHuddle = page.getByAltText("UBL players and coaches raise their hands together in a team huddle");
-  await expect(liveAction).toBeVisible();
-  await expect(competitionIllustration).toBeVisible();
-  await expect(playoffHuddle).toBeVisible();
-  await expect(liveAction).toHaveAttribute("loading", "lazy");
-  await expect(competitionIllustration).toHaveAttribute("loading", "lazy");
-  await expect(playoffHuddle).toHaveAttribute("loading", "lazy");
-  await expect.poll(() => liveAction.evaluate((image) => image.currentSrc)).toMatch(/about-season-02-live-action-(?:768|1600)\.webp$/);
-  await expect(competitionIllustration).toHaveAttribute("width", "1536");
-  await expect(competitionIllustration).toHaveAttribute("height", "1024");
-  await expect.poll(() => competitionIllustration.evaluate((image) => image.currentSrc)).toMatch(/assets\/ubl\/ubl-competition-give-your-best\.webp$/);
-  await expect.poll(() => playoffHuddle.evaluate((image) => image.currentSrc)).toMatch(/about-season-04-playoffs-huddle-(?:768|1600)\.webp$/);
+  const programIllustration = page.getByAltText("Illustrated UBL players gathered shoulder-to-shoulder in a pregame huddle");
+  const competitionIllustration = page.getByAltText("Illustrated varsity basketball players contesting the opening tip");
+  const seedingIllustration = page.getByAltText("Illustrated league standings flowing into a playoff bracket");
+  const championshipIllustration = page.getByAltText("Illustrated UBL players and coaches raising their hands together in celebration");
+  for (const illustration of [programIllustration, competitionIllustration, seedingIllustration, championshipIllustration]) {
+    await expect(illustration).toBeVisible();
+    await expect(illustration).toHaveAttribute("loading", "lazy");
+    await expect(illustration).toHaveAttribute("width", "768");
+    await expect(illustration).toHaveAttribute("height", "512");
+  }
+  await expect.poll(() => programIllustration.evaluate((image) => image.currentSrc)).toMatch(/about-season-01-programs-illustrated-(?:768|1536)\.webp$/);
+  await expect.poll(() => competitionIllustration.evaluate((image) => image.currentSrc)).toMatch(/about-season-02-compete-illustrated-(?:768|1536)\.webp$/);
+  await expect.poll(() => seedingIllustration.evaluate((image) => image.currentSrc)).toMatch(/about-season-03-seeding-illustrated-v2-(?:768|1536)\.webp$/);
+  await expect.poll(() => championshipIllustration.evaluate((image) => image.currentSrc)).toMatch(/about-season-04-champions-illustrated-(?:768|1536)\.webp$/);
 
   await expect(page.getByRole("heading", { name: "The culture behind the commitments" })).toHaveCount(0);
   await expect(page.locator(".culture-section")).toHaveCount(0);
