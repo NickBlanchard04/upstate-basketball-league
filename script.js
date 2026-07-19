@@ -749,19 +749,12 @@ function initializeTeamCardMotion(scope = document) {
   const directory = document.querySelector(".team-directory");
   const cards = [...scope.querySelectorAll(".division-team-card")];
   if (!directory || !cards.length) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     cards.forEach((card) => card.classList.add("is-visible"));
     return;
   }
   directory.classList.add("team-card-motion-ready");
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-visible");
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.14, rootMargin: "0px 0px -4% 0px" });
-  cards.forEach((card) => observer.observe(card));
+  requestAnimationFrame(() => cards.forEach((card) => card.classList.add("is-visible")));
 }
 
 const teamDirectory = document.querySelector("[data-team-directory]");

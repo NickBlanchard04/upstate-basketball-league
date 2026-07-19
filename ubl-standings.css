@@ -117,9 +117,7 @@ p {
   transform: translateY(0);
 }
 
-.standings-hero {
-  min-height: calc(100svh - 5.75rem);
-  padding: clamp(2.25rem, 4vw, 4.5rem) var(--page-pad) clamp(2.5rem, 5vw, 5rem);
+.standings-page main {
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -130,12 +128,18 @@ p {
   background-size: cover;
 }
 
-.standings-hero::after {
+.standings-page main::after {
   content: "";
   position: absolute;
   z-index: -1;
   inset: 0;
   background: rgba(2, 15, 34, 0.48);
+}
+
+.standings-hero {
+  min-height: calc(100svh - 5.75rem);
+  padding: clamp(2.25rem, 4vw, 4.5rem) var(--page-pad) clamp(2.5rem, 5vw, 5rem);
+  color: var(--white);
 }
 
 .division-field {

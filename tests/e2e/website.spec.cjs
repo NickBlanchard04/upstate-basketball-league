@@ -190,6 +190,29 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-bracket]")).toHaveCount(2);
 });
 
+test("standings background continues through the postseason panel", async ({ page }) => {
+  await page.goto("/standings.html");
+  await expect(page.locator("main > .division-field")).toHaveCount(2);
+  await expect(page.getByRole("heading", { name: "Five teams. One championship path." })).toBeVisible();
+
+  const coverage = await page.evaluate(() => {
+    const main = document.querySelector(".standings-page main");
+    const note = document.querySelector(".standings-note");
+    const mainRect = main.getBoundingClientRect();
+    const noteRect = note.getBoundingClientRect();
+
+    return {
+      backgroundImage: getComputedStyle(main).backgroundImage,
+      noteInsideMain: noteRect.top >= mainRect.top && noteRect.bottom <= mainRect.bottom,
+      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    };
+  });
+
+  expect(coverage.backgroundImage).toContain("ubl-website-hero-1600.webp");
+  expect(coverage.noteInsideMain).toBe(true);
+  expect(coverage.horizontalOverflow).toBe(false);
+});
+
 test("standings removes the lower court graphic and explains desktop stat abbreviations", async ({ page }) => {
   await page.goto("/standings.html");
 
@@ -268,6 +291,8 @@ test("team directory separates each division and opens the right profile", async
   await page.getByRole("button", { name: "Girls", exact: true }).click();
   await expect(directory).toBeVisible();
   await expect(girlsCards).toHaveCount(5);
+  await expect.poll(() => girlsCards.evaluateAll((cards) => cards.every((card) => card.classList.contains("is-visible")))).toBe(true);
+  expect(await girlsCards.evaluateAll((cards) => [...new Set(cards.map((card) => getComputedStyle(card).animationDelay))])).toEqual(["0s"]);
   await expect(boysCards).toHaveCount(0);
   await expect(girlsColumn).toBeVisible();
   await expect(boysColumn).toBeHidden();
