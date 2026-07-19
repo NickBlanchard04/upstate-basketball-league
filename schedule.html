@@ -26,16 +26,17 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/barlow-condensed-900-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/ibm-plex-sans-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/material-symbols-rounded-ubl-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260718-12">
-  <script src="config.js?v=20260718-12" defer></script>
-  <script src="analytics.js?v=20260718-12" defer></script>
-  <script src="league-core.js?v=20260718-12" defer></script>
-  <script src="data.js?v=20260718-12" defer></script>
-  <script src="data-loader.js?v=20260718-12" defer></script>
-  <script src="script.js?v=20260718-12" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260719-2">
+  <script src="config.js?v=20260719-2" defer></script>
+  <script src="analytics.js?v=20260719-2" defer></script>
+  <script src="league-core.js?v=20260719-2" defer></script>
+  <script src="data.js?v=20260719-2" defer></script>
+  <script src="data-loader.js?v=20260719-2" defer></script>
+  <script src="script.js?v=20260719-2" defer></script>
 </head>
 <body class="schedule-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -50,23 +51,44 @@
     </div>
   </header>
 
-  <main class="subpage-main" id="main">
-    <section class="page-banner schedule-banner">
-      <div class="schedule-banner-copy"><h1>League schedule</h1><p>Follow every regular-season matchup, school-break update, and postseason game from December through February.</p></div>
-      <div class="schedule-season"><span>Preliminary schedule</span><strong>Dec 3, 2026 &ndash; Feb 22, 2027</strong></div>
-    </section>
-
-    <section class="panel schedule-page-panel section-wrap" aria-labelledby="schedule-page-title">
-      <div class="section-title section-title-inline">
-        <div><h2 id="schedule-page-title">Choose a week</h2><span>2026-27 preliminary schedule</span></div>
-        <a href="bracket.html">View playoff format</a>
+  <section class="schedule-season-rail" aria-label="2026-27 regular season dates">
+    <div class="schedule-season-rail-inner">
+      <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+      <div>
+        <strong>2026&ndash;27 season</strong>
+        <span>Dec 3, 2026 &ndash; Feb 22, 2027</span>
       </div>
-      <div class="planning-note"><strong>Preliminary schedule</strong><p>Games shown here reflect the latest commissioner schedule. Times and venues become official after league confirmation.</p></div>
+    </div>
+  </section>
+
+  <main class="subpage-main" id="main">
+    <section class="schedule-page-panel section-wrap" aria-labelledby="schedule-page-title">
+      <header class="schedule-command-header">
+        <div><h1 id="schedule-page-title">Choose a week</h1><p>2026&ndash;27 preliminary schedule</p></div>
+        <a href="bracket.html">View playoff format <span class="material-symbols-rounded" aria-hidden="true">east</span></a>
+      </header>
+      <div class="planning-note">
+        <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+        <div><strong>Preliminary schedule</strong><p>Games shown here reflect the latest commissioner schedule. Times and venues become official after league confirmation.</p></div>
+      </div>
       <p class="data-freshness" data-freshness aria-live="polite"></p>
       <div class="week-controls">
-        <button type="button" data-week-step="-1" aria-label="View previous week">Previous week</button>
-        <label><span>Select week</span><select data-week-select aria-label="Select schedule week"></select></label>
-        <button type="button" data-week-step="1" aria-label="View next week">Next week</button>
+        <div class="week-picker-field">
+          <span class="week-picker-label" id="week-picker-label">Select week</span>
+          <select class="week-select-native" data-week-select aria-label="Select schedule week" aria-hidden="true" tabindex="-1"></select>
+          <div class="week-picker" data-week-picker>
+            <button class="week-picker-trigger" type="button" role="combobox" aria-controls="week-picker-list" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="week-picker-label week-picker-value" data-week-picker-trigger>
+              <span id="week-picker-value" data-week-picker-value>Opening Week &middot; Dec 3</span>
+              <span class="material-symbols-rounded" aria-hidden="true">east</span>
+            </button>
+            <div class="week-picker-popover" data-week-picker-popover hidden>
+              <div class="week-picker-list" id="week-picker-list" role="listbox" aria-labelledby="week-picker-label" data-week-picker-list></div>
+              <div class="week-picker-postseason-note" aria-hidden="true"><strong>Postseason</strong><span>Playoffs &amp; championship</span></div>
+            </div>
+          </div>
+        </div>
+        <button type="button" data-week-step="-1" aria-label="View previous week"><span class="material-symbols-rounded" aria-hidden="true">east</span>Previous week</button>
+        <button type="button" data-week-step="1" aria-label="View next week">Next week<span class="material-symbols-rounded" aria-hidden="true">east</span></button>
       </div>
       <div class="tabs" role="group" aria-label="Schedule division filters">
         <button class="active" type="button" data-schedule-filter="all" aria-pressed="true">All games</button>

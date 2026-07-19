@@ -47,7 +47,7 @@ async function expectNoAppErrors(page, action) {
 test("all public routes render meaningful content without runtime errors", async ({ page }) => {
   const routes = [
     ["/index.html", "Faith."],
-    ["/schedule.html", "League schedule"],
+    ["/schedule.html", "Choose a week"],
     ["/standings.html", "Standings"],
     ["/teams.html", "Meet the teams shaping UBL."],
     ["/team.html?program=hv-rocks&division=boys", "HV Rocks"],
