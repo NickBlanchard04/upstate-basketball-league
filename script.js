@@ -202,6 +202,75 @@ function gameMarkup(game) {
   `;
 }
 
+function scheduleDateParts(game) {
+  const parts = String(game.date || "Date pending").trim().split(/\s+/);
+  return {
+    weekday: parts[0] || "Date",
+    month: parts[1] || "",
+    day: parts.slice(2).join(" ") || "Pending"
+  };
+}
+
+function scheduleTeamMarkup(game, side) {
+  const team = tickerTeam(game, side);
+  return `
+    <div class="schedule-team schedule-team-${side}">
+      <img src="${safeAttribute(team.logo)}" alt="">
+      <strong>${escapeHtml(team.name)}</strong>
+    </div>
+  `;
+}
+
+function scheduleGameRowMarkup(game) {
+  return `
+    <article class="game-row schedule-game-row" data-game-id="${safeAttribute(game.id || "")}">
+      ${scheduleTeamMarkup(game, "away")}
+      <span class="schedule-versus" aria-hidden="true">vs</span>
+      ${scheduleTeamMarkup(game, "home")}
+      <span class="schedule-division">${escapeHtml(game.division)}</span>
+      <time class="schedule-time"${game.iso ? ` datetime="${safeAttribute(game.iso)}"` : ""}>${escapeHtml(game.time)}</time>
+      <div class="schedule-venue">${gameLocationMarkup(game)}</div>
+      <div class="game-row-status">${gameStatusMarkup(game)}</div>
+    </article>
+  `;
+}
+
+function scheduleSlateMarkup(games) {
+  const groups = new Map();
+  games.forEach((game) => {
+    const key = game.iso || game.date || "date-pending";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(game);
+  });
+
+  return [...groups.values()].map((group) => {
+    const parts = scheduleDateParts(group[0]);
+    return `
+      <section class="schedule-date-group" aria-label="Games on ${safeAttribute(group[0].date || "date pending")}">
+        <time class="schedule-date-rail"${group[0].iso ? ` datetime="${safeAttribute(group[0].iso)}"` : ""}>
+          <span>${escapeHtml(parts.weekday)}</span>
+          <small>${escapeHtml(parts.month)}</small>
+          <strong>${escapeHtml(parts.day)}</strong>
+        </time>
+        <div class="schedule-matchups">${group.map(scheduleGameRowMarkup).join("")}</div>
+      </section>
+    `;
+  }).join("");
+}
+
+function scheduleSupportRowMarkup(game) {
+  const parts = scheduleDateParts(game);
+  return `
+    <article class="schedule-support-row" data-support-game-id="${safeAttribute(game.id || "")}">
+      <time${game.iso ? ` datetime="${safeAttribute(game.iso)}"` : ""}><strong>${escapeHtml(parts.weekday)}</strong><span>${escapeHtml(`${parts.month} ${parts.day}`.trim())}</span></time>
+      <div class="schedule-support-matchup">${scheduleTeamMarkup(game, "away")}<span class="schedule-versus" aria-hidden="true">vs</span>${scheduleTeamMarkup(game, "home")}</div>
+      <span class="schedule-division">${escapeHtml(game.division)}</span>
+      <div class="game-row-status">${gameStatusMarkup(game)}</div>
+      <div class="schedule-venue">${gameLocationMarkup(game)}</div>
+    </article>
+  `;
+}
+
 function allScheduledGames() {
   const games = league.games || league.scheduleWeeks.flatMap((week) => week.games);
   return [...new Map(games.map((game) => [game.id || `${game.iso}-${game.time}-${game.division}`, game])).values()]
@@ -365,6 +434,25 @@ function renderHomeSchedule() {
     : `<div class="schedule-empty"><strong>No upcoming games</strong><p>Check the full schedule for completed dates and postseason details.</p></div>`;
 }
 
+function renderScheduleSupport() {
+  const support = document.querySelector("[data-schedule-support]");
+  if (!support) return;
+  const relevantGames = allScheduledGames().filter((game) => scheduleDivision === "all" || game.division === scheduleDivision);
+  const results = relevantGames.filter((game) => FINAL_STATUSES.has(game.status)).slice(-2).reverse();
+  const updates = relevantGames.filter((game) => game.status === "Postponed" || game.status === "Cancelled").slice(0, 2);
+  const sections = [];
+
+  if (results.length) {
+    sections.push(`<section class="schedule-support-section"><h2>Recent results</h2>${results.map(scheduleSupportRowMarkup).join("")}</section>`);
+  }
+  if (updates.length) {
+    sections.push(`<section class="schedule-support-section"><h2>Schedule updates</h2>${updates.map(scheduleSupportRowMarkup).join("")}</section>`);
+  }
+
+  support.hidden = sections.length === 0;
+  support.innerHTML = sections.join("");
+}
+
 function renderSchedulePage() {
   const weekList = document.querySelector("[data-week-game-list]");
   const weekSelect = document.querySelector("[data-week-select]");
@@ -379,14 +467,24 @@ function renderSchedulePage() {
   if (weekHeading) weekHeading.textContent = `${week.label} · ${week.range}`;
   if (weekNote) weekNote.textContent = week.note || league.scheduleNotice;
   weekList.innerHTML = games.length
-    ? games.map(gameMarkup).join("")
+    ? scheduleSlateMarkup(games)
     : `<div class="schedule-empty"><strong>No games planned</strong><p>${escapeHtml(week.note || "No games match this division filter.")}</p></div>`;
+  const weekIndex = league.scheduleWeeks.indexOf(week);
+  document.querySelectorAll("[data-week-step]").forEach((button) => {
+    const direction = Number(button.dataset.weekStep);
+    button.disabled = direction < 0 ? weekIndex <= 0 : weekIndex >= league.scheduleWeeks.length - 1;
+  });
+  renderScheduleSupport();
 }
 
 document.querySelectorAll("[data-schedule-filter]").forEach((button) => {
   button.addEventListener("click", () => {
-    document.querySelectorAll("[data-schedule-filter]").forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll("[data-schedule-filter]").forEach((item) => {
+      item.classList.remove("active");
+      item.setAttribute("aria-pressed", "false");
+    });
     button.classList.add("active");
+    button.setAttribute("aria-pressed", "true");
     scheduleDivision = button.dataset.scheduleFilter;
     renderHomeSchedule();
     renderSchedulePage();
