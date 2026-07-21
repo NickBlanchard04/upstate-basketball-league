@@ -198,6 +198,9 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-bracket='Boys Varsity'] .bracket-live-team")).toHaveCount(5);
   await expect(page.locator("[data-bracket='Girls Varsity'] .bracket-live-team")).toHaveCount(5);
   await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toContainText("0-0");
+  await expect(page.locator(".bracket-mobile-path")).toHaveCount(2);
+  await expect(page.locator(".bracket-live-swipe-hint")).toHaveCount(0);
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-mobile-seed='1']")).toContainText("0-0");
   await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "preseason");
 
   const bracketLayout = await page.evaluate(() => {
@@ -207,13 +210,19 @@ test("standings and separate division brackets render from league data", async (
     const scroller = document.querySelector(".bracket-live-scroller");
     const bracket = document.querySelector(".bracket-live").getBoundingClientRect();
     const heroHeading = document.querySelector(".bracket-page-banner h1").getBoundingClientRect();
+    const hero = document.querySelector(".bracket-page-banner").getBoundingClientRect();
     const standingsLink = document.querySelector(".bracket-page-standings-link").getBoundingClientRect();
+    const mobilePath = document.querySelector(".bracket-mobile-path");
+    const desktopArt = document.querySelector(".bracket-live-artboard");
     const viewportCenter = document.documentElement.clientWidth / 2;
     return {
       directoryFillsViewport: Math.abs(directory.x) <= 1 && Math.abs(directory.width - document.documentElement.clientWidth) <= 1,
-      sectionFillsScreen: section.height >= window.innerHeight - header.height - 2,
+      sectionSizingMatchesViewport: window.innerWidth < 768 || section.height >= window.innerHeight - header.height - 2,
       horizontalPageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-      bracketScrollsInsideItsScroller: window.innerWidth >= 900 || scroller.scrollWidth > scroller.clientWidth,
+      mobilePathFitsScroller: window.innerWidth >= 768 || scroller.scrollWidth <= scroller.clientWidth + 1,
+      mobilePathVisibilityMatchesViewport: window.innerWidth >= 768 || getComputedStyle(mobilePath).display !== "none",
+      desktopArtVisibilityMatchesViewport: window.innerWidth < 768 || getComputedStyle(desktopArt).display !== "none",
+      mobileHeroIsCompact: window.innerWidth >= 768 || hero.height <= 260,
       heroIsCentered: Math.abs(heroHeading.left + heroHeading.width / 2 - viewportCenter) <= 2,
       standingsLinkIsCentered: Math.abs(standingsLink.left + standingsLink.width / 2 - viewportCenter) <= 2,
       bracketIsCentered: window.innerWidth < 900 || Math.abs(bracket.left + bracket.width / 2 - viewportCenter) <= 2,
@@ -223,9 +232,12 @@ test("standings and separate division brackets render from league data", async (
   });
   expect(bracketLayout).toEqual({
     directoryFillsViewport: true,
-    sectionFillsScreen: true,
+    sectionSizingMatchesViewport: true,
     horizontalPageOverflow: false,
-    bracketScrollsInsideItsScroller: true,
+    mobilePathFitsScroller: true,
+    mobilePathVisibilityMatchesViewport: true,
+    desktopArtVisibilityMatchesViewport: true,
+    mobileHeroIsCompact: true,
     heroIsCentered: true,
     standingsLinkIsCentered: true,
     bracketIsCentered: true,
@@ -614,6 +626,7 @@ test("completed score updates schedule, standings, and bracket seeds", async ({ 
   await page.goto("/bracket.html");
   await expect(page.locator("[data-bracket='Boys Varsity']")).toContainText("Perth");
   await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toHaveAttribute("data-program-id", "perth");
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-mobile-seed='1']")).toHaveAttribute("data-mobile-program-id", "perth");
   await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "current");
 });
 
@@ -627,6 +640,7 @@ test("open bracket refreshes seed positions when a final score is posted", async
   await page.evaluate(() => window.UBL_RELOAD_DATA());
 
   await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toHaveAttribute("data-program-id", "perth");
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-mobile-seed='1']")).toHaveAttribute("data-mobile-program-id", "perth");
   await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "current");
 });
 
