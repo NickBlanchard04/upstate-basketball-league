@@ -29,15 +29,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260719-2">
-  <script src="config.js?v=20260719-2" defer></script>
-  <script src="analytics.js?v=20260719-2" defer></script>
-  <script src="league-core.js?v=20260719-2" defer></script>
-  <script src="data.js?v=20260719-2" defer></script>
-  <script src="data-loader.js?v=20260719-2" defer></script>
-  <script src="script.js?v=20260719-2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260720-3">
+  <script src="config.js?v=20260720-3" defer></script>
+  <script src="analytics.js?v=20260720-3" defer></script>
+  <script src="league-core.js?v=20260720-3" defer></script>
+  <script src="data.js?v=20260720-3" defer></script>
+  <script src="data-loader.js?v=20260720-3" defer></script>
+  <script src="script.js?v=20260720-3" defer></script>
 </head>
-<body>
+<body class="bracket-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="header-inner">
@@ -51,33 +51,15 @@
   </header>
 
   <main class="subpage-main" id="main">
-    <section class="page-banner">
-      <div><h1>Playoff brackets</h1><p>Boys Varsity and Girls Varsity follow separate five-team paths to their UBL championships.</p></div>
-      <strong>Two division championships</strong>
+    <section class="page-banner bracket-page-banner">
+      <div class="bracket-page-title-group">
+        <h1>Playoff brackets</h1>
+        <a class="bracket-page-standings-link" href="standings.html">View full standings</a>
+      </div>
     </section>
 
     <div class="bracket-directory section-wrap">
-      <div class="bracket-live-toolbar">
-        <div>
-          <strong>Live playoff picture</strong>
-          <span>Seed positions refresh from the same standings data used across the site.</span>
-        </div>
-        <p class="data-freshness" data-freshness aria-live="polite"></p>
-      </div>
-
-      <nav class="bracket-division-links" aria-label="Jump to a division bracket">
-        <a href="#boys-bracket-title">Boys Varsity</a>
-        <a href="#girls-bracket-title">Girls Varsity</a>
-      </nav>
-
-      <section class="bracket-live-section" aria-labelledby="boys-bracket-title">
-        <header class="bracket-live-section-header">
-          <div>
-            <span class="bracket-live-kicker">Current postseason seeds</span>
-            <h2 id="boys-bracket-title">Boys Varsity</h2>
-          </div>
-          <span class="bracket-live-indicator"><i aria-hidden="true"></i> Live standings</span>
-        </header>
+      <section class="bracket-live-section" aria-label="Boys Varsity playoff bracket">
         <div class="bracket-live-scroller" tabindex="0" aria-label="Scrollable Boys Varsity playoff bracket">
           <p class="bracket-live-swipe-hint">Swipe horizontally to view the full bracket.</p>
           <div class="bracket-live" role="group" aria-label="Boys Varsity playoff bracket" data-bracket="Boys Varsity" data-bracket-art="assets/playoff-brackets/boys-varsity-bracket.webp"></div>
@@ -85,14 +67,7 @@
         <p class="bracket-live-note">Seed 4 and Seed 5 meet in the Boys Varsity play-in. The winner advances to face Seed 1.</p>
       </section>
 
-      <section class="bracket-live-section" aria-labelledby="girls-bracket-title">
-        <header class="bracket-live-section-header">
-          <div>
-            <span class="bracket-live-kicker">Current postseason seeds</span>
-            <h2 id="girls-bracket-title">Girls Varsity</h2>
-          </div>
-          <span class="bracket-live-indicator"><i aria-hidden="true"></i> Live standings</span>
-        </header>
+      <section class="bracket-live-section" aria-label="Girls Varsity playoff bracket">
         <div class="bracket-live-scroller" tabindex="0" aria-label="Scrollable Girls Varsity playoff bracket">
           <p class="bracket-live-swipe-hint">Swipe horizontally to view the full bracket.</p>
           <div class="bracket-live" role="group" aria-label="Girls Varsity playoff bracket" data-bracket="Girls Varsity" data-bracket-art="assets/playoff-brackets/girls-varsity-bracket.webp"></div>
