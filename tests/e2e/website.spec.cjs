@@ -393,16 +393,31 @@ test("team directory separates each division and opens the right profile", async
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
   await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls$/);
-  await expect(page.locator("h1")).toHaveText("The King’s School");
+  await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
+  if (!testInfo.project.name.startsWith("desktop")) {
+    await page.locator('[data-team-section-target="head-coach"]').click();
+  }
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
+  if (!testInfo.project.name.startsWith("desktop")) {
+    await page.locator('[data-team-section-target="assistant-coach"]').click();
+  }
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Hudson Waters" })).toHaveCount(0);
+  if (!testInfo.project.name.startsWith("desktop")) {
+    await page.locator('[data-team-section-target="program"]').click();
+  }
   await expect(page.getByRole("link", { name: "athletic_director@kingsschool.info" })).toHaveAttribute("href", "mailto:athletic_director@kingsschool.info");
 
   await page.getByRole("link", { name: "Boys", exact: true }).click();
   await expect(page).toHaveURL(/team\.html\?program=kings-school&division=boys$/);
+  if (!testInfo.project.name.startsWith("desktop")) {
+    await page.locator('[data-team-section-target="head-coach"]').click();
+  }
   await expect(page.getByRole("heading", { name: "Hudson Waters" })).toBeVisible();
   await expect(page.getByAltText("Hudson Waters")).toHaveAttribute("src", "assets/optimized/hudson-waters-192.webp");
+  if (!testInfo.project.name.startsWith("desktop")) {
+    await page.locator('[data-team-section-target="assistant-coach"]').click();
+  }
   await expect(page.getByRole("heading", { name: "Jacob Fischer" })).toBeVisible();
   await expect(page.getByAltText("Jacob Fischer")).toHaveAttribute("src", "assets/optimized/jacob-fischer-192.webp");
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toHaveCount(0);
@@ -410,18 +425,168 @@ test("team directory separates each division and opens the right profile", async
 
 test("team profiles expose known venue data and honest missing states", async ({ page }) => {
   await page.goto("/team.html?program=hv-rocks&division=boys");
+  await page.locator('[data-team-section-target="head-coach"]').click();
   await expect(page.getByRole("heading", { name: "Marc Bailey" })).toBeVisible();
+  await page.locator('[data-team-section-target="assistant-coach"]').click();
   await expect(page.getByRole("heading", { name: "Tim Stuitje" })).toBeVisible();
+  await page.locator('[data-team-section-target="program"]').click();
   await page.locator('[data-map-address="2714 Curry Rd, Schenectady, NY 12303"]').click();
   await expect(page.locator(".map-dialog")).toContainText("2714 Curry Rd");
   await page.locator("[data-map-dialog-close]").click();
   await expect(page.locator(".map-dialog")).not.toBeVisible();
 
   await page.goto("/team.html?program=perth&division=girls");
-  await expect(page.locator(".team-profile-empty")).toContainText("Coaching staff not yet published");
-  await expect(page.locator(".team-profile-facts")).toContainText("Home-court details not yet published");
-  await expect(page.locator(".team-profile-facts")).toContainText("Public representative email not yet provided");
+  await expect(page.locator(".team-banner-coach").filter({ hasText: "Profile pending" }).first()).toContainText("Profile pending");
+  await expect(page.locator(".team-banner-program")).toContainText("Home-court details not yet published");
+  await expect(page.locator(".team-banner-program")).toContainText("Public representative email not yet provided");
+  await page.locator('[data-team-section-target="program"]').click();
   await expect(page.getByRole("link", { name: "Ask UBL for the right contact" })).toHaveAttribute("href", /^mailto:Info\.upstatebasketballleague@gmail\.com/);
+});
+
++test("team profile banners focus content with desktop camera and mobile accordion behavior", async ({ page }, testInfo) => {
+  await page.goto("/team.html?program=kings-school&division=girls");
+  const programTrigger = page.getByRole("button", { name: "Focus program information banner" });
+  const programNav = page.locator('[data-team-section-target="program"]');
+  const programDetail = page.locator("#team-banner-program-detail");
+  const scene = page.locator("[data-team-banner-scene]");
+  const stage = page.locator("[data-team-banner-stage]");
+  const lightRig = page.locator("[data-team-banner-light-rig]");
+  const backLink = page.getByRole("link", { name: "Back to all teams" });
+  const galleryLink = page.locator("[data-team-gallery-link]");
+  const galleryNav = page.locator('[data-team-section-target="gallery"]');
+  const galleryTrigger = page.getByRole("button", { name: "Focus team gallery banner" });
+
+  await expect(page.getByText("How we win matters", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Kingdom impact", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "All teams", exact: true })).toHaveCount(0);
+  await expect(page.locator(".team-banner-toolbar > p")).toHaveCount(0);
+  await expect(backLink).toHaveAttribute("href", "teams.html");
+  await expect(page.locator(".team-banner")).toHaveCount(6);
+  await expect(galleryLink).toHaveAttribute("href", "gallery.html?program=kings-school&division=girls#team-album-kings-school");
+  await expect(page.locator(".team-banner-section-track")).not.toContainText(/0[1-6]/);
+
+  expect(await page.locator(".team-banner-logo-lockup").evaluate((frame) => {
+    const image = frame.querySelector("img");
+    const frameBounds = frame.getBoundingClientRect();
+    const imageBounds = image.getBoundingClientRect();
+    return getComputedStyle(image).objectFit === "contain"
+      && imageBounds.left >= frameBounds.left - 1
+      && imageBounds.right <= frameBounds.right + 1;
+  })).toBe(true);
+
+  if (testInfo.project.name.startsWith("desktop")) {
+    await page.locator('[data-team-section-target="identity"]').click();
+    expect(await page.locator('[data-banner-key="identity"]').evaluate((banner) => {
+      const wordBounds = banner.querySelector("h1 > span").getBoundingClientRect();
+      const suffixBounds = banner.querySelector(".team-banner-name-suffix").getBoundingClientRect();
+      return wordBounds.bottom <= suffixBounds.top + 1;
+    })).toBe(true);
+    await page.keyboard.press("Escape");
+    await programTrigger.click();
+    await expect(programTrigger).toHaveAttribute("aria-expanded", "true");
+    await expect(programNav).toHaveAttribute("aria-pressed", "true");
+    await expect(programDetail).toBeVisible();
+    await expect(scene).toHaveClass(/is-camera-active/);
+    await expect.poll(() => stage.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
+    await expect(lightRig).toHaveCSS("display", "block");
+    await expect.poll(() => page.evaluate(() => {
+      const selected = document.querySelector(".team-banner.is-selected").getBoundingClientRect();
+      const light = document.querySelector("[data-team-banner-light-rig]").getBoundingClientRect();
+      return Math.abs((light.left + light.width / 2) - (selected.left + selected.width / 2));
+    })).toBeLessThan(2);
+    expect(await page.evaluate(() => {
+      const sceneBounds = document.querySelector("[data-team-banner-scene]").getBoundingClientRect();
+      const light = document.querySelector("[data-team-banner-light-rig]");
+      const lightBounds = light.getBoundingClientRect();
+      const beamWidth = Number.parseFloat(getComputedStyle(light, "::after").width);
+      const center = lightBounds.left + lightBounds.width / 2;
+      return center - beamWidth / 2 >= sceneBounds.left - 1
+        && center + beamWidth / 2 <= sceneBounds.right + 1;
+    })).toBe(true);
+    await programTrigger.click();
+    await expect(programTrigger).toHaveAttribute("aria-expanded", "true");
+    await expect(scene).toHaveClass(/is-camera-active/);
+    await page.keyboard.press("Escape");
+    await expect(programTrigger).toHaveAttribute("aria-expanded", "false");
+    await expect(scene).not.toHaveClass(/is-camera-active/);
+    await expect(page.getByRole("button", { name: "View all banners" })).toBeHidden();
+    await galleryNav.click();
+    await expect(galleryTrigger).toHaveAttribute("aria-expanded", "true");
+    await expect(galleryNav).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#team-banner-gallery-detail")).toBeVisible();
+  } else {
+    await expect(page.locator('[data-banner-key="identity"]')).toBeVisible();
+    await expect(page.locator('[data-banner-key="division"]')).toBeHidden();
+    await programNav.click();
+    await expect(programNav).toHaveAttribute("aria-pressed", "true");
+    await expect(programTrigger).toHaveAttribute("aria-expanded", "true");
+    await expect(programDetail).toBeVisible();
+    await expect(page.locator("[data-team-banner]:visible")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: "Next: Team gallery" })).toBeVisible();
+    await expect(scene).not.toHaveClass(/is-camera-active/);
+    await expect(stage).toHaveCSS("transform", "none");
+    await expect(lightRig).toHaveCSS("display", "none");
+    await galleryNav.click();
+    await expect(galleryTrigger).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator('[data-banner-key="gallery"]')).toBeVisible();
+    await expect(page.locator("[data-team-banner]:visible")).toHaveCount(1);
+  }
+
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+});
+
+test("team Gallery destination opens the matching expanded division album", async ({ page }) => {
+  await page.goto("/team.html?program=kings-school&division=girls");
+  await page.locator('[data-team-section-target="gallery"]').click();
+  await expect(page.locator("#team-banner-gallery-detail")).toBeVisible();
+  await page.locator("[data-team-gallery-link]").click();
+  await expect(page).toHaveURL(/gallery\.html\?program=kings-school&division=girls#team-album-kings-school$/);
+
+  const galleryDirectory = page.locator("[data-gallery-directory]");
+  const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
+  await expect(galleryDirectory).toHaveClass(/is-direct-album/);
+  await expect(page.locator(".team-gallery-card-grid")).toBeHidden();
+  await expect(kingsGallery).toBeVisible();
+  await expect(page.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(6);
+  await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(0);
+  await expect(kingsGallery.getByRole("link", { name: "Back to The King’s School team profile" })).toHaveAttribute("href", "team.html?program=kings-school&division=girls");
+  await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe("team-album-kings-school");
+});
+
+test("team identity banners fit every program name without clipping", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("desktop"), "Desktop banner geometry is covered once");
+  const profiles = [
+    ["kings-school", "girls"],
+    ["perth", "girls"],
+    ["wilton-baptist", "girls"],
+    ["hv-rocks", "boys"],
+    ["hv-flames", "girls"]
+  ];
+
+  for (const [program, division] of profiles) {
+    await page.goto(`/team.html?program=${program}&division=${division}`);
+    await page.evaluate(() => document.fonts.ready);
+    await page.locator('[data-team-section-target="identity"]').click();
+    await expect.poll(() => page.locator('[data-banner-key="identity"]').evaluate((banner) => {
+      const frame = banner.querySelector("h1").getBoundingClientRect();
+      const word = banner.querySelector("h1 > span").getBoundingClientRect();
+      const suffix = banner.querySelector(".team-banner-name-suffix").getBoundingClientRect();
+      return word.top >= frame.top - 1
+        && word.bottom <= frame.bottom + 1
+        && word.bottom <= suffix.top + 1;
+    })).toBe(true);
+  }
+});
+
+test("team profile details remain available when reduced motion is requested", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/team.html?program=kings-school&division=girls");
+  const coachTrigger = page.getByRole("button", { name: "Focus Head coach banner" });
+  await page.locator('[data-team-section-target="head-coach"]').click();
+  await expect(coachTrigger).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#team-banner-head-coach-detail")).toBeVisible();
+  await expect(page.locator("[data-team-banner-stage]")).toHaveCSS("transform", "none");
 });
 
 test("team cards remain complete when reduced motion is requested", async ({ page }) => {
