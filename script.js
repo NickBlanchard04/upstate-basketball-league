@@ -128,6 +128,35 @@ function initializeSeasonFlipCards() {
 
 initializeSeasonFlipCards();
 
+function setLeagueProfileCardFlipped(card, flipped) {
+  const title = card.dataset.profileTitle || "League profile";
+  const front = card.querySelector(".league-profile-front");
+  const back = card.querySelector(".league-profile-back");
+  card.classList.toggle("is-flipped", flipped);
+  card.setAttribute("aria-pressed", String(flipped));
+  card.setAttribute("aria-label", `${title}: ${flipped ? "return to front" : "show details"}`);
+  front?.setAttribute("aria-hidden", String(flipped));
+  back?.setAttribute("aria-hidden", String(!flipped));
+}
+
+function initializeLeagueProfileCards() {
+  const cards = [...document.querySelectorAll(".league-profile-card")];
+  cards.forEach((card) => {
+    setLeagueProfileCardFlipped(card, false);
+    card.addEventListener("click", () => {
+      const nextState = card.getAttribute("aria-pressed") !== "true";
+      cards.forEach((item) => setLeagueProfileCardFlipped(item, item === card && nextState));
+    });
+    card.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || card.getAttribute("aria-pressed") !== "true") return;
+      event.preventDefault();
+      setLeagueProfileCardFlipped(card, false);
+    });
+  });
+}
+
+initializeLeagueProfileCards();
+
 document.addEventListener("toggle", (event) => {
   const item = event.target;
   if (!(item instanceof HTMLDetailsElement) || !item.open) return;

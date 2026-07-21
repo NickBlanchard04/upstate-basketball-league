@@ -57,3 +57,70 @@
 - [P3] The implementation uses the approved UBL playbook texture more quietly than the concept's dotted halftone clusters. This keeps the page consistent with the existing brand asset library and does not reduce hierarchy or usability.
 
 final result: passed
+
+---
+
+# About Profile Cards design QA
+
+## Comparison target
+
+- Source visual truth: `C:/Users/lblan/AppData/Local/Temp/codex-clipboard-676455ec-b476-425a-bf10-19b9ab68d7dc.png`
+- Desktop implementation: `C:/Users/lblan/AppData/Local/Temp/ubl-about-profile-cards-desktop.png`
+- Mobile implementation: `C:/Users/lblan/AppData/Local/Temp/ubl-about-profile-cards-mobile.png`
+- Combined full-view comparison: `C:/Users/lblan/AppData/Local/Temp/ubl-about-card-design-comparison.png`
+- Viewports: 1280 × 720 desktop and 390 × 844 mobile.
+- States: all fronts, first and second card backs, hover/focus, exclusive-open behavior, and reduced-motion fallback.
+
+## Full-view comparison evidence
+
+The combined comparison places the reference Teams cards and the implemented About cards in one image. The implementation preserves the reference's three-column rhythm, dark navy court field, rounded outline, top-right action control, centered white graphic stage, condensed display title, supporting line, and full-width bottom action bar. Category icons intentionally replace team logos because these cards explain league identity rather than link to program profiles.
+
+## Focused comparison evidence
+
+A separate crop was not needed because the card faces, typography, borders, controls, and graphic stages are clearly readable in the combined component-level comparison. The mobile screenshot provides the focused single-column check.
+
+## Findings
+
+- No actionable P0, P1, or P2 differences remain.
+- The About cards intentionally omit team abbreviations and coach names because those fields do not apply to league-profile content.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. Barlow Condensed and IBM Plex Sans match the established UBL card hierarchy, with no clipped or truncated labels.
+- Spacing and layout rhythm: passed. Card proportions, framed icon stages, action controls, and bottom bars follow the source. The grid progresses from one to two to three columns at standard project breakpoints.
+- Colors and visual tokens: passed. Midnight navy, league blue, UBL red, white, and pink supporting text match the existing Teams component.
+- Image quality and asset fidelity: passed. Bundled Material Symbols provide crisp category icons; no fabricated team or league imagery was introduced.
+- Copy and content: passed. The three requested titles and full descriptions are preserved exactly on the card backs.
+
+## Interaction and browser verification
+
+- Card fronts and backs flip correctly on desktop and mobile.
+- Opening one card closes the previously opened card.
+- `aria-pressed`, `aria-hidden`, and accessible labels update with state.
+- Card backs are centered and remain fully readable at 390px.
+- No horizontal overflow at desktop or mobile widths.
+- Automated route checks report no browser console or runtime errors.
+
+## Comparison history
+
+### Iteration 1
+
+- [P2] Inherited Teams mobile rules hid the flip controls.
+- [P2] The accessibility heading used a utility class that was not defined in this project and remained faintly visible.
+- Fix: restored the controls with scoped About-card rules and changed the heading to the project's existing `sr-only` utility.
+
+### Iteration 2
+
+- Post-fix desktop and mobile evidence confirms visible flip affordances, a properly hidden accessible heading, centered backs, exclusive-open state, and zero horizontal overflow.
+- Result: no actionable P0, P1, or P2 differences remain.
+
+## Implementation checklist
+
+- [x] Remove the previous “Built for growing programs” treatment.
+- [x] Build three responsive Teams-style cards.
+- [x] Add accessible front/back flip behavior.
+- [x] Keep only one card flipped at a time.
+- [x] Preserve the requested descriptions.
+- [x] Verify desktop and mobile layouts and interactions.
+
+final result: passed
