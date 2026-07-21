@@ -1335,10 +1335,12 @@ function renderTeamProfile() {
 
     <section class="team-profile-next section-wrap" aria-label="Continue exploring the UBL">
       <div><span>Keep exploring</span><strong>See where ${escapeHtml(program.name)} fits into the season.</strong></div>
-      <div><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="teams.html">All teams</a></div>
+      <div><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="gallery.html?program=${encodeURIComponent(program.id)}&division=${division === "Girls Varsity" ? "girls" : "boys"}#team-album-${encodeURIComponent(program.id)}">Team gallery</a><a href="teams.html">All teams</a></div>
     </section>
   `;
 }
+
+const renderStackedTeamProfile = renderTeamProfile;
 
 const GALLERY_DIVISIONS = new Set(["Boys Varsity", "Girls Varsity"]);
 const GALLERY_IMAGE_HOSTS = new Set(["drive.google.com", "lh3.googleusercontent.com"]);

@@ -544,6 +544,11 @@ function updateTeamProfileMetadata(program, division) {
 function renderTeamProfile() {
   const container = document.querySelector("[data-team-profile]");
   if (!container) return;
+  if (window.matchMedia("(max-width: 767px)").matches) {
+    if (!container.querySelector(".team-profile-hero")) renderedTeamProfileSignature = "";
+    renderStackedTeamProfile();
+    return;
+  }
   const params = new URLSearchParams(location.search);
   const program = programById(params.get("program"));
   if (!program || program.id === "tbd") {
@@ -678,5 +683,11 @@ function renderTeamProfile() {
 }
 
 
+
+const teamProfileLayoutMedia = window.matchMedia("(max-width: 767px)");
+teamProfileLayoutMedia.addEventListener("change", () => {
+  renderedTeamProfileSignature = "";
+  renderTeamProfile();
+});
 
 initializeApp();
