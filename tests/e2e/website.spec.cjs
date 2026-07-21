@@ -91,7 +91,7 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
     renderedHeight: image.getBoundingClientRect().height,
   }));
   const expectedHeroAsset = testInfo.project.name.startsWith("mobile")
-    ? /assets\/ubl\/ubl-kingdom-impact-homepage-clean\.webp$/
+    ? /assets\/ubl\/ubl-kingdom-impact-homepage-clean-1024\.webp$/
     : /assets\/ubl\/ubl-kingdom-impact-homepage-wide\.webp$/;
   expect(heroMetrics.currentSrc).toMatch(expectedHeroAsset);
   expect(heroMetrics.naturalWidth).toBeGreaterThanOrEqual(Math.ceil(heroMetrics.renderedWidth));

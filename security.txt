@@ -1,0 +1,4 @@
+Contact: mailto:Info.upstatebasketballleague@gmail.com
+Expires: 2027-06-30T23:59:59Z
+Preferred-Languages: en
+Canonical: https://nickblanchard04.github.io/upstate-basketball-league/.well-known/security.txt

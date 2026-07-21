@@ -1,4 +1,14 @@
 User-agent: *
 Allow: /
 
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+# Allow UBL pages to appear in ChatGPT search results.
+User-agent: OAI-SearchBot
+Allow: /
+
 Sitemap: https://nickblanchard04.github.io/upstate-basketball-league/sitemap.xml
