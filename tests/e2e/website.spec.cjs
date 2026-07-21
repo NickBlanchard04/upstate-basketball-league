@@ -716,8 +716,8 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(bundledPhotos).toHaveCount(13);
   await expect(kingsGallery.locator("[data-gallery-count]")).toHaveText("13 photos");
   await expect(firstImage).toHaveAttribute("src", "assets/gallery/optimized/480/kings-gallery-01.webp");
-  await expect(firstImage).toHaveAttribute("srcset", "assets/gallery/optimized/480/kings-gallery-01.webp 480w, assets/gallery/optimized/960/kings-gallery-01.webp 960w");
-  await expect(firstImage).toHaveAttribute("sizes", "(min-width: 768px) 25vw, 50vw");
+  await expect(firstImage).toHaveAttribute("srcset", "assets/gallery/optimized/480/kings-gallery-01.webp 480w, assets/gallery/optimized/960/kings-gallery-01.webp 960w, assets/gallery/kings-gallery-01.jpg 2048w");
+  await expect(firstImage).toHaveAttribute("sizes", "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw");
   await expect(firstImage).toHaveAttribute("width", "480");
   await expect(firstImage).toHaveAttribute("height", "320");
   await expect(firstImage).toHaveAttribute("alt", "King's girls varsity player driving through defenders");
@@ -747,7 +747,7 @@ test("bundled gallery metadata renders responsively and remains interactive", as
 
   await firstPhoto.locator("[data-gallery-full]").click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
-  await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("src", "assets/gallery/optimized/960/kings-gallery-01.webp");
+  await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("src", "assets/gallery/kings-gallery-01.jpg");
   await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("alt", "King's girls varsity player driving through defenders");
   await expect(page.locator("[data-gallery-lightbox-title]")).toHaveText("Girls Varsity");
   await expect(page.locator("[data-gallery-lightbox-detail]")).toHaveText("2025-26 season");
