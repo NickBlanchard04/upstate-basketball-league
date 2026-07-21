@@ -60,6 +60,67 @@ final result: passed
 
 ---
 
+# About Season Title consistency design QA
+
+## Comparison target
+
+- Source visual truth: `C:/Users/lblan/AppData/Local/Temp/ubl-teams-title-reference-1440x900.png` (the existing Teams page title system).
+- Desktop implementation: `C:/Users/lblan/AppData/Local/Temp/ubl-about-shared-title-desktop-1440x900.png`.
+- Mobile implementation: `C:/Users/lblan/AppData/Local/Temp/ubl-about-shared-title-mobile-390x844.png`.
+- Viewport overrides: 1440 x 900 desktop and 390 x 844 mobile. The browser's persistent scrollbar produced 1425 px and 375 px content widths respectively.
+- Comparison state: About page loaded at the top, card faces unflipped, navigation closed on mobile.
+
+## Full-view comparison evidence
+
+The Teams reference and About implementation were reviewed together in one comparison input. Both headings now use the same display family, weight, fluid size, line height, tracking, uppercase treatment, and clean no-glow finish.
+
+## Findings
+
+- No actionable P0, P1, or P2 differences remain.
+- The About title now uses the shared Barlow Condensed 900 page-heading format used by Teams and Gallery.
+- The custom red `UBL` lockup and glow were removed so the title no longer looks like a separate visual system.
+- All legacy sketch-reveal classes, duplicated pseudo-element text, `data-ink` attributes, and number entrance effects were removed.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. About and Teams both compute to Barlow Condensed 900, 118.4px at the desktop viewport, 98.272px line height, and -4.144px tracking.
+- Spacing and layout rhythm: passed. The centered heading balances to two lines on mobile and stays on one line at desktop without clipping.
+- Colors and visual treatment: passed. The About title is solid white with no glow, matching the other page headings.
+- Responsive behavior: passed. Browser measurements found no horizontal overflow at either viewport.
+- Motion cleanup: passed. Computed `animation-name` is `none`; no legacy ink nodes, split-title spans, or pseudo-content remain.
+
+## Interaction and browser verification
+
+- The four season flip cards remain functional and unchanged.
+- Browser console warnings/errors checked: none.
+- Automated About-page coverage passed in desktop Chromium and mobile Chromium.
+- Unit test suite passed: 47 tests.
+
+## Comparison history
+
+### Iteration 1
+
+- Replaced the previous italic/skewed sports lettering with the upright condensed wordmark treatment.
+- Removed the sketch outline/fill animation system and the animated number reveal.
+- Added a controlled three-layer glow that preserves sharp letter edges.
+- Final desktop and mobile evidence showed no clipping, overflow, duplicated text, or residual animation.
+
+### Iteration 2
+
+- Evidence: the new attached title crop and the final v7 desktop capture were reviewed together in one comparison input.
+- Standardized font synthesis, antialiasing, geometric text rendering, and glow geometry across all three title spans so `How a` and `UBL` inherit the same crisp display treatment as `Season Works`.
+- Post-fix desktop and mobile evidence showed the requested lockup, zero horizontal overflow, and no text or number animations.
+
+### Iteration 3
+
+- Evidence: the Teams page and revised About page were captured at the same 1440 x 900 viewport and reviewed together.
+- Replaced the custom split lockup with one semantic heading and copied the established Teams heading metrics exactly.
+- Post-fix evidence confirms identical computed typography, no glow or special red word treatment, clean mobile wrapping, and zero horizontal overflow.
+
+final result: passed
+
+---
+
 # About Profile Cards design QA
 
 ## Comparison target

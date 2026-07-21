@@ -380,7 +380,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
-  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-7");
+  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-9");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
@@ -404,7 +404,7 @@ test("team directory separates each division and opens the right profile", async
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-7$/);
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-9$/);
   await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -1028,9 +1028,8 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(page.locator(".season-node")).toHaveCount(4);
   await expect(page.locator(".season-flip-card")).toHaveCount(4);
   await expect(page.locator('.season-flip-card[aria-pressed="true"]')).toHaveCount(0);
-  await expect(page.locator(".season-brand")).toHaveAttribute("data-ink", "UBL");
-  await expect(page.locator(".season-title-line")).toHaveAttribute("data-ink", "season works");
-  await expect(page.locator(".season-number-ink")).toHaveCount(4);
+  await expect(page.locator(".season-ink, .season-number-ink")).toHaveCount(0);
+  await expect(page.locator(".lineup-footer")).toHaveCount(0);
 
   const routeMarkersOverlap = await page.locator(".season-stage").evaluateAll((stages) => stages.some((stage) => {
     const number = stage.querySelector(".season-step").getBoundingClientRect();
