@@ -199,6 +199,10 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-bracket='Girls Varsity'] .bracket-live-team")).toHaveCount(5);
   await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toContainText("0-0");
   await expect(page.locator(".bracket-mobile-path")).toHaveCount(2);
+  await expect(page.locator(".bracket-mobile-spine")).toHaveCount(2);
+  await expect(page.locator(".bracket-mobile-round")).toHaveCount(6);
+  await expect(page.locator(".bracket-mobile-finish img")).toHaveCount(2);
+  await expect(page.locator(".bracket-mobile-finish img").first()).toHaveAttribute("src", "assets/playoff-brackets/ubl-championship-trophy.webp");
   await expect(page.locator(".bracket-live-swipe-hint")).toHaveCount(0);
   await expect(page.locator("[data-bracket='Boys Varsity'] [data-mobile-seed='1']")).toContainText("0-0");
   await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "preseason");
@@ -213,6 +217,8 @@ test("standings and separate division brackets render from league data", async (
     const hero = document.querySelector(".bracket-page-banner").getBoundingClientRect();
     const standingsLink = document.querySelector(".bracket-page-standings-link").getBoundingClientRect();
     const mobilePath = document.querySelector(".bracket-mobile-path");
+    const mobileTeam = document.querySelector(".bracket-mobile-team");
+    const mobileTrophy = document.querySelector(".bracket-mobile-finish img");
     const desktopArt = document.querySelector(".bracket-live-artboard");
     const viewportCenter = document.documentElement.clientWidth / 2;
     return {
@@ -221,6 +227,9 @@ test("standings and separate division brackets render from league data", async (
       horizontalPageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       mobilePathFitsScroller: window.innerWidth >= 768 || scroller.scrollWidth <= scroller.clientWidth + 1,
       mobilePathVisibilityMatchesViewport: window.innerWidth >= 768 || getComputedStyle(mobilePath).display !== "none",
+      mobilePosterUsesCourtArtwork: window.innerWidth >= 768 || getComputedStyle(document.body).backgroundImage.includes("mobile-bracket-court.webp"),
+      mobileTeamsUseDarkPanels: window.innerWidth >= 768 || getComputedStyle(mobileTeam).backgroundColor.includes("2, 15, 34"),
+      mobileTrophyIsRestrained: window.innerWidth >= 768 || mobileTrophy.getBoundingClientRect().width <= 96,
       desktopArtVisibilityMatchesViewport: window.innerWidth < 768 || getComputedStyle(desktopArt).display !== "none",
       mobileHeroIsCompact: window.innerWidth >= 768 || hero.height <= 260,
       heroIsCentered: Math.abs(heroHeading.left + heroHeading.width / 2 - viewportCenter) <= 2,
@@ -236,6 +245,9 @@ test("standings and separate division brackets render from league data", async (
     horizontalPageOverflow: false,
     mobilePathFitsScroller: true,
     mobilePathVisibilityMatchesViewport: true,
+    mobilePosterUsesCourtArtwork: true,
+    mobileTeamsUseDarkPanels: true,
+    mobileTrophyIsRestrained: true,
     desktopArtVisibilityMatchesViewport: true,
     mobileHeroIsCompact: true,
     heroIsCentered: true,

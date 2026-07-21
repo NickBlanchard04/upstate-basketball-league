@@ -783,24 +783,29 @@ function bracketMobileTeamMarkup(label, programId, fallback, standings, game, si
   const score = programId && game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
     ? String(game[`${side}Score`])
     : "";
-  const detail = score || (programId ? bracketTeamRecord(programId, standings) : "") || "Pending";
+  const detail = score || (programId ? bracketTeamRecord(programId, standings) : "") || "\u2014";
+  const detailLabel = score ? `${detail} points` : detail !== "\u2014" ? `${detail} record` : "Pending";
   const winnerClass = winner && winner === programId ? " is-winner" : "";
   return `
     <div class="bracket-mobile-team${winnerClass}"${programId ? ` data-mobile-program-id="${safeAttribute(programId)}"` : ""}${seedNumber ? ` data-mobile-seed="${safeAttribute(seedNumber)}"` : ""}>
       <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(bracketTeamName(programId, fallback))}</strong>
-      <small>${escapeHtml(detail)}</small>
+      <div>
+        <strong>${escapeHtml(bracketTeamName(programId, fallback))}</strong>
+        <small aria-label="${safeAttribute(detailLabel)}">${escapeHtml(detail)}</small>
+      </div>
     </div>
   `;
 }
 
 function bracketMobileMatchupMarkup(label, away, home, standings, game, winner) {
   return `
-    <article class="bracket-mobile-matchup">
+    <article class="bracket-mobile-matchup" aria-label="${safeAttribute(label)}">
       <p>${escapeHtml(label)}</p>
-      ${bracketMobileTeamMarkup(away.label, away.id, away.fallback, standings, game, "away", winner, away.seed)}
-      <span class="bracket-mobile-versus" aria-hidden="true">VS</span>
-      ${bracketMobileTeamMarkup(home.label, home.id, home.fallback, standings, game, "home", winner, home.seed)}
+      <div class="bracket-mobile-matchup-pair">
+        ${bracketMobileTeamMarkup(away.label, away.id, away.fallback, standings, game, "away", winner, away.seed)}
+        <span class="bracket-mobile-versus" aria-hidden="true">VS</span>
+        ${bracketMobileTeamMarkup(home.label, home.id, home.fallback, standings, game, "home", winner, home.seed)}
+      </div>
     </article>
   `;
 }
@@ -856,31 +861,35 @@ function bracketMarkup(division, artwork) {
     </div>
     <div class="bracket-mobile-path" aria-hidden="true">
       <header class="bracket-mobile-identity">
-        <span>2027 UBL playoffs</span>
         <strong>${escapeHtml(divisionName)} bracket</strong>
-        <small>Five teams. One championship path.</small>
+        <small>2027 <em>UBL</em> playoffs</small>
       </header>
 
-      <section class="bracket-mobile-round">
-        <header><span>01</span><div><strong>Play-in</strong><small>Date pending</small></div></header>
-        ${bracketMobileMatchupMarkup("Elimination game", { label: "Seed 5", id: playInAway, fallback: "Seed 5", seed: "5" }, { label: "Seed 4", id: playInHome, fallback: "Seed 4", seed: "4" }, standings, playIn, playInWinner)}
-      </section>
+      <div class="bracket-mobile-tournament">
+        <span class="bracket-mobile-spine" aria-hidden="true"></span>
 
-      <div class="bracket-mobile-advance"><span>Winner advances</span></div>
+        <section class="bracket-mobile-round bracket-mobile-round-play-in">
+          <header><strong>Play-in</strong><small>Date pending</small></header>
+          ${bracketMobileMatchupMarkup("Play-in matchup", { label: "Seed 5", id: playInAway, fallback: "Seed 5", seed: "5" }, { label: "Seed 4", id: playInHome, fallback: "Seed 4", seed: "4" }, standings, playIn, playInWinner)}
+        </section>
 
-      <section class="bracket-mobile-round">
-        <header><span>02</span><div><strong>Semifinals</strong><small>Date pending</small></div></header>
-        ${bracketMobileMatchupMarkup("Semifinal 1", { label: "Play-in winner", id: semifinalOneAway, fallback: "Play-in winner" }, { label: "Seed 1", id: semifinalOneHome, fallback: "Seed 1", seed: "1" }, standings, semifinalOne, semifinalOneWinner)}
-        ${bracketMobileMatchupMarkup("Semifinal 2", { label: "Seed 3", id: semifinalTwoAway, fallback: "Seed 3", seed: "3" }, { label: "Seed 2", id: semifinalTwoHome, fallback: "Seed 2", seed: "2" }, standings, semifinalTwo, semifinalTwoWinner)}
-      </section>
+        <section class="bracket-mobile-round bracket-mobile-round-semifinals">
+          <header><strong>Semifinals</strong><small>Date pending</small></header>
+          ${bracketMobileMatchupMarkup("Semifinal 1", { label: "Seed 1", id: semifinalOneHome, fallback: "Seed 1", seed: "1" }, { label: "Play-in winner", id: semifinalOneAway, fallback: "Play-in winner" }, standings, semifinalOne, semifinalOneWinner)}
+          ${bracketMobileMatchupMarkup("Semifinal 2", { label: "Seed 3", id: semifinalTwoAway, fallback: "Seed 3", seed: "3" }, { label: "Seed 2", id: semifinalTwoHome, fallback: "Seed 2", seed: "2" }, standings, semifinalTwo, semifinalTwoWinner)}
+        </section>
 
-      <div class="bracket-mobile-advance"><span>Finalists advance</span></div>
-
-      <section class="bracket-mobile-round bracket-mobile-round-championship">
-        <header><span>03</span><div><strong>Championship</strong><small>Date pending</small></div></header>
-        ${bracketMobileMatchupMarkup("UBL championship", { label: "Semifinal 1", id: championshipAway, fallback: "Semifinal 1 winner" }, { label: "Semifinal 2", id: championshipHome, fallback: "Semifinal 2 winner" }, standings, championship, champion)}
-        ${champion ? `<div class="bracket-mobile-champion"><span>2027 ${escapeHtml(divisionName)} champion</span><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></div>` : ""}
-      </section>
+        <section class="bracket-mobile-round bracket-mobile-round-championship">
+          <header><strong>Championship</strong><small>Date pending</small></header>
+          ${bracketMobileMatchupMarkup("UBL championship", { label: "Semifinal 1", id: championshipAway, fallback: "Semifinal 1 winner" }, { label: "Semifinal 2", id: championshipHome, fallback: "Semifinal 2 winner" }, standings, championship, champion)}
+          <div class="bracket-mobile-finish">
+            <img src="assets/playoff-brackets/ubl-championship-trophy.webp" alt="" width="240" height="320" loading="lazy" decoding="async">
+            ${champion
+              ? `<div class="bracket-mobile-champion"><span>2027 ${escapeHtml(divisionName)} champion</span><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></div>`
+              : `<span class="bracket-mobile-champion-pending">2027 UBL champion</span>`}
+          </div>
+        </section>
+      </div>
     </div>
     <div class="sr-only bracket-accessible-summary">
       <h3>Play-in</h3>
