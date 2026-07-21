@@ -4666,7 +4666,21 @@ th {
   width: auto;
 }
 
-@media (max-width: 599px), (min-width: 1024px) {
+@media (max-width: 599px) {
+  .gallery-directory .team-gallery-card-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .gallery-directory .team-gallery-card {
+    grid-column: span 2;
+  }
+
+  .gallery-directory .team-gallery-card.is-gallery-last-single {
+    grid-column: 3 / span 2;
+  }
+}
+
+@media (min-width: 1024px) {
   .gallery-directory .team-gallery-card {
     grid-column: span 2;
   }
