@@ -6,6 +6,25 @@
     : [];
   const allowedHost = allowedHosts.includes(location.hostname.toLowerCase());
   const doNotTrack = navigator.doNotTrack === "1" || window.doNotTrack === "1";
+
+  const measurementId = String(config.googleAnalyticsMeasurementId || "").trim();
+  if (allowedHost && !doNotTrack && /^G-[A-Z0-9]+$/.test(measurementId)) {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag("js", new Date());
+    window.gtag("config", measurementId, {
+      anonymize_ip: true,
+      send_page_view: true
+    });
+
+    const googleTag = document.createElement("script");
+    googleTag.async = true;
+    googleTag.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+    document.head.appendChild(googleTag);
+  }
+
   if (!config.analyticsEnabled || !endpoint || !allowedHost || doNotTrack) return;
 
   let cls = 0;
