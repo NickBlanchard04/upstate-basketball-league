@@ -121,12 +121,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-01.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-01.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-01.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-01.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-01.jpg", width: 2048 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-01.webp"
+      fullUrl: "assets/gallery/kings-gallery-01.jpg"
     },
     {
       id: "kings-gallery-02",
@@ -137,12 +138,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-02.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-02.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-02.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-02.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-02.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-02.webp"
+      fullUrl: "assets/gallery/kings-gallery-02.jpg"
     },
     {
       id: "kings-gallery-03",
@@ -153,12 +155,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-03.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-03.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-03.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-03.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-03.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-03.webp"
+      fullUrl: "assets/gallery/kings-gallery-03.jpg"
     },
     {
       id: "kings-gallery-04",
@@ -169,12 +172,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-04.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-04.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-04.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-04.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-04.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-04.webp"
+      fullUrl: "assets/gallery/kings-gallery-04.jpg"
     },
     {
       id: "kings-gallery-05",
@@ -185,12 +189,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-05.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-05.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-05.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-05.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-05.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-05.webp"
+      fullUrl: "assets/gallery/kings-gallery-05.jpg"
     },
     {
       id: "kings-gallery-06",
@@ -201,12 +206,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-06.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-06.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-06.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-06.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-06.jpg", width: 2048 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-06.webp"
+      fullUrl: "assets/gallery/kings-gallery-06.jpg"
     },
     {
       id: "kings-gallery-07",
@@ -217,12 +223,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-07.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-07.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-07.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-07.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-07.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-07.webp"
+      fullUrl: "assets/gallery/kings-gallery-07.jpg"
     },
     {
       id: "kings-gallery-08",
@@ -233,12 +240,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-08.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-08.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-08.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-08.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-08.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-08.webp"
+      fullUrl: "assets/gallery/kings-gallery-08.jpg"
     },
     {
       id: "kings-gallery-09",
@@ -249,12 +257,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-09.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-09.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-09.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-09.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-09.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-09.webp"
+      fullUrl: "assets/gallery/kings-gallery-09.jpg"
     },
     {
       id: "kings-gallery-10",
@@ -265,12 +274,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-10.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-10.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-10.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-10.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-10.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-10.webp"
+      fullUrl: "assets/gallery/kings-gallery-10.jpg"
     },
     {
       id: "kings-gallery-11",
@@ -281,12 +291,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-11.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-11.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-11.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-11.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-11.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-11.webp"
+      fullUrl: "assets/gallery/kings-gallery-11.jpg"
     },
     {
       id: "kings-gallery-12",
@@ -297,12 +308,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-12.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-12.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-12.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-12.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-12.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-12.webp"
+      fullUrl: "assets/gallery/kings-gallery-12.jpg"
     },
     {
       id: "kings-gallery-13",
@@ -313,12 +325,13 @@ window.UBL_DATA = {
       previewUrl: "assets/gallery/optimized/480/kings-gallery-13.webp",
       previewSrcset: [
         { url: "assets/gallery/optimized/480/kings-gallery-13.webp", width: 480 },
-        { url: "assets/gallery/optimized/960/kings-gallery-13.webp", width: 960 }
+        { url: "assets/gallery/optimized/960/kings-gallery-13.webp", width: 960 },
+        { url: "assets/gallery/kings-gallery-13.jpg", width: 1364 }
       ],
-      sizes: "(min-width: 768px) 25vw, 50vw",
+      sizes: "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw",
       width: 480,
       height: 320,
-      fullUrl: "assets/gallery/optimized/960/kings-gallery-13.webp"
+      fullUrl: "assets/gallery/kings-gallery-13.jpg"
     }
   ],
   standings: {
