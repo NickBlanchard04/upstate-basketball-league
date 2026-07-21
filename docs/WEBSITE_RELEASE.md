@@ -70,7 +70,17 @@ Verify these production surfaces on desktop and mobile:
 - `robots.txt`, `sitemap.xml`, and `site.webmanifest` return HTTP 200.
 - A valid team-profile URL becomes `index, follow` with its query-specific canonical; the generic `team.html` state and `404.html` remain `noindex, follow`.
 
-## 5. Roll back
+## 5. Custom-domain checks
+
+The production domain is `upstatebasketballleague.com`, registered through GoDaddy. GitHub Pages must be configured with that apex domain before DNS records are changed.
+
+- Point the apex host to GitHub Pages using all four documented IPv4 records.
+- Point `www` to `NickBlanchard04.github.io` with a CNAME record.
+- Confirm both hosts resolve, `www` redirects to the apex host, and the previous GitHub Pages project URL redirects to the apex host.
+- Enable **Enforce HTTPS** after GitHub issues the certificate.
+- Submit `https://upstatebasketballleague.com/sitemap.xml` to Google Search Console and Bing Webmaster Tools after the HTTPS site is available.
+
+## 6. Roll back
 
 If production verification fails:
 

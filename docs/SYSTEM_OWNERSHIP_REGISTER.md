@@ -14,7 +14,7 @@ This register records ownership and recovery responsibility without storing pass
 | Approved and Rejected gallery folders | Needs verification in Google Drive | League-controlled Google account | System owner | Private Drive folder hierarchy and moderation log | Needs verification |
 | League mailbox `info.upstatebasketballleague@gmail.com` | League commissioner | League organization | One approved league officer | Google's account recovery process | Needs verification |
 | Analytics and Notification Log sheets | Control-panel owner | League-controlled Google account | System owner | Daily control-panel backup | Needs verification |
-| Custom domain `UpstateBasketballLeague.com` | Not yet registered | League organization | Commissioner plus system owner | Registrar recovery and billing contact | Not applicable |
+| Custom domain `UpstateBasketballLeague.com` | Website system owner / GoDaddy | UBL website system owner | Commissioner recovery access to be added | GoDaddy account recovery and private purchase receipt | 2026-07-21 |
 
 ## Required before public rollout
 
@@ -22,7 +22,7 @@ This register records ownership and recovery responsibility without storing pass
 2. Assign one backup administrator who is not dependent on the same personal account or device.
 3. Confirm the league mailbox recovery phone and recovery email are league-approved.
 4. Confirm GitHub two-factor authentication and repository recovery access.
-5. Record the domain registrar, renewal date, billing contact, and DNS recovery process after purchase.
+5. Confirm the GoDaddy renewal date, billing contact, and commissioner recovery access after registration finishes.
 6. Run one isolated workbook recovery drill and one website rebuild from a clean clone.
 
 ## Quarterly review
