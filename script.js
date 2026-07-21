@@ -716,11 +716,11 @@ function bracketTeamName(programId, fallback) {
 
 function bracketTeamRecord(programId, standings) {
   const row = standings.find((entry) => entry.programId === programId);
-  if (!row || row.wins + row.losses === 0) return "";
+  if (!row) return "";
   return `${row.wins}-${row.losses}`;
 }
 
-function bracketLiveTeamMarkup(slotClass, programId, standings, game, side) {
+function bracketLiveTeamMarkup(slotClass, programId, standings, game, side, seedNumber = "") {
   if (!programId) return "";
   const score = game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
     ? String(game[`${side}Score`])
@@ -728,7 +728,7 @@ function bracketLiveTeamMarkup(slotClass, programId, standings, game, side) {
   const detail = score || bracketTeamRecord(programId, standings);
   const detailLabel = score ? `${detail} points` : detail ? `${detail} record` : "";
   return `
-    <span class="bracket-live-team bracket-live-team-${slotClass}" title="${safeAttribute(`${bracketTeamName(programId, "Team")}${detailLabel ? `, ${detailLabel}` : ""}`)}">
+    <span class="bracket-live-team bracket-live-team-${slotClass}" data-bracket-slot="${safeAttribute(slotClass)}" data-program-id="${safeAttribute(programId)}"${seedNumber ? ` data-seed="${safeAttribute(seedNumber)}"` : ""} title="${safeAttribute(`${seedNumber ? `Seed ${seedNumber}, ` : ""}${bracketTeamName(programId, "Team")}${detailLabel ? `, ${detailLabel}` : ""}`)}">
       <strong>${escapeHtml(bracketTeamName(programId, "Team"))}</strong>
       ${detail ? `<small>${escapeHtml(detail)}</small>` : ""}
     </span>
@@ -750,8 +750,7 @@ function bracketSlotMarkup(label, programId, fallback, game, side, winner) {
 
 function bracketMarkup(division, artwork) {
   const standings = league.standings?.[division] || [];
-  const standingsStarted = standings.some((row) => row.wins + row.losses > 0);
-  const seeds = standingsStarted ? standings.map((row) => row.programId) : [];
+  const seeds = standings.map((row) => row.programId);
   const seed = (number) => seeds[number - 1] || "";
   const playoffGames = allScheduledGames().filter((game) => game.division === division && game.stage);
   const playIn = playoffGames.find((game) => game.stage === "Play-in");
@@ -777,12 +776,12 @@ function bracketMarkup(division, artwork) {
   return `
     <div class="bracket-live-artboard">
       <img class="bracket-live-art" src="${safeAttribute(safeImageUrl(artwork))}" alt="" width="1672" height="941" decoding="async">
-      ${bracketLiveTeamMarkup("seed-5", playInAway, standings, playIn, "away")}
-      ${bracketLiveTeamMarkup("seed-4", playInHome, standings, playIn, "home")}
+      ${bracketLiveTeamMarkup("seed-5", playInAway, standings, playIn, "away", "5")}
+      ${bracketLiveTeamMarkup("seed-4", playInHome, standings, playIn, "home", "4")}
       ${bracketLiveTeamMarkup("play-in-winner", semifinalOneAway, standings, semifinalOne, "away")}
-      ${bracketLiveTeamMarkup("seed-1", semifinalOneHome, standings, semifinalOne, "home")}
-      ${bracketLiveTeamMarkup("seed-3", semifinalTwoAway, standings, semifinalTwo, "away")}
-      ${bracketLiveTeamMarkup("seed-2", semifinalTwoHome, standings, semifinalTwo, "home")}
+      ${bracketLiveTeamMarkup("seed-1", semifinalOneHome, standings, semifinalOne, "home", "1")}
+      ${bracketLiveTeamMarkup("seed-3", semifinalTwoAway, standings, semifinalTwo, "away", "3")}
+      ${bracketLiveTeamMarkup("seed-2", semifinalTwoHome, standings, semifinalTwo, "home", "2")}
       ${champion ? `<span class="bracket-live-champion"><small>2027 ${escapeHtml(divisionName)} champion</small><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></span>` : ""}
     </div>
     <div class="sr-only bracket-accessible-summary">
@@ -801,9 +800,18 @@ function bracketMarkup(division, artwork) {
   `;
 }
 
+function updateBracketStatus(bracket) {
+  const division = bracket.dataset.bracket;
+  const standings = league.standings?.[division] || [];
+  const standingsStarted = standings.some((row) => row.wins + row.losses > 0);
+  const section = bracket.closest(".bracket-live-section");
+  if (section) section.dataset.seedState = standingsStarted ? "current" : "preseason";
+}
+
 function renderBrackets() {
   document.querySelectorAll("[data-bracket]").forEach((bracket) => {
     bracket.innerHTML = bracketMarkup(bracket.dataset.bracket, bracket.dataset.bracketArt);
+    updateBracketStatus(bracket);
   });
 }
 
@@ -1566,6 +1574,7 @@ function applyLeagueData(data) {
   const nextSignature = leagueSignature(data);
   league = data;
   if (nextSignature === renderedLeagueSignature) {
+    document.querySelectorAll("[data-bracket]").forEach(updateBracketStatus);
     renderDataFreshness();
     return;
   }

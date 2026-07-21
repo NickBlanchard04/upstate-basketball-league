@@ -185,9 +185,53 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator("[data-standings-division='Girls Varsity']")).toContainText("HV Flames");
   await expect(page.locator("[data-standings-division='Boys Varsity']")).toContainText("HV Rocks");
   await page.goto("/bracket.html");
+  await expect(page.getByRole("link", { name: "View full standings" })).toBeVisible();
+  await expect(page.locator(".bracket-page-banner")).not.toContainText("Boys Varsity and Girls Varsity follow separate five-team paths");
+  await expect(page.locator(".bracket-page-banner")).not.toContainText("Two division championships");
+  await expect(page.locator(".bracket-directory")).not.toContainText("Preseason order");
+  await expect(page.locator(".bracket-directory")).not.toContainText("Watching for first final");
+  await expect(page.locator(".bracket-division-links")).toHaveCount(0);
+  await expect(page.locator(".bracket-live-section-header")).toHaveCount(0);
   await expect(page.locator("[data-bracket='Boys Varsity']")).toContainText("Winner advances to play Seed 1");
   await expect(page.locator("[data-bracket='Girls Varsity']")).toContainText("Winner advances to play Seed 1");
   await expect(page.locator("[data-bracket]")).toHaveCount(2);
+  await expect(page.locator("[data-bracket='Boys Varsity'] .bracket-live-team")).toHaveCount(5);
+  await expect(page.locator("[data-bracket='Girls Varsity'] .bracket-live-team")).toHaveCount(5);
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toContainText("0-0");
+  await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "preseason");
+
+  const bracketLayout = await page.evaluate(() => {
+    const directory = document.querySelector(".bracket-directory").getBoundingClientRect();
+    const section = document.querySelector(".bracket-live-section").getBoundingClientRect();
+    const header = document.querySelector(".site-header").getBoundingClientRect();
+    const scroller = document.querySelector(".bracket-live-scroller");
+    const bracket = document.querySelector(".bracket-live").getBoundingClientRect();
+    const heroHeading = document.querySelector(".bracket-page-banner h1").getBoundingClientRect();
+    const standingsLink = document.querySelector(".bracket-page-standings-link").getBoundingClientRect();
+    const viewportCenter = document.documentElement.clientWidth / 2;
+    return {
+      directoryFillsViewport: Math.abs(directory.x) <= 1 && Math.abs(directory.width - document.documentElement.clientWidth) <= 1,
+      sectionFillsScreen: section.height >= window.innerHeight - header.height - 2,
+      horizontalPageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      bracketScrollsInsideItsScroller: window.innerWidth >= 900 || scroller.scrollWidth > scroller.clientWidth,
+      heroIsCentered: Math.abs(heroHeading.left + heroHeading.width / 2 - viewportCenter) <= 2,
+      standingsLinkIsCentered: Math.abs(standingsLink.left + standingsLink.width / 2 - viewportCenter) <= 2,
+      bracketIsCentered: window.innerWidth < 900 || Math.abs(bracket.left + bracket.width / 2 - viewportCenter) <= 2,
+      desktopBracketIsCapped: window.innerWidth < 900 || bracket.width <= 1218,
+      pageUsesOneBackgroundImage: (getComputedStyle(document.body).backgroundImage.match(/url\(/g) || []).length === 1,
+    };
+  });
+  expect(bracketLayout).toEqual({
+    directoryFillsViewport: true,
+    sectionFillsScreen: true,
+    horizontalPageOverflow: false,
+    bracketScrollsInsideItsScroller: true,
+    heroIsCentered: true,
+    standingsLinkIsCentered: true,
+    bracketIsCentered: true,
+    desktopBracketIsCapped: true,
+    pageUsesOneBackgroundImage: true,
+  });
 });
 
 test("standings background continues through the postseason panel", async ({ page }) => {
@@ -569,6 +613,21 @@ test("completed score updates schedule, standings, and bracket seeds", async ({ 
   await expect(firstRow).toContainText("1");
   await page.goto("/bracket.html");
   await expect(page.locator("[data-bracket='Boys Varsity']")).toContainText("Perth");
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toHaveAttribute("data-program-id", "perth");
+  await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "current");
+});
+
+test("open bracket refreshes seed positions when a final score is posted", async ({ page }) => {
+  await page.goto("/bracket.html");
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).not.toHaveAttribute("data-program-id", "perth");
+
+  const resultFeed = structuredClone(feed);
+  Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
+  await useLiveFeed(page, resultFeed);
+  await page.evaluate(() => window.UBL_RELOAD_DATA());
+
+  await expect(page.locator("[data-bracket='Boys Varsity'] [data-seed='1']")).toHaveAttribute("data-program-id", "perth");
+  await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "current");
 });
 
 test("simultaneous games are all shown during the configured live window", async ({ page }) => {

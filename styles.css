@@ -5522,3 +5522,165 @@ th {
   .schedule-page .tabs button:hover,
   .schedule-page .schedule-game-row:hover { transform: none; }
 }
+
+/* Full-viewport playoff bracket */
+.bracket-page {
+  min-height: 100vh;
+  color: var(--white);
+  background-color: var(--navy-950);
+  background-image:
+    linear-gradient(180deg, rgba(2, 15, 34, 0.9), rgba(2, 15, 34, 0.82)),
+    url("assets/optimized/ubl-website-hero-1600.webp");
+  background-position: center, center 43%;
+  background-size: cover, cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bracket-page .subpage-main {
+  min-height: calc(100svh - 5rem);
+  padding-bottom: 0;
+  overflow-x: hidden;
+  background: transparent;
+}
+
+.bracket-page .bracket-page-banner {
+  min-height: clamp(18rem, 38svh, 26rem);
+  padding: clamp(3rem, 7vw, 6rem) var(--page-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  text-align: center;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.bracket-page .bracket-page-title-group {
+  width: min(100%, 90rem);
+  margin-inline: auto;
+  display: grid;
+  justify-items: center;
+  gap: clamp(0.6rem, 1.6vw, 1.2rem);
+}
+
+.bracket-page .bracket-page-banner h1 {
+  max-width: none;
+  margin: 0;
+  font-size: clamp(4rem, 9vw, 8.5rem);
+  line-height: 0.82;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.bracket-page-standings-link {
+  min-height: 3.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.78);
+  font: 800 clamp(2rem, 4.6vw, 4.4rem)/0.95 var(--display);
+  letter-spacing: 0.02em;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 0.16rem;
+  text-underline-offset: 0.35rem;
+  text-transform: uppercase;
+  transition: color 160ms ease;
+}
+
+.bracket-page-standings-link:hover,
+.bracket-page-standings-link:focus-visible {
+  color: var(--white);
+}
+
+.bracket-page .section-wrap.bracket-directory {
+  width: 100%;
+  margin: 0;
+  gap: 0;
+  background: transparent;
+}
+
+.bracket-page .bracket-live-section {
+  min-height: calc(100svh - 5rem);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.bracket-page .bracket-live-scroller {
+  min-height: 0;
+  display: grid;
+  align-items: center;
+  padding-block: clamp(1rem, 2.5vw, 2.5rem);
+  background: transparent;
+}
+
+.bracket-page .bracket-live {
+  width: 100%;
+  min-width: 56rem;
+}
+
+.bracket-page .bracket-live-artboard {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(11, 75, 137, 0.34), transparent 42%),
+    var(--navy-950);
+}
+
+.bracket-page .bracket-live-art {
+  opacity: 0.94;
+}
+
+.bracket-page .bracket-live-note {
+  padding: 0.9rem var(--page-pad);
+  text-align: center;
+  background: rgba(2, 15, 34, 0.74);
+}
+
+.bracket-page .bracket-live-swipe-hint {
+  background: rgba(2, 15, 34, 0.74);
+}
+
+.bracket-page noscript .panel {
+  margin: 1rem var(--page-pad);
+  color: var(--ink);
+}
+
+@media (max-width: 600px) {
+  .bracket-page .bracket-page-banner {
+    min-height: 18rem;
+    padding-block: 3.25rem;
+    background: transparent;
+  }
+
+  .bracket-page .bracket-page-banner h1 {
+    max-width: 7ch;
+    font-size: clamp(3.5rem, 19vw, 5.1rem);
+    white-space: normal;
+  }
+
+  .bracket-page-standings-link {
+    font-size: clamp(1.7rem, 9vw, 2.35rem);
+  }
+}
+
+@media (min-width: 900px) {
+  .bracket-page .bracket-live {
+    width: min(calc(100% - 4rem), 76rem);
+    max-width: 76rem;
+    min-width: 0;
+    margin-inline: auto;
+    border: 1px solid rgba(131, 182, 231, 0.22);
+    box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.28);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bracket-page .subpage-main,
+  .bracket-page .bracket-live-section {
+    min-height: calc(100svh - 5.7rem);
+  }
+}
