@@ -6095,6 +6095,311 @@ th {
   }
 }
 
+/* Mobile tournament-spine treatment */
+@media (max-width: 767px) {
+  .bracket-page {
+    background-image: url("assets/playoff-brackets/mobile-bracket-court.webp");
+    background-position: center top;
+    background-size: 100% 100%;
+  }
+
+  .bracket-page .bracket-page-banner {
+    background: rgba(2, 15, 34, 0.34);
+  }
+
+  .bracket-page .bracket-live-section {
+    padding: 0;
+  }
+
+  .bracket-page .bracket-mobile-path {
+    width: 100%;
+    max-width: 32rem;
+    padding: 0 0.72rem 2.4rem;
+    color: var(--white);
+    background: rgba(7, 52, 103, 0.13);
+  }
+
+  .bracket-mobile-identity {
+    overflow: visible;
+    padding: 2.15rem 0.5rem 1.65rem;
+    justify-items: center;
+    gap: 0.32rem;
+    background: transparent;
+    border: 0;
+    text-align: center;
+  }
+
+  .bracket-mobile-identity::after {
+    content: none;
+  }
+
+  .bracket-mobile-identity > strong {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.4rem, 2vw, 0.65rem);
+    font: 900 clamp(2.2rem, 10.8vw, 2.85rem)/0.86 var(--display);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .bracket-mobile-identity > strong::before,
+  .bracket-mobile-identity > strong::after {
+    content: "";
+    width: clamp(0.85rem, 4.5vw, 1.45rem);
+    height: 0.22rem;
+    flex: 0 0 auto;
+    background: var(--red);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+
+  .bracket-mobile-identity > small {
+    margin-top: 0;
+    color: rgba(255, 255, 255, 0.86);
+    font: 700 clamp(0.82rem, 3.8vw, 1rem)/1.15 var(--sans);
+    letter-spacing: 0.16em;
+  }
+
+  .bracket-mobile-identity em {
+    color: var(--red);
+    font-style: italic;
+    font-weight: 800;
+  }
+
+  .bracket-mobile-tournament {
+    position: relative;
+    display: grid;
+    gap: 2.4rem;
+  }
+
+  .bracket-mobile-spine {
+    position: absolute;
+    z-index: 0;
+    top: 2.4rem;
+    bottom: 6.4rem;
+    left: 50%;
+    width: 0.24rem;
+    display: block;
+    background: var(--red);
+    box-shadow: 0 0 0.8rem rgba(227, 19, 49, 0.26);
+    transform: translateX(-50%);
+  }
+
+  .bracket-mobile-round {
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    display: grid;
+    gap: 0.92rem;
+    background: transparent;
+    border: 0;
+  }
+
+  .bracket-mobile-round > header {
+    position: relative;
+    z-index: 3;
+    width: min(69%, 15.5rem);
+    min-height: 4.55rem;
+    margin-inline: auto;
+    padding: 0.66rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    color: var(--white);
+    background: rgba(2, 15, 34, 0.96);
+    border: 1px solid rgba(151, 206, 255, 0.82);
+    border-inline: 0.28rem solid var(--red);
+    box-shadow: 0 0.75rem 1.4rem rgba(2, 15, 34, 0.3);
+    clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+    text-align: center;
+  }
+
+  .bracket-mobile-round > header strong {
+    color: var(--white);
+    font: 900 clamp(1.75rem, 8vw, 2.15rem)/0.9 var(--display);
+    letter-spacing: 0.025em;
+  }
+
+  .bracket-mobile-round > header small {
+    margin-top: 0.28rem;
+    color: #e5bd61;
+    font: 800 0.76rem/1 var(--sans);
+    letter-spacing: 0.12em;
+  }
+
+  .bracket-mobile-matchup {
+    position: relative;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .bracket-mobile-matchup > p {
+    display: none;
+  }
+
+  .bracket-mobile-matchup-pair {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(2.4rem, 13vw, 3.55rem) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .bracket-mobile-matchup-pair::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    left: 12%;
+    right: 12%;
+    height: 0.14rem;
+    background: #d8edff;
+    box-shadow: 0 0 0.38rem rgba(216, 237, 255, 0.34);
+    transform: translateY(-50%);
+  }
+
+  .bracket-mobile-team:first-of-type {
+    grid-column: 1;
+  }
+
+  .bracket-mobile-team:last-of-type {
+    grid-column: 3;
+  }
+
+  .bracket-mobile-team {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    min-height: 5.5rem;
+    padding: 0.72rem 0.62rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 0.48rem;
+    color: var(--white);
+    background: rgba(2, 15, 34, 0.94);
+    border: 1px solid rgba(57, 149, 229, 0.94);
+    border-top: 0.18rem solid #45a8fb;
+    box-shadow:
+      inset 0 0 1.4rem rgba(11, 75, 137, 0.22),
+      0 0.5rem 1rem rgba(2, 15, 34, 0.34);
+  }
+
+  .bracket-mobile-team > span {
+    color: rgba(216, 237, 255, 0.8);
+    font: 700 clamp(0.62rem, 2.8vw, 0.72rem)/1.1 var(--sans);
+    letter-spacing: 0.08em;
+  }
+
+  .bracket-mobile-team > div {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 0.38rem;
+  }
+
+  .bracket-mobile-team strong {
+    min-width: 0;
+    color: var(--white);
+    font: 900 clamp(0.92rem, 4.4vw, 1.16rem)/0.9 var(--display);
+    letter-spacing: 0.01em;
+    overflow-wrap: break-word;
+    text-transform: uppercase;
+  }
+
+  .bracket-mobile-team small {
+    min-width: 2.05rem;
+    padding: 0.3rem 0.34rem;
+    color: #e9c876;
+    background: rgba(4, 26, 56, 0.92);
+    border: 1px solid rgba(229, 189, 97, 0.72);
+    font: 800 0.7rem/1 var(--sans);
+    text-align: center;
+  }
+
+  .bracket-mobile-team.is-winner {
+    border-color: #ff4962;
+    box-shadow:
+      inset 0 0 0 1px rgba(227, 19, 49, 0.28),
+      0 0.5rem 1rem rgba(2, 15, 34, 0.34);
+  }
+
+  .bracket-mobile-versus {
+    z-index: 3;
+    grid-column: 2;
+    width: 1.05rem;
+    height: 1.05rem;
+    margin: 0;
+    justify-self: center;
+    color: transparent;
+    background: var(--red);
+    border: 0.18rem solid var(--navy-950);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0.12rem #d8edff;
+    font-size: 0;
+  }
+
+  .bracket-mobile-round-semifinals {
+    gap: 1.1rem;
+  }
+
+  .bracket-mobile-round-semifinals .bracket-mobile-matchup + .bracket-mobile-matchup {
+    margin-top: 0.24rem;
+  }
+
+  .bracket-mobile-finish {
+    position: relative;
+    z-index: 2;
+    min-height: 7.6rem;
+    margin-top: -0.1rem;
+    display: grid;
+    justify-items: center;
+    gap: 0.48rem;
+  }
+
+  .bracket-mobile-finish img {
+    width: 5.25rem;
+    height: 7rem;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    box-shadow: 0 0.8rem 1.6rem rgba(2, 15, 34, 0.34);
+  }
+
+  .bracket-mobile-round-championship {
+    padding-bottom: 0.2rem;
+    border: 0;
+  }
+
+  .bracket-mobile-champion-pending {
+    color: #e9cc83;
+    font: 800 0.75rem/1.2 var(--sans);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .bracket-mobile-champion {
+    width: min(100%, 15rem);
+    padding: 0.72rem 0.85rem;
+    justify-items: center;
+    gap: 0.2rem;
+    background: rgba(2, 15, 34, 0.94);
+    border: 1px solid rgba(229, 189, 97, 0.82);
+    text-align: center;
+  }
+
+  .bracket-mobile-champion > strong {
+    font-size: 1.4rem;
+  }
+}
+
 @media (min-width: 900px) {
   .bracket-page .bracket-live {
     width: min(calc(100% - 4rem), 76rem);
