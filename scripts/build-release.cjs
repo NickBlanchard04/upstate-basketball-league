@@ -5,6 +5,7 @@ const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.resolve(siteRoot, "dist");
 
 const publicFiles = Object.freeze([
+  ".nojekyll",
   "index.html",
   "schedule.html",
   "standings.html",
