@@ -235,7 +235,7 @@ function validateSitemap(root) {
   const sitemap = read(root, "sitemap.xml");
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1].replaceAll("&amp;", "&"));
   check(JSON.stringify(urls) === JSON.stringify(expectedSitemapUrls), "Sitemap URLs or ordering do not match the public UBL routes");
-  check((sitemap.match(/<lastmod>2026-07-18<\/lastmod>/g) || []).length === expectedSitemapUrls.length, "Every sitemap route needs the release lastmod date");
+  check((sitemap.match(/<lastmod>2026-07-20<\/lastmod>/g) || []).length === expectedSitemapUrls.length, "Every sitemap route needs the release lastmod date");
   check(!urls.includes(`${canonicalBase}team.html`), "Generic noindex team template must not appear in sitemap");
   check(teamProfileUrls.every((url) => urls.includes(url)), "Every honest team profile must appear in sitemap");
 

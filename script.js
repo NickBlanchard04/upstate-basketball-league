@@ -271,14 +271,29 @@ function scheduleSupportRowMarkup(game) {
   `;
 }
 
+let scheduledGamesCacheLeague = null;
+let scheduledGamesCache = [];
+const gameStartTimeCache = new Map();
+
 function allScheduledGames() {
+  if (scheduledGamesCacheLeague === league) return scheduledGamesCache;
   const games = league.games || league.scheduleWeeks.flatMap((week) => week.games);
-  return [...new Map(games.map((game) => [game.id || `${game.iso}-${game.time}-${game.division}`, game])).values()]
-    .sort((a, b) => gameStartTime(a) - gameStartTime(b));
+  scheduledGamesCacheLeague = league;
+  scheduledGamesCache = [...new Map(games.map((game) => [game.id || `${game.iso}-${game.time}-${game.division}`, game])).values()]
+    .map((game) => ({ game, start: gameStartTime(game) }))
+    .sort((a, b) => a.start - b.start)
+    .map((entry) => entry.game);
+  return scheduledGamesCache;
 }
 
 function gameStartTime(game) {
-  return core.gameStartTime(game, league.settings?.timezone || "America/New_York");
+  if (!game || typeof game !== "object") return Number.NaN;
+  const timezone = league.settings?.timezone || "America/New_York";
+  const cacheKey = `${game.iso || game.date || ""}|${game.time || ""}|${timezone}`;
+  if (gameStartTimeCache.has(cacheKey)) return gameStartTimeCache.get(cacheKey);
+  const start = core.gameStartTime(game, timezone);
+  gameStartTimeCache.set(cacheKey, start);
+  return start;
 }
 
 function scheduleFocus(now = Date.now()) {
@@ -1535,9 +1550,9 @@ mapDialog.innerHTML = `
     </div>
     <p data-map-dialog-address></p>
     <div class="map-options">
-      <a data-map-apple target="_blank" rel="noopener">Apple Maps</a>
-      <a data-map-google target="_blank" rel="noopener">Google Maps</a>
-      <a data-map-waze target="_blank" rel="noopener">Waze</a>
+      <a data-map-apple href="https://maps.apple.com/" target="_blank" rel="noopener">Apple Maps</a>
+      <a data-map-google href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a>
+      <a data-map-waze href="https://www.waze.com/live-map" target="_blank" rel="noopener">Waze</a>
     </div>
   </div>
 `;
@@ -1614,7 +1629,13 @@ function renderLeagueData() {
   updateCountdown();
 }
 
+function renderCriticalHomeData() {
+  renderDataFreshness();
+  updateCountdown();
+}
+
 let renderedLeagueSignature = "";
+let hasCompletedFullRender = false;
 
 function leagueSignature(data) {
   try {
@@ -1624,20 +1645,28 @@ function leagueSignature(data) {
   }
 }
 
-function applyLeagueData(data) {
+function applyLeagueData(data, criticalOnly = false) {
   const nextSignature = leagueSignature(data);
   league = data;
-  if (nextSignature === renderedLeagueSignature) {
+  scheduledGamesCacheLeague = null;
+  scheduledGamesCache = [];
+  if (criticalOnly) {
+    renderedLeagueSignature = nextSignature;
+    renderCriticalHomeData();
+    return;
+  }
+  if (nextSignature === renderedLeagueSignature && hasCompletedFullRender) {
     document.querySelectorAll("[data-bracket]").forEach(updateBracketStatus);
     renderDataFreshness();
     return;
   }
   renderedLeagueSignature = nextSignature;
   renderLeagueData();
+  hasCompletedFullRender = true;
 }
 
 function initializeApp() {
-  applyLeagueData(window.UBL_DATA);
+  applyLeagueData(window.UBL_DATA, document.body.classList.contains("home-page"));
   initializeGallery();
   Promise.resolve(window.UBL_DATA_READY || window.UBL_DATA)
     .then(applyLeagueData)

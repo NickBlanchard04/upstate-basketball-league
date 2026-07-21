@@ -66,7 +66,7 @@ test("sitemap contains only indexable page templates and valid team profiles", (
   assert.ok(urls.length > 0);
   assert.ok(!urls.includes("https://nickblanchard04.github.io/upstate-basketball-league/team.html"));
   assert.ok(urls.some((url) => url.endsWith("team.html?program=hv-rocks&division=boys")));
-  assert.equal((sitemap.match(/<lastmod>2026-07-18<\/lastmod>/g) || []).length, urls.length);
+  assert.equal((sitemap.match(/<lastmod>2026-07-20<\/lastmod>/g) || []).length, urls.length);
 
   for (const url of urls.filter((value) => !value.includes("team.html?"))) {
     const parsed = new URL(url);
@@ -82,4 +82,40 @@ test("release builder identifies UBL by project sentinels instead of a local fol
   assert.doesNotMatch(builder, /path\.basename\(siteRoot\)/);
   assert.match(builder, /packageJson\.name !== "upstate-basketball-league"/);
   assert.match(builder, /Upstate Basketball League Brand Identity/);
+});
+
+test("security contact files follow the public vulnerability disclosure format", () => {
+  const canonical = read(".well-known/security.txt");
+  const legacy = read("security.txt");
+  assert.equal(legacy, canonical);
+  assert.match(canonical, /^Contact: mailto:Info\.upstatebasketballleague@gmail\.com$/m);
+  assert.match(canonical, /^Expires: 2027-06-30T23:59:59Z$/m);
+  assert.match(canonical, /^Preferred-Languages: en$/m);
+  assert.match(canonical, /^Canonical: https:\/\/nickblanchard04\.github\.io\/upstate-basketball-league\/\.well-known\/security\.txt$/m);
+});
+
+test("homepage schema identifies the league without inventing a storefront", () => {
+  const html = read("index.html");
+  const json = html.match(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/)?.[1];
+  assert.ok(json, "Homepage must include JSON-LD");
+  const schema = JSON.parse(json);
+  const organization = schema["@graph"].find((item) => item["@type"] === "SportsOrganization");
+  const website = schema["@graph"].find((item) => item["@type"] === "WebSite");
+  assert.equal(organization.name, "Upstate Basketball League");
+  assert.equal(organization.areaServed.name, "Upstate New York");
+  assert.deepEqual(organization.member.map((team) => team.name), [
+    "The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"
+  ]);
+  assert.equal(organization.address, undefined);
+  assert.equal(organization["@type"], "SportsOrganization");
+  assert.equal(website.publisher["@id"], organization["@id"]);
+});
+
+test("utility pages provide contextual internal links beyond the main navigation", () => {
+  for (const file of ["schedule.html", "standings.html", "teams.html", "team.html", "bracket.html", "rules.html", "gallery.html", "about.html"]) {
+    const html = read(file);
+    const block = html.match(/<nav class="page-paths[\s\S]*?<\/nav>/)?.[0] || "";
+    assert.match(block, /Continue exploring/, `${file} needs a contextual navigation label`);
+    assert.ok((block.match(/href="[^"]+\.html"/g) || []).length >= 3, `${file} needs at least three contextual internal links`);
+  }
 });

@@ -497,6 +497,55 @@ p {
   margin: 0.5rem auto 0;
 }
 
+.page-paths {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem 1.1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 3rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-left: 0.25rem solid var(--red);
+  background: var(--white);
+  box-shadow: 0 0.75rem 1.9rem rgba(2, 15, 34, 0.06);
+}
+
+.page-paths > span {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.page-paths a {
+  color: var(--navy-800);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration-color: rgba(227, 19, 49, 0.35);
+  text-decoration-thickness: 0.12rem;
+  text-underline-offset: 0.25rem;
+}
+
+.page-paths a:hover,
+.page-paths a:focus-visible {
+  color: var(--red-dark);
+  text-decoration-color: currentColor;
+}
+
+@media (max-width: 640px) {
+  .page-paths {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 2.1rem;
+    padding: 1rem 1.1rem;
+  }
+
+  .page-paths > span { margin-bottom: 0.15rem; }
+}
+
 .panel {
   border: 1px solid var(--line);
   border-radius: 1rem;

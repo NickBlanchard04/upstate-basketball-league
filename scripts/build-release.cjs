@@ -30,6 +30,8 @@ const publicFiles = Object.freeze([
   "sponsors.js",
   "league-data.json",
   "robots.txt",
+  ".well-known/security.txt",
+  "security.txt",
   "sitemap.xml",
   "site.webmanifest"
 ]);
