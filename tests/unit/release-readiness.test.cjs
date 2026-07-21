@@ -115,10 +115,19 @@ test("homepage schema identifies the league without inventing a storefront", () 
 });
 
 test("utility pages provide contextual internal links beyond the main navigation", () => {
-  for (const file of ["schedule.html", "standings.html", "teams.html", "team.html", "bracket.html", "rules.html", "gallery.html", "about.html"]) {
+  for (const file of ["schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "about.html"]) {
     const html = read(file);
     const block = html.match(/<nav class="page-paths[\s\S]*?<\/nav>/)?.[0] || "";
     assert.match(block, /Continue exploring/, `${file} needs a contextual navigation label`);
     assert.ok((block.match(/href="[^"]+\.html"/g) || []).length >= 3, `${file} needs at least three contextual internal links`);
   }
+
+  const teamProfileExperience = read("team-profile-experience.js");
+  assert.match(teamProfileExperience, /Back to all teams/, "team.html needs a contextual return path");
+  assert.ok((teamProfileExperience.match(/href="[^"]+\.html"/g) || []).length >= 3, "team.html needs at least three contextual internal links");
+
+  const gallery = read("gallery.html");
+  const galleryExperience = read("team-gallery-experience.js");
+  assert.match(gallery, /team-gallery-card/, "gallery.html needs program-level album navigation");
+  assert.match(galleryExperience, /teamProfileUrl\(/, "gallery.html needs a contextual team-profile return path");
 });

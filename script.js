@@ -1677,7 +1677,7 @@ document.addEventListener("ubl:data-updated", (event) => {
   applyLeagueData(event.detail.data);
 });
 
-initializeApp();
+if (!document.body.matches(".team-detail-page, .gallery-landing-page")) initializeApp();
 
 if (countdownParts.seconds) setInterval(updateCountdown, 1000);
 

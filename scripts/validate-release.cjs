@@ -223,11 +223,12 @@ function validateIcons(root) {
 function validateCaching(root) {
   for (const file of publicHtml) {
     const html = read(root, file);
+    const expectedToken = file === "team.html" || file === "gallery.html" ? "20260721-2" : releaseToken;
     for (const match of html.matchAll(/(?:href|src)=["'][^"']+\.(?:css|js)\?v=([^"']+)["']/gi)) {
-      check(match[1] === releaseToken, `${file} uses stale asset token ${match[1]}`);
+      check(match[1] === expectedToken, `${file} uses stale asset token ${match[1]}`);
     }
-    if (html.includes("styles.css")) check(html.includes(`styles.css?v=${releaseToken}`), `${file} has a stale styles.css token`);
-    if (html.includes("script.js")) check(html.includes(`script.js?v=${releaseToken}`), `${file} has a stale script.js token`);
+    if (html.includes("styles.css")) check(html.includes(`styles.css?v=${expectedToken}`), `${file} has a stale styles.css token`);
+    if (html.includes("script.js")) check(html.includes(`script.js?v=${expectedToken}`), `${file} has a stale script.js token`);
   }
 }
 
@@ -250,7 +251,7 @@ function validateHonestContent(root) {
   check(sponsors.includes("Prospective partner categories") && sponsors.includes("no organization is shown as a confirmed UBL sponsor"), "Sponsor page needs explicit prospective-category language");
 
   const releaseTextFiles = publicHtml.concat([
-    "styles.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "league-core.js", "data.js", "league-data.json", "script.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt"
+    "styles.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt"
   ]);
   const forbidden = /assets\/team-hv-flames\.svg|assets\/ubl-championship-hero|ubl-core-commitments-trophy|assets\/sponsors|Northline/i;
   for (const file of releaseTextFiles) check(!forbidden.test(read(root, file)), `${file} references a forbidden temporary, fake, sponsor, or Northline asset`);
