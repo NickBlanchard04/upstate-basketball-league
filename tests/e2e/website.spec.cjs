@@ -454,7 +454,7 @@ test("team profile keeps the banner camera on desktop and restores the stacked m
   if (!isDesktop) {
     await expect(page.locator(".team-profile-hero")).toBeVisible();
     await expect(page.locator(".team-banner")).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "All teams", exact: true })).toHaveAttribute("href", "teams.html");
+    await expect(page.locator(".team-profile-back")).toHaveAttribute("href", "teams.html");
     await expect(page.locator(".team-profile-hero-copy h1")).toContainText("The King");
     await expect(page.getByRole("link", { name: "Girls", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("link", { name: "Boys", exact: true })).toHaveAttribute("href", "team.html?program=kings-school&division=boys");
