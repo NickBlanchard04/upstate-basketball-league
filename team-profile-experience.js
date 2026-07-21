@@ -618,7 +618,7 @@ function renderTeamProfile() {
             <span class="team-banner-number" aria-hidden="true">01</span>
             <div class="team-banner-content">
               <span class="team-banner-kicker">${escapeHtml(nameParts.prefix)}</span>
-              <h1 id="team-banner-identity-title" aria-label="${safeAttribute(program.name)}"><span aria-hidden="true">${escapeHtml(nameParts.primary)}</span></h1>
+              <h1 id="team-banner-identity-title"><span class="sr-only">${escapeHtml(program.name)}</span><span aria-hidden="true">${escapeHtml(nameParts.primary)}</span></h1>
               <strong class="team-banner-name-suffix">${escapeHtml(nameParts.suffix)}</strong>
               <div class="team-banner-logo-lockup">
                 <img src="${safeAttribute(safeImageUrl(program.logo))}" alt="${safeAttribute(logoAlt)}" width="192" height="192">
