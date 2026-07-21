@@ -84,6 +84,16 @@ test("homepage retains Google Search Console ownership verification", () => {
   );
 });
 
+test("public analytics configures the UBL GA4 property behind privacy and host guards", () => {
+  const config = read("config.js");
+  const analytics = read("analytics.js");
+
+  assert.match(config, /googleAnalyticsMeasurementId:\s*"G-E7W3TG2NR8"/);
+  assert.match(analytics, /allowedHost\s*&&\s*!doNotTrack/);
+  assert.match(analytics, /googletagmanager\.com\/gtag\/js\?id=/);
+  assert.match(analytics, /window\.gtag\("config", measurementId/);
+});
+
 test("release builder identifies UBL by project sentinels instead of a local folder name", () => {
   const builder = read("scripts/build-release.cjs");
   const pagesWorkflow = read(".github/workflows/manual-pages-release.yml");

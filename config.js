@@ -5,6 +5,7 @@ window.UBL_CONFIG = {
   analyticsEndpoint: "https://script.google.com/macros/s/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7/exec",
   analyticsChannel: "ubl-public-v1",
   analyticsEnabled: true,
+  googleAnalyticsMeasurementId: "G-E7W3TG2NR8",
   analyticsAllowedHosts: ["nickblanchard04.github.io", "upstatebasketballleague.com", "www.upstatebasketballleague.com"],
   staticFeedUrl: "league-data.json",
   refreshMinutes: 1
