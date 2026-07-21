@@ -79,9 +79,11 @@ test("sitemap contains only indexable page templates and valid team profiles", (
 
 test("release builder identifies UBL by project sentinels instead of a local folder name", () => {
   const builder = read("scripts/build-release.cjs");
+  const pagesWorkflow = read(".github/workflows/manual-pages-release.yml");
   assert.doesNotMatch(builder, /path\.basename\(siteRoot\)/);
   assert.match(builder, /packageJson\.name !== "upstate-basketball-league"/);
   assert.match(builder, /Upstate Basketball League Brand Identity/);
+  assert.match(pagesWorkflow, /include-hidden-files:\s*true/);
 });
 
 test("security contact files follow the public vulnerability disclosure format", () => {
