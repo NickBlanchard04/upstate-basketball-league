@@ -1655,57 +1655,112 @@ th {
   padding: 1rem;
 }
 
-.gallery-panel {
-  padding: 1rem;
+.gallery-landing-page {
+  min-height: 100vh;
+  background: var(--navy-950);
 }
 
-.gallery-filters {
-  margin-bottom: 0.9rem;
+.gallery-hero .teams-hero-copy h1 {
+  letter-spacing: 0.08em;
+}
+
+.gallery-directory.is-direct-album .division-heading,
+.gallery-directory.is-direct-album .team-gallery-card-grid,
+.gallery-directory.is-direct-album ~ .gallery-opportunity {
+  display: none;
+}
+
+.gallery-directory.is-direct-album .team-gallery-list {
+  gap: 0;
+}
+
+.gallery-directory .team-gallery-albums {
+  display: grid;
+  gap: 1rem;
+}
+
+.gallery-directory .team-gallery-card-grid {
+  width: 100%;
 }
 
 .team-gallery-list {
   display: grid;
-  gap: 0.65rem;
+  gap: 1rem;
+}
+
+.team-gallery-card {
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.team-gallery-card[aria-expanded="true"] {
+  border-color: var(--division-accent);
+  box-shadow: 0 0 0 4px var(--division-accent), 0 1.4rem 3rem var(--division-glow);
+}
+
+.team-gallery-card[hidden] {
+  display: none;
+}
+
+.team-gallery-card[aria-expanded="true"] .team-card-view {
+  border-color: var(--division-accent);
+  background: var(--division-accent);
+}
+
+.team-gallery-card[aria-expanded="true"] .division-team-card-content b {
+  border-color: var(--white);
+  color: var(--navy-950);
+  background: var(--white);
 }
 
 .team-gallery {
   overflow: hidden;
+  scroll-margin-top: 6.5rem;
   border: 1px solid var(--line);
-  border-radius: 0.7rem;
+  border-radius: 0.8rem;
   background: var(--white);
+  box-shadow: 0 0.8rem 2rem rgba(2, 15, 34, 0.13);
+  animation: team-album-reveal 240ms ease both;
 }
 
-.team-gallery summary {
-  min-height: 4.6rem;
-  padding: 0.65rem 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  color: var(--navy-800);
-  cursor: pointer;
-  list-style: none;
-  background: var(--canvas);
+.team-gallery:focus {
+  outline: 0;
 }
 
-.team-gallery summary::-webkit-details-marker {
+.team-gallery:focus-visible {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(227, 19, 49, 0.2), 0 0.8rem 2rem rgba(2, 15, 34, 0.13);
+}
+
+.team-gallery[hidden] {
   display: none;
 }
 
-.team-gallery summary::after {
-  content: "+";
-  flex: 0 0 auto;
-  color: var(--red);
-  font: 900 1.35rem/1 var(--display);
+@keyframes team-album-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.team-gallery[open] summary {
+.team-gallery-heading {
+  min-height: 5.2rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   color: var(--white);
-  background: var(--navy-900);
-}
-
-.team-gallery[open] summary::after {
-  content: "−";
+  background:
+    linear-gradient(90deg, rgba(227, 19, 49, 0.17), transparent 36%),
+    var(--navy-900);
 }
 
 .team-gallery-identity {
@@ -1746,25 +1801,65 @@ th {
 
 .team-gallery-identity small {
   margin-top: 0.3rem;
-  color: var(--muted);
-  font-size: 0.58rem;
-}
-
-.team-gallery[open] .team-gallery-identity small {
   color: rgba(255, 255, 255, 0.62);
+  font-size: 0.68rem;
 }
 
-.team-gallery-count {
+.team-gallery-heading-actions {
   margin-left: auto;
-  color: var(--muted);
-  font-size: 0.57rem;
-  font-weight: 700;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.gallery-team-return {
+  min-height: 2.75rem;
+  padding: 0.58rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(255, 124, 143, 0.72);
+  color: var(--white);
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-decoration: none;
   text-transform: uppercase;
 }
 
-.team-gallery[open] .team-gallery-count {
+.gallery-team-return:hover,
+.gallery-team-return:focus-visible {
+  border-color: var(--white);
+  background: var(--red-dark);
+}
+
+.team-gallery-heading-actions button {
+  min-height: 2.75rem;
+  padding: 0.58rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 0.35rem;
+  color: var(--white);
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.team-gallery-heading-actions button:hover,
+.team-gallery-heading-actions button:focus-visible {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.team-gallery-count {
   color: #ff9aac;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-align: right;
+  text-transform: uppercase;
 }
 
 .team-gallery-content {
@@ -3135,10 +3230,6 @@ th {
     padding: 1.2rem;
   }
 
-  .gallery-panel {
-    padding: 1.2rem;
-  }
-
   .leadership-panel,
   .contact-callout {
     padding: 1.2rem;
@@ -3216,8 +3307,13 @@ th {
 
   .data-freshness-loading::before,
   .gallery-skeleton-photo,
-  .gallery-skeleton-line {
+  .gallery-skeleton-line,
+  .team-gallery {
     animation: none;
+  }
+
+  .team-gallery-card {
+    transition: none;
   }
 }
 
@@ -4561,6 +4657,27 @@ th {
   .team-card-motion-ready .division-team-card:not(.is-visible) {
     opacity: 1;
     transform: none;
+  }
+}
+
+.gallery-directory .team-gallery-card {
+  width: auto;
+}
+
+@media (max-width: 599px), (min-width: 1024px) {
+  .gallery-directory .team-gallery-card {
+    grid-column: span 2;
+  }
+
+  .gallery-directory .team-gallery-card.is-gallery-last-single {
+    grid-column: 3 / span 2;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .gallery-directory .team-gallery-card,
+  .gallery-directory .team-gallery-card.is-gallery-last-single {
+    grid-column: auto;
   }
 }
 
