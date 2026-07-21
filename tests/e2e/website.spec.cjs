@@ -700,7 +700,7 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
   await expect(page.locator("body")).not.toHaveClass(/menu-open/);
 });
 
-test("bundled gallery metadata renders responsively and remains interactive", async ({ page }) => {
+test("bundled gallery metadata renders responsively and remains interactive", async ({ page }, testInfo) => {
   await page.goto("/gallery.html");
   await expect(page.locator(".gallery-lede")).toHaveCount(0);
   await expect(page.locator("body")).toHaveClass(/gallery-landing-page/);
@@ -720,6 +720,18 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(page.locator("[data-gallery-card]:visible")).toHaveCount(4);
   await expect(page.locator('[data-gallery-trigger="hv-flames"]')).toBeVisible();
   await expect(page.locator('[data-gallery-trigger="hv-rocks"]')).toBeHidden();
+  if (testInfo.project.name === "mobile-chromium") {
+    const visibleCards = page.locator("[data-gallery-card]:visible");
+    const gridBox = await page.locator(".team-gallery-card-grid").boundingBox();
+    const cardBoxes = await Promise.all(Array.from({ length: 4 }, (_, index) => visibleCards.nth(index).boundingBox()));
+    expect(gridBox).not.toBeNull();
+    cardBoxes.forEach((box) => expect(box).not.toBeNull());
+    expect(Math.abs(cardBoxes[0].y - cardBoxes[1].y)).toBeLessThan(8);
+    expect(Math.abs(cardBoxes[0].y - cardBoxes[2].y)).toBeLessThan(8);
+    expect(Math.abs(cardBoxes[0].width - cardBoxes[1].width)).toBeLessThan(4);
+    expect(cardBoxes[0].width).toBeLessThan(gridBox.width * 0.4);
+    expect(Math.abs((cardBoxes[3].x + cardBoxes[3].width / 2) - (gridBox.x + gridBox.width / 2))).toBeLessThan(4);
+  }
   const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
   const kingsCard = page.locator('[data-gallery-trigger="kings-school"]');
   const bundledPhotos = kingsGallery.locator("[data-gallery-photo-id]");
