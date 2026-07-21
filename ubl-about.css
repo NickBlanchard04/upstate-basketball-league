@@ -133,7 +133,7 @@
   min-height: 2.75rem;
   padding-inline: 0.9rem;
   display: inline-flex;
-  font-size: 0.65rem;
+  font-size: 0.8125rem;
 }
 
 .league-profile-icon-stage {
@@ -175,7 +175,8 @@
 .league-profile-card-content > span {
   min-height: 1.35rem;
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.9375rem;
+  line-height: 1.4;
 }
 
 .league-profile-card-content b {
@@ -183,6 +184,8 @@
   margin-top: 0.9rem;
   display: flex;
   color: var(--ubl-white);
+  font-size: 0.875rem;
+  line-height: 1.2;
   background: rgba(188, 13, 39, 0.78);
 }
 
@@ -970,7 +973,7 @@
   gap: 0.38rem;
   align-items: center;
   color: #ff9aac;
-  font: 800 0.78rem/1 "IBM Plex Sans", sans-serif;
+  font: 800 0.875rem/1.15 "IBM Plex Sans", sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1278,8 +1281,12 @@
 }
 
 .roster-title {
+  min-height: 1.9em;
+  display: grid;
+  align-items: center;
   font: 800 clamp(1.25rem, 5.5vw, 1.65rem)/0.95 "Barlow Condensed", sans-serif;
   letter-spacing: -0.01em;
+  text-wrap: balance;
   text-transform: uppercase;
 }
 
@@ -1571,7 +1578,7 @@
   grid-row: 3;
   border-top: 1px solid rgba(255, 255, 255, 0.14);
   color: rgba(255, 255, 255, 0.68);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.62;
 }
 
@@ -1580,6 +1587,23 @@
   border-radius: 0;
   background: #020f22;
   box-shadow: none;
+}
+
+.about-page .contact-callout > div > span {
+  font-size: 0.8125rem;
+}
+
+.about-page .contact-callout p {
+  font-size: 1rem;
+  line-height: 1.58;
+}
+
+.about-page .contact-email {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  line-height: 1.4;
 }
 
 @media (min-width: 640px) {
@@ -1876,8 +1900,8 @@
   }
 
   .season-flip-cue {
-    min-height: 2.3rem;
-    font-size: clamp(0.66rem, 0.72vw, 0.76rem);
+    min-height: 2.75rem;
+    font-size: 0.875rem;
   }
 
   .season-card-back {
@@ -2107,8 +2131,8 @@
   }
 
   .season-flip-cue {
-    min-height: 1.8rem;
-    font-size: 0.72rem;
+    min-height: 2.75rem;
+    font-size: 0.875rem;
   }
 
   .season-card-back {
