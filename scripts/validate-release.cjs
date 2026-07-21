@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.join(siteRoot, "dist");
-const releaseToken = "20260721-1";
+const releaseToken = "20260721-3";
 const canonicalBase = "https://nickblanchard04.github.io/upstate-basketball-league/";
 const socialImageUrl = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialImageAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
@@ -223,7 +223,7 @@ function validateIcons(root) {
 function validateCaching(root) {
   for (const file of publicHtml) {
     const html = read(root, file);
-    const expectedToken = file === "team.html" || file === "gallery.html" ? "20260721-2" : releaseToken;
+    const expectedToken = releaseToken;
     for (const match of html.matchAll(/(?:href|src)=["'][^"']+\.(?:css|js)\?v=([^"']+)["']/gi)) {
       check(match[1] === expectedToken, `${file} uses stale asset token ${match[1]}`);
     }

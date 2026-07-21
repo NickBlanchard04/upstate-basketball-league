@@ -77,6 +77,13 @@ test("sitemap contains only indexable page templates and valid team profiles", (
   assert.match(read("script.js"), /setAttribute\("content", "index, follow"\)/);
 });
 
+test("homepage retains Google Search Console ownership verification", () => {
+  assert.match(
+    read("index.html"),
+    /<meta name="google-site-verification" content="QpcmoOi9BCl5q2IPHPLoq1-9uzXWo6s6ZuOqaBOuZ2s">/
+  );
+});
+
 test("release builder identifies UBL by project sentinels instead of a local folder name", () => {
   const builder = read("scripts/build-release.cjs");
   const pagesWorkflow = read(".github/workflows/manual-pages-release.yml");

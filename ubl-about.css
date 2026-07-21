@@ -26,7 +26,7 @@
   background: transparent;
 }
 
-.league-brief,
+.league-profile,
 .winning-section,
 .season-section,
 .commitments-section,
@@ -42,100 +42,295 @@
   margin: 0.5rem auto 0;
 }
 
-.league-brief {
-  padding: clamp(1.45rem, 5vw, 2.35rem) clamp(1.15rem, 4vw, 2.5rem);
+.league-profile {
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(0.85rem, 3vw, 2.25rem);
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(2, 15, 34, 0.72);
+}
+
+.league-profile-grid {
   display: grid;
-  gap: 1.35rem;
-  border-top: 0.28rem solid var(--ubl-red);
-  border-bottom: 1px solid var(--ubl-line);
-  color: var(--ubl-navy);
-  background: rgba(255, 255, 255, 0.86);
+  gap: 1rem;
 }
 
-.league-brief-intro {
-  max-width: 43rem;
+.league-profile-card {
+  width: 100%;
+  min-height: 23.5rem;
+  padding: 0;
+  display: block;
+  position: relative;
+  border: 0;
+  color: var(--ubl-white);
+  background: transparent;
+  cursor: pointer;
+  perspective: 70rem;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.league-brief-eyebrow {
-  margin: 0 0 0.55rem;
-  color: var(--ubl-red);
-  font: 700 0.78rem/1 "IBM Plex Sans", sans-serif;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+.league-profile-card-inner {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  display: block;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 720ms cubic-bezier(0.2, 0.72, 0.14, 1);
 }
 
-.league-brief-intro h2 {
-  margin: 0;
-  color: var(--ubl-navy);
-  font: 900 clamp(2.25rem, 9vw, 3.65rem)/0.9 "Barlow Condensed", sans-serif;
-  letter-spacing: -0.025em;
-  text-transform: uppercase;
+.league-profile-card.is-flipped .league-profile-card-inner {
+  transform: rotateY(180deg);
 }
 
-.league-brief-intro > p:last-child {
-  max-width: 42rem;
-  margin: 0.8rem 0 0;
-  color: var(--ubl-muted);
+.league-profile-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.league-profile-front {
+  display: flex;
+  align-items: flex-end;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(11, 75, 137, 0.72), transparent 38%),
+    linear-gradient(155deg, #071f40 0%, #020f22 72%);
+  box-shadow: 0 1.1rem 2.4rem rgba(0, 0, 0, 0.3);
+  transition: border-color 260ms ease, box-shadow 260ms ease;
+}
+
+.league-profile-front::before {
+  position: absolute;
+  z-index: 1;
+  inset: 34% 0 0;
+  content: "";
+  background: linear-gradient(to bottom, transparent, rgba(2, 15, 34, 0.82) 35%, #020f22 78%);
+  pointer-events: none;
+}
+
+.league-profile-card:hover .league-profile-front,
+.league-profile-card:focus-visible .league-profile-front {
+  border-color: var(--ubl-red);
+  box-shadow: 0 0 0 1px rgba(227, 19, 49, 0.38), 0 1.2rem 2.7rem rgba(0, 0, 0, 0.38);
+}
+
+.league-profile-card:focus-visible {
+  outline: none;
+}
+
+.league-profile-card:focus-visible .league-profile-face {
+  outline: 0.18rem solid var(--ubl-white);
+  outline-offset: -0.42rem;
+}
+
+.league-profile-card .team-card-view {
+  min-height: 2.75rem;
+  padding-inline: 0.9rem;
+  display: inline-flex;
+  font-size: 0.65rem;
+}
+
+.league-profile-icon-stage {
+  top: 12%;
+  width: 43%;
+  max-width: 9.3rem;
+  padding: 0;
+}
+
+.league-profile-icon-stage .material-symbols-rounded {
+  color: #073467;
+  font-family: "Material Symbols Rounded";
+  font-size: clamp(4rem, 15vw, 6.2rem);
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  font-feature-settings: "liga";
+  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 48;
+  filter: drop-shadow(0 0.7rem 0.8rem rgba(0, 24, 64, 0.2));
+}
+
+.league-profile-card-content {
+  padding: 1.1rem;
+}
+
+.league-profile-card-content small {
+  color: #ff9aac;
   font-size: 1rem;
-  line-height: 1.62;
 }
 
-.league-brief-facts {
-  margin: 0;
+.league-profile-card-content strong {
+  margin-top: 0.45rem;
+  font-size: clamp(2rem, 8vw, 2.65rem);
 }
 
-.league-brief-facts > div {
-  padding: 1rem 0;
-  border-top: 1px solid var(--ubl-line);
+.league-profile-card-content > span {
+  min-height: 1.35rem;
+  display: block;
+  font-size: 0.78rem;
 }
 
-.league-brief-facts dt {
-  margin: 0 0 0.35rem;
+.league-profile-card-content b {
+  min-height: 3rem;
+  margin-top: 0.9rem;
+  display: flex;
+  color: var(--ubl-white);
+  background: rgba(188, 13, 39, 0.78);
+}
+
+.league-profile-card-content b > span {
+  position: absolute;
+  right: 0.9rem;
+  font: 700 1.15rem/1 "IBM Plex Sans", sans-serif;
+  transition: transform 240ms ease;
+}
+
+.league-profile-card:hover .team-card-court,
+.league-profile-card:focus-visible .team-card-court {
+  opacity: 0.82;
+  transform: scale(1.05);
+}
+
+.league-profile-card:hover .league-profile-icon-stage,
+.league-profile-card:focus-visible .league-profile-icon-stage {
+  filter: drop-shadow(0 0 1rem rgba(227, 19, 49, 0.35));
+  transform: translateX(-50%) translateY(-0.35rem) scale(1.03);
+}
+
+.league-profile-card:hover .team-card-view,
+.league-profile-card:focus-visible .team-card-view {
+  border-color: var(--ubl-red);
+  background: var(--ubl-red);
+  transform: translateY(-0.1rem);
+}
+
+.league-profile-card:hover .league-profile-card-content b,
+.league-profile-card:focus-visible .league-profile-card-content b {
   color: var(--ubl-navy);
-  font: 800 1.2rem/1 "Barlow Condensed", sans-serif;
-  letter-spacing: 0.025em;
+  border-color: var(--ubl-white);
+  background: var(--ubl-white);
+}
+
+.league-profile-card:hover .league-profile-card-content b > span,
+.league-profile-card:focus-visible .league-profile-card-content b > span {
+  transform: rotate(180deg);
+}
+
+.league-profile-back {
+  padding: clamp(1.5rem, 6vw, 2.5rem);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  border-color: rgba(227, 19, 49, 0.94);
+  color: var(--ubl-white);
+  text-align: center;
+  background:
+    linear-gradient(135deg, rgba(227, 19, 49, 0.28), transparent 43%),
+    linear-gradient(315deg, rgba(7, 52, 103, 0.48), transparent 48%),
+    #020f22;
+  box-shadow: inset 0 0 3rem rgba(227, 19, 49, 0.17), 0 0 1.15rem rgba(227, 19, 49, 0.24);
+  transform: rotateY(180deg);
+}
+
+.league-profile-back::before {
+  content: "";
+  position: absolute;
+  inset: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  clip-path: polygon(0 0, 86% 0, 100% 14%, 100% 100%, 14% 100%, 0 86%);
+}
+
+.league-profile-back-eyebrow {
+  color: #ff9aac;
+  font: 800 0.75rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-.league-brief-facts dt::before {
-  content: "//";
-  margin-right: 0.45rem;
-  color: var(--ubl-red);
+.league-profile-back strong {
+  max-width: 12ch;
+  margin-top: 0.8rem;
+  color: var(--ubl-white);
+  font: 900 clamp(2.4rem, 10vw, 3.5rem)/0.88 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
 }
 
-.league-brief-facts dd {
-  margin: 0;
-  color: var(--ubl-muted);
-  font-size: 0.95rem;
-  line-height: 1.58;
+.league-profile-description {
+  max-width: 29rem;
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.82);
+  font: 600 1rem/1.6 "IBM Plex Sans", sans-serif;
 }
 
-@media (min-width: 768px) {
-  .league-brief {
-    grid-template-columns: minmax(17rem, 0.85fr) minmax(0, 1.65fr);
-    gap: clamp(2rem, 4vw, 4rem);
-    align-items: center;
+.league-profile-return {
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  color: #ff9aac;
+  font: 800 0.75rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+  .league-profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .league-brief-facts {
-    display: grid;
+  .league-profile-card:last-child:nth-child(odd) {
+    width: calc(50% - 0.5rem);
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  .league-profile-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .league-brief-facts > div {
-    min-width: 0;
-    padding: 0 1.2rem;
-    border-top: 0;
-    border-left: 1px solid var(--ubl-line);
+  .league-profile-card,
+  .league-profile-card:last-child:nth-child(odd) {
+    width: 100%;
+    min-height: 25rem;
+    grid-column: auto;
   }
 
-  .league-brief-facts > div:first-child {
-    padding-left: 0;
-    border-left: 0;
+  .league-profile-icon-stage .material-symbols-rounded {
+    font-size: 5.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .league-profile-card-inner,
+  .league-profile-card.is-flipped .league-profile-card-inner {
+    transition: none;
+    transform: none;
   }
 
-  .league-brief-facts > div:last-child {
-    padding-right: 0;
+  .league-profile-back {
+    opacity: 0;
+    visibility: hidden;
+    transform: none;
+  }
+
+  .league-profile-card.is-flipped .league-profile-front {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .league-profile-card.is-flipped .league-profile-back {
+    opacity: 1;
+    visibility: visible;
   }
 }
 
@@ -2447,7 +2642,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .league-brief *,
+  .league-profile *,
   .winning-section *,
   .season-section *,
   .commitments-section *,
