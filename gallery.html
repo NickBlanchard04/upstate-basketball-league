@@ -29,15 +29,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260721-1">
-  <script src="config.js?v=20260721-1" defer></script>
-  <script src="analytics.js?v=20260721-1" defer></script>
-  <script src="league-core.js?v=20260721-1" defer></script>
-  <script src="data.js?v=20260721-1" defer></script>
-  <script src="data-loader.js?v=20260721-1" defer></script>
-  <script src="script.js?v=20260721-1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260721-2">
+  <script src="config.js?v=20260721-2" defer></script>
+  <script src="analytics.js?v=20260721-2" defer></script>
+  <script src="league-core.js?v=20260721-2" defer></script>
+  <script src="data.js?v=20260721-2" defer></script>
+  <script src="data-loader.js?v=20260721-2" defer></script>
+  <script src="script.js?v=20260721-2" defer></script>
 </head>
-<body>
+<body class="teams-landing-page gallery-landing-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="header-inner">
@@ -50,65 +50,108 @@
     </div>
   </header>
 
-  <main class="subpage-main" id="main">
-    <section class="page-banner">
-      <div><h1>Gallery</h1><p>The moments, matchups, and people shaping the Upstate Basketball League.</p></div>
-      <strong>2026-27 season</strong>
-    </section>
+  <main class="teams-main" id="main">
+    <div class="teams-stage gallery-stage" data-gallery-stage>
+      <div class="teams-hero-court" aria-hidden="true"><span></span></div>
 
-    <section class="panel gallery-panel section-wrap" aria-labelledby="gallery-title">
-      <div class="section-title"><h2 id="gallery-title">Team galleries</h2><span>5 programs · 1 open spot</span></div>
-      <div class="tabs gallery-filters" role="tablist" aria-label="Gallery division">
-        <button class="active" type="button" role="tab" aria-selected="true" data-gallery-filter="all">All photos</button>
-        <button type="button" role="tab" aria-selected="false" data-gallery-filter="Boys Varsity">Boys Varsity</button>
-        <button type="button" role="tab" aria-selected="false" data-gallery-filter="Girls Varsity">Girls Varsity</button>
-      </div>
-
-      <div class="team-gallery-list">
-        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries" data-gallery-team="kings-school" data-gallery-divisions="Boys Varsity|Girls Varsity">
-          <summary>
-            <span class="team-gallery-identity"><img src="assets/optimized/team-kings-school-192.webp" alt="" width="192" height="192"><span><strong>The King's School</strong><small>Boys &amp; Girls Varsity</small></span></span>
-            <span class="team-gallery-count" data-gallery-count>Photos loading</span>
-          </summary>
-          <div class="team-gallery-content">
-            <div class="gallery-grid" data-gallery-grid></div>
-            <p class="gallery-empty" data-gallery-empty hidden>The King's School photos will appear here as the season gets underway.</p>
+      <section class="teams-hero gallery-hero" aria-labelledby="gallery-page-title">
+        <div class="teams-hero-copy">
+          <span class="teams-hero-kicker">2026&ndash;27 photo directory</span>
+          <h1 id="gallery-page-title">Gallery</h1>
+          <p>Choose a division, select your program, and step inside the moments defining this season.</p>
+          <div class="teams-hero-actions" aria-label="Choose a gallery division">
+            <button type="button" data-gallery-division-select="Girls Varsity" aria-controls="gallery-division" aria-pressed="false"><strong>Girls</strong></button>
+            <button type="button" data-gallery-division-select="Boys Varsity" aria-controls="gallery-division" aria-pressed="false"><strong>Boys</strong></button>
           </div>
-        </details>
+        </div>
+      </section>
 
-        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries" data-gallery-team="perth" data-gallery-divisions="Boys Varsity|Girls Varsity">
-          <summary><span class="team-gallery-identity"><img src="assets/optimized/team-perth-192.webp" alt="" width="192" height="192"><span><strong>Perth</strong><small>Boys &amp; Girls Varsity</small></span></span><span class="team-gallery-count" data-gallery-count>No photos published</span></summary>
-          <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>Perth photos will appear here as the season gets underway.</p></div>
-        </details>
+      <section class="team-directory gallery-directory section-wrap" data-gallery-directory aria-label="Team galleries by division" hidden>
+        <div class="division-board">
+          <section class="division-column gallery-division-column division-column-girls" id="gallery-division" data-gallery-division-column aria-labelledby="gallery-division-title">
+            <header class="division-heading">
+              <h2 id="gallery-division-title" data-gallery-division-title>Girls galleries</h2>
+            </header>
 
-        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries" data-gallery-team="wilton-baptist" data-gallery-divisions="Boys Varsity|Girls Varsity">
-          <summary><span class="team-gallery-identity"><img src="assets/optimized/team-wilton-baptist-192.webp" alt="" width="192" height="192"><span><strong>Wilton Baptist</strong><small>Boys &amp; Girls Varsity</small></span></span><span class="team-gallery-count" data-gallery-count>No photos published</span></summary>
-          <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>Wilton Baptist photos will appear here as the season gets underway.</p></div>
-        </details>
+            <div class="team-gallery-list">
+        <div class="team-gallery-card-grid division-team-grid" aria-label="Choose a team photo album">
+          <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="kings-school" data-gallery-divisions="Boys Varsity|Girls Varsity" aria-expanded="false" aria-controls="team-album-kings-school" aria-label="Open The King's School photo album" style="--card-order:0">
+            <span class="team-card-court" aria-hidden="true"><i></i></span>
+            <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <span class="team-card-logo-stage"><img src="assets/optimized/team-kings-school-192.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+            <span class="division-team-card-content"><small class="team-card-abbr">TKS</small><strong>The King's School</strong><span><span data-gallery-card-division-label>Boys &amp; Girls Varsity</span> &middot; <span data-gallery-count-for="kings-school">Photos loading</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+          </button>
 
-        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries" data-gallery-team="hv-rocks" data-gallery-divisions="Boys Varsity">
-          <summary><span class="team-gallery-identity"><img src="assets/optimized/team-hudson-valley-rocks-192.webp" alt="" width="192" height="192"><span><strong>HV Rocks</strong><small>Boys Varsity</small></span></span><span class="team-gallery-count" data-gallery-count>No photos published</span></summary>
-          <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>HV Rocks boys varsity photos will appear here as the season gets underway.</p></div>
-        </details>
+          <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="perth" data-gallery-divisions="Boys Varsity|Girls Varsity" aria-expanded="false" aria-controls="team-album-perth" aria-label="Open Perth photo album" style="--card-order:1">
+            <span class="team-card-court" aria-hidden="true"><i></i></span>
+            <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <span class="team-card-logo-stage"><img src="assets/optimized/team-perth-192.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+            <span class="division-team-card-content"><small class="team-card-abbr">PER</small><strong>Perth</strong><span><span data-gallery-card-division-label>Boys &amp; Girls Varsity</span> &middot; <span data-gallery-count-for="perth">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+          </button>
 
-        <details class="team-gallery" name="team-gallery" data-accordion-group="team-galleries" data-gallery-team="hv-flames" data-gallery-divisions="Girls Varsity">
-          <summary><span class="team-gallery-identity"><img src="assets/icons/icon-192.png" alt="" width="192" height="192"><span><strong>HV Flames</strong><small>Girls Varsity</small></span></span><span class="team-gallery-count" data-gallery-count>No photos published</span></summary>
-          <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>HV Flames girls varsity photos will appear here as the season gets underway.</p></div>
-        </details>
+          <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="wilton-baptist" data-gallery-divisions="Boys Varsity|Girls Varsity" aria-expanded="false" aria-controls="team-album-wilton-baptist" aria-label="Open Wilton Baptist photo album" style="--card-order:2">
+            <span class="team-card-court" aria-hidden="true"><i></i></span>
+            <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <span class="team-card-logo-stage"><img src="assets/optimized/team-wilton-baptist-192.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+            <span class="division-team-card-content"><small class="team-card-abbr">WBC</small><strong>Wilton Baptist</strong><span><span data-gallery-card-division-label>Boys &amp; Girls Varsity</span> &middot; <span data-gallery-count-for="wilton-baptist">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+          </button>
 
-        <section class="program-profile open-spot-profile" aria-labelledby="gallery-open-spot-title">
-          <div class="open-spot-copy">
-            <span>2026–27 opportunity</span>
-            <h3 id="gallery-open-spot-title">Bring your program to the UBL</h3>
-            <p>UBL is recruiting a fifth program ready for structured varsity competition, shared standards, and a meaningful championship experience.</p>
-          </div>
-          <div class="open-spot-actions">
-            <strong>Boys Varsity · Girls Varsity</strong>
-            <a class="button button-primary" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
-          </div>
-        </section>
-      </div>
-    </section>
+          <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="hv-rocks" data-gallery-divisions="Boys Varsity" aria-expanded="false" aria-controls="team-album-hv-rocks" aria-label="Open HV Rocks photo album" style="--card-order:3">
+            <span class="team-card-court" aria-hidden="true"><i></i></span>
+            <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <span class="team-card-logo-stage"><img src="assets/optimized/team-hudson-valley-rocks-192.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+            <span class="division-team-card-content"><small class="team-card-abbr">HVR</small><strong>HV Rocks</strong><span><span data-gallery-card-division-label>Boys Varsity</span> &middot; <span data-gallery-count-for="hv-rocks">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+          </button>
+
+          <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="hv-flames" data-gallery-divisions="Girls Varsity" aria-expanded="false" aria-controls="team-album-hv-flames" aria-label="Open HV Flames photo album" style="--card-order:4">
+            <span class="team-card-court" aria-hidden="true"><i></i></span>
+            <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            <span class="team-card-logo-stage"><img src="assets/icons/icon-192.png" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
+            <span class="division-team-card-content"><small class="team-card-abbr">HVF</small><strong>HV Flames</strong><span><span data-gallery-card-division-label>Girls Varsity</span> &middot; <span data-gallery-count-for="hv-flames">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+          </button>
+        </div>
+
+        <div class="team-gallery-albums">
+          <section class="team-gallery" id="team-album-kings-school" data-gallery-team="kings-school" data-gallery-divisions="Boys Varsity|Girls Varsity" aria-labelledby="team-album-kings-school-title" hidden>
+            <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="assets/optimized/team-kings-school-192.webp" alt="" width="192" height="192"><span><strong id="team-album-kings-school-title">The King's School</strong><small>Boys &amp; Girls Varsity album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>Photos loading</span><button type="button" data-gallery-close="kings-school">Close album</button></span></header>
+            <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty hidden>The King's School photos will appear here as the season gets underway.</p></div>
+          </section>
+
+          <section class="team-gallery" id="team-album-perth" data-gallery-team="perth" data-gallery-divisions="Boys Varsity|Girls Varsity" aria-labelledby="team-album-perth-title" hidden>
+            <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="assets/optimized/team-perth-192.webp" alt="" width="192" height="192"><span><strong id="team-album-perth-title">Perth</strong><small>Boys &amp; Girls Varsity album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="perth">Close album</button></span></header>
+            <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>Perth photos will appear here as the season gets underway.</p></div>
+          </section>
+
+          <section class="team-gallery" id="team-album-wilton-baptist" data-gallery-team="wilton-baptist" data-gallery-divisions="Boys Varsity|Girls Varsity" aria-labelledby="team-album-wilton-baptist-title" hidden>
+            <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="assets/optimized/team-wilton-baptist-192.webp" alt="" width="192" height="192"><span><strong id="team-album-wilton-baptist-title">Wilton Baptist</strong><small>Boys &amp; Girls Varsity album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="wilton-baptist">Close album</button></span></header>
+            <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>Wilton Baptist photos will appear here as the season gets underway.</p></div>
+          </section>
+
+          <section class="team-gallery" id="team-album-hv-rocks" data-gallery-team="hv-rocks" data-gallery-divisions="Boys Varsity" aria-labelledby="team-album-hv-rocks-title" hidden>
+            <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="assets/optimized/team-hudson-valley-rocks-192.webp" alt="" width="192" height="192"><span><strong id="team-album-hv-rocks-title">HV Rocks</strong><small>Boys Varsity album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="hv-rocks">Close album</button></span></header>
+            <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>HV Rocks boys varsity photos will appear here as the season gets underway.</p></div>
+          </section>
+
+          <section class="team-gallery" id="team-album-hv-flames" data-gallery-team="hv-flames" data-gallery-divisions="Girls Varsity" aria-labelledby="team-album-hv-flames-title" hidden>
+            <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="assets/icons/icon-192.png" alt="" width="192" height="192"><span><strong id="team-album-hv-flames-title">HV Flames</strong><small>Girls Varsity album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="hv-flames">Close album</button></span></header>
+            <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>HV Flames girls varsity photos will appear here as the season gets underway.</p></div>
+          </section>
+        </div>
+
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="teams-opportunity gallery-opportunity section-wrap open-spot-profile" aria-labelledby="gallery-open-spot-title">
+        <div>
+          <span>One place remains</span>
+          <h2 id="gallery-open-spot-title">Ready to bring your program into the league?</h2>
+          <p>UBL is welcoming one more varsity program committed to organized competition, shared standards, and a meaningful championship path.</p>
+        </div>
+        <a class="button button-primary" href="mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL">Start a conversation</a>
+      </section>
+    </div>
     <nav class="page-paths section-wrap" aria-label="Continue exploring the UBL">
       <span>Continue exploring</span>
       <a href="teams.html">League teams</a>

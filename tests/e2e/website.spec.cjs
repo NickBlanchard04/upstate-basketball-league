@@ -520,10 +520,25 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
 test("bundled gallery metadata renders responsively and remains interactive", async ({ page }) => {
   await page.goto("/gallery.html");
   await expect(page.locator(".gallery-lede")).toHaveCount(0);
-  const galleryOpenSpot = page.locator(".gallery-panel .open-spot-profile");
-  await expect(galleryOpenSpot).toContainText("Bring your program to the UBL");
+  await expect(page.locator("body")).toHaveClass(/gallery-landing-page/);
+  await expect(page.getByRole("heading", { name: "Gallery", exact: true })).toBeVisible();
+  const galleryDirectory = page.locator("[data-gallery-directory]");
+  await expect(galleryDirectory).toBeHidden();
+  const galleryOpenSpot = page.locator(".gallery-opportunity");
+  await expect(galleryOpenSpot).toContainText("Ready to bring your program into the league?");
   await expect(galleryOpenSpot.getByRole("link", { name: "Start a conversation" })).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
+  await expect(page.locator("[data-gallery-card]")).toHaveCount(5);
+  await expect(page.locator(".team-gallery-card-grid")).toHaveClass(/division-team-grid/);
+  const girlsSelector = page.getByRole("button", { name: "Girls", exact: true });
+  const boysSelector = page.getByRole("button", { name: "Boys", exact: true });
+  await girlsSelector.click();
+  await expect(girlsSelector).toHaveAttribute("aria-pressed", "true");
+  await expect(galleryDirectory).toBeVisible();
+  await expect(page.locator("[data-gallery-card]:visible")).toHaveCount(4);
+  await expect(page.locator('[data-gallery-trigger="hv-flames"]')).toBeVisible();
+  await expect(page.locator('[data-gallery-trigger="hv-rocks"]')).toBeHidden();
   const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
+  const kingsCard = page.locator('[data-gallery-trigger="kings-school"]');
   const bundledPhotos = kingsGallery.locator("[data-gallery-photo-id]");
   const firstPhoto = kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"]');
   const firstImage = firstPhoto.locator("img");
@@ -535,15 +550,29 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(firstImage).toHaveAttribute("width", "480");
   await expect(firstImage).toHaveAttribute("height", "320");
   await expect(firstImage).toHaveAttribute("alt", "King's girls varsity player driving through defenders");
+  await expect(kingsCard).toHaveClass(/division-team-card/);
+  await expect(kingsCard.locator(".team-card-court")).toHaveCount(1);
+  await expect(kingsCard.locator(".team-card-logo-stage img")).toHaveAttribute("src", "assets/optimized/team-kings-school-192.webp");
+  await expect(kingsCard.locator(".team-card-abbr")).toHaveText("TKS");
+  await expect(kingsCard.locator(".division-team-card-content")).toContainText("13 photos");
 
-  await kingsGallery.locator("summary").click();
-  await page.getByRole("tab", { name: "Boys Varsity" }).click();
+  await expect(kingsCard).toHaveAttribute("aria-expanded", "false");
+  await expect(kingsGallery).toBeHidden();
+  await kingsCard.click();
+  await expect(kingsCard).toHaveAttribute("aria-expanded", "true");
+  await expect(kingsCard.locator("[data-gallery-action-label]")).toHaveText("Album open");
+  await expect(kingsCard.locator("[data-gallery-cta-label]")).toHaveText("Close album");
+  await expect(kingsGallery).toBeVisible();
+  await kingsCard.click();
+  await expect(kingsGallery).toBeHidden();
+  await kingsCard.click();
+  await expect(kingsGallery).toBeVisible();
+  await boysSelector.click();
   await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(7);
   await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(0);
-  await page.getByRole("tab", { name: "Girls Varsity" }).click();
+  await girlsSelector.click();
   await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(6);
   await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(0);
-  await page.getByRole("tab", { name: "All photos" }).click();
 
   await firstPhoto.locator("[data-gallery-full]").click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
@@ -595,7 +624,9 @@ test("approved Drive photos appear only in their matching team and division", as
 
   await page.goto("/gallery.html");
   const rocksGallery = page.locator('[data-gallery-team="hv-rocks"]');
-  await rocksGallery.locator("summary").click();
+  const rocksCard = page.locator('[data-gallery-trigger="hv-rocks"]');
+  await page.getByRole("button", { name: "Boys", exact: true }).click();
+  await rocksCard.click();
   await expect(rocksGallery.locator("[data-gallery-count]")).toHaveText("1 photo");
   await expect(rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"]')).toBeVisible();
   const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
@@ -603,9 +634,13 @@ test("approved Drive photos appear only in their matching team and division", as
   await expect(kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"]')).toHaveCount(1);
   await expect(kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"] img')).toHaveAttribute("src", "assets/gallery/optimized/480/kings-gallery-01.webp");
 
-  await page.getByRole("tab", { name: "Girls Varsity" }).click();
+  await page.getByRole("button", { name: "Girls", exact: true }).click();
+  await expect(rocksCard).toBeHidden();
   await expect(rocksGallery).toBeHidden();
-  await page.getByRole("tab", { name: "Boys Varsity" }).click();
+  await page.getByRole("button", { name: "Boys", exact: true }).click();
+  await expect(rocksCard).toBeVisible();
+  await expect(rocksGallery).toBeHidden();
+  await rocksCard.click();
   await expect(rocksGallery).toBeVisible();
   await rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"] [data-gallery-full]').click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
@@ -858,7 +893,8 @@ test("approved gallery feed is requested only after an empty team gallery opens"
   expect(requests).toBe(0);
 
   const rocksGallery = page.locator('[data-gallery-team="hv-rocks"]');
-  await rocksGallery.locator("summary").click();
+  await page.getByRole("button", { name: "Boys", exact: true }).click();
+  await page.locator('[data-gallery-trigger="hv-rocks"]').click();
   await expect(rocksGallery.locator(".gallery-skeleton")).toHaveCount(2);
   await expect.poll(() => requests).toBe(1);
   await expect(rocksGallery.locator(".gallery-skeleton")).toHaveCount(0, { timeout: 2000 });
