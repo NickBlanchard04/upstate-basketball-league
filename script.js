@@ -883,7 +883,7 @@ function bracketMarkup(division, artwork) {
           <header><strong>Championship</strong><small>Date pending</small></header>
           ${bracketMobileMatchupMarkup("UBL championship", { label: "Semifinal 1", id: championshipAway, fallback: "Semifinal 1 winner" }, { label: "Semifinal 2", id: championshipHome, fallback: "Semifinal 2 winner" }, standings, championship, champion)}
           <div class="bracket-mobile-finish">
-            <img src="assets/playoff-brackets/ubl-championship-trophy.webp" alt="" width="240" height="320" loading="lazy" decoding="async">
+            <img src="assets/playoff-brackets/ubl-championship-trophy-exact-cutout.webp" alt="" width="240" height="320" loading="lazy" decoding="async">
             ${champion
               ? `<div class="bracket-mobile-champion"><span>2027 ${escapeHtml(divisionName)} champion</span><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></div>`
               : `<span class="bracket-mobile-champion-pending">2027 UBL champion</span>`}

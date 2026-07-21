@@ -6378,6 +6378,7 @@ th {
   .bracket-mobile-finish {
     position: relative;
     z-index: 2;
+    isolation: isolate;
     min-height: 7.6rem;
     margin-top: -0.1rem;
     display: grid;
@@ -6385,13 +6386,37 @@ th {
     gap: 0.48rem;
   }
 
+  .bracket-mobile-finish::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -1rem;
+    left: 50%;
+    width: 10rem;
+    height: 9rem;
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 246, 204, 0.82) 0%,
+      rgba(215, 169, 64, 0.52) 28%,
+      rgba(224, 30, 63, 0.2) 50%,
+      rgba(2, 15, 34, 0) 72%
+    );
+    filter: blur(0.4rem);
+  }
+
   .bracket-mobile-finish img {
+    position: relative;
+    z-index: 1;
     width: 5.25rem;
     height: 7rem;
     display: block;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
-    box-shadow: 0 0.8rem 1.6rem rgba(2, 15, 34, 0.34);
+    filter:
+      drop-shadow(0 0 0.32rem rgba(255, 238, 176, 0.92))
+      drop-shadow(0 0 1.1rem rgba(215, 169, 64, 0.54));
   }
 
   .bracket-mobile-round-championship {
@@ -6400,6 +6425,8 @@ th {
   }
 
   .bracket-mobile-champion-pending {
+    position: relative;
+    z-index: 1;
     color: #e9cc83;
     font: 800 0.75rem/1.2 var(--sans);
     letter-spacing: 0.12em;
@@ -6407,6 +6434,8 @@ th {
   }
 
   .bracket-mobile-champion {
+    position: relative;
+    z-index: 1;
     width: min(100%, 15rem);
     padding: 0.72rem 0.85rem;
     justify-items: center;

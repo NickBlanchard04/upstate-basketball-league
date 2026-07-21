@@ -202,7 +202,7 @@ test("standings and separate division brackets render from league data", async (
   await expect(page.locator(".bracket-mobile-spine")).toHaveCount(2);
   await expect(page.locator(".bracket-mobile-round")).toHaveCount(6);
   await expect(page.locator(".bracket-mobile-finish img")).toHaveCount(2);
-  await expect(page.locator(".bracket-mobile-finish img").first()).toHaveAttribute("src", "assets/playoff-brackets/ubl-championship-trophy.webp");
+  await expect(page.locator(".bracket-mobile-finish img").first()).toHaveAttribute("src", "assets/playoff-brackets/ubl-championship-trophy-exact-cutout.webp");
   await expect(page.locator(".bracket-live-swipe-hint")).toHaveCount(0);
   await expect(page.locator("[data-bracket='Boys Varsity'] [data-mobile-seed='1']")).toContainText("0-0");
   await expect(page.locator("[data-bracket='Boys Varsity']").locator("xpath=ancestor::section")).toHaveAttribute("data-seed-state", "preseason");
