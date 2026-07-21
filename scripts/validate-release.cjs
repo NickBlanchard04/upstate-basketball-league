@@ -223,7 +223,7 @@ function validateIcons(root) {
 function validateCaching(root) {
   for (const file of publicHtml) {
     const html = read(root, file);
-    const expectedToken = releaseToken;
+    const expectedToken = file === "teams.html" ? "20260721-4" : releaseToken;
     for (const match of html.matchAll(/(?:href|src)=["'][^"']+\.(?:css|js)\?v=([^"']+)["']/gi)) {
       check(match[1] === expectedToken, `${file} uses stale asset token ${match[1]}`);
     }

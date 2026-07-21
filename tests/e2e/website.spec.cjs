@@ -639,17 +639,23 @@ test("team cards stay separated across mobile, tablet, and desktop breakpoints",
         rows.set(card.offsetTop, (rows.get(card.offsetTop) || 0) + 1);
         return rows;
       }, new Map()).values()];
+      const gridRect = grid.getBoundingClientRect();
+      const lastCardRect = cards.at(-1).getBoundingClientRect();
       return {
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         overlaps,
-        rowCounts
+        rowCounts,
+        lastCardCentered: Math.abs(
+          (lastCardRect.left + lastCardRect.width / 2) - (gridRect.left + gridRect.width / 2)
+        ) < 2
       };
     });
 
     expect(metrics.overflow, `${width}px horizontal overflow`).toBe(false);
     expect(metrics.overlaps, `${width}px logo or action overlap: ${JSON.stringify(metrics.overlaps)}`).toEqual([]);
-    const expectedRows = width < 600 || width >= 1024 ? [3, 2] : [2, 2, 1];
+    const expectedRows = width < 1024 ? [2, 2, 1] : [3, 2];
     expect(metrics.rowCounts, `${width}px cards per division row`).toEqual(expectedRows);
+    if (width < 1024) expect(metrics.lastCardCentered, `${width}px final card alignment`).toBe(true);
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
