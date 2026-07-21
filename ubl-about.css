@@ -709,44 +709,20 @@
 }
 
 .season-title-lockup {
-  width: 100%;
+  width: min(100%, 70rem);
+  margin-inline: auto;
 }
 
 .season-heading h1 {
-  width: max-content;
-  max-width: 100%;
+  max-width: 70rem;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  color: var(--ubl-white);
+  font: 900 clamp(3.35rem, 8.4vw, 7.4rem)/0.83 var(--display);
+  letter-spacing: -0.035em;
   scroll-margin-top: 6.5rem;
+  text-align: center;
+  text-wrap: balance;
   text-transform: uppercase;
-}
-
-.season-heading h1 span {
-  display: block;
-}
-
-.season-kicker {
-  color: var(--ubl-white);
-  font: 900 clamp(1.2rem, 5vw, 1.65rem)/0.86 "Barlow Condensed", sans-serif;
-  letter-spacing: 0.26em;
-}
-
-.season-brand {
-  margin: 0.18rem 0 0 0.05em;
-  color: var(--ubl-red);
-  font: italic 900 clamp(4.65rem, 21vw, 7.15rem)/0.72 "Barlow Condensed", sans-serif;
-  letter-spacing: -0.08em;
-  transform: skewX(-6deg) scaleX(1.06);
-  transform-origin: left center;
-}
-
-.season-title-line {
-  margin-top: 0.62rem;
-  color: var(--ubl-white);
-  font: 900 clamp(2.8rem, 12vw, 4.85rem)/0.82 "Barlow Condensed", sans-serif;
-  letter-spacing: -0.015em;
 }
 
 .season-path {
@@ -1066,18 +1042,12 @@
 }
 
 .season-motion-ready .season-flip-card,
-.season-motion-ready .season-step,
 .season-motion-ready .season-node {
   opacity: 0;
 }
 
 .season-motion-ready .season-flip-card {
   translate: 0 1rem;
-}
-
-.season-motion-ready .season-step {
-  scale: 0.84;
-  translate: 0 0.65rem;
 }
 
 .season-motion-ready .season-node {
@@ -1095,16 +1065,6 @@
   transition:
     opacity 420ms ease var(--season-delay),
     translate 560ms cubic-bezier(0.22, 1, 0.36, 1) var(--season-delay);
-}
-
-.season-motion-ready.season-motion-visible .season-step {
-  opacity: 1;
-  scale: 1;
-  translate: 0 0;
-  transition:
-    opacity 260ms ease calc(var(--season-delay) + 90ms),
-    scale 420ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--season-delay) + 90ms),
-    translate 420ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--season-delay) + 90ms);
 }
 
 .season-motion-ready.season-motion-visible .season-node {
@@ -1345,46 +1305,6 @@
   color: rgba(255, 255, 255, 0.78);
   font-size: 0.95rem;
   line-height: 1.55;
-}
-
-.lineup-footer {
-  max-width: 46rem;
-  margin: 1rem auto 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 1fr);
-  align-items: center;
-}
-
-.lineup-footer p {
-  min-height: 4.25rem;
-  margin: 0;
-  padding: 0.65rem;
-  display: grid;
-  align-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.lineup-footer p span {
-  color: rgba(255, 255, 255, 0.58);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-.lineup-footer p strong {
-  margin-top: 0.2rem;
-  color: var(--ubl-white);
-  font: 800 clamp(0.85rem, 2.8vw, 1rem)/1.1 "Barlow Condensed", sans-serif;
-}
-
-.lineup-footer img {
-  width: 4.5rem;
-  position: relative;
-  z-index: 1;
-  justify-self: center;
-  filter: drop-shadow(0 0.4rem 0.7rem rgba(0, 0, 0, 0.45));
 }
 
 .testimonial-break {
@@ -2001,10 +1921,6 @@
     font-size: 0.93rem;
   }
 
-  .lineup-footer {
-    margin-top: 1.5rem;
-  }
-
   .leadership-section .leader-card {
     grid-template-columns: 9.25rem minmax(0, 1fr);
   }
@@ -2030,41 +1946,6 @@
     padding: clamp(1.6rem, 3vw, 2.6rem) clamp(1.5rem, 4vw, 3.25rem);
     align-items: center;
     justify-content: center;
-  }
-
-  .season-heading h1 {
-    width: max-content;
-    max-width: 100%;
-    margin-inline: auto;
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-template-rows: auto auto;
-    column-gap: clamp(0.9rem, 2.2vw, 1.8rem);
-    align-items: end;
-  }
-
-  .season-kicker {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    margin-bottom: 0.35rem;
-    font-size: clamp(1.25rem, 2.2vw, 1.7rem);
-  }
-
-  .season-brand {
-    grid-column: 1;
-    grid-row: 2;
-    margin: 0;
-    font-size: clamp(5.25rem, 10vw, 8rem);
-    line-height: 0.72;
-  }
-
-  .season-title-line {
-    grid-column: 2;
-    grid-row: 2;
-    margin: 0 0 -0.04em;
-    font-size: clamp(3.1rem, 5.9vw, 5.05rem);
-    line-height: 0.82;
-    white-space: nowrap;
   }
 
   .season-path {
@@ -2425,155 +2306,6 @@
   padding-bottom: 1.15rem;
 }
 
-/* Spray-paint inspired outline-first reveal for the season title and stage numerals. */
-.season-ink {
-  --ink-color: currentColor;
-  position: relative;
-  isolation: isolate;
-}
-
-.season-brand {
-  --ink-color: var(--ubl-red);
-}
-
-.season-title-line {
-  --ink-color: var(--ubl-white);
-}
-
-.season-number-ink {
-  --ink-color: var(--ubl-red);
-}
-
-.season-ink.season-number-ink::before,
-.season-ink.season-number-ink::after {
-  inset: -0.22em -0.18em -0.14em -0.28em;
-  padding: 0.22em 0.18em 0.14em 0.28em;
-}
-
-.season-step.season-ink {
-  position: absolute;
-}
-
-.season-ink::before,
-.season-ink::after {
-  content: attr(data-ink);
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  color: transparent;
-  font: inherit;
-  font-style: inherit;
-  letter-spacing: inherit;
-  line-height: inherit;
-  text-align: inherit;
-  text-transform: inherit;
-  white-space: inherit;
-  pointer-events: none;
-}
-
-.season-motion-ready .season-ink {
-  color: transparent;
-  text-shadow: none;
-}
-
-.season-motion-ready .season-ink::before {
-  opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  -webkit-text-stroke: 0.035em var(--ink-color);
-  text-shadow:
-    0.018em 0.012em 0 var(--ink-color),
-    -0.014em 0.02em 0 rgba(255, 255, 255, 0.34);
-}
-
-.season-motion-ready .season-ink::after {
-  opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  color: var(--ink-color);
-}
-
-.season-motion-ready.season-motion-visible .season-brand::before {
-  animation: season-sketch-outline 900ms steps(12, end) 100ms both;
-}
-
-.season-motion-ready.season-motion-visible .season-brand::after {
-  animation: season-sketch-fill 360ms cubic-bezier(0.22, 1, 0.36, 1) 780ms both;
-}
-
-.season-motion-ready.season-motion-visible .season-title-line::before {
-  animation: season-sketch-outline 1.1s steps(16, end) 620ms both;
-}
-
-.season-motion-ready.season-motion-visible .season-title-line::after {
-  animation: season-sketch-fill 420ms cubic-bezier(0.22, 1, 0.36, 1) 1.58s both;
-}
-
-.season-motion-ready.season-motion-visible .season-number-ink::before {
-  animation: season-sketch-outline 620ms steps(8, end) calc(var(--season-delay) + 180ms) both;
-}
-
-.season-motion-ready.season-motion-visible .season-number-ink::after {
-  animation: season-sketch-number-fill 260ms ease calc(var(--season-delay) + 700ms) both;
-}
-
-@keyframes season-sketch-outline {
-  0% {
-    opacity: 0;
-    clip-path: inset(0 100% 0 0);
-  }
-  12% {
-    opacity: 0.95;
-    clip-path: inset(0 88% 0 0);
-  }
-  31% {
-    opacity: 0.7;
-    clip-path: inset(0 67% 0 0);
-  }
-  54% {
-    opacity: 1;
-    clip-path: inset(0 43% 0 0);
-  }
-  73% {
-    opacity: 0.78;
-    clip-path: inset(0 24% 0 0);
-  }
-  88% {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-  }
-  100% {
-    opacity: 0;
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes season-sketch-fill {
-  0% {
-    opacity: 0;
-    clip-path: inset(0 100% 0 0);
-  }
-  100% {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes season-sketch-number-fill {
-  0% {
-    opacity: 0;
-    clip-path: inset(0 100% 0 0);
-  }
-  100% {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-    text-shadow:
-      -0.06rem 0 var(--ubl-navy),
-      0.06rem 0 var(--ubl-navy),
-      0 -0.06rem var(--ubl-navy),
-      0 0.06rem var(--ubl-navy),
-      0.2rem 0.24rem 0 rgba(0, 0, 0, 0.78);
-  }
-}
-
 @media (min-width: 768px) {
   .league-identity {
     display: grid;
@@ -2682,22 +2414,10 @@
   }
 
   .season-motion-ready .season-flip-card,
-  .season-motion-ready .season-step,
   .season-motion-ready .season-node {
     opacity: 1;
     scale: 1;
     translate: 0 0;
-  }
-
-  .season-motion-ready .season-ink {
-    color: var(--ink-color);
-    text-shadow: inherit;
-  }
-
-  .season-motion-ready .season-ink::before,
-  .season-motion-ready .season-ink::after {
-    display: none;
-    animation: none;
   }
 
   .season-card-inner,
