@@ -5838,9 +5838,12 @@ th {
   }
 
   .bracket-page .bracket-page-banner h1 {
-    max-width: 7ch;
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
     font-size: clamp(3rem, 15.5vw, 4.15rem);
     line-height: 0.84;
+    text-align: center;
     white-space: normal;
   }
 
