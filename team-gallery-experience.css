@@ -241,16 +241,16 @@
 
 .gallery-item img {
   width: 100%;
-  aspect-ratio: 3 / 2;
+  height: auto;
+  aspect-ratio: auto;
   display: block;
-  object-fit: cover;
-  transition: transform 180ms ease, filter 180ms ease;
+  object-fit: contain;
+  transition: filter 180ms ease;
 }
 
 .gallery-open:hover img,
 .gallery-open:focus-visible img {
   filter: brightness(1.08);
-  transform: scale(1.025);
 }
 
 .gallery-open:focus-visible {
@@ -324,6 +324,10 @@
   font-size: 0.72rem;
   text-align: center;
   background: var(--navy-900);
+}
+
+.gallery-empty[hidden] {
+  display: none;
 }
 
 .gallery-lightbox {

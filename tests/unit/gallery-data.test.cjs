@@ -52,7 +52,7 @@ test("bundled gallery metadata is complete, responsive, and backed by local asse
     assert.equal(photo.division, division);
     assert.equal(photo.alt, alt);
     assert.equal(photo.season, "2025-26 season");
-    assert.equal(photo.sizes, "(min-width: 768px) 25vw, 50vw");
+    assert.equal(photo.sizes, "(min-width: 1024px) 50vw, (min-width: 640px) 34vw, 50vw");
     assert.equal(photo.width, 480);
     assert.equal(photo.height, 320);
 
@@ -61,9 +61,10 @@ test("bundled gallery metadata is complete, responsive, and backed by local asse
     assert.ok(Array.from(program.divisions).includes(photo.division), `${photo.id} must use a division offered by its program`);
 
     const sources = Array.from(photo.previewSrcset || []);
-    assert.deepEqual(sources.map((source) => source.width), [480, 960]);
+    const originalWidth = ["kings-gallery-01", "kings-gallery-06"].includes(photo.id) ? 2048 : 1364;
+    assert.deepEqual(sources.map((source) => source.width), [480, 960, originalWidth]);
     assert.equal(photo.previewUrl, sources[0].url);
-    assert.equal(photo.fullUrl, sources[1].url);
+    assert.equal(photo.fullUrl, sources[2].url);
     assertGalleryAssetExists(photo.previewUrl);
     assertGalleryAssetExists(photo.fullUrl);
     sources.forEach((source) => assertGalleryAssetExists(source.url));
