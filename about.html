@@ -31,14 +31,14 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260721-2">
-  <link rel="stylesheet" href="ubl-about.css?v=20260721-2">
-  <script src="config.js?v=20260721-2" defer></script>
-  <script src="analytics.js?v=20260721-2" defer></script>
-  <script src="league-core.js?v=20260721-2" defer></script>
-  <script src="data.js?v=20260721-2" defer></script>
-  <script src="data-loader.js?v=20260721-2" defer></script>
-  <script src="script.js?v=20260721-2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260721-3">
+  <link rel="stylesheet" href="ubl-about.css?v=20260721-3">
+  <script src="config.js?v=20260721-3" defer></script>
+  <script src="analytics.js?v=20260721-3" defer></script>
+  <script src="league-core.js?v=20260721-3" defer></script>
+  <script src="data.js?v=20260721-3" defer></script>
+  <script src="data-loader.js?v=20260721-3" defer></script>
+  <script src="script.js?v=20260721-3" defer></script>
 </head>
 <body class="about-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -176,26 +176,81 @@
       </ol>
     </section>
 
-    <section class="league-brief section-wrap" aria-labelledby="league-brief-title">
-      <div class="league-brief-intro">
-        <p class="league-brief-eyebrow">League at a glance</p>
-        <h2 id="league-brief-title">Built for growing programs.</h2>
-        <p>UBL is a faith-rooted varsity basketball league offering organized competition, dependable leadership, and a meaningful postseason.</p>
+    <section class="league-profile section-wrap" aria-labelledby="league-profile-title">
+      <h2 class="sr-only" id="league-profile-title">About the Upstate Basketball League</h2>
+      <div class="league-profile-grid">
+        <button class="league-profile-card" type="button" aria-pressed="false" aria-label="Who we are: show details" data-profile-title="Who we are">
+          <span class="league-profile-card-inner">
+            <span class="league-profile-face league-profile-front" aria-hidden="false">
+              <span class="team-card-court" aria-hidden="true"><i></i></span>
+              <span class="team-card-view">Flip card</span>
+              <span class="team-card-logo-stage league-profile-icon-stage" aria-hidden="true">
+                <span class="material-symbols-rounded">handshake</span>
+              </span>
+              <span class="division-team-card-content league-profile-card-content">
+                <small>About UBL</small>
+                <strong>Who we are</strong>
+                <span>Faith. Competition. Clear standards.</span>
+                <b>See who we are <span aria-hidden="true">↻</span></b>
+              </span>
+            </span>
+            <span class="league-profile-face league-profile-back" aria-hidden="true">
+              <span class="league-profile-back-eyebrow">About UBL</span>
+              <strong>Who we are</strong>
+              <span class="league-profile-description">A structured league that brings faith, competition, sportsmanship, and clear standards onto the same court.</span>
+              <span class="league-profile-return">Return to front</span>
+            </span>
+          </span>
+        </button>
+
+        <button class="league-profile-card" type="button" aria-pressed="false" aria-label="Who we serve: show details" data-profile-title="Who we serve">
+          <span class="league-profile-card-inner">
+            <span class="league-profile-face league-profile-front" aria-hidden="false">
+              <span class="team-card-court" aria-hidden="true"><i></i></span>
+              <span class="team-card-view">Flip card</span>
+              <span class="team-card-logo-stage league-profile-icon-stage" aria-hidden="true">
+                <span class="material-symbols-rounded">forum</span>
+              </span>
+              <span class="division-team-card-content league-profile-card-content">
+                <small>About UBL</small>
+                <strong>Who we serve</strong>
+                <span>Growing varsity programs.</span>
+                <b>Meet our programs <span aria-hidden="true">↻</span></b>
+              </span>
+            </span>
+            <span class="league-profile-face league-profile-back" aria-hidden="true">
+              <span class="league-profile-back-eyebrow">About UBL</span>
+              <strong>Who we serve</strong>
+              <span class="league-profile-description">Smaller high school programs competing in Boys Varsity and Girls Varsity divisions.</span>
+              <span class="league-profile-return">Return to front</span>
+            </span>
+          </span>
+        </button>
+
+        <button class="league-profile-card" type="button" aria-pressed="false" aria-label="Where we play: show details" data-profile-title="Where we play">
+          <span class="league-profile-card-inner">
+            <span class="league-profile-face league-profile-front" aria-hidden="false">
+              <span class="team-card-court" aria-hidden="true"><i></i></span>
+              <span class="team-card-view">Flip card</span>
+              <span class="team-card-logo-stage league-profile-icon-stage" aria-hidden="true">
+                <span class="material-symbols-rounded">account_balance</span>
+              </span>
+              <span class="division-team-card-content league-profile-card-content">
+                <small>About UBL</small>
+                <strong>Where we play</strong>
+                <span>Across upstate New York.</span>
+                <b>See where we play <span aria-hidden="true">↻</span></b>
+              </span>
+            </span>
+            <span class="league-profile-face league-profile-back" aria-hidden="true">
+              <span class="league-profile-back-eyebrow">About UBL</span>
+              <strong>Where we play</strong>
+              <span class="league-profile-description">Across upstate New York, with games hosted in member-program gyms and a shared postseason championship.</span>
+              <span class="league-profile-return">Return to front</span>
+            </span>
+          </span>
+        </button>
       </div>
-      <dl class="league-brief-facts">
-        <div>
-          <dt>Who we are</dt>
-          <dd>A structured league that brings faith, competition, sportsmanship, and clear standards onto the same court.</dd>
-        </div>
-        <div>
-          <dt>Who we serve</dt>
-          <dd>Smaller high school programs competing in Boys Varsity and Girls Varsity divisions.</dd>
-        </div>
-        <div>
-          <dt>Where we play</dt>
-          <dd>Across upstate New York, with games hosted in member-program gyms and a shared postseason championship.</dd>
-        </div>
-      </dl>
     </section>
 
     <section class="winning-section section-wrap" aria-labelledby="winning-title">

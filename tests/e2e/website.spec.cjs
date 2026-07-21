@@ -793,9 +793,12 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(page.getByRole("heading", { name: "How a UBL season works" })).toBeVisible();
   await expect(page.locator("main > .season-section")).toHaveCount(1);
   await expect(page.locator(".page-banner, .league-identity")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Built for growing programs." })).toBeVisible();
-  await expect(page.locator(".league-brief-facts")).toContainText("Smaller high school programs");
-  await expect(page.locator(".league-brief-facts")).toContainText("Across upstate New York");
+  await expect(page.getByRole("heading", { name: "Built for growing programs." })).toHaveCount(0);
+  await expect(page.locator(".league-profile-card")).toHaveCount(3);
+  await expect(page.locator('.league-profile-card[aria-pressed="true"]')).toHaveCount(0);
+  await expect(page.locator(".league-profile-grid")).toContainText("Who we are");
+  await expect(page.locator(".league-profile-grid")).toContainText("Who we serve");
+  await expect(page.locator(".league-profile-grid")).toContainText("Where we play");
   await expect(page.locator("body")).toHaveCSS("background-image", /ubl-about-playbook-texture\.webp/);
   await expect(page.locator(".season-path > li")).toHaveCount(4);
   await expect(page.locator(".season-node")).toHaveCount(4);
@@ -836,6 +839,20 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(seasonCards.nth(1)).toContainText("December and runs through the end of January");
   await expect(page.locator(".season-back-icon")).toHaveCount(0);
   await expect(seasonCards.nth(1).locator(".season-card-back")).toHaveCSS("text-align", "center");
+
+  const profileCards = page.locator(".league-profile-card");
+  await profileCards.nth(0).click();
+  await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "true");
+  await expect(profileCards.nth(0).locator(".league-profile-back")).toHaveAttribute("aria-hidden", "false");
+  await expect(profileCards.nth(0)).toContainText("A structured league that brings faith");
+  await profileCards.nth(1).click();
+  await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "false");
+  await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "true");
+  await expect(profileCards.nth(1)).toContainText("Smaller high school programs competing");
+  await profileCards.nth(2).click();
+  await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "false");
+  await expect(profileCards.nth(2)).toContainText("Across upstate New York");
+  await expect(profileCards.nth(2).locator(".league-profile-back")).toHaveCSS("text-align", "center");
 
   const programIllustration = page.getByAltText("Illustrated UBL players gathered shoulder-to-shoulder in a pregame huddle");
   const competitionIllustration = page.getByAltText("Illustrated varsity basketball players contesting the opening tip");
