@@ -87,6 +87,7 @@ test("release builder identifies UBL by project sentinels instead of a local fol
 test("security contact files follow the public vulnerability disclosure format", () => {
   const canonical = read(".well-known/security.txt");
   const legacy = read("security.txt");
+  assert.ok(fs.existsSync(path.join(siteRoot, ".nojekyll")), "GitHub Pages must publish the .well-known directory");
   assert.equal(legacy, canonical);
   assert.match(canonical, /^Contact: mailto:Info\.upstatebasketballleague@gmail\.com$/m);
   assert.match(canonical, /^Expires: 2027-06-30T23:59:59Z$/m);
