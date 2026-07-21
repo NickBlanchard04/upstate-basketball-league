@@ -380,7 +380,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
-  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-9");
+  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-10");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
@@ -404,7 +404,7 @@ test("team directory separates each division and opens the right profile", async
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-9$/);
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-10$/);
   await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -791,6 +791,15 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(kingsGallery).toBeHidden();
   await kingsCard.click();
   await expect(kingsGallery).toBeVisible();
+  const albumShare = kingsGallery.locator('[data-gallery-share-album="kings-school"]');
+  await expect(albumShare).toBeVisible();
+  await expect(albumShare).toHaveAccessibleName(/Share The King.s School photo album/);
+  if (testInfo.project.name === "mobile-chromium") {
+    const shareBox = await albumShare.boundingBox();
+    expect(shareBox).not.toBeNull();
+    expect(shareBox.width).toBeGreaterThanOrEqual(44);
+    expect(shareBox.height).toBeGreaterThanOrEqual(44);
+  }
   await boysSelector.click();
   await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(7);
   await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(0);
@@ -804,6 +813,33 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("alt", "King's girls varsity player driving through defenders");
   await expect(page.locator("[data-gallery-lightbox-title]")).toHaveText("Girls Varsity");
   await expect(page.locator("[data-gallery-lightbox-detail]")).toHaveText("2025-26 season");
+  await expect(page.locator('[data-gallery-lightbox-x]')).toHaveCount(0);
+  await expect(page.getByText("Please share student-athlete photos thoughtfully.")).toHaveCount(0);
+  if (testInfo.project.name === "desktop-chromium") {
+    await expect(page.locator(".gallery-lightbox-site-header")).toBeVisible();
+    await expect(page.locator(".gallery-lightbox-site-header .brand")).toBeVisible();
+    await expect(page.locator(".gallery-lightbox-site-header .brand img")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(page.locator(".gallery-lightbox-site-header .site-nav")).toBeVisible();
+    await expect(page.locator(".gallery-lightbox-header")).toBeVisible();
+    await expect(page.locator(".gallery-lightbox-details")).toBeVisible();
+    await expect(page.locator("[data-gallery-lightbox-facebook]")).toBeVisible();
+    await expect(page.locator("[data-gallery-lightbox-image]")).toHaveCSS("object-fit", "contain");
+    await expect(page.locator("[data-gallery-lightbox-image]")).toHaveCSS("position", "absolute");
+    await expect(page.locator("[data-gallery-lightbox-album-count]")).toHaveText("13 photos");
+    await expect(page.locator("[data-gallery-lightbox-position]")).toHaveText("1 of 6");
+    await expect(page.locator("[data-gallery-lightbox-thumbnail]")).toHaveCount(6);
+    await expect(page.locator("[data-gallery-lightbox-thumbnail].is-current img")).toHaveCSS("object-fit", "contain");
+    await page.getByRole("button", { name: "View next photo (1 of 6)" }).click();
+    await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("src", "assets/gallery/kings-gallery-02.jpg");
+    await expect(page.locator("[data-gallery-lightbox-position]")).toHaveText("2 of 6");
+    await page.locator(".gallery-lightbox").press("ArrowRight");
+    await expect(page.locator("[data-gallery-lightbox-image]")).toHaveAttribute("src", "assets/gallery/kings-gallery-06.jpg");
+    await expect(page.locator("[data-gallery-lightbox-position]")).toHaveText("3 of 6");
+  } else {
+    await expect(page.locator(".gallery-lightbox-site-header")).toBeHidden();
+    await expect(page.locator(".gallery-lightbox-header")).toBeHidden();
+    await expect(page.locator(".gallery-lightbox-details")).toBeHidden();
+  }
   await page.getByRole("button", { name: "Close fullscreen photo" }).click();
 });
 

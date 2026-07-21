@@ -7,6 +7,76 @@ function galleryDivisionSummary(program) {
   return program.divisions[0] || "Varsity";
 }
 
+function galleryShareUrl(teamId, { division = activeGalleryDivision(), photoId = "" } = {}) {
+  const url = new URL("gallery.html", window.location.href);
+  const divisionSlug = division === "Girls Varsity" ? "girls" : division === "Boys Varsity" ? "boys" : "";
+  url.searchParams.set("program", teamId);
+  if (divisionSlug) url.searchParams.set("division", divisionSlug);
+  if (photoId) url.searchParams.set("photo", photoId);
+  url.hash = `team-album-${teamId}`;
+  return url.href;
+}
+
+function setGalleryShareFeedback(message) {
+  const status = document.querySelector("[data-gallery-share-status]");
+  if (status) status.textContent = message;
+}
+
+async function copyGalleryShareUrl(url) {
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch (error) {
+    const field = document.createElement("textarea");
+    field.value = url;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.opacity = "0";
+    document.body.append(field);
+    field.select();
+    document.execCommand("copy");
+    field.remove();
+  }
+  setGalleryShareFeedback("Gallery link copied.");
+}
+
+async function shareGallery({ title, text, url, copyOnly = false }) {
+  if (!copyOnly && typeof navigator.share === "function") {
+    try {
+      await navigator.share({ title, text, url });
+      setGalleryShareFeedback("Sharing options opened.");
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+    }
+  }
+  await copyGalleryShareUrl(url);
+}
+
+function ensureGalleryShareControls() {
+  if (!document.querySelector("[data-gallery-share-status]")) {
+    const status = document.createElement("span");
+    status.className = "sr-only";
+    status.dataset.galleryShareStatus = "";
+    status.setAttribute("aria-live", "polite");
+    document.body.append(status);
+  }
+
+  document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
+    const actions = gallery.querySelector(".team-gallery-heading-actions");
+    const close = actions?.querySelector("[data-gallery-close]");
+    if (!actions || !close || actions.querySelector("[data-gallery-share-album]")) return;
+
+    const program = programById(gallery.dataset.galleryTeam);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "gallery-album-share";
+    button.dataset.galleryShareAlbum = gallery.dataset.galleryTeam;
+    button.setAttribute("aria-label", `Share ${program?.name || "team"} photo album`);
+    button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">ios_share</span><span class="gallery-share-label">Share</span>';
+    actions.insertBefore(button, close);
+  });
+}
+
 function ensureGalleryProgramSections() {
   const cardGrid = document.querySelector(".team-gallery-card-grid");
   const albums = document.querySelector(".team-gallery-albums");
@@ -39,6 +109,7 @@ function ensureGalleryProgramSections() {
 
   const directoryCount = document.querySelector("[data-gallery-program-count]");
   if (directoryCount) directoryCount.textContent = `${programs.length} program${programs.length === 1 ? "" : "s"} \u00b7 1 open spot`;
+  ensureGalleryShareControls();
 }
 
 function updateGallerySections() {
@@ -376,6 +447,19 @@ function initializeGallery() {
     });
   });
 
+  document.addEventListener("click", (event) => {
+    const shareButton = event.target.closest("[data-gallery-share-album]");
+    if (!shareButton) return;
+    const teamId = shareButton.dataset.galleryShareAlbum;
+    const program = programById(teamId);
+    const division = activeGalleryDivision();
+    shareGallery({
+      title: `${program?.name || "UBL"} photo album`,
+      text: `View the ${program?.name || "UBL"} ${division === "all" ? "varsity" : division} photo album.`,
+      url: galleryShareUrl(teamId, { division })
+    });
+  });
+
   document.querySelectorAll("[data-gallery-division-select]").forEach((button) => {
     button.addEventListener("click", () => {
       const division = button.dataset.galleryDivisionSelect;
@@ -404,34 +488,212 @@ function initializeGallery() {
 
   const lightbox = document.createElement("dialog");
   lightbox.className = "gallery-lightbox";
+  lightbox.tabIndex = -1;
+  lightbox.setAttribute("aria-labelledby", "gallery-lightbox-team");
   lightbox.innerHTML = `
     <div class="gallery-lightbox-card">
-      <button type="button" class="gallery-lightbox-close" aria-label="Close fullscreen photo">Close</button>
-      <img data-gallery-lightbox-image alt="">
-      <div class="gallery-lightbox-caption">
-        <strong data-gallery-lightbox-title></strong>
-        <span data-gallery-lightbox-detail></span>
+      <header class="gallery-lightbox-site-header" aria-label="UBL website header"></header>
+      <header class="gallery-lightbox-header">
+        <span class="gallery-lightbox-team">
+          <img data-gallery-lightbox-logo alt="" width="192" height="192">
+          <span><strong id="gallery-lightbox-team" data-gallery-lightbox-team></strong><small data-gallery-lightbox-team-division></small></span>
+        </span>
+        <span class="gallery-lightbox-header-actions">
+          <strong data-gallery-lightbox-album-count></strong>
+          <span class="gallery-lightbox-divider" aria-hidden="true"></span>
+          <button type="button" class="gallery-lightbox-share" data-gallery-lightbox-share aria-label="Share this photo">
+            <span class="material-symbols-rounded" aria-hidden="true">ios_share</span><span class="sr-only">Share</span>
+          </button>
+          <span class="gallery-lightbox-divider" aria-hidden="true"></span>
+          <button type="button" class="gallery-lightbox-close" aria-label="Close fullscreen photo">
+            <span>Close</span><span class="material-symbols-rounded" aria-hidden="true">close</span>
+          </button>
+        </span>
+      </header>
+      <div class="gallery-lightbox-body">
+        <div class="gallery-lightbox-stage">
+          <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" aria-label="View previous photo">
+            <span class="material-symbols-rounded" aria-hidden="true">east</span>
+          </button>
+          <div class="gallery-lightbox-media">
+            <img data-gallery-lightbox-image alt="">
+            <button type="button" class="gallery-lightbox-mobile-close" aria-label="Close fullscreen photo">
+              <span class="material-symbols-rounded" aria-hidden="true">close</span>
+            </button>
+          </div>
+          <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" aria-label="View next photo">
+            <span class="material-symbols-rounded" aria-hidden="true">east</span>
+          </button>
+        </div>
+        <aside class="gallery-lightbox-details" aria-label="Photo details">
+          <span class="gallery-lightbox-kicker">Photo details</span>
+          <strong data-gallery-lightbox-title></strong>
+          <span data-gallery-lightbox-detail></span>
+          <p data-gallery-lightbox-description></p>
+          <span class="gallery-lightbox-position" data-gallery-lightbox-position></span>
+          <section class="gallery-lightbox-sharing" aria-label="Share this photo">
+            <strong>Share this photo</strong>
+            <div>
+              <button type="button" data-gallery-lightbox-copy>
+                <span class="material-symbols-rounded" aria-hidden="true">link</span><span>Copy link</span>
+              </button>
+              <a data-gallery-lightbox-facebook target="_blank" rel="noopener noreferrer">Facebook</a>
+            </div>
+          </section>
+        </aside>
+        <div class="gallery-lightbox-caption">
+          <strong data-gallery-lightbox-mobile-title></strong>
+          <span data-gallery-lightbox-mobile-detail></span>
+        </div>
       </div>
+      <footer class="gallery-lightbox-footer">
+        <div class="gallery-lightbox-filmstrip" data-gallery-lightbox-filmstrip aria-label="Choose another photo"></div>
+        <span class="gallery-lightbox-helper">Use arrow keys to browse</span>
+      </footer>
     </div>
   `;
   document.body.append(lightbox);
 
+  const sourceHeader = document.querySelector(".site-header .header-inner");
+  const lightboxSiteHeader = lightbox.querySelector(".gallery-lightbox-site-header");
+  if (sourceHeader && lightboxSiteHeader) {
+    const headerInner = sourceHeader.cloneNode(true);
+    headerInner.querySelector(".menu-toggle")?.remove();
+    const siteNav = headerInner.querySelector(".site-nav");
+    if (siteNav) {
+      siteNav.id = "gallery-lightbox-site-nav";
+      siteNav.classList.remove("open");
+    }
+    lightboxSiteHeader.append(headerInner);
+  }
+
+  let lightboxFigures = [];
+  let lightboxIndex = 0;
+  let lightboxTeamId = "";
+  let lightboxShareData = null;
+
+  function updateLightboxShareLinks() {
+    if (!lightboxShareData) return;
+    const encodedUrl = encodeURIComponent(lightboxShareData.url);
+    lightbox.querySelector("[data-gallery-lightbox-facebook]").href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+  }
+
+  function updateLightboxPhoto(index) {
+    if (!lightboxFigures.length) return;
+    lightboxIndex = (index + lightboxFigures.length) % lightboxFigures.length;
+    const figure = lightboxFigures[lightboxIndex];
+    const trigger = figure.querySelector("[data-gallery-full]");
+    const preview = trigger.querySelector("img");
+    const title = figure.querySelector("figcaption strong").textContent;
+    const detail = figure.querySelector("figcaption span").textContent;
+    const photoId = figure.dataset.galleryPhotoId;
+    const program = programById(lightboxTeamId);
+    const image = lightbox.querySelector("[data-gallery-lightbox-image]");
+    image.src = trigger.dataset.galleryFull;
+    image.alt = preview.alt;
+    lightbox.querySelector("[data-gallery-lightbox-title]").textContent = title;
+    lightbox.querySelector("[data-gallery-lightbox-detail]").textContent = detail;
+    lightbox.querySelector("[data-gallery-lightbox-description]").textContent = preview.alt;
+    lightbox.querySelector("[data-gallery-lightbox-mobile-title]").textContent = title;
+    lightbox.querySelector("[data-gallery-lightbox-mobile-detail]").textContent = detail;
+    lightbox.querySelector("[data-gallery-lightbox-position]").textContent = `${lightboxIndex + 1} of ${lightboxFigures.length}`;
+    lightbox.querySelector(".gallery-lightbox-prev").setAttribute("aria-label", `View previous photo (${lightboxIndex + 1} of ${lightboxFigures.length})`);
+    lightbox.querySelector(".gallery-lightbox-next").setAttribute("aria-label", `View next photo (${lightboxIndex + 1} of ${lightboxFigures.length})`);
+    lightbox.querySelectorAll("[data-gallery-lightbox-thumbnail]").forEach((thumbnail, thumbnailIndex) => {
+      const current = thumbnailIndex === lightboxIndex;
+      thumbnail.classList.toggle("is-current", current);
+      thumbnail.setAttribute("aria-current", current ? "true" : "false");
+    });
+    lightboxShareData = {
+      title: `${program?.name || "UBL"} ${title} photo`,
+      text: preview.alt,
+      url: galleryShareUrl(lightboxTeamId, { division: title, photoId })
+    };
+    updateLightboxShareLinks();
+  }
+
+  function renderLightboxFilmstrip() {
+    const filmstrip = lightbox.querySelector("[data-gallery-lightbox-filmstrip]");
+    filmstrip.replaceChildren();
+    lightboxFigures.forEach((figure, index) => {
+      const source = figure.querySelector("img");
+      const button = document.createElement("button");
+      const image = document.createElement("img");
+      button.type = "button";
+      button.dataset.galleryLightboxThumbnail = String(index);
+      button.setAttribute("aria-label", `View photo ${index + 1} of ${lightboxFigures.length}`);
+      image.src = source.src;
+      if (source.srcset) image.srcset = source.srcset;
+      image.sizes = "9rem";
+      image.alt = "";
+      image.loading = "lazy";
+      button.append(image);
+      filmstrip.append(button);
+    });
+  }
+
+  function openLightbox(trigger) {
+    const figure = trigger.closest(".gallery-item");
+    const gallery = figure.closest("[data-gallery-team]");
+    const identity = gallery.querySelector(".team-gallery-identity");
+    const program = programById(gallery.dataset.galleryTeam);
+    lightboxFigures = [...gallery.querySelectorAll(".gallery-item:not([hidden])")];
+    lightboxIndex = Math.max(0, lightboxFigures.indexOf(figure));
+    lightboxTeamId = gallery.dataset.galleryTeam;
+    lightbox.querySelector("[data-gallery-lightbox-logo]").src = identity.querySelector("img").src;
+    lightbox.querySelector("[data-gallery-lightbox-team]").textContent = program?.name || identity.querySelector("strong").textContent;
+    lightbox.querySelector("[data-gallery-lightbox-team-division]").textContent = figure.querySelector("figcaption strong").textContent;
+    lightbox.querySelector("[data-gallery-lightbox-album-count]").textContent = gallery.querySelector("[data-gallery-count]").textContent;
+    renderLightboxFilmstrip();
+    updateLightboxPhoto(lightboxIndex);
+    if (!lightbox.open) {
+      document.body.classList.add("gallery-lightbox-open");
+      lightbox.showModal();
+      requestAnimationFrame(() => lightbox.focus({ preventScroll: true }));
+    }
+  }
+
   document.addEventListener("click", (event) => {
     const trigger = event.target.closest("[data-gallery-full]");
-    if (!trigger) return;
-    const figure = trigger.closest(".gallery-item");
-    const preview = trigger.querySelector("img");
-    lightbox.querySelector("[data-gallery-lightbox-image]").src = trigger.dataset.galleryFull;
-    lightbox.querySelector("[data-gallery-lightbox-image]").alt = preview.alt;
-    lightbox.querySelector("[data-gallery-lightbox-title]").textContent = figure.querySelector("figcaption strong").textContent;
-    lightbox.querySelector("[data-gallery-lightbox-detail]").textContent = figure.querySelector("figcaption span").textContent;
-    lightbox.showModal();
+    if (trigger) openLightbox(trigger);
   });
 
-  lightbox.querySelector(".gallery-lightbox-close").addEventListener("click", () => lightbox.close());
+  lightbox.querySelectorAll(".gallery-lightbox-close, .gallery-lightbox-mobile-close").forEach((button) => {
+    button.addEventListener("click", () => lightbox.close());
+  });
+  lightbox.querySelector(".gallery-lightbox-prev").addEventListener("click", () => updateLightboxPhoto(lightboxIndex - 1));
+  lightbox.querySelector(".gallery-lightbox-next").addEventListener("click", () => updateLightboxPhoto(lightboxIndex + 1));
+  lightbox.querySelector("[data-gallery-lightbox-filmstrip]").addEventListener("click", (event) => {
+    const thumbnail = event.target.closest("[data-gallery-lightbox-thumbnail]");
+    if (thumbnail) updateLightboxPhoto(Number(thumbnail.dataset.galleryLightboxThumbnail));
+  });
+  lightbox.querySelector("[data-gallery-lightbox-share]").addEventListener("click", () => {
+    if (lightboxShareData) shareGallery(lightboxShareData);
+  });
+  lightbox.querySelector("[data-gallery-lightbox-copy]").addEventListener("click", () => {
+    if (lightboxShareData) shareGallery({ ...lightboxShareData, copyOnly: true });
+  });
+  lightbox.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      updateLightboxPhoto(lightboxIndex - 1);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      updateLightboxPhoto(lightboxIndex + 1);
+    }
+  });
   lightbox.addEventListener("click", (event) => {
     if (event.target === lightbox) lightbox.close();
   });
+  lightbox.addEventListener("close", () => document.body.classList.remove("gallery-lightbox-open"));
+
+  const routePhotoId = routeParams.get("photo");
+  if (routeProgram && routePhotoId) {
+    requestAnimationFrame(() => {
+      document.querySelector(`[data-gallery-team="${CSS.escape(routeProgram.id)}"] [data-gallery-photo-id="${CSS.escape(routePhotoId)}"] [data-gallery-full]`)?.click();
+    });
+  }
 }
 
 
