@@ -41,6 +41,24 @@ test("404 base bootstrap resolves deep GitHub Pages paths before relative assets
   assert.equal(run("127.0.0.1", "/404.html"), "/");
 });
 
+test("mobile team routes and profile assets share one cache version", () => {
+  const script = read("script.js");
+  const profileExperience = read("team-profile-experience.js");
+  const directoryVersion = script.match(/UBL_TEAM_PROFILE_CACHE_VERSION = "([^"]+)"/)?.[1];
+  const profileVersion = profileExperience.match(/TEAM_PROFILE_ASSET_VERSION = "([^"]+)"/)?.[1];
+
+  assert.ok(directoryVersion, "script.js must publish a mobile profile cache version");
+  assert.equal(profileVersion, directoryVersion, "team profile scripts must agree on the cache version");
+  assert.match(script, /profileBuild=\$\{encodeURIComponent\(UBL_TEAM_PROFILE_CACHE_VERSION\)\}/);
+  assert.match(profileExperience, /typeof renderStackedTeamProfile !== "function"/);
+
+  for (const file of ["teams.html", "team.html"]) {
+    const versions = [...read(file).matchAll(/\?v=([0-9-]+)/g)].map((match) => match[1]);
+    assert.ok(versions.length > 0, `${file} must version its shared assets`);
+    assert.deepEqual([...new Set(versions)], [directoryVersion], `${file} assets must use the profile cache version`);
+  }
+});
+
 test("public source excludes fabricated identity and affiliation assets", () => {
   const files = [
     "index.html", "schedule.html", "standings.html", "teams.html", "team.html", "bracket.html",
