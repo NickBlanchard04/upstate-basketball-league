@@ -7,7 +7,7 @@ Use the league Google account for commissioner work. Team representatives use on
 1. Open the [UBL League Control Panel](https://docs.google.com/spreadsheets/d/1AVo5oRxSCFuTrkCK4MA30vT5u_6XuLAXIvyaqnWgcRE/edit).
 2. Review `Commissioner Dashboard` for dates, times, teams, venues, statuses, and alerts.
 3. Make routine schedule changes on the dashboard, not in the backend Games table.
-4. Confirm important changes on the public [schedule](https://nickblanchard04.github.io/upstate-basketball-league/schedule.html).
+4. Confirm important changes on the public [schedule](https://upstatebasketballleague.com/schedule.html).
 
 ## After games
 

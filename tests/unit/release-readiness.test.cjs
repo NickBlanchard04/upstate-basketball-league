@@ -82,13 +82,13 @@ test("sitemap contains only indexable page templates and valid team profiles", (
   const sitemap = read("sitemap.xml");
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1].replaceAll("&amp;", "&"));
   assert.ok(urls.length > 0);
-  assert.ok(!urls.includes("https://nickblanchard04.github.io/upstate-basketball-league/team.html"));
+  assert.ok(!urls.includes("https://upstatebasketballleague.com/team.html"));
   assert.ok(urls.some((url) => url.endsWith("team.html?program=hv-rocks&division=boys")));
   assert.equal((sitemap.match(/<lastmod>2026-07-20<\/lastmod>/g) || []).length, urls.length);
 
   for (const url of urls.filter((value) => !value.includes("team.html?"))) {
     const parsed = new URL(url);
-    const relative = parsed.pathname.replace("/upstate-basketball-league/", "") || "index.html";
+    const relative = parsed.pathname.replace(/^\/+/, "") || "index.html";
     assert.match(read(relative), /<meta name="robots" content="index, follow">/);
   }
   assert.match(read("team.html"), /<meta name="robots" content="noindex, follow">/);
@@ -100,6 +100,31 @@ test("homepage retains Google Search Console ownership verification", () => {
     read("index.html"),
     /<meta name="google-site-verification" content="QpcmoOi9BCl5q2IPHPLoq1-9uzXWo6s6ZuOqaBOuZ2s">/
   );
+});
+
+test("public discovery files and metadata use the registered UBL domain", () => {
+  const canonicalBase = "https://upstatebasketballleague.com";
+  const legacyBase = "https://nickblanchard04.github.io/upstate-basketball-league";
+  const publicFiles = [
+    "index.html", "schedule.html", "standings.html", "teams.html", "team.html", "bracket.html",
+    "rules.html", "gallery.html", "sponsors.html", "about.html", "robots.txt", "sitemap.xml",
+    "security.txt", ".well-known/security.txt"
+  ];
+
+  for (const file of publicFiles) {
+    const source = read(file);
+    assert.ok(!source.includes(legacyBase), `${file} still references the legacy public URL`);
+  }
+
+  for (const file of publicFiles.filter((name) => name.endsWith(".html"))) {
+    const html = read(file);
+    assert.match(html, new RegExp(`<link rel="canonical" href="${canonicalBase.replaceAll(".", "\\.")}`), `${file} needs the registered-domain canonical`);
+    assert.match(html, new RegExp(`<meta property="og:url" content="${canonicalBase.replaceAll(".", "\\.")}`), `${file} needs the registered-domain Open Graph URL`);
+  }
+
+  assert.match(read("robots.txt"), /^Sitemap: https:\/\/upstatebasketballleague\.com\/sitemap\.xml$/m);
+  assert.match(read("sitemap.xml"), /<loc>https:\/\/upstatebasketballleague\.com\//);
+  assert.match(read(".well-known/security.txt"), /^Canonical: https:\/\/upstatebasketballleague\.com\/\.well-known\/security\.txt$/m);
 });
 
 test("public analytics configures the UBL GA4 property behind privacy and host guards", () => {
@@ -125,11 +150,11 @@ test("security contact files follow the public vulnerability disclosure format",
   const canonical = read(".well-known/security.txt");
   const legacy = read("security.txt");
   assert.ok(fs.existsSync(path.join(siteRoot, ".nojekyll")), "GitHub Pages must publish the .well-known directory");
-  assert.equal(legacy, canonical);
+  assert.equal(legacy.replace(/\r\n/g, "\n"), canonical.replace(/\r\n/g, "\n"));
   assert.match(canonical, /^Contact: mailto:Info\.upstatebasketballleague@gmail\.com$/m);
   assert.match(canonical, /^Expires: 2027-06-30T23:59:59Z$/m);
   assert.match(canonical, /^Preferred-Languages: en$/m);
-  assert.match(canonical, /^Canonical: https:\/\/nickblanchard04\.github\.io\/upstate-basketball-league\/\.well-known\/security\.txt$/m);
+  assert.match(canonical, /^Canonical: https:\/\/upstatebasketballleague\.com\/\.well-known\/security\.txt$/m);
 });
 
 test("homepage schema identifies the league without inventing a storefront", () => {

@@ -4,7 +4,7 @@ const path = require("node:path");
 const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.join(siteRoot, "dist");
 const releaseToken = "20260721-7";
-const canonicalBase = "https://nickblanchard04.github.io/upstate-basketball-league/";
+const canonicalBase = "https://upstatebasketballleague.com/";
 const socialImageUrl = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialImageAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
 
@@ -122,9 +122,7 @@ function localTarget(value) {
   if (/^https?:\/\//i.test(value)) {
     const url = new URL(value);
     if (url.origin !== new URL(canonicalBase).origin) return "";
-    const prefix = "/upstate-basketball-league/";
-    if (!url.pathname.startsWith(prefix)) return "";
-    const relative = decodeURIComponent(url.pathname.slice(prefix.length));
+    const relative = decodeURIComponent(url.pathname.replace(/^\/+/, ""));
     return relative || "index.html";
   }
   const withoutFragment = value.split("#")[0].split("?")[0];

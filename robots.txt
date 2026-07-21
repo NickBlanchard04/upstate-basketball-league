@@ -11,4 +11,4 @@ Allow: /
 User-agent: OAI-SearchBot
 Allow: /
 
-Sitemap: https://nickblanchard04.github.io/upstate-basketball-league/sitemap.xml
+Sitemap: https://upstatebasketballleague.com/sitemap.xml

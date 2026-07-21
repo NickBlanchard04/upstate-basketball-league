@@ -1253,7 +1253,7 @@ function updateTeamProfileMetadata(program, division) {
   document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
   document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", title);
   document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", description);
-  const canonicalUrl = `https://nickblanchard04.github.io/upstate-basketball-league/${teamProfileUrl(program.id, division)}`;
+  const canonicalUrl = `https://upstatebasketballleague.com/${teamProfileUrl(program.id, division)}`;
   document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonicalUrl);
   document.querySelector('meta[property="og:url"]')?.setAttribute("content", canonicalUrl);
 }

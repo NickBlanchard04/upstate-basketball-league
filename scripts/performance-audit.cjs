@@ -1,6 +1,6 @@
 const { chromium } = require("@playwright/test");
 
-const defaultBaseUrl = "https://nickblanchard04.github.io/upstate-basketball-league";
+const defaultBaseUrl = "https://upstatebasketballleague.com";
 const routes = [
   "index.html",
   "schedule.html",
