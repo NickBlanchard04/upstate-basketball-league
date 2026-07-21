@@ -1,5 +1,7 @@
 /* UBL interactive team-profile experience.
    Loaded after script.js so these focused renderers replace the legacy profile layout. */
+const TEAM_PROFILE_ASSET_VERSION = "20260721-7";
+
 function teamGalleryUrl(programId, division = "") {
   const params = new URLSearchParams({ program: programId });
   if (division) params.set("division", division === "Girls Varsity" ? "girls" : "boys");
@@ -545,6 +547,14 @@ function renderTeamProfile() {
   const container = document.querySelector("[data-team-profile]");
   if (!container) return;
   if (window.matchMedia("(max-width: 767px)").matches) {
+    if (typeof renderStackedTeamProfile !== "function") {
+      const refreshUrl = new URL(location.href);
+      if (refreshUrl.searchParams.get("profileBuild") !== TEAM_PROFILE_ASSET_VERSION) {
+        refreshUrl.searchParams.set("profileBuild", TEAM_PROFILE_ASSET_VERSION);
+        location.replace(refreshUrl.toString());
+      }
+      return;
+    }
     if (!container.querySelector(".team-profile-hero")) renderedTeamProfileSignature = "";
     renderStackedTeamProfile();
     return;

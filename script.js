@@ -177,6 +177,8 @@ function teamProfileUrl(programId, division = "") {
   return `team.html?${params.toString()}`;
 }
 
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260721-7";
+
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];
   if (programId === "tbd") return "Open League Spot";
@@ -1101,7 +1103,7 @@ function divisionTeamCardMarkup(program, division, order) {
   }
   const headCoach = program.teams?.[division]?.headCoach?.name || "";
   const detail = headCoach && headCoach !== "To be confirmed" ? `Head coach ${headCoach}` : "Open program profile";
-  const href = teamProfileUrl(program.id, division);
+  const href = `${teamProfileUrl(program.id, division)}&profileBuild=${encodeURIComponent(UBL_TEAM_PROFILE_CACHE_VERSION)}`;
   const accessibleName = `View team ${program.short}, ${division}, ${program.name}. ${detail}. Meet the program`;
   return `
     <a class="division-team-card" href="${safeAttribute(href)}" data-program-card="${safeAttribute(program.id)}" style="--card-order:${order}" aria-label="${safeAttribute(accessibleName)}">
