@@ -78,15 +78,15 @@ test("public source excludes fabricated identity and affiliation assets", () => 
   assert.match(sponsors, /no organization is shown as a confirmed UBL sponsor/);
 });
 
-test("sitemap contains only indexable page templates and valid team profiles", () => {
+test("sitemap contains only statically indexable canonical pages", () => {
   const sitemap = read("sitemap.xml");
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1].replaceAll("&amp;", "&"));
   assert.ok(urls.length > 0);
-  assert.ok(!urls.includes("https://upstatebasketballleague.com/team.html"));
-  assert.ok(urls.some((url) => url.endsWith("team.html?program=hv-rocks&division=boys")));
-  assert.equal((sitemap.match(/<lastmod>2026-07-20<\/lastmod>/g) || []).length, urls.length);
+  assert.ok(!urls.some((url) => url.includes("team.html")));
+  assert.equal((sitemap.match(/<lastmod>[^<]+<\/lastmod>/g) || []).length, urls.length);
+  assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/teams\.html<\/loc><lastmod>2026-07-21<\/lastmod>/);
 
-  for (const url of urls.filter((value) => !value.includes("team.html?"))) {
+  for (const url of urls) {
     const parsed = new URL(url);
     const relative = parsed.pathname.replace(/^\/+/, "") || "index.html";
     assert.match(read(relative), /<meta name="robots" content="index, follow">/);
@@ -144,6 +144,29 @@ test("release builder identifies UBL by project sentinels instead of a local fol
   assert.match(builder, /packageJson\.name !== "upstate-basketball-league"/);
   assert.match(builder, /Upstate Basketball League Brand Identity/);
   assert.match(pagesWorkflow, /include-hidden-files:\s*true/);
+  assert.match(builder, /"llms\.txt"/);
+  assert.match(builder, /"5e2cb865318641f38db2af0e8a4a4bc8\.txt"/);
+  assert.match(pagesWorkflow, /notify-indexnow:[\s\S]*needs: deploy/);
+  assert.match(pagesWorkflow, /node scripts\/submit-indexnow\.cjs --all/);
+});
+
+test("team directory and AI summary expose verified league information without JavaScript", () => {
+  const teams = read("teams.html");
+  for (const name of ["The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"]) {
+    assert.ok(teams.includes(name), `${name} must be present in static HTML`);
+  }
+  const json = [...teams.matchAll(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/g)]
+    .map((match) => JSON.parse(match[1]))
+    .find((schema) => schema["@type"] === "ItemList");
+  assert.equal(json.numberOfItems, 5);
+  assert.deepEqual(json.itemListElement.map((entry) => entry.item.name), [
+    "The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"
+  ]);
+
+  const llms = read("llms.txt");
+  assert.match(llms, /^# Upstate Basketball League$/m);
+  assert.match(llms, /https:\/\/upstatebasketballleague\.com\/schedule\.html/);
+  assert.match(llms, /Info\.upstatebasketballleague@gmail\.com/);
 });
 
 test("security contact files follow the public vulnerability disclosure format", () => {

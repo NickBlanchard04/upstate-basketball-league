@@ -34,23 +34,11 @@ const indexablePages = new Map([
   ["about.html", `${canonicalBase}about.html`]
 ]);
 
-const teamProfileUrls = [
-  "team.html?program=kings-school&division=girls",
-  "team.html?program=kings-school&division=boys",
-  "team.html?program=perth&division=girls",
-  "team.html?program=perth&division=boys",
-  "team.html?program=wilton-baptist&division=girls",
-  "team.html?program=wilton-baptist&division=boys",
-  "team.html?program=hv-flames&division=girls",
-  "team.html?program=hv-rocks&division=boys"
-].map((route) => `${canonicalBase}${route}`);
-
 const expectedSitemapUrls = [
   canonicalBase,
   `${canonicalBase}schedule.html`,
   `${canonicalBase}standings.html`,
   `${canonicalBase}teams.html`,
-  ...teamProfileUrls,
   `${canonicalBase}bracket.html`,
   `${canonicalBase}rules.html`,
   `${canonicalBase}gallery.html`,
@@ -234,12 +222,34 @@ function validateSitemap(root) {
   const sitemap = read(root, "sitemap.xml");
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1].replaceAll("&amp;", "&"));
   check(JSON.stringify(urls) === JSON.stringify(expectedSitemapUrls), "Sitemap URLs or ordering do not match the public UBL routes");
-  check((sitemap.match(/<lastmod>2026-07-20<\/lastmod>/g) || []).length === expectedSitemapUrls.length, "Every sitemap route needs the release lastmod date");
-  check(!urls.includes(`${canonicalBase}team.html`), "Generic noindex team template must not appear in sitemap");
-  check(teamProfileUrls.every((url) => urls.includes(url)), "Every honest team profile must appear in sitemap");
+  const entries = [...sitemap.matchAll(/<url><loc>([^<]+)<\/loc><lastmod>([^<]+)<\/lastmod>/g)]
+    .map((match) => [match[1].replaceAll("&amp;", "&"), match[2]]);
+  check(entries.length === expectedSitemapUrls.length, "Every sitemap route needs a lastmod date");
+  for (const [url, lastmod] of entries) {
+    const expected = url === `${canonicalBase}teams.html` ? "2026-07-21" : "2026-07-20";
+    check(lastmod === expected, `${url} has an inaccurate sitemap lastmod date`);
+  }
+  check(!urls.some((url) => url.includes("team.html")), "Client-rendered team templates must not appear in sitemap");
+  check(urls.every((url) => [...indexablePages.values()].includes(url)), "Sitemap must contain only statically indexable canonical pages");
 
   const robots = read(root, "robots.txt");
   check(robots.includes(`Sitemap: ${canonicalBase}sitemap.xml`), "robots.txt sitemap URL mismatch");
+}
+
+function validateDiscoveryFiles(root) {
+  const teams = read(root, "teams.html");
+  for (const name of ["The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"]) {
+    check(teams.includes(name), `teams.html must expose ${name} without requiring JavaScript`);
+  }
+  check(teams.includes('"@type": "ItemList"') && teams.includes('"@type": "SportsTeam"'), "teams.html needs structured team-list data");
+
+  const llms = read(root, "llms.txt");
+  check(llms.startsWith("# Upstate Basketball League"), "llms.txt needs an official league heading");
+  check(llms.includes(`${canonicalBase}schedule.html`) && llms.includes(`${canonicalBase}standings.html`), "llms.txt needs official schedule and standings sources");
+  check(llms.includes("Info.upstatebasketballleague@gmail.com"), "llms.txt needs the league contact");
+
+  const indexNowKey = "5e2cb865318641f38db2af0e8a4a4bc8";
+  check(read(root, `${indexNowKey}.txt`).trim() === indexNowKey, "Published IndexNow key file is invalid");
 }
 
 function validateHonestContent(root) {
@@ -249,7 +259,7 @@ function validateHonestContent(root) {
   check(sponsors.includes("Prospective partner categories") && sponsors.includes("no organization is shown as a confirmed UBL sponsor"), "Sponsor page needs explicit prospective-category language");
 
   const releaseTextFiles = publicHtml.concat([
-    "styles.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "about.js", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt"
+    "styles.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "about.js", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt", "llms.txt"
   ]);
   const forbidden = /assets\/team-hv-flames\.svg|assets\/ubl-championship-hero|ubl-core-commitments-trophy|assets\/sponsors|Northline/i;
   for (const file of releaseTextFiles) check(!forbidden.test(read(root, file)), `${file} references a forbidden temporary, fake, sponsor, or Northline asset`);
@@ -283,10 +293,20 @@ function validateRoot(root) {
   validateIcons(root);
   validateCaching(root);
   validateSitemap(root);
+  validateDiscoveryFiles(root);
   validateHonestContent(root);
+}
+
+function validateIndexNowAutomation() {
+  const automation = read(siteRoot, "scripts/submit-indexnow.cjs");
+  const workflow = read(siteRoot, ".github/workflows/manual-pages-release.yml");
+  check(automation.includes("https://api.indexnow.org/indexnow"), "IndexNow automation needs the official endpoint");
+  check(automation.includes("waitForPublishedKey"), "IndexNow automation must wait for the deployed key");
+  check(workflow.includes("needs: deploy") && workflow.includes("node scripts/submit-indexnow.cjs --all"), "Pages releases must notify IndexNow after deployment");
 }
 
 validateRoot(siteRoot);
 validateRoot(distRoot);
+validateIndexNowAutomation();
 validateDistBoundaries();
 console.log("UBL release validation passed: routes, metadata, assets, sitemap, honesty, and dist boundaries are coherent.");

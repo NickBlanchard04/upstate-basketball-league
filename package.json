@@ -9,6 +9,8 @@
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",
     "audit:performance": "node scripts/performance-audit.cjs",
+    "notify:indexnow": "node scripts/submit-indexnow.cjs --all",
+    "notify:indexnow:dry": "node scripts/submit-indexnow.cjs --dry-run",
     "build:release": "node scripts/build-release.cjs",
     "validate:release": "node scripts/validate-release.cjs",
     "test:release": "npm run test:unit && npm run test:workflow && npm run build:release && npm run validate:release"
