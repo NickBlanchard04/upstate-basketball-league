@@ -17,14 +17,15 @@ concurrency:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Retrieve and validate public feed
         run: node scripts/snapshot-live-feed.cjs
@@ -69,12 +70,31 @@ jobs:
         shell: bash
         run: |
           title="UBL league feed snapshot failed"
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty' || true)"
           if [ -z "$existing" ]; then
             gh issue create \
               --title "$title" \
               --assignee NickBlanchard04 \
-              --body "The scheduled public-feed validation failed. Review workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" || true
+              --body "The scheduled public-feed validation failed. Review workflow run: $run_url" || true
+          else
+            gh issue comment "$existing" \
+              --body "The scheduled public-feed validation failed again. Review workflow run: $run_url" || true
+          fi
+
+      - name: Resolve feed failure issue after recovery
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          title="UBL league feed snapshot failed"
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          existing="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty' || true)"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" \
+              --body "The scheduled public-feed validation recovered successfully. Verified by workflow run: $run_url" || true
+            gh issue close "$existing" --reason completed || true
           fi
 
 # This workflow intentionally has no Pages environment, deployment action, or production cutover step.

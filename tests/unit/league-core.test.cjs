@@ -1,16 +1,89 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const core = require("../../league-core.js");
-const feed = require("../../league-data.json");
+const publishedFeed = require("../../league-data.json");
 
-const programs = feed.teams.map((team) => ({ ...team }));
+function createFeedFixture() {
+  return {
+    schemaVersion: 1,
+    lastUpdated: "2026-07-01T12:00:00.000Z",
+    settings: {
+      season: "2026-27",
+      timezone: "America/New_York",
+      gameDurationMinutes: 90,
+      showSimultaneousLiveGames: true
+    },
+    teams: [
+      {
+        id: "kings-school",
+        name: "The King's School",
+        short: "TKS",
+        logo: "assets/optimized/team-kings-school-192.webp",
+        divisions: ["Boys Varsity", "Girls Varsity"],
+        status: "Active",
+        summary: "Fixture program."
+      },
+      {
+        id: "wilton-baptist",
+        name: "Wilton Baptist",
+        short: "WBC",
+        logo: "assets/optimized/team-wilton-baptist-192.webp",
+        divisions: ["Boys Varsity", "Girls Varsity"],
+        status: "Active",
+        summary: "Fixture program."
+      }
+    ],
+    venues: [
+      {
+        id: "kings-school-gym",
+        name: "The King's School Gym",
+        address: "10 Fixture Lane",
+        mapLabel: "Fixture Court",
+        status: "Active"
+      }
+    ],
+    profiles: [],
+    games: [
+      {
+        id: "ubl-001",
+        date: "2026-12-03",
+        time: "6:00 PM",
+        division: "Boys Varsity",
+        awayTeamId: "wilton-baptist",
+        homeTeamId: "kings-school",
+        venueId: "kings-school-gym",
+        status: "Scheduled",
+        awayScore: null,
+        homeScore: null,
+        stage: "",
+        notes: "",
+        weekId: "opening-week"
+      },
+      {
+        id: "ubl-002",
+        date: "2026-12-03",
+        time: "7:30 PM",
+        division: "Girls Varsity",
+        awayTeamId: "wilton-baptist",
+        homeTeamId: "kings-school",
+        venueId: "kings-school-gym",
+        status: "Scheduled",
+        awayScore: null,
+        homeScore: null,
+        stage: "",
+        notes: "",
+        weekId: "opening-week"
+      }
+    ]
+  };
+}
 
 test("published feed is valid", () => {
-  assert.deepEqual(core.validateFeed(feed), []);
+  assert.deepEqual(core.validateFeed(publishedFeed), []);
 });
 
 test("feed validation rejects unsafe game state", () => {
-  const invalid = structuredClone(feed);
+  const invalid = createFeedFixture();
   invalid.games[0].status = "Final";
   invalid.games[0].awayScore = 40;
   invalid.games[0].homeScore = 40;
@@ -18,7 +91,7 @@ test("feed validation rejects unsafe game state", () => {
 });
 
 test("feed validation accepts any commissioner-approved game date and enforces score shape", () => {
-  const invalid = structuredClone(feed);
+  const invalid = createFeedFixture();
   invalid.games[0].date = "2026-12-04";
   invalid.games[0].awayScore = -1;
   const errors = core.validateFeed(invalid).join(" ");
@@ -56,20 +129,21 @@ test("standings count finals and apply point differential tiebreaker", () => {
 });
 
 test("normalization connects venues, statuses, and new feed teams", () => {
+  const fixture = createFeedFixture();
   const fallback = {
     programs: [],
     scheduleWeeks: [{ id: "opening-week", label: "Opening Week", range: "Dec 3", games: [] }],
     scheduleNotice: "Notice"
   };
-  const normalized = core.normalizeFeed(feed, fallback);
-  assert.equal(normalized.games[0].location, "Perth home court");
+  const normalized = core.normalizeFeed(fixture, fallback);
+  assert.equal(normalized.games[0].location, "Fixture Court");
   assert.equal(normalized.games[0].status, "Scheduled");
-  assert.equal(normalized.programs.length, feed.teams.length);
+  assert.equal(normalized.programs.length, fixture.teams.length);
   assert.ok(normalized.programs[0].teams["Boys Varsity"].headCoach);
 });
 
 test("live public profiles override team pages while missing profiles keep bundled data", () => {
-  const profileFeed = structuredClone(feed);
+  const profileFeed = createFeedFixture();
   profileFeed.profiles = [{
     id: "kings-school:Boys Varsity",
     teamId: "kings-school",
@@ -107,7 +181,7 @@ test("live public profiles override team pages while missing profiles keep bundl
 });
 
 test("profile validation rejects unknown teams, duplicate rows, and invalid emails", () => {
-  const invalid = structuredClone(feed);
+  const invalid = createFeedFixture();
   invalid.profiles = [
     { id: "bad", teamId: "unknown", division: "Boys Varsity", representativeEmail: "not-an-email", assistants: [] },
     { id: "bad", teamId: "unknown", division: "Other", assistants: {} }
@@ -126,7 +200,7 @@ test("published score CSV safely replaces schedule and result fields", () => {
     'ubl-002,2026-12-03,7:30 PM,Girls Varsity,wilton-baptist,kings-school,kings-school-gym,Scheduled,,,opening-week'
   ].join("\n");
   const scoreGames = core.parseScoreFeedCsv(csv);
-  const merged = core.mergeScoreFeed(structuredClone(feed), scoreGames);
+  const merged = core.mergeScoreFeed(createFeedFixture(), scoreGames);
 
   assert.equal(merged.games.length, 2);
   assert.equal(merged.games[0].status, "Final");
