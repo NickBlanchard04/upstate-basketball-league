@@ -461,6 +461,7 @@ test("team profile keeps the banner camera on desktop and restores the stacked m
     await expect(page.locator(".team-profile-hero-copy h1")).toContainText("The King");
     await expect(page.getByRole("link", { name: "Girls", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("link", { name: "Boys", exact: true })).toHaveAttribute("href", "teams/kings-school-boys.html");
+    await expect(page.getByRole("link", { name: "View team gallery", exact: true })).toHaveAttribute("href", "gallery.html?program=kings-school&division=girls#team-album-kings-school");
     await expect(page.getByRole("heading", { name: "Girls varsity coaching staff" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -496,6 +497,7 @@ test("team profile keeps the banner camera on desktop and restores the stacked m
   await expect(page.locator(".team-banner-toolbar > p")).toHaveCount(0);
   await expect(backLink).toHaveAttribute("href", "teams.html");
   await expect(page.locator(".team-banner")).toHaveCount(6);
+  await expect(page.locator(".team-profile-gallery-link")).toHaveCount(0);
   await expect(galleryLink).toHaveAttribute("href", "gallery.html?program=kings-school&division=girls#team-album-kings-school");
   await expect(page.locator(".team-banner-section-track")).not.toContainText(/0[1-6]/);
 
@@ -576,7 +578,7 @@ test("team Gallery destination opens the matching expanded division album", asyn
     await expect(page.locator("#team-banner-gallery-detail")).toBeVisible();
     await page.locator("[data-team-gallery-link]").click();
   } else {
-    await page.getByRole("link", { name: "Team gallery", exact: true }).click();
+    await page.getByRole("link", { name: "View team gallery", exact: true }).click();
   }
   await expect(page).toHaveURL(/gallery\.html\?program=kings-school&division=girls#team-album-kings-school$/);
 
@@ -615,6 +617,7 @@ test("team identity banners fit every program name without clipping", async ({ p
         && word.bottom <= suffix.top + 1;
     })).toBe(true);
   }
+
 });
 
 test("team profile details remain available when reduced motion is requested", async ({ page }, testInfo) => {

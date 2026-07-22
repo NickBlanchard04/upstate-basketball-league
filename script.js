@@ -189,7 +189,7 @@ function requestedTeamProfileRoute() {
   };
 }
 
-const UBL_TEAM_PROFILE_CACHE_VERSION = "20260722-3";
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260722-4";
 
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];
@@ -1325,6 +1325,10 @@ function renderTeamProfile() {
           <h1>${escapeHtml(program.name)}</h1>
           <p>${escapeHtml(program.summary)}</p>
           ${profileDivisionLinks(program, division)}
+          <a class="team-profile-gallery-link" href="gallery.html?program=${encodeURIComponent(program.id)}&division=${division === "Girls Varsity" ? "girls" : "boys"}#team-album-${encodeURIComponent(program.id)}">
+            <span>View team gallery</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
         <div class="team-profile-logo"><span>${escapeHtml(program.short)}</span><img src="${safeAttribute(safeImageUrl(program.logo))}" alt="${safeAttribute(logoAlt)}" width="192" height="192"></div>
       </div>
