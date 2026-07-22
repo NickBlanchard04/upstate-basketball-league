@@ -1352,9 +1352,9 @@ function renderTeamProfile() {
       </aside>
     </div>
 
-    <section class="team-profile-next section-wrap" aria-label="Continue exploring the UBL">
-      <div><span>Keep exploring</span><strong>See where ${escapeHtml(program.name)} fits into the season.</strong></div>
-      <div><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="gallery.html?program=${encodeURIComponent(program.id)}&division=${division === "Girls Varsity" ? "girls" : "boys"}#team-album-${encodeURIComponent(program.id)}">Team gallery</a><a href="teams.html">All teams</a></div>
+    <section class="explore-panel section-wrap" aria-labelledby="team-profile-explore-title">
+      <div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="team-profile-explore-title">See where ${escapeHtml(program.name)} fits into the season.</h2></div>
+      <nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="gallery.html?program=${encodeURIComponent(program.id)}&division=${division === "Girls Varsity" ? "girls" : "boys"}#team-album-${encodeURIComponent(program.id)}">Team gallery</a><a href="teams.html">All teams</a></nav>
     </section>
   `;
 }
