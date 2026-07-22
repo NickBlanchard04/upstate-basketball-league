@@ -16,6 +16,7 @@ const publicFiles = Object.freeze([
   "gallery.html",
   "sponsors.html",
   "about.html",
+  "privacy.html",
   "404.html",
   "styles.css",
   "team-profile-experience.css",

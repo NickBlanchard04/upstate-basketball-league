@@ -55,7 +55,8 @@ test("all public routes render meaningful content without runtime errors", async
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
     ["/sponsors.html", "Partner with the UBL"],
-    ["/about.html", "How a UBL season works"]
+    ["/about.html", "How a UBL season works"],
+    ["/privacy.html", "Website privacy"]
   ];
   await expectNoAppErrors(page, async () => {
     for (const [route, heading] of routes) {
@@ -380,7 +381,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
-  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-11");
+  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-12");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
@@ -404,7 +405,7 @@ test("team directory separates each division and opens the right profile", async
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-11$/);
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-12$/);
   await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -1288,17 +1289,22 @@ test("public pages expose complete search and social metadata", async ({ page, r
   expect((await request.get("/site.webmanifest")).status()).toBe(200);
 });
 
-test("cookieless analytics sends only bounded anonymous page data", async ({ page }) => {
+test("analytics stays off until consent and then sends only bounded anonymous league data", async ({ page }) => {
   await page.route("**/config.js*", (route) => route.fulfill({
     contentType: "application/javascript",
     body: `window.UBL_CONFIG = {
       analyticsEndpoint: "https://script.google.com/macros/s/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7/exec",
       analyticsChannel: "ubl-public-v1",
       analyticsEnabled: true,
+      googleAnalyticsMeasurementId: "G-E7W3TG2NR8",
       analyticsAllowedHosts: ["127.0.0.1"],
       staticFeedUrl: "league-data.json",
       refreshMinutes: 1
     };`
+  }));
+  await page.route("https://www.googletagmanager.com/**", (route) => route.fulfill({
+    contentType: "application/javascript",
+    body: ""
   }));
   await page.unroute(galleryFeedUrlPattern);
   let analyticsBody = "";
@@ -1312,7 +1318,19 @@ test("cookieless analytics sends only bounded anonymous page data", async ({ pag
   });
 
   await page.goto("/schedule.html");
+  const consent = page.getByRole("dialog", { name: "Help us improve the UBL website" });
+  await expect(consent).toBeVisible();
+  await expect(consent.getByRole("button", { name: "Allow analytics" })).toBeVisible();
+  await expect(consent.getByRole("button", { name: "Decline" })).toBeVisible();
+  await page.waitForTimeout(500);
+  expect(analyticsBody).toBe("");
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveCount(0);
+
+  await consent.getByRole("button", { name: "Allow analytics" }).click();
   await expect.poll(() => analyticsBody, { timeout: 4000 }).toContain("event=pageview");
+  await expect(consent).toBeHidden();
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveCount(1);
+  expect(await page.evaluate(() => localStorage.getItem("ubl-analytics-consent-v1"))).toBe("granted");
   const params = new URLSearchParams(analyticsBody);
   expect(params.get("page")).toBe("schedule.html");
   expect(params.get("device")).toMatch(/mobile|desktop/);
@@ -1320,6 +1338,43 @@ test("cookieless analytics sends only bounded anonymous page data", async ({ pag
   expect(params.has("email")).toBe(false);
   expect(params.has("name")).toBe(false);
   expect(await page.context().cookies()).toEqual([]);
+
+  await page.goto("/privacy.html");
+  await expect(page.locator("[data-consent-status]")).toContainText("currently allow");
+  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toHaveCount(0);
+});
+
+test("declining analytics persists without loading tracking", async ({ page }) => {
+  await page.route("**/config.js*", (route) => route.fulfill({
+    contentType: "application/javascript",
+    body: `window.UBL_CONFIG = {
+      analyticsEndpoint: "https://script.google.com/macros/s/AKfycbyLkMwVxtgJugNRvBmEApHvCOwsGC4fNn8EqArGUnPaVZosyQbN-VYIDOna3SkQ3kA7/exec",
+      analyticsEnabled: true,
+      googleAnalyticsMeasurementId: "G-E7W3TG2NR8",
+      analyticsAllowedHosts: ["127.0.0.1"]
+    };`
+  }));
+  await page.unroute(galleryFeedUrlPattern);
+  let analyticsPosts = 0;
+  await page.route(galleryFeedUrlPattern, async (route) => {
+    if (route.request().method() === "POST") analyticsPosts += 1;
+    await route.fulfill({ json: { accepted: true, schemaVersion: 1, photos: [] } });
+  });
+
+  await page.goto("/index.html");
+  const consent = page.getByRole("dialog", { name: "Help us improve the UBL website" });
+  await consent.getByRole("button", { name: "Decline" }).click();
+  await page.waitForTimeout(600);
+  expect(analyticsPosts).toBe(0);
+  expect(await page.evaluate(() => localStorage.getItem("ubl-analytics-consent-v1"))).toBe("denied");
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toHaveCount(0);
+  await page.goto("/privacy.html");
+  await expect(page.locator("[data-consent-status]")).toContainText("currently decline");
+  await page.getByRole("button", { name: "Review privacy choices" }).click();
+  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toBeVisible();
 });
 
 test("analytics stays disabled on unapproved preview hosts", async ({ page }) => {
@@ -1333,10 +1388,11 @@ test("analytics stays disabled on unapproved preview hosts", async ({ page }) =>
   await page.goto("/schedule.html");
   await page.waitForTimeout(1800);
   expect(analyticsPosts).toBe(0);
+  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toHaveCount(0);
 });
 
 test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "team.html?program=hv-rocks&division=boys", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html", "404.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "team.html?program=hv-rocks&division=boys", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html", "privacy.html", "404.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     const results = await new AxeBuilder({ page })
