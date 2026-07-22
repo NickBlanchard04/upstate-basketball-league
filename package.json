@@ -8,6 +8,7 @@
     "test:workflow": "node scripts/workflow-simulation.cjs",
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",
+    "generate:discovery": "node scripts/generate-discovery-pages.cjs",
     "audit:performance": "node scripts/performance-audit.cjs",
     "notify:indexnow": "node scripts/submit-indexnow.cjs --all",
     "notify:indexnow:dry": "node scripts/submit-indexnow.cjs --dry-run",

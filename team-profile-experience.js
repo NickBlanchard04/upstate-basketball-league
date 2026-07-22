@@ -1,6 +1,6 @@
-/* UBL interactive team-profile experience.
+﻿/* UBL interactive team-profile experience.
    Loaded after script.js so these focused renderers replace the legacy profile layout. */
-const TEAM_PROFILE_ASSET_VERSION = "20260722-2";
+const TEAM_PROFILE_ASSET_VERSION = "20260722-3";
 
 function teamGalleryUrl(programId, division = "") {
   const params = new URLSearchParams({ program: programId });
@@ -532,7 +532,8 @@ function updateTeamProfileMetadata(program, division) {
   const title = `${program.name} ${division} | UBL`;
   const description = `${program.summary} View ${division.toLowerCase()} coaches, home-court information, and program contact details.`;
   document.title = title;
-  document.querySelector('meta[name="robots"]')?.setAttribute("content", "index, follow");
+  const isStaticProfile = Boolean(document.body.dataset.teamProgram && document.body.dataset.teamDivision);
+  document.querySelector('meta[name="robots"]')?.setAttribute("content", isStaticProfile ? "index, follow" : "noindex, follow");
   document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
   document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
@@ -559,10 +560,10 @@ function renderTeamProfile() {
     renderStackedTeamProfile();
     return;
   }
-  const params = new URLSearchParams(location.search);
-  const program = programById(params.get("program"));
+  const route = requestedTeamProfileRoute();
+  const program = programById(route.programId);
   if (!program || program.id === "tbd") {
-    const missingSignature = `missing:${params.get("program") || ""}`;
+    const missingSignature = `missing:${route.programId}`;
     if (renderedTeamProfileSignature === missingSignature) return;
     renderedTeamProfileSignature = missingSignature;
     container.innerHTML = `
@@ -577,7 +578,7 @@ function renderTeamProfile() {
     return;
   }
 
-  const division = requestedProfileDivision(program, params.get("division"));
+  const division = requestedProfileDivision(program, route.division);
   const email = validProgramEmail(program);
   const hasAddress = Boolean(program.homeAddress);
   const locationValue = / home court$/i.test(program.homeGym || "")

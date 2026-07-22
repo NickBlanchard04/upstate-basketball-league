@@ -1,4 +1,4 @@
-let league = window.UBL_DATA;
+﻿let league = window.UBL_DATA;
 const core = window.UBL_CORE;
 const { ACTIVE_STATUSES, FINAL_STATUSES, escapeHtml, publicVenueLabel, safeImageUrl } = core;
 
@@ -172,12 +172,24 @@ function programById(id) {
 }
 
 function teamProfileUrl(programId, division = "") {
+  if (programId && division && programId !== "tbd") {
+    const divisionSlug = division === "Girls Varsity" || division === "girls" ? "girls" : "boys";
+    return `teams/${programId}-${divisionSlug}.html`;
+  }
   const params = new URLSearchParams({ program: programId });
   if (division) params.set("division", division === "Girls Varsity" ? "girls" : "boys");
   return `team.html?${params.toString()}`;
 }
 
-const UBL_TEAM_PROFILE_CACHE_VERSION = "20260722-2";
+function requestedTeamProfileRoute() {
+  const params = new URLSearchParams(location.search);
+  return {
+    programId: params.get("program") || document.body.dataset.teamProgram || "",
+    division: params.get("division") || document.body.dataset.teamDivision || ""
+  };
+}
+
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260722-3";
 
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];
@@ -1103,7 +1115,7 @@ function divisionTeamCardMarkup(program, division, order) {
   }
   const headCoach = program.teams?.[division]?.headCoach?.name || "";
   const detail = headCoach && headCoach !== "To be confirmed" ? `Head coach ${headCoach}` : "Open program profile";
-  const href = `${teamProfileUrl(program.id, division)}&profileBuild=${encodeURIComponent(UBL_TEAM_PROFILE_CACHE_VERSION)}`;
+  const href = teamProfileUrl(program.id, division);
   const accessibleName = `View team ${program.short}, ${division}, ${program.name}. ${detail}. Meet the program`;
   return `
     <a class="division-team-card" href="${safeAttribute(href)}" data-program-card="${safeAttribute(program.id)}" style="--card-order:${order}" aria-label="${safeAttribute(accessibleName)}">
@@ -1247,7 +1259,8 @@ function updateTeamProfileMetadata(program, division) {
   const title = `${program.name} ${division} | UBL`;
   const description = `${program.summary} View ${division.toLowerCase()} coaches, home-court information, and program contact details.`;
   document.title = title;
-  document.querySelector('meta[name="robots"]')?.setAttribute("content", "index, follow");
+  const isStaticProfile = Boolean(document.body.dataset.teamProgram && document.body.dataset.teamDivision);
+  document.querySelector('meta[name="robots"]')?.setAttribute("content", isStaticProfile ? "index, follow" : "noindex, follow");
   document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
   document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
@@ -1263,10 +1276,10 @@ let renderedTeamProfileSignature = "";
 function renderTeamProfile() {
   const container = document.querySelector("[data-team-profile]");
   if (!container) return;
-  const params = new URLSearchParams(location.search);
-  const program = programById(params.get("program"));
+  const route = requestedTeamProfileRoute();
+  const program = programById(route.programId);
   if (!program || program.id === "tbd") {
-    const missingSignature = `missing:${params.get("program") || ""}`;
+    const missingSignature = `missing:${route.programId}`;
     if (renderedTeamProfileSignature === missingSignature) return;
     renderedTeamProfileSignature = missingSignature;
     container.innerHTML = `
@@ -1281,7 +1294,7 @@ function renderTeamProfile() {
     return;
   }
 
-  const division = requestedProfileDivision(program, params.get("division"));
+  const division = requestedProfileDivision(program, route.division);
   const email = validProgramEmail(program);
   const hasAddress = Boolean(program.homeAddress);
   const locationValue = / home court$/i.test(program.homeGym || "")

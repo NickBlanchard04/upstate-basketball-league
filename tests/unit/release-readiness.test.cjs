@@ -49,10 +49,10 @@ test("mobile team routes and profile assets share one cache version", () => {
 
   assert.ok(directoryVersion, "script.js must publish a mobile profile cache version");
   assert.equal(profileVersion, directoryVersion, "team profile scripts must agree on the cache version");
-  assert.match(script, /profileBuild=\$\{encodeURIComponent\(UBL_TEAM_PROFILE_CACHE_VERSION\)\}/);
+  assert.match(script, /teams\/\$\{programId\}-\$\{divisionSlug\}\.html/);
   assert.match(profileExperience, /typeof renderStackedTeamProfile !== "function"/);
 
-  for (const file of ["teams.html", "team.html"]) {
+  for (const file of ["teams.html", "team.html", "teams/kings-school-boys.html"]) {
     const versions = [...read(file).matchAll(/\?v=([0-9-]+)/g)].map((match) => match[1]);
     assert.ok(versions.length > 0, `${file} must version its shared assets`);
     assert.deepEqual([...new Set(versions)], [directoryVersion], `${file} assets must use the profile cache version`);
@@ -61,8 +61,11 @@ test("mobile team routes and profile assets share one cache version", () => {
 
 test("public source excludes fabricated identity and affiliation assets", () => {
   const files = [
-    "index.html", "schedule.html", "standings.html", "teams.html", "team.html", "bracket.html",
-    "rules.html", "gallery.html", "sponsors.html", "about.html", "privacy.html", "404.html", "styles.css",
+    "index.html", "schedule.html", "standings.html", "teams.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
+    "teams/perth-boys.html", "teams/perth-girls.html", "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html",
+    "teams/hv-rocks-boys.html", "teams/hv-flames-girls.html", "team.html", "bracket.html", "rules.html", "gallery.html",
+    "news.html", "news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html",
+    "sponsors.html", "about.html", "privacy.html", "404.html", "styles.css", "discovery.css", "site-shell.js",
     "ubl-standings.css", "ubl-about.css", "sponsors.css", "league-core.js", "data.js",
     "league-data.json", "script.js", "ubl-standings.js", "sponsors.js", "site.webmanifest"
   ];
@@ -84,7 +87,9 @@ test("sitemap contains only statically indexable canonical pages", () => {
   assert.ok(urls.length > 0);
   assert.ok(!urls.some((url) => url.includes("team.html")));
   assert.equal((sitemap.match(/<lastmod>[^<]+<\/lastmod>/g) || []).length, urls.length);
-  assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/teams\.html<\/loc><lastmod>2026-07-21<\/lastmod>/);
+  assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/teams\.html<\/loc><lastmod>2026-07-22<\/lastmod>/);
+  assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/news\.html<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/teams\/hv-rocks-boys\.html<\/loc>/);
 
   for (const url of urls) {
     const parsed = new URL(url);
@@ -92,7 +97,7 @@ test("sitemap contains only statically indexable canonical pages", () => {
     assert.match(read(relative), /<meta name="robots" content="index, follow">/);
   }
   assert.match(read("team.html"), /<meta name="robots" content="noindex, follow">/);
-  assert.match(read("script.js"), /setAttribute\("content", "index, follow"\)/);
+  assert.match(read("script.js"), /isStaticProfile \? "index, follow" : "noindex, follow"/);
 });
 
 test("homepage retains Google Search Console ownership verification", () => {
@@ -106,8 +111,11 @@ test("public discovery files and metadata use the registered UBL domain", () => 
   const canonicalBase = "https://upstatebasketballleague.com";
   const legacyBase = "https://nickblanchard04.github.io/upstate-basketball-league";
   const publicFiles = [
-    "index.html", "schedule.html", "standings.html", "teams.html", "team.html", "bracket.html",
-    "rules.html", "gallery.html", "sponsors.html", "about.html", "privacy.html", "robots.txt", "sitemap.xml",
+    "index.html", "schedule.html", "standings.html", "teams.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
+    "teams/perth-boys.html", "teams/perth-girls.html", "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html",
+    "teams/hv-rocks-boys.html", "teams/hv-flames-girls.html", "team.html", "bracket.html", "rules.html", "gallery.html",
+    "news.html", "news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html",
+    "sponsors.html", "about.html", "privacy.html", "robots.txt", "sitemap.xml",
     "security.txt", ".well-known/security.txt"
   ];
 
@@ -176,7 +184,29 @@ test("team directory and AI summary expose verified league information without J
   const llms = read("llms.txt");
   assert.match(llms, /^# Upstate Basketball League$/m);
   assert.match(llms, /https:\/\/upstatebasketballleague\.com\/schedule\.html/);
+  assert.match(llms, /https:\/\/upstatebasketballleague\.com\/news\.html/);
   assert.match(llms, /Info\.upstatebasketballleague@gmail\.com/);
+});
+
+test("static team and news pages expose indexable source content and structured data", () => {
+  const teamRoutes = [
+    "teams/kings-school-boys.html", "teams/kings-school-girls.html", "teams/perth-boys.html", "teams/perth-girls.html",
+    "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html", "teams/hv-rocks-boys.html", "teams/hv-flames-girls.html"
+  ];
+  for (const route of teamRoutes) {
+    const html = read(route);
+    assert.match(html, /<meta name="robots" content="index, follow">/);
+    assert.match(html, /"@type": "SportsTeam"/);
+    assert.match(html, /<h1>[^<]+<\/h1>/);
+    assert.match(html, /href="schedule\.html"/);
+  }
+
+  assert.match(read("news.html"), /"@type": "CollectionPage"/);
+  for (const route of ["news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html"]) {
+    const html = read(route);
+    assert.match(html, /<meta name="robots" content="index, follow">/);
+    assert.match(html, /"@type": "NewsArticle"/);
+  }
 });
 
 test("security contact files follow the public vulnerability disclosure format", () => {

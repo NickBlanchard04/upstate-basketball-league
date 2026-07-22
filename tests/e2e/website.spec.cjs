@@ -1,4 +1,4 @@
-const { test, expect } = require("@playwright/test");
+﻿const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
 const feed = require("../../league-data.json");
 const liveFeedUrlPattern = /script\.google\.com\/macros\/s\/AKfycbzgjDF7Z0LZahvdeFMa3illib1Dc26LsI2lYG_gCn63gXiUgncmExTQoJrUUD94fxzZ\/exec/;
@@ -50,10 +50,12 @@ test("all public routes render meaningful content without runtime errors", async
     ["/schedule.html", "Choose a week"],
     ["/standings.html", "Standings"],
     ["/teams.html", "Meet the teams shaping UBL."],
-    ["/team.html?program=hv-rocks&division=boys", "HV Rocks"],
+    ["/teams/hv-rocks-boys.html", "HV Rocks"],
     ["/bracket.html", "Playoff brackets"],
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
+    ["/news.html", "UBL news, clearly organized."],
+    ["/news/2027-playoff-format.html", "UBL outlines separate 2027 varsity playoff brackets"],
     ["/sponsors.html", "Partner with the UBL"],
     ["/about.html", "How a UBL season works"],
     ["/privacy.html", "Website privacy"]
@@ -73,7 +75,7 @@ async function useLiveFeed(page, sourceFeed) {
 }
 
 test("public pages do not expose internal placeholder language", async ({ page }) => {
-  for (const route of ["/schedule.html", "/teams.html", "/team.html?program=hv-rocks&division=boys", "/bracket.html", "/gallery.html", "/sponsors.html", "/about.html"]) {
+  for (const route of ["/schedule.html", "/teams.html", "/teams/hv-rocks-boys.html", "/bracket.html", "/gallery.html", "/news.html", "/sponsors.html", "/about.html"]) {
     await page.goto(route);
     const visibleText = await page.locator("body").innerText();
     expect(visibleText).not.toMatch(/\bTBD\b|placeholder|to be confirmed|coming soon/i);
@@ -381,7 +383,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
-  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260722-2");
+  await expect(girlsKings).toHaveAttribute("href", "teams/kings-school-girls.html");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
@@ -405,7 +407,7 @@ test("team directory separates each division and opens the right profile", async
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260722-2$/);
+  await expect(page).toHaveURL(/teams\/kings-school-girls\.html$/);
   await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -413,7 +415,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(page.getByRole("link", { name: "athletic_director@kingsschool.info" })).toHaveAttribute("href", "mailto:athletic_director@kingsschool.info");
 
   await page.getByRole("link", { name: "Boys", exact: true }).click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=boys$/);
+  await expect(page).toHaveURL(/teams\/kings-school-boys\.html$/);
   await expect(page.getByRole("heading", { name: "Hudson Waters" })).toBeVisible();
   await expect(page.getByAltText("Hudson Waters")).toHaveAttribute("src", "assets/optimized/hudson-waters-192.webp");
   await expect(page.getByRole("heading", { name: "Jacob Fischer" })).toBeVisible();
@@ -423,7 +425,7 @@ test("team directory separates each division and opens the right profile", async
 
 test("team profiles expose known venue data and honest missing states", async ({ page }, testInfo) => {
   const isDesktop = testInfo.project.name.startsWith("desktop");
-  await page.goto("/team.html?program=hv-rocks&division=boys");
+  await page.goto("/teams/hv-rocks-boys.html");
   if (isDesktop) await page.locator('[data-team-section-target="head-coach"]').click();
   await expect(page.getByRole("heading", { name: "Marc Bailey" })).toBeVisible();
   if (isDesktop) await page.locator('[data-team-section-target="assistant-coach"]').click();
@@ -434,7 +436,7 @@ test("team profiles expose known venue data and honest missing states", async ({
   await page.locator("[data-map-dialog-close]").click();
   await expect(page.locator(".map-dialog")).not.toBeVisible();
 
-  await page.goto("/team.html?program=perth&division=girls");
+  await page.goto("/teams/perth-girls.html");
   if (isDesktop) {
     await expect(page.locator(".team-banner-coach").filter({ hasText: "Profile pending" }).first()).toContainText("Profile pending");
     await expect(page.locator(".team-banner-program")).toContainText("Home-court details not yet published");
@@ -449,7 +451,7 @@ test("team profiles expose known venue data and honest missing states", async ({
 });
 
 test("team profile keeps the banner camera on desktop and restores the stacked mobile layout", async ({ page }, testInfo) => {
-  await page.goto("/team.html?program=kings-school&division=girls");
+  await page.goto("/teams/kings-school-girls.html");
   const isDesktop = testInfo.project.name.startsWith("desktop");
 
   if (!isDesktop) {
@@ -458,7 +460,7 @@ test("team profile keeps the banner camera on desktop and restores the stacked m
     await expect(page.locator(".team-profile-back")).toHaveAttribute("href", "teams.html");
     await expect(page.locator(".team-profile-hero-copy h1")).toContainText("The King");
     await expect(page.getByRole("link", { name: "Girls", exact: true })).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("link", { name: "Boys", exact: true })).toHaveAttribute("href", "team.html?program=kings-school&division=boys");
+    await expect(page.getByRole("link", { name: "Boys", exact: true })).toHaveAttribute("href", "teams/kings-school-boys.html");
     await expect(page.getByRole("heading", { name: "Girls varsity coaching staff" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -568,7 +570,7 @@ test("team profile keeps the banner camera on desktop and restores the stacked m
 });
 
 test("team Gallery destination opens the matching expanded division album", async ({ page }, testInfo) => {
-  await page.goto("/team.html?program=kings-school&division=girls");
+  await page.goto("/teams/kings-school-girls.html");
   if (testInfo.project.name.startsWith("desktop")) {
     await page.locator('[data-team-section-target="gallery"]').click();
     await expect(page.locator("#team-banner-gallery-detail")).toBeVisible();
@@ -586,7 +588,7 @@ test("team Gallery destination opens the matching expanded division album", asyn
   await expect(page.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(kingsGallery.locator('[data-gallery-division="Girls Varsity"]:not([hidden])')).toHaveCount(6);
   await expect(kingsGallery.locator('[data-gallery-division="Boys Varsity"]:not([hidden])')).toHaveCount(0);
-  await expect(kingsGallery.getByRole("link", { name: "Back to The King’s School team profile" })).toHaveAttribute("href", "team.html?program=kings-school&division=girls");
+  await expect(kingsGallery.getByRole("link", { name: "Back to The King’s School team profile" })).toHaveAttribute("href", "teams/kings-school-girls.html");
   await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe("team-album-kings-school");
 });
 
@@ -601,7 +603,7 @@ test("team identity banners fit every program name without clipping", async ({ p
   ];
 
   for (const [program, division] of profiles) {
-    await page.goto(`/team.html?program=${program}&division=${division}`);
+    await page.goto(`/teams/${program}-${division}.html`);
     await page.evaluate(() => document.fonts.ready);
     await page.locator('[data-team-section-target="identity"]').click();
     await expect.poll(() => page.locator('[data-banner-key="identity"]').evaluate((banner) => {
@@ -617,7 +619,7 @@ test("team identity banners fit every program name without clipping", async ({ p
 
 test("team profile details remain available when reduced motion is requested", async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/team.html?program=kings-school&division=girls");
+  await page.goto("/teams/kings-school-girls.html");
   if (!testInfo.project.name.startsWith("desktop")) {
     await expect(page.locator(".team-profile-hero")).toBeVisible();
     await expect(page.locator(".team-banner")).toHaveCount(0);
@@ -1265,7 +1267,7 @@ test("sponsorship page presents a focused partner path and prospective partner c
 });
 
 test("public pages expose complete search and social metadata", async ({ page, request }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "team.html?program=hv-rocks&division=boys", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "teams/hv-rocks-boys.html", "bracket.html", "rules.html", "gallery.html", "news.html", "news/2027-playoff-format.html", "sponsors.html", "about.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S/);
@@ -1399,7 +1401,7 @@ test("analytics stays disabled on unapproved preview hosts", async ({ page }) =>
 });
 
 test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "team.html?program=hv-rocks&division=boys", "bracket.html", "rules.html", "gallery.html", "sponsors.html", "about.html", "privacy.html", "404.html"];
+  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "teams/hv-rocks-boys.html", "bracket.html", "rules.html", "gallery.html", "news.html", "news/2027-playoff-format.html", "sponsors.html", "about.html", "privacy.html", "404.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     const results = await new AxeBuilder({ page })

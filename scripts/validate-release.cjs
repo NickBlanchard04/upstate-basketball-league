@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.join(siteRoot, "dist");
-const releaseToken = "20260722-2";
+const releaseToken = "20260722-3";
 const canonicalBase = "https://upstatebasketballleague.com/";
 const socialImageUrl = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialImageAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
@@ -13,10 +13,22 @@ const publicHtml = [
   "schedule.html",
   "standings.html",
   "teams.html",
+  "teams/kings-school-boys.html",
+  "teams/kings-school-girls.html",
+  "teams/perth-boys.html",
+  "teams/perth-girls.html",
+  "teams/wilton-baptist-boys.html",
+  "teams/wilton-baptist-girls.html",
+  "teams/hv-rocks-boys.html",
+  "teams/hv-flames-girls.html",
   "team.html",
   "bracket.html",
   "rules.html",
   "gallery.html",
+  "news.html",
+  "news/2026-27-season-planning.html",
+  "news/2027-playoff-format.html",
+  "news/ubl-program-directory.html",
   "sponsors.html",
   "about.html",
   "privacy.html",
@@ -28,9 +40,21 @@ const indexablePages = new Map([
   ["schedule.html", `${canonicalBase}schedule.html`],
   ["standings.html", `${canonicalBase}standings.html`],
   ["teams.html", `${canonicalBase}teams.html`],
+  ["teams/kings-school-boys.html", `${canonicalBase}teams/kings-school-boys.html`],
+  ["teams/kings-school-girls.html", `${canonicalBase}teams/kings-school-girls.html`],
+  ["teams/perth-boys.html", `${canonicalBase}teams/perth-boys.html`],
+  ["teams/perth-girls.html", `${canonicalBase}teams/perth-girls.html`],
+  ["teams/wilton-baptist-boys.html", `${canonicalBase}teams/wilton-baptist-boys.html`],
+  ["teams/wilton-baptist-girls.html", `${canonicalBase}teams/wilton-baptist-girls.html`],
+  ["teams/hv-rocks-boys.html", `${canonicalBase}teams/hv-rocks-boys.html`],
+  ["teams/hv-flames-girls.html", `${canonicalBase}teams/hv-flames-girls.html`],
   ["bracket.html", `${canonicalBase}bracket.html`],
   ["rules.html", `${canonicalBase}rules.html`],
   ["gallery.html", `${canonicalBase}gallery.html`],
+  ["news.html", `${canonicalBase}news.html`],
+  ["news/2026-27-season-planning.html", `${canonicalBase}news/2026-27-season-planning.html`],
+  ["news/2027-playoff-format.html", `${canonicalBase}news/2027-playoff-format.html`],
+  ["news/ubl-program-directory.html", `${canonicalBase}news/ubl-program-directory.html`],
   ["sponsors.html", `${canonicalBase}sponsors.html`],
   ["about.html", `${canonicalBase}about.html`]
 ]);
@@ -40,9 +64,21 @@ const expectedSitemapUrls = [
   `${canonicalBase}schedule.html`,
   `${canonicalBase}standings.html`,
   `${canonicalBase}teams.html`,
+  `${canonicalBase}teams/kings-school-boys.html`,
+  `${canonicalBase}teams/kings-school-girls.html`,
+  `${canonicalBase}teams/perth-boys.html`,
+  `${canonicalBase}teams/perth-girls.html`,
+  `${canonicalBase}teams/wilton-baptist-boys.html`,
+  `${canonicalBase}teams/wilton-baptist-girls.html`,
+  `${canonicalBase}teams/hv-rocks-boys.html`,
+  `${canonicalBase}teams/hv-flames-girls.html`,
   `${canonicalBase}bracket.html`,
   `${canonicalBase}rules.html`,
   `${canonicalBase}gallery.html`,
+  `${canonicalBase}news.html`,
+  `${canonicalBase}news/2026-27-season-planning.html`,
+  `${canonicalBase}news/2027-playoff-format.html`,
+  `${canonicalBase}news/ubl-program-directory.html`,
   `${canonicalBase}sponsors.html`,
   `${canonicalBase}about.html`
 ];
@@ -107,7 +143,7 @@ function imageDimensions(filePath) {
 }
 
 function localTarget(value) {
-  if (!value || value.startsWith("#") || /^(?:mailto:|tel:|javascript:|data:)/i.test(value)) return "";
+  if (!value || value === "../" || value.startsWith("#") || /^(?:mailto:|tel:|javascript:|data:)/i.test(value)) return "";
   if (/^https?:\/\//i.test(value)) {
     const url = new URL(value);
     if (url.origin !== new URL(canonicalBase).origin) return "";
@@ -165,8 +201,8 @@ function validateMetadata(root) {
   const team = read(root, "team.html");
   check(meta(team, "name", "robots") === "noindex, follow", "Generic team template must stay noindex");
   const script = read(root, "script.js");
-  check(script.includes('setAttribute("content", "index, follow")'), "Valid team profiles must become indexable at runtime");
-  check(script.includes("teamProfileUrl(program.id, division)"), "Valid team profiles must receive runtime canonical URLs");
+  check(script.includes('isStaticProfile ? "index, follow" : "noindex, follow"'), "Only static team profiles may become indexable at runtime");
+  check(script.includes("teams/${programId}-${divisionSlug}.html"), "Team profile links must use stable static URLs");
 
   const privacy = read(root, "privacy.html");
   check(meta(privacy, "name", "robots") === "noindex, follow", "Privacy page must stay out of search results");
@@ -233,10 +269,10 @@ function validateSitemap(root) {
     .map((match) => [match[1].replaceAll("&amp;", "&"), match[2]]);
   check(entries.length === expectedSitemapUrls.length, "Every sitemap route needs a lastmod date");
   for (const [url, lastmod] of entries) {
-    const expected = url === `${canonicalBase}teams.html` ? "2026-07-21" : "2026-07-20";
+    const expected = "2026-07-22";
     check(lastmod === expected, `${url} has an inaccurate sitemap lastmod date`);
   }
-  check(!urls.some((url) => url.includes("team.html")), "Client-rendered team templates must not appear in sitemap");
+  check(!urls.some((url) => /\/team\.html(?:$|\?)/.test(url)), "Generic client-rendered team template must not appear in sitemap");
   check(urls.every((url) => [...indexablePages.values()].includes(url)), "Sitemap must contain only statically indexable canonical pages");
 
   const robots = read(root, "robots.txt");
@@ -249,6 +285,20 @@ function validateDiscoveryFiles(root) {
     check(teams.includes(name), `teams.html must expose ${name} without requiring JavaScript`);
   }
   check(teams.includes('"@type": "ItemList"') && teams.includes('"@type": "SportsTeam"'), "teams.html needs structured team-list data");
+  for (const route of [
+    "teams/kings-school-boys.html", "teams/kings-school-girls.html", "teams/perth-boys.html", "teams/perth-girls.html",
+    "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html", "teams/hv-rocks-boys.html", "teams/hv-flames-girls.html"
+  ]) {
+    const profile = read(root, route);
+    check(profile.includes('"@type": "SportsTeam"'), `${route} needs SportsTeam structured data`);
+    check(profile.includes("data-team-program=") && profile.includes("data-team-division="), `${route} needs a stable runtime profile identity`);
+  }
+
+  const news = read(root, "news.html");
+  check(news.includes('"@type": "CollectionPage"') && news.includes("news/2027-playoff-format.html"), "news.html needs a crawlable article collection");
+  for (const route of ["news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html"]) {
+    check(read(root, route).includes('"@type": "NewsArticle"'), `${route} needs NewsArticle structured data`);
+  }
 
   const llms = read(root, "llms.txt");
   check(llms.startsWith("# Upstate Basketball League"), "llms.txt needs an official league heading");
@@ -266,7 +316,7 @@ function validateHonestContent(root) {
   check(sponsors.includes("Prospective partner categories") && sponsors.includes("no organization is shown as a confirmed UBL sponsor"), "Sponsor page needs explicit prospective-category language");
 
   const releaseTextFiles = publicHtml.concat([
-    "styles.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "about.js", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt", "llms.txt"
+    "styles.css", "discovery.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "about.js", "site-shell.js", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt", "llms.txt"
   ]);
   const forbidden = /assets\/team-hv-flames\.svg|assets\/ubl-championship-hero|ubl-core-commitments-trophy|assets\/sponsors|Northline/i;
   for (const file of releaseTextFiles) check(!forbidden.test(read(root, file)), `${file} references a forbidden temporary, fake, sponsor, or Northline asset`);
