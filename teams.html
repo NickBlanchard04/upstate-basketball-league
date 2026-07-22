@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -29,13 +29,14 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260722-2">
-  <script src="config.js?v=20260722-2" defer></script>
-  <script src="analytics.js?v=20260722-2" defer></script>
-  <script src="league-core.js?v=20260722-2" defer></script>
-  <script src="data.js?v=20260722-2" defer></script>
-  <script src="data-loader.js?v=20260722-2" defer></script>
-  <script src="script.js?v=20260722-2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260722-3">
+  <link rel="stylesheet" href="discovery.css?v=20260722-3">
+  <script src="config.js?v=20260722-3" defer></script>
+  <script src="analytics.js?v=20260722-3" defer></script>
+  <script src="league-core.js?v=20260722-3" defer></script>
+  <script src="data.js?v=20260722-3" defer></script>
+  <script src="data-loader.js?v=20260722-3" defer></script>
+  <script src="script.js?v=20260722-3" defer></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -50,6 +51,7 @@
         "item": {
           "@type": "SportsTeam",
           "name": "The King's School",
+          "url": "https://upstatebasketballleague.com/teams/kings-school-boys.html",
           "memberOf": { "@id": "https://upstatebasketballleague.com/#organization" }
         }
       },
@@ -59,6 +61,7 @@
         "item": {
           "@type": "SportsTeam",
           "name": "Perth",
+          "url": "https://upstatebasketballleague.com/teams/perth-boys.html",
           "memberOf": { "@id": "https://upstatebasketballleague.com/#organization" }
         }
       },
@@ -68,6 +71,7 @@
         "item": {
           "@type": "SportsTeam",
           "name": "Wilton Baptist",
+          "url": "https://upstatebasketballleague.com/teams/wilton-baptist-boys.html",
           "memberOf": { "@id": "https://upstatebasketballleague.com/#organization" }
         }
       },
@@ -77,6 +81,7 @@
         "item": {
           "@type": "SportsTeam",
           "name": "HV Rocks",
+          "url": "https://upstatebasketballleague.com/teams/hv-rocks-boys.html",
           "memberOf": { "@id": "https://upstatebasketballleague.com/#organization" }
         }
       },
@@ -86,6 +91,7 @@
         "item": {
           "@type": "SportsTeam",
           "name": "HV Flames",
+          "url": "https://upstatebasketballleague.com/teams/hv-flames-girls.html",
           "memberOf": { "@id": "https://upstatebasketballleague.com/#organization" }
         }
       }
@@ -101,7 +107,7 @@
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a class="active" href="teams.html">Teams</a>
-        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="sponsors.html">Sponsors</a><a href="about.html">About</a>
+        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="news.html">News</a><a href="sponsors.html">Sponsors</a><a href="about.html">About</a>
       </nav>
     </div>
   </header>
@@ -139,6 +145,20 @@
         </div>
       </section>
 
+      <section class="team-profile-index section-wrap" aria-labelledby="team-profile-index-title">
+        <header><span>Public team profiles</span><h2 id="team-profile-index-title">Browse every varsity team.</h2><p>Open a direct team page for approved coaching information, home-court details, schedules, standings, and galleries.</p></header>
+        <div class="team-profile-link-grid">
+          <a href="teams/kings-school-boys.html"><strong>The King's School</strong><span>Boys Varsity</span></a>
+          <a href="teams/kings-school-girls.html"><strong>The King's School</strong><span>Girls Varsity</span></a>
+          <a href="teams/perth-boys.html"><strong>Perth</strong><span>Boys Varsity</span></a>
+          <a href="teams/perth-girls.html"><strong>Perth</strong><span>Girls Varsity</span></a>
+          <a href="teams/wilton-baptist-boys.html"><strong>Wilton Baptist</strong><span>Boys Varsity</span></a>
+          <a href="teams/wilton-baptist-girls.html"><strong>Wilton Baptist</strong><span>Girls Varsity</span></a>
+          <a href="teams/hv-rocks-boys.html"><strong>HV Rocks</strong><span>Boys Varsity</span></a>
+          <a href="teams/hv-flames-girls.html"><strong>HV Flames</strong><span>Girls Varsity</span></a>
+        </div>
+      </section>
+
       <section class="teams-opportunity section-wrap" aria-labelledby="teams-opportunity-title">
         <div>
           <span>One place remains</span>
@@ -152,6 +172,7 @@
         <a href="schedule.html">Full schedule</a>
         <a href="standings.html">Current standings</a>
         <a href="gallery.html">Team galleries</a>
+        <a href="news.html">League news</a>
       </nav>
     </div>
   </main>

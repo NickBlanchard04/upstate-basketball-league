@@ -1,0 +1,405 @@
+.discovery-page,
+.static-team-profile {
+  background: var(--canvas);
+  color: var(--navy-950);
+}
+
+.discovery-hero,
+.league-article-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(120deg, rgba(2, 15, 34, .98), rgba(4, 31, 68, .94)),
+    radial-gradient(circle at 75% 30%, rgba(237, 23, 55, .2), transparent 34%);
+  color: var(--white);
+}
+
+.discovery-hero::after,
+.league-article-hero::after {
+  content: "";
+  position: absolute;
+  inset: -35% -12% auto auto;
+  width: min(54vw, 760px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 12vw rgba(255, 255, 255, .012);
+  pointer-events: none;
+}
+
+.discovery-hero .section-wrap,
+.league-article-hero .section-wrap {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(4rem, 9vw, 8rem);
+}
+
+.discovery-hero span,
+.league-article-hero span,
+.news-feed > header span,
+.news-card > span {
+  font: 800 .78rem/1.1 "IBM Plex Sans", sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.discovery-hero span,
+.league-article-hero span {
+  color: #ff7085;
+}
+
+.news-feed > header span,
+.news-card > span {
+  color: var(--red-dark);
+}
+
+.discovery-hero h1,
+.league-article-hero h1 {
+  max-width: 14ch;
+  margin: .55rem 0 1rem;
+  font: 900 clamp(3.6rem, 8vw, 7.6rem)/.82 "Barlow Condensed", sans-serif;
+  letter-spacing: -.045em;
+  text-transform: uppercase;
+}
+
+.discovery-hero p,
+.league-article-hero p {
+  max-width: 720px;
+  margin: 0;
+  color: rgba(255, 255, 255, .78);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  line-height: 1.7;
+}
+
+.news-feed {
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.news-feed > header {
+  display: grid;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+
+.news-feed h2 {
+  margin: 0;
+  font: 900 clamp(2.4rem, 5vw, 4.8rem)/.9 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.news-card {
+  display: flex;
+  min-height: 330px;
+  flex-direction: column;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--red);
+  background: var(--white);
+  box-shadow: 0 16px 36px rgba(2, 15, 34, .07);
+}
+
+.news-card time {
+  margin-top: .65rem;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.news-card h3 {
+  margin: 1.1rem 0 .75rem;
+  font: 800 clamp(1.7rem, 3vw, 2.35rem)/.94 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.news-card h3 a {
+  color: var(--navy-950);
+  text-decoration: none;
+}
+
+.news-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.news-card-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: .5rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  color: var(--red-dark);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.news-card h3 a:hover,
+.news-card h3 a:focus-visible,
+.news-card-link:hover,
+.news-card-link:focus-visible {
+  color: var(--red);
+}
+
+.league-article-hero a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-bottom: 1.35rem;
+  color: rgba(255, 255, 255, .8);
+  font-weight: 700;
+}
+
+.league-article-hero time {
+  display: block;
+  margin-top: 1.25rem;
+  color: rgba(255, 255, 255, .62);
+  font-size: .86rem;
+}
+
+.league-article-body {
+  max-width: 850px;
+  padding-block: clamp(2.8rem, 7vw, 6rem);
+}
+
+.league-article-body > p,
+.league-article-body > h2 {
+  max-width: 72ch;
+}
+
+.league-article-body > p {
+  font-size: 1.08rem;
+  line-height: 1.78;
+}
+
+.league-article-body > p:first-child {
+  color: var(--navy-950);
+  font-size: clamp(1.2rem, 2vw, 1.42rem);
+  font-weight: 600;
+}
+
+.league-article-body h2 {
+  margin: 2.5rem 0 .8rem;
+  font: 900 clamp(2rem, 4vw, 3.2rem)/.92 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.discovery-callout {
+  margin-top: 2.5rem;
+  padding: clamp(1.4rem, 4vw, 2.4rem);
+  border-left: 5px solid var(--red);
+  background: var(--navy-950);
+  color: var(--white);
+}
+
+.discovery-callout strong {
+  display: block;
+  font: 900 clamp(1.8rem, 3vw, 2.6rem)/.95 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.discovery-callout p {
+  max-width: 62ch;
+  color: rgba(255, 255, 255, .76);
+  line-height: 1.6;
+}
+
+.static-team-profile {
+  padding-block: clamp(2rem, 6vw, 5rem);
+}
+
+.static-team-back {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--navy-950);
+  font-weight: 800;
+}
+
+.static-team-header {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  margin-top: 1rem;
+  padding: clamp(1.3rem, 4vw, 3rem);
+  background: var(--navy-950);
+  color: var(--white);
+}
+
+.static-team-header img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--white);
+  border-radius: 50%;
+  padding: .8rem;
+}
+
+.static-team-header span {
+  color: #ff7085;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.static-team-header h1 {
+  margin: .3rem 0;
+  font: 900 clamp(3rem, 8vw, 6rem)/.86 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.static-team-header p {
+  max-width: 66ch;
+  margin: 0;
+  color: rgba(255, 255, 255, .72);
+}
+
+.static-team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.static-team-grid section {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.static-team-grid h2 {
+  margin-top: 0;
+  font: 900 2rem/1 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.static-team-grid dl {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+}
+
+.static-team-grid dl > div {
+  display: grid;
+  gap: .2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.static-team-grid dt {
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.static-team-grid dd {
+  display: grid;
+  gap: .2rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.static-team-grid dd a,
+.static-team-grid dd span,
+.static-team-grid dd strong {
+  overflow-wrap: anywhere;
+}
+
+.team-profile-index {
+  padding-block: clamp(2.8rem, 6vw, 5rem);
+}
+
+.team-profile-index header {
+  max-width: 760px;
+}
+
+.team-profile-index header > span {
+  color: var(--red);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.team-profile-index h2 {
+  margin: .4rem 0 .65rem;
+  font: 900 clamp(2.6rem, 5vw, 4.7rem)/.9 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.team-profile-index header p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.team-profile-link-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1.5rem;
+}
+
+.team-profile-link-grid a {
+  display: grid;
+  min-height: 118px;
+  align-content: end;
+  gap: .3rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-bottom: 4px solid var(--red);
+  background: var(--white);
+  color: var(--navy-950);
+  text-decoration: none;
+}
+
+.team-profile-link-grid strong {
+  font: 800 1.45rem/1 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.team-profile-link-grid span {
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.team-profile-link-grid a:hover,
+.team-profile-link-grid a:focus-visible {
+  border-color: var(--red);
+  background: var(--navy-950);
+  color: var(--white);
+}
+
+.team-profile-link-grid a:hover span,
+.team-profile-link-grid a:focus-visible span {
+  color: rgba(255, 255, 255, .72);
+}
+
+@media (max-width: 900px) {
+  .news-grid { grid-template-columns: 1fr; }
+  .news-card { min-height: 0; }
+  .team-profile-link-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .discovery-hero .section-wrap,
+  .league-article-hero .section-wrap { padding-block: 3.25rem; }
+  .discovery-hero h1,
+  .league-article-hero h1 { font-size: clamp(3rem, 16vw, 4.5rem); }
+  .static-team-header { grid-template-columns: 82px minmax(0, 1fr); }
+  .static-team-header h1 { font-size: clamp(2.7rem, 14vw, 4rem); }
+  .static-team-grid { grid-template-columns: 1fr; }
+  .team-profile-link-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-card,
+  .news-card a { scroll-behavior: auto; transition: none; }
+}
