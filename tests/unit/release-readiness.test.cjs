@@ -237,16 +237,28 @@ test("homepage schema identifies the league without inventing a storefront", () 
   assert.equal(website.publisher["@id"], organization["@id"]);
 });
 
-test("utility pages provide contextual internal links beyond the main navigation", () => {
-  for (const file of ["schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "about.html"]) {
+test("public pages use one shared Keep Exploring component", () => {
+  const files = [
+    "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "about.html", "news.html",
+    "news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html",
+    "teams/hv-flames-girls.html", "teams/hv-rocks-boys.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
+    "teams/perth-boys.html", "teams/perth-girls.html", "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html"
+  ];
+
+  for (const file of files) {
     const html = read(file);
-    const block = html.match(/<nav class="page-paths[\s\S]*?<\/nav>/)?.[0] || "";
-    assert.match(block, /Continue exploring/, `${file} needs a contextual navigation label`);
-    assert.ok((block.match(/href="[^"]+\.html"/g) || []).length >= 3, `${file} needs at least three contextual internal links`);
+    const block = html.match(/<section class="explore-panel[\s\S]*?<\/section>/)?.[0] || "";
+    assert.match(block, /Keep exploring/, `${file} needs the shared contextual navigation label`);
+    assert.match(block, /<h2[^>]*>[^<]+<\/h2>/, `${file} needs a contextual exploration headline`);
+    assert.match(block, /explore-panel-links/, `${file} needs the shared contextual navigation layout`);
+    assert.equal((block.match(/href="[^"]+\.html/g) || []).length, 4, `${file} needs the four reference actions`);
+    assert.doesNotMatch(html, /Continue exploring/i, `${file} must not use the retired label`);
   }
 
   const teamProfileExperience = read("team-profile-experience.js");
   assert.match(teamProfileExperience, /Back to all teams/, "team.html needs a contextual return path");
+  assert.match(teamProfileExperience, /class="explore-panel section-wrap"/, "desktop team profiles need the shared Keep Exploring component");
+  assert.match(teamProfileExperience, /Keep exploring/, "desktop team profiles need the shared contextual navigation label");
   assert.ok((teamProfileExperience.match(/href="[^"]+\.html"/g) || []).length >= 3, "team.html needs at least three contextual internal links");
 
   const gallery = read("gallery.html");

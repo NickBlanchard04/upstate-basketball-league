@@ -3429,6 +3429,7 @@ th {
 .team-profile-coaches header > span,
 .team-profile-facts header > span,
 .team-profile-next span,
+.explore-panel-eyebrow,
 .team-profile-missing > span {
   display: block;
   color: #ff8799;
@@ -4328,9 +4329,8 @@ th {
   text-transform: uppercase;
 }
 
-.team-profile-next {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
+.team-profile-next,
+.explore-panel {
   padding: clamp(1.5rem, 4vw, 2.5rem);
   display: grid;
   gap: 1.5rem;
@@ -4339,7 +4339,18 @@ th {
   background: var(--navy-900);
 }
 
-.team-profile-next strong {
+.team-profile-next {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.explore-panel {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.team-profile-next strong,
+.explore-panel h2 {
   display: block;
   max-width: 24ch;
   margin-top: 0.35rem;
@@ -4347,13 +4358,19 @@ th {
   text-transform: uppercase;
 }
 
-.team-profile-next > div:last-child {
+.explore-panel h2 {
+  margin-bottom: 0;
+}
+
+.team-profile-next > div:last-child,
+.explore-panel-links {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
 }
 
-.team-profile-next a {
+.team-profile-next a,
+.explore-panel a {
   min-height: 2.9rem;
   padding: 0.65rem 0.85rem;
   display: inline-flex;
@@ -4450,7 +4467,8 @@ th {
   }
 
   .team-profile-back:hover,
-  .team-profile-next a:hover {
+  .team-profile-next a:hover,
+  .explore-panel a:hover {
     color: var(--white);
     border-color: var(--white);
   }
@@ -4631,12 +4649,14 @@ th {
     width: min(28vw, 20rem);
   }
 
-  .team-profile-next {
+  .team-profile-next,
+  .explore-panel {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
   }
 
-  .team-profile-next > div:last-child {
+  .team-profile-next > div:last-child,
+  .explore-panel-links {
     justify-content: flex-end;
   }
 }

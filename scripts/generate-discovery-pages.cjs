@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const canonicalBase = "https://upstatebasketballleague.com/";
-const releaseToken = "20260722-3";
+const releaseToken = "20260722-4";
 const socialImage = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
 
@@ -284,8 +284,11 @@ function teamPage(program, key, team) {
           <section aria-labelledby="team-staff-title"><h2 id="team-staff-title">Coaching staff</h2><dl>${coachText}${assistantText}</dl></section>
           <section aria-labelledby="team-program-title"><h2 id="team-program-title">Program information</h2><dl><div><dt>Division</dt><dd>${team.division}</dd></div><div><dt>Home court</dt><dd>${locationText}</dd></div><div><dt>Program contact</dt><dd>${contactText}</dd></div></dl></section>
         </div>
-        <nav class="page-paths" aria-label="Continue exploring"><span>Continue exploring</span><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="gallery.html?program=${program.id}&amp;division=${key}">Team gallery</a><a href="news.html">League news</a></nav>
       </article>
+      <section class="explore-panel section-wrap" aria-labelledby="team-explore-title">
+        <div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="team-explore-title">See where ${htmlEscape(program.name)} fits into the season.</h2></div>
+        <nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="schedule.html">League schedule</a><a href="standings.html">Current standings</a><a href="gallery.html?program=${program.id}&amp;division=${key}">Team gallery</a><a href="teams.html">All teams</a></nav>
+      </section>
     </section>
   </main>
 </body>
@@ -323,7 +326,7 @@ function newsIndexPage() {
     <section class="news-feed section-wrap" aria-labelledby="latest-news-title"><header><span>Latest from the league</span><h2 id="latest-news-title">League updates</h2></header><div class="news-grid">
       ${articles.map((article) => `<article class="news-card"><span>${article.eyebrow}</span><time datetime="${article.isoDate}">${article.date}</time><h3><a href="news/${article.slug}.html">${article.title}</a></h3><p>${article.description}</p><a class="news-card-link" href="news/${article.slug}.html">Read update <span aria-hidden="true">&#8594;</span></a></article>`).join("\n      ")}
     </div></section>
-    <nav class="page-paths section-wrap" aria-label="League information"><span>League information</span><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a><a href="about.html">About UBL</a></nav>
+    <section class="explore-panel section-wrap" aria-labelledby="news-explore-title"><div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="news-explore-title">Stay connected to the UBL season.</h2></div><nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a><a href="about.html">About UBL</a></nav></section>
   </main>
 </body>
 </html>\n`;
@@ -356,7 +359,7 @@ function articlePage(article) {
       <header class="league-article-hero"><div class="section-wrap"><a href="news.html">All league news</a><span>${article.eyebrow}</span><h1>${article.title}</h1><p>${article.description}</p><time datetime="${article.isoDate}">${article.date}</time></div></header>
       <div class="league-article-body section-wrap">${article.body}</div>
     </article>
-    <nav class="page-paths section-wrap" aria-label="Continue exploring"><span>Continue exploring</span><a href="news.html">All news</a><a href="schedule.html">Schedule</a><a href="teams.html">Teams</a><a href="about.html">About UBL</a></nav>
+    <section class="explore-panel section-wrap" aria-labelledby="article-explore-title"><div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="article-explore-title">Keep following the UBL season.</h2></div><nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="news.html">All news</a><a href="schedule.html">Schedule</a><a href="teams.html">Teams</a><a href="about.html">About UBL</a></nav></section>
   </main>
 </body>
 </html>\n`;

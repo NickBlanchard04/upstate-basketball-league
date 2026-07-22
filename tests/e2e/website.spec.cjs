@@ -408,7 +408,7 @@ test("team directory separates each division and opens the right profile", async
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
   await expect(page).toHaveURL(/teams\/kings-school-girls\.html$/);
-  await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The King’s School", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Hudson Waters" })).toHaveCount(0);
@@ -493,7 +493,7 @@ test("team profile keeps the banner camera on desktop and restores the stacked m
 
   await expect(page.getByText("How we win matters", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Kingdom impact", { exact: true })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "All teams", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "All teams", exact: true })).toHaveCount(1);
   await expect(page.locator(".team-banner-toolbar > p")).toHaveCount(0);
   await expect(backLink).toHaveAttribute("href", "teams.html");
   await expect(page.locator(".team-banner")).toHaveCount(6);
@@ -1131,7 +1131,7 @@ test("about page explains the league, season, testimonial, and leadership", asyn
     await expect(profileDetails.nth(1)).toHaveAttribute("open", "");
     await expect(profileDetails.nth(1)).toContainText("Smaller high school programs competing");
 
-    const pathLinkHeights = await page.locator(".page-paths a").evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
+    const pathLinkHeights = await page.locator(".explore-panel a").evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
     expect(pathLinkHeights.every((height) => height >= 44)).toBe(true);
   } else {
     await expect(page.locator(".league-profile-mobile")).toBeHidden();
