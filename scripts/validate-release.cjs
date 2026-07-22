@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.join(siteRoot, "dist");
-const releaseToken = "20260721-11";
+const releaseToken = "20260721-12";
 const canonicalBase = "https://upstatebasketballleague.com/";
 const socialImageUrl = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialImageAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
@@ -19,6 +19,7 @@ const publicHtml = [
   "gallery.html",
   "sponsors.html",
   "about.html",
+  "privacy.html",
   "404.html"
 ];
 
@@ -166,6 +167,10 @@ function validateMetadata(root) {
   const script = read(root, "script.js");
   check(script.includes('setAttribute("content", "index, follow")'), "Valid team profiles must become indexable at runtime");
   check(script.includes("teamProfileUrl(program.id, division)"), "Valid team profiles must receive runtime canonical URLs");
+
+  const privacy = read(root, "privacy.html");
+  check(meta(privacy, "name", "robots") === "noindex, follow", "Privacy page must stay out of search results");
+  check(privacy.includes("data-consent-open") && privacy.includes("data-consent-status"), "Privacy page needs working consent controls");
 
   const notFound = read(root, "404.html");
   check(meta(notFound, "name", "robots") === "noindex, follow", "404.html must remain noindex");

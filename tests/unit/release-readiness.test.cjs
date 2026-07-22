@@ -62,7 +62,7 @@ test("mobile team routes and profile assets share one cache version", () => {
 test("public source excludes fabricated identity and affiliation assets", () => {
   const files = [
     "index.html", "schedule.html", "standings.html", "teams.html", "team.html", "bracket.html",
-    "rules.html", "gallery.html", "sponsors.html", "about.html", "404.html", "styles.css",
+    "rules.html", "gallery.html", "sponsors.html", "about.html", "privacy.html", "404.html", "styles.css",
     "ubl-standings.css", "ubl-about.css", "sponsors.css", "league-core.js", "data.js",
     "league-data.json", "script.js", "ubl-standings.js", "sponsors.js", "site.webmanifest"
   ];
@@ -107,7 +107,7 @@ test("public discovery files and metadata use the registered UBL domain", () => 
   const legacyBase = "https://nickblanchard04.github.io/upstate-basketball-league";
   const publicFiles = [
     "index.html", "schedule.html", "standings.html", "teams.html", "team.html", "bracket.html",
-    "rules.html", "gallery.html", "sponsors.html", "about.html", "robots.txt", "sitemap.xml",
+    "rules.html", "gallery.html", "sponsors.html", "about.html", "privacy.html", "robots.txt", "sitemap.xml",
     "security.txt", ".well-known/security.txt"
   ];
 
@@ -132,9 +132,13 @@ test("public analytics configures the UBL GA4 property behind privacy and host g
   const analytics = read("analytics.js");
 
   assert.match(config, /googleAnalyticsMeasurementId:\s*"G-E7W3TG2NR8"/);
-  assert.match(analytics, /allowedHost\s*&&\s*!doNotTrack/);
+  assert.match(analytics, /canTrack\s*=\s*allowedHost\s*&&\s*!doNotTrack/);
+  assert.match(analytics, /readPreference\(\)\s*!==\s*granted/);
+  assert.match(analytics, /ubl-analytics-consent-v1/);
   assert.match(analytics, /googletagmanager\.com\/gtag\/js\?id=/);
   assert.match(analytics, /window\.gtag\("config", measurementId/);
+  assert.match(read("privacy.html"), /data-consent-open/);
+  assert.match(read("privacy.html"), /<meta name="robots" content="noindex, follow">/);
 });
 
 test("release builder identifies UBL by project sentinels instead of a local folder name", () => {

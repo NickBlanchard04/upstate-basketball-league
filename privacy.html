@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Read how the Upstate Basketball League website handles optional analytics, game information, photographs, and privacy choices.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#020f22">
+  <title>Website Privacy | Upstate Basketball League</title>
+  <link rel="canonical" href="https://upstatebasketballleague.com/privacy.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Upstate Basketball League">
+  <meta property="og:title" content="Website Privacy | Upstate Basketball League">
+  <meta property="og:description" content="See what the UBL website collects, why it is used, and how to control optional analytics.">
+  <meta property="og:url" content="https://upstatebasketballleague.com/privacy.html">
+  <meta property="og:image" content="https://upstatebasketballleague.com/assets/social/ubl-social-share.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="900">
+  <meta property="og:image:alt" content="Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Website Privacy | Upstate Basketball League">
+  <meta name="twitter:description" content="See what the UBL website collects, why it is used, and how to control optional analytics.">
+  <meta name="twitter:image" content="https://upstatebasketballleague.com/assets/social/ubl-social-share.jpg">
+  <meta name="twitter:image:alt" content="Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="assets/fonts/barlow-condensed-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/ibm-plex-sans-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
+  <link rel="stylesheet" href="styles.css?v=20260721-12">
+  <script src="config.js?v=20260721-12" defer></script>
+  <script src="analytics.js?v=20260721-12" defer></script>
+  <script src="league-core.js?v=20260721-12" defer></script>
+  <script src="data.js?v=20260721-12" defer></script>
+  <script src="data-loader.js?v=20260721-12" defer></script>
+  <script src="script.js?v=20260721-12" defer></script>
+</head>
+<body class="privacy-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Upstate Basketball League home">
+        <img src="assets/optimized/ubl-logo-192.webp" alt="" width="192" height="295">
+        <span><strong>Upstate</strong> Basketball League</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span><span class="sr-only">Open menu</span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a>
+        <a href="bracket.html">Bracket</a><a href="rules.html">League standards</a><a href="gallery.html">Gallery</a><a href="sponsors.html">Sponsors</a><a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="subpage-main" id="main">
+    <section class="page-banner">
+      <div>
+        <h1>Website privacy</h1>
+        <p>Clear choices, limited data, and no advertising profiles.</p>
+      </div>
+      <strong>UBL</strong>
+    </section>
+
+    <article class="panel section-wrap privacy-panel">
+      <div class="privacy-summary">
+        <div>
+          <h2>The short version</h2>
+          <p>UBL uses essential website services to publish league information. Optional analytics stays off until you allow it. We do not sell visitor information or use analytics for advertising.</p>
+        </div>
+        <div class="privacy-choice-card">
+          <strong>Your analytics choice</strong>
+          <span data-consent-status aria-live="polite">Checking this browser's preference...</span>
+          <button class="button button-primary" type="button" data-consent-open>Review privacy choices</button>
+        </div>
+      </div>
+
+      <div class="privacy-sections">
+        <section class="privacy-section" aria-labelledby="privacy-essential">
+          <h2 id="privacy-essential">Essential website activity</h2>
+          <p>The website requests public schedules, scores, standings, team information, and approved gallery images from UBL-managed files and Google services. These requests are necessary to show current league information and do not depend on analytics consent.</p>
+        </section>
+
+        <section class="privacy-section" aria-labelledby="privacy-analytics">
+          <h2 id="privacy-analytics">Optional analytics</h2>
+          <p>After you choose “Allow analytics,” the site may use Google Analytics and the UBL's private performance feed. The UBL feed records only:</p>
+          <ul>
+            <li>The page viewed and referring website host.</li>
+            <li>General device class and browser viewport size.</li>
+            <li>Page load time, largest-contentful-paint time, and layout-shift measurement.</li>
+          </ul>
+          <p>The UBL feed does not include names, email addresses, form entries, advertising identifiers, or precise location. Google Analytics may place first-party analytics cookies after consent. Advertising storage, Google signals, and ad personalization are disabled in the UBL configuration.</p>
+        </section>
+
+        <section class="privacy-section" aria-labelledby="privacy-choice">
+          <h2 id="privacy-choice">How your choice works</h2>
+          <p>Your browser stores “granted” or “denied” under <code>ubl-analytics-consent-v1</code> in local storage. This preference is not used for advertising. Declining prevents optional analytics from loading on future visits from that browser. Clearing browser storage will ask you again.</p>
+        </section>
+
+        <section class="privacy-section" aria-labelledby="privacy-league-content">
+          <h2 id="privacy-league-content">Scores, photographs, and communications</h2>
+          <p>Game results and team information are league records supplied by authorized representatives. Gallery photographs are published only through the UBL approval workflow and may include student-athletes, coaches, officials, or spectators. Email links open your email provider; the public website does not collect the message itself.</p>
+        </section>
+
+        <section class="privacy-section" aria-labelledby="privacy-contact">
+          <h2 id="privacy-contact">Questions or removal requests</h2>
+          <p>To ask about website data, correct public league information, or request review of a photograph, email <a href="mailto:info.upstatebasketballleague@gmail.com">info.upstatebasketballleague@gmail.com</a>.</p>
+          <p><strong>Last updated:</strong> July 21, 2026.</p>
+        </section>
+      </div>
+    </article>
+  </main>
+</body>
+</html>
