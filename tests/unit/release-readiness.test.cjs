@@ -137,8 +137,14 @@ test("public analytics configures the UBL GA4 property behind privacy and host g
   assert.match(analytics, /ubl-analytics-consent-v1/);
   assert.match(analytics, /googletagmanager\.com\/gtag\/js\?id=/);
   assert.match(analytics, /window\.gtag\("config", measurementId/);
-  assert.match(read("privacy.html"), /data-consent-open/);
-  assert.match(read("privacy.html"), /<meta name="robots" content="noindex, follow">/);
+  const privacy = read("privacy.html");
+  assert.match(privacy, /data-consent-open/);
+  assert.match(privacy, /<meta name="robots" content="noindex, follow">/);
+  assert.match(privacy, /id="privacy-sponsors"/);
+  assert.match(privacy, /id="privacy-advertising"/);
+  assert.match(privacy, /does not sell personal information/);
+  assert.match(privacy, /does not provide sponsors with raw UBL performance-feed rows/);
+  assert.match(analytics, /show sponsors our combined audience reach/);
 });
 
 test("release builder identifies UBL by project sentinels instead of a local folder name", () => {
