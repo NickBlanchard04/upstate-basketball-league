@@ -25,6 +25,7 @@ const publicFiles = Object.freeze([
   "sponsors.css",
   "config.js",
   "analytics.js",
+  "about.js",
   "league-core.js",
   "data.js",
   "data-loader.js",

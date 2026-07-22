@@ -38,12 +38,12 @@
   --ubl-white: #ffffff;
   --ubl-line: #d8dee8;
   --ubl-muted: #58677a;
-  width: min(calc(100% - 1rem), 92rem);
-  margin: 0.5rem auto 0;
+  width: min(calc(100% - 2rem), 92rem);
+  margin: 1rem auto 0;
 }
 
 .league-profile {
-  padding: clamp(1.5rem, 4vw, 3rem) clamp(0.85rem, 3vw, 2.25rem);
+  padding: 0.75rem;
   overflow: hidden;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
   border-bottom: 1px solid rgba(255, 255, 255, 0.18);
@@ -51,8 +51,114 @@
 }
 
 .league-profile-grid {
-  display: grid;
+  display: none;
   gap: 1rem;
+}
+
+.league-profile-mobile {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.league-profile-mobile details {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(4, 26, 56, 0.94);
+}
+
+.league-profile-mobile summary {
+  min-height: 5.5rem;
+  padding: 0.7rem 0.8rem;
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr) 2.75rem;
+  gap: 0.8rem;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 180ms ease;
+}
+
+.league-profile-mobile summary::-webkit-details-marker {
+  display: none;
+}
+
+.league-profile-mobile summary:hover,
+.league-profile-mobile summary:focus-visible,
+.league-profile-mobile details[open] summary {
+  background: rgba(7, 52, 103, 0.72);
+}
+
+.league-profile-mobile summary:focus-visible {
+  outline: 0.16rem solid var(--ubl-white);
+  outline-offset: -0.3rem;
+}
+
+.league-profile-mobile-icon {
+  width: 3.25rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: #102b4a;
+  box-shadow: inset 0 -0.2rem 0 var(--ubl-red);
+}
+
+.league-profile-mobile-icon .material-symbols-rounded {
+  color: var(--ubl-white);
+  font-family: "Material Symbols Rounded";
+  font-size: 1.65rem;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  font-feature-settings: "liga";
+  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 24;
+}
+
+.league-profile-mobile-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.league-profile-mobile-copy strong {
+  color: var(--ubl-white);
+  font: 900 clamp(1.65rem, 8vw, 2rem)/0.95 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.league-profile-mobile-copy > span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.league-profile-mobile-cue {
+  width: 0.75rem;
+  aspect-ratio: 1;
+  place-self: center;
+  border-right: 0.15rem solid #ff9aac;
+  border-bottom: 0.15rem solid #ff9aac;
+  transform: rotate(45deg) translate(-0.15rem, -0.15rem);
+  transition: transform 220ms ease;
+}
+
+.league-profile-mobile details[open] .league-profile-mobile-cue {
+  transform: rotate(225deg) translate(-0.15rem, -0.15rem);
+}
+
+.league-profile-mobile-panel {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(2, 15, 34, 0.78);
+}
+
+.league-profile-mobile-panel p {
+  margin: 0;
+  padding: 0.9rem 1rem 1rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .league-profile-card {
@@ -285,7 +391,16 @@
 }
 
 @media (min-width: 640px) {
+  .league-profile {
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(0.85rem, 3vw, 2.25rem);
+  }
+
+  .league-profile-mobile {
+    display: none;
+  }
+
   .league-profile-grid {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -517,7 +632,8 @@
 }
 
 .winning-photo {
-  min-height: 15rem;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
   position: relative;
   overflow: hidden;
   border-bottom: 0.35rem solid var(--ubl-red);
@@ -544,7 +660,7 @@
 }
 
 .winning-copy {
-  padding: clamp(1.5rem, 6vw, 3.75rem) clamp(1.25rem, 5vw, 4.25rem);
+  padding: 1.25rem 1rem 1.4rem;
   position: relative;
 }
 
@@ -573,7 +689,7 @@
 .winning-copy h2 {
   margin: 0 0 1rem;
   color: var(--ubl-white);
-  font: 900 clamp(3rem, 13vw, 4.2rem)/0.84 "Barlow Condensed", sans-serif;
+  font: 900 clamp(2.7rem, 12vw, 3.8rem)/0.86 "Barlow Condensed", sans-serif;
   letter-spacing: -0.025em;
   text-transform: uppercase;
 }
@@ -698,9 +814,9 @@
 
 .season-heading {
   width: min(100%, 92rem);
-  min-height: 11rem;
+  min-height: 9.75rem;
   margin-inline: auto;
-  padding: clamp(1.65rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3.5rem);
+  padding: 1.5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -717,7 +833,7 @@
   max-width: 70rem;
   margin: 0 auto;
   color: var(--ubl-white);
-  font: 900 clamp(3.35rem, 8.4vw, 7.4rem)/0.83 var(--display);
+  font: 900 clamp(3rem, 13vw, 3.65rem)/0.84 var(--display);
   letter-spacing: -0.035em;
   scroll-margin-top: 6.5rem;
   text-align: center;
@@ -726,31 +842,37 @@
 }
 
 .season-path {
-  width: min(100%, 92rem);
+  width: 100%;
   margin: 0 auto;
-  padding: 1.1rem 1rem 1.6rem 3.7rem;
-  display: grid;
+  padding: 1rem;
+  display: flex;
+  gap: 0.75rem;
   position: relative;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  scroll-padding-inline: 1rem;
+  scroll-snap-type: x mandatory;
   list-style: none;
   background: rgba(2, 15, 34, 0.34);
 }
 
+.season-path::-webkit-scrollbar {
+  display: none;
+}
+
 .season-path::before {
-  content: "";
-  width: 0.2rem;
-  position: absolute;
-  top: 2rem;
-  bottom: 2.75rem;
-  left: 1.7rem;
-  background: var(--ubl-red);
-  transform-origin: top;
+  display: none;
 }
 
 .season-stage {
   --season-delay: 80ms;
+  flex: 0 0 min(84vw, 21.5rem);
   min-width: 0;
   position: relative;
-  padding-bottom: 1rem;
+  padding-bottom: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .season-stage:nth-child(2) {
@@ -767,7 +889,7 @@
 
 .season-flip-card {
   width: 100%;
-  height: clamp(20rem, 100vw, 23rem);
+  height: 21rem;
   padding: 0;
   display: block;
   position: relative;
@@ -786,7 +908,7 @@
   display: block;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 720ms cubic-bezier(0.2, 0.72, 0.14, 1);
+  transition: transform 450ms cubic-bezier(0.2, 0.72, 0.14, 1);
 }
 
 .season-flip-card.is-flipped .season-card-inner {
@@ -802,7 +924,7 @@
 }
 
 .season-card-front {
-  grid-template-rows: minmax(0, 1fr) 7rem;
+  grid-template-rows: minmax(0, 1fr) 6.35rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
   background: var(--ubl-navy);
   transition: border-color 180ms ease, box-shadow 180ms ease;
@@ -878,7 +1000,7 @@
 
 .season-copy {
   min-height: 0;
-  padding: 1.45rem 0.9rem 0.75rem;
+  padding: 1.2rem 0.9rem 0.65rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -887,6 +1009,7 @@
 }
 
 .season-node {
+  display: none;
   width: 0.58rem;
   height: 0.58rem;
   position: absolute;
@@ -1037,6 +1160,58 @@
   margin-top: 0.65rem;
 }
 
+.season-mobile-progress {
+  min-height: 4.4rem;
+  padding: 0.75rem 1rem 0.95rem;
+  display: grid;
+  grid-template-columns: auto minmax(3.5rem, 1fr);
+  gap: 0.35rem 0.8rem;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(2, 15, 34, 0.86);
+}
+
+.season-mobile-count {
+  color: var(--ubl-white);
+  font: 700 1rem/1 "IBM Plex Sans", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.season-mobile-count strong {
+  color: #ff9aac;
+  font-size: 1.1rem;
+}
+
+.season-mobile-dots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.season-mobile-dots i {
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  background: transparent;
+  transition: width 180ms ease, border-radius 180ms ease, background-color 180ms ease;
+}
+
+.season-mobile-dots i.is-active {
+  width: 1.35rem;
+  border-color: var(--ubl-red);
+  border-radius: 999px;
+  background: var(--ubl-red);
+}
+
+.season-mobile-hint {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .season-motion-ready .season-path::before {
   transform: scaleY(0);
 }
@@ -1091,8 +1266,17 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
   mix-blend-mode: multiply;
+}
+
+.commitments-background img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .commitments-section > :not(.commitments-background) {
@@ -1101,7 +1285,7 @@
 }
 
 .commitments-heading {
-  padding: clamp(1.75rem, 5vw, 3.25rem) clamp(1.25rem, 5vw, 3.5rem);
+  padding: 1.5rem 1rem;
   color: var(--ubl-white);
   background: rgba(2, 15, 34, 0.78);
   border-bottom: 1px solid rgba(255, 255, 255, 0.22);
@@ -1119,7 +1303,7 @@
 .commitments-heading h2 {
   margin: 0 0 0.45rem;
   color: var(--ubl-white);
-  font: 900 clamp(2.6rem, 10vw, 5rem)/0.9 "Barlow Condensed", sans-serif;
+  font: 900 clamp(2.35rem, 10vw, 5rem)/0.9 "Barlow Condensed", sans-serif;
   letter-spacing: -0.02em;
   text-transform: uppercase;
 }
@@ -1133,7 +1317,7 @@
 }
 
 .lineup-stage {
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: 0.85rem;
   background: rgba(2, 15, 34, 0.58);
 }
 
@@ -1336,7 +1520,7 @@
 .testimonial-break blockquote {
   margin: 0;
   color: var(--ubl-white);
-  font: 800 clamp(1.7rem, 7vw, 2.65rem)/1.08 "Barlow Condensed", sans-serif;
+  font: 800 clamp(1.55rem, 6.5vw, 2.65rem)/1.1 "Barlow Condensed", sans-serif;
 }
 
 .testimonial-break cite {
@@ -1526,7 +1710,27 @@
   line-height: 1.4;
 }
 
+.about-page .page-paths a {
+  width: 100%;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+}
+
+.about-page .page-paths a + a {
+  border-top: 1px solid rgba(2, 15, 34, 0.12);
+}
+
 @media (min-width: 640px) {
+  .about-page .page-paths a {
+    width: auto;
+    min-height: 2.75rem;
+  }
+
+  .about-page .page-paths a + a {
+    border-top: 0;
+  }
+
   .winning-actions {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1637,6 +1841,7 @@
 
   .winning-photo {
     min-height: 34rem;
+    aspect-ratio: auto;
     border-right: 0.35rem solid var(--ubl-red);
     border-bottom: 0;
   }
@@ -1646,6 +1851,7 @@
   }
 
   .winning-copy {
+    padding: clamp(1.5rem, 6vw, 3.75rem) clamp(1.25rem, 5vw, 4.25rem);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1937,6 +2143,14 @@
 
 /* Concept 7 playboard: a square 2x2 season journey built from live controls. */
 @media (min-width: 768px) {
+  .league-profile,
+  .winning-section,
+  .commitments-section,
+  .testimonial-break,
+  .leadership-section {
+    width: min(calc(100% - 1rem), 92rem);
+  }
+
   .season-section {
     width: 100%;
   }
@@ -1948,11 +2162,21 @@
     justify-content: center;
   }
 
+  .season-heading h1 {
+    font-size: clamp(3.35rem, 8.4vw, 7.4rem);
+  }
+
   .season-path {
+    width: min(100%, 92rem);
     padding: 0.75rem;
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(20rem, 1fr));
     gap: 0.2rem;
+    overflow: visible;
+    overscroll-behavior-inline: auto;
+    scroll-padding-inline: 0;
+    scroll-snap-type: none;
     isolation: isolate;
   }
 
@@ -1962,9 +2186,12 @@
 
   .season-stage,
   .season-stage:nth-child(2) {
+    flex: initial;
     min-height: 0;
     padding-bottom: 0;
     border: 0;
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
   }
 
   .season-stage + .season-stage {
@@ -1974,6 +2201,10 @@
   .season-flip-card {
     height: 100%;
     min-height: 20rem;
+  }
+
+  .season-card-inner {
+    transition: transform 720ms cubic-bezier(0.2, 0.72, 0.14, 1);
   }
 
   .season-card-front {
@@ -1998,6 +2229,7 @@
   }
 
   .season-node {
+    display: block;
     width: 0.72rem;
     height: 0.72rem;
     top: -0.5rem;
@@ -2032,6 +2264,14 @@
   .season-back-description {
     max-width: 32rem;
     font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  }
+
+  .season-mobile-progress {
+    display: none;
+  }
+
+  .commitments-heading {
+    padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
   }
 }
 

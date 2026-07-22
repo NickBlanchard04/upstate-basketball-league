@@ -31,17 +31,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon-64.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=20260721-10">
-  <link rel="stylesheet" href="ubl-about.css?v=20260721-10">
-  <script src="config.js?v=20260721-10" defer></script>
-  <script src="analytics.js?v=20260721-10" defer></script>
-  <script src="league-core.js?v=20260721-10" defer></script>
-  <script src="data.js?v=20260721-10" defer></script>
-  <script src="data-loader.js?v=20260721-10" defer></script>
-  <script src="script.js?v=20260721-10" defer></script>
+  <link rel="stylesheet" href="styles.css?v=20260721-11">
+  <link rel="stylesheet" href="ubl-about.css?v=20260721-11">
+  <script src="config.js?v=20260721-11" defer></script>
+  <script src="analytics.js?v=20260721-11" defer></script>
+  <script src="about.js?v=20260721-11" defer></script>
 </head>
 <body class="about-page">
-  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="index.html" aria-label="Upstate Basketball League home"><img src="assets/optimized/ubl-logo-192.webp" alt="" width="192" height="295"><span><strong>Upstate</strong> Basketball League</span></a>
@@ -60,7 +56,7 @@
           <h1 id="season-title">How a UBL season works</h1>
         </div>
       </div>
-      <ol class="season-path">
+      <ol class="season-path" aria-label="Four stages of a UBL season">
         <li class="season-stage season-stage-programs">
           <button class="season-flip-card" type="button" aria-pressed="false" aria-label="Programs enter: show details" data-season-title="Programs enter">
             <span class="season-card-inner">
@@ -170,10 +166,41 @@
           </button>
         </li>
       </ol>
+      <div class="season-mobile-progress" aria-label="Season card progress">
+        <span class="season-mobile-count" aria-live="polite" aria-atomic="true"><strong data-season-current>1</strong> of 4</span>
+        <span class="season-mobile-dots" aria-hidden="true"><i class="is-active"></i><i></i><i></i><i></i></span>
+        <span class="season-mobile-hint">Swipe through · tap for details</span>
+      </div>
     </section>
 
     <section class="league-profile section-wrap" aria-labelledby="league-profile-title">
       <h2 class="sr-only" id="league-profile-title">About the Upstate Basketball League</h2>
+      <div class="league-profile-mobile" aria-label="About the UBL">
+        <details data-accordion-group="league-profile">
+          <summary>
+            <span class="league-profile-mobile-icon" aria-hidden="true"><span class="material-symbols-rounded">handshake</span></span>
+            <span class="league-profile-mobile-copy"><strong>Who we are</strong><span>Faith. Competition. Clear standards.</span></span>
+            <span class="league-profile-mobile-cue" aria-hidden="true"></span>
+          </summary>
+          <div class="league-profile-mobile-panel"><p>A structured league that brings faith, competition, sportsmanship, and clear standards onto the same court.</p></div>
+        </details>
+        <details data-accordion-group="league-profile">
+          <summary>
+            <span class="league-profile-mobile-icon" aria-hidden="true"><span class="material-symbols-rounded">forum</span></span>
+            <span class="league-profile-mobile-copy"><strong>Who we serve</strong><span>Growing varsity programs.</span></span>
+            <span class="league-profile-mobile-cue" aria-hidden="true"></span>
+          </summary>
+          <div class="league-profile-mobile-panel"><p>Smaller high school programs competing in Boys Varsity and Girls Varsity divisions.</p></div>
+        </details>
+        <details data-accordion-group="league-profile">
+          <summary>
+            <span class="league-profile-mobile-icon" aria-hidden="true"><span class="material-symbols-rounded">account_balance</span></span>
+            <span class="league-profile-mobile-copy"><strong>Where we play</strong><span>Across upstate New York.</span></span>
+            <span class="league-profile-mobile-cue" aria-hidden="true"></span>
+          </summary>
+          <div class="league-profile-mobile-panel"><p>Across upstate New York, with games hosted in member-program gyms and a shared postseason championship.</p></div>
+        </details>
+      </div>
       <div class="league-profile-grid">
         <button class="league-profile-card" type="button" aria-pressed="false" aria-label="Who we are: show details" data-profile-title="Who we are">
           <span class="league-profile-card-inner">
@@ -299,7 +326,10 @@
     </section>
 
     <section class="commitments-section section-wrap" aria-labelledby="commitments-title">
-      <img class="commitments-background" src="assets/ubl/ubl-kingdom-impact-huddle.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async" fetchpriority="low" aria-hidden="true">
+      <picture class="commitments-background" aria-hidden="true">
+        <source media="(max-width: 767px)" srcset="assets/optimized/ubl-kingdom-impact-huddle-768.webp" type="image/webp">
+        <img src="assets/ubl/ubl-kingdom-impact-huddle.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async" fetchpriority="low">
+      </picture>
       <div class="commitments-heading">
         <p class="lineup-eyebrow">UBL starting lineup</p>
         <h2 id="commitments-title">Our Core Commitments</h2>

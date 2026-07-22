@@ -60,6 +60,38 @@ final result: passed
 
 ---
 
+# About Mobile Optimization QA
+
+## Scope
+
+- Added a horizontal, scroll-snapping season journey on screens below 768px with an active-card counter, progress dots, and a concise swipe/tap cue.
+- Replaced the three tall mobile profile flip cards with compact native accordions while preserving the existing desktop cards.
+- Tightened mobile section spacing and the winning/testimonial type scale without changing the leadership content or structure.
+- Increased the three “Continue exploring” links to 48px touch targets.
+- Replaced the full-size Core Commitments backdrop on mobile with a coordinated 768px WebP and moved About onto a dedicated page script instead of the global league-data stack.
+
+## Browser evidence
+
+- Verified at 375 × 812, 414 × 896, 768 × 1024, and 1440 × 1000.
+- The 375px page height dropped from approximately 6,582px to 4,544px (about 31% shorter).
+- Mobile document width equals the viewport width; no horizontal page overflow was found.
+- Season rail overflow and snap behavior are present, the active counter advances, and card flips remain functional.
+- Profile accordions keep only one item open at a time; desktop profile cards remain unchanged.
+- Leadership biographies remain fully visible and unchanged, per scope.
+- Mobile navigation targets measure 48px high.
+- Mobile Core Commitments uses `ubl-kingdom-impact-huddle-768.webp`.
+- About requests `about.js` and no longer requests `league-core.js`, `data.js`, `data-loader.js`, or `script.js`.
+
+## Verification
+
+- About-specific desktop and mobile Chromium tests passed.
+- Release unit, workflow, build, and validation checks passed.
+- Full desktop/mobile browser suite completed with 66 passing, 3 skipped, and one unrelated gallery-layout check passing on retry.
+
+final result: passed
+
+---
+
 # About Season Title consistency design QA
 
 ## Comparison target

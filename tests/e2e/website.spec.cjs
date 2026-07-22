@@ -380,7 +380,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
-  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-10");
+  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-11");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
@@ -404,7 +404,7 @@ test("team directory separates each division and opens the right profile", async
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-10$/);
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-11$/);
   await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -1026,6 +1026,8 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => document.fonts.check('700 16px "Material Symbols Rounded"'))).toBe(true);
   expect(requestedUrls.some((url) => /fonts\.googleapis\.com|fonts\.gstatic\.com/.test(url))).toBe(false);
+  expect(requestedUrls.some((url) => /\/about\.js(?:[?#]|$)/.test(url))).toBe(true);
+  expect(requestedUrls.some((url) => /\/(?:league-core|data|data-loader|script)\.js(?:[?#]|$)/.test(url))).toBe(false);
 
   const pageBackground = await page.locator("body.about-page").evaluate((element) => getComputedStyle(element).backgroundImage);
   expect(pageBackground).toContain("ubl-about-playbook-texture.webp");
@@ -1035,6 +1037,9 @@ test("fonts and responsive artwork load from optimized local assets", async ({ p
   const seasonArtworkSource = await seasonArtwork.evaluate((image) => image.currentSrc);
   if (testInfo.project.name.startsWith("mobile")) {
     expect(seasonArtworkSource).toContain("about-season-01-programs-illustrated-768.webp");
+    const commitmentBackdrop = page.locator(".commitments-background img");
+    await commitmentBackdrop.scrollIntoViewIfNeeded();
+    await expect.poll(() => commitmentBackdrop.evaluate((image) => image.currentSrc)).toContain("ubl-kingdom-impact-huddle-768.webp");
   } else {
     expect(seasonArtworkSource).toContain("about-season-01-programs-illustrated-1536.webp");
   }
@@ -1055,6 +1060,7 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(page.locator(".page-banner, .league-identity")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Built for growing programs." })).toHaveCount(0);
   await expect(page.locator(".league-profile-card")).toHaveCount(3);
+  await expect(page.locator(".league-profile-mobile details")).toHaveCount(3);
   await expect(page.locator('.league-profile-card[aria-pressed="true"]')).toHaveCount(0);
   await expect(page.locator(".league-profile-grid")).toContainText("Who we are");
   await expect(page.locator(".league-profile-grid")).toContainText("Who we serve");
@@ -1075,6 +1081,10 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   expect(routeMarkersOverlap).toBe(false);
 
   if (testInfo.project.name === "mobile-chromium") {
+    await expect(page.locator(".season-mobile-progress")).toBeVisible();
+    await expect(page.locator(".season-mobile-count")).toContainText("1 of 4");
+    expect(await page.locator(".season-path").evaluate((rail) => rail.scrollWidth > rail.clientWidth)).toBe(true);
+
     const mobileNumbersSitInsidePhotos = await page.locator(".season-stage").evaluateAll((stages) => stages.every((stage) => {
       const number = stage.querySelector(".season-step").getBoundingClientRect();
       const photo = stage.querySelector(".season-media").getBoundingClientRect();
@@ -1085,6 +1095,11 @@ test("about page explains the league, season, testimonial, and leadership", asyn
         && number.bottom >= photo.bottom - 90;
     }));
     expect(mobileNumbersSitInsidePhotos).toBe(true);
+
+    await page.locator(".season-path").evaluate((rail) => {
+      rail.scrollTo({ left: rail.querySelectorAll(".season-stage")[1].offsetLeft - 16, behavior: "instant" });
+    });
+    await expect(page.locator(".season-mobile-count")).toContainText("2 of 4");
   }
 
   const seasonCards = page.locator(".season-flip-card");
@@ -1099,19 +1114,35 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await expect(page.locator(".season-back-icon")).toHaveCount(0);
   await expect(seasonCards.nth(1).locator(".season-card-back")).toHaveCSS("text-align", "center");
 
-  const profileCards = page.locator(".league-profile-card");
-  await profileCards.nth(0).click();
-  await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "true");
-  await expect(profileCards.nth(0).locator(".league-profile-back")).toHaveAttribute("aria-hidden", "false");
-  await expect(profileCards.nth(0)).toContainText("A structured league that brings faith");
-  await profileCards.nth(1).click();
-  await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "false");
-  await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "true");
-  await expect(profileCards.nth(1)).toContainText("Smaller high school programs competing");
-  await profileCards.nth(2).click();
-  await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "false");
-  await expect(profileCards.nth(2)).toContainText("Across upstate New York");
-  await expect(profileCards.nth(2).locator(".league-profile-back")).toHaveCSS("text-align", "center");
+  if (testInfo.project.name === "mobile-chromium") {
+    await expect(page.locator(".league-profile-grid")).toBeHidden();
+    const profileDetails = page.locator(".league-profile-mobile details");
+    await profileDetails.nth(0).locator("summary").click();
+    await expect(profileDetails.nth(0)).toHaveAttribute("open", "");
+    await expect(profileDetails.nth(0)).toContainText("A structured league that brings faith");
+    await profileDetails.nth(1).locator("summary").click();
+    await expect(profileDetails.nth(0)).not.toHaveAttribute("open", "");
+    await expect(profileDetails.nth(1)).toHaveAttribute("open", "");
+    await expect(profileDetails.nth(1)).toContainText("Smaller high school programs competing");
+
+    const pathLinkHeights = await page.locator(".page-paths a").evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
+    expect(pathLinkHeights.every((height) => height >= 44)).toBe(true);
+  } else {
+    await expect(page.locator(".league-profile-mobile")).toBeHidden();
+    const profileCards = page.locator(".league-profile-card");
+    await profileCards.nth(0).click();
+    await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "true");
+    await expect(profileCards.nth(0).locator(".league-profile-back")).toHaveAttribute("aria-hidden", "false");
+    await expect(profileCards.nth(0)).toContainText("A structured league that brings faith");
+    await profileCards.nth(1).click();
+    await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "false");
+    await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "true");
+    await expect(profileCards.nth(1)).toContainText("Smaller high school programs competing");
+    await profileCards.nth(2).click();
+    await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "false");
+    await expect(profileCards.nth(2)).toContainText("Across upstate New York");
+    await expect(profileCards.nth(2).locator(".league-profile-back")).toHaveCSS("text-align", "center");
+  }
 
   const programIllustration = page.getByAltText("Illustrated UBL players gathered shoulder-to-shoulder in a pregame huddle");
   const competitionIllustration = page.getByAltText("Illustrated varsity basketball players contesting the opening tip");

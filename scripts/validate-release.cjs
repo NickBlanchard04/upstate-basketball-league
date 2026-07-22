@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.join(siteRoot, "dist");
-const releaseToken = "20260721-10";
+const releaseToken = "20260721-11";
 const canonicalBase = "https://upstatebasketballleague.com/";
 const socialImageUrl = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialImageAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
@@ -249,7 +249,7 @@ function validateHonestContent(root) {
   check(sponsors.includes("Prospective partner categories") && sponsors.includes("no organization is shown as a confirmed UBL sponsor"), "Sponsor page needs explicit prospective-category language");
 
   const releaseTextFiles = publicHtml.concat([
-    "styles.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt"
+    "styles.css", "team-profile-experience.css", "team-gallery-experience.css", "ubl-standings.css", "ubl-about.css", "sponsors.css", "about.js", "league-core.js", "data.js", "league-data.json", "script.js", "team-profile-experience.js", "team-gallery-experience.js", "ubl-standings.js", "sponsors.js", "site.webmanifest", "sitemap.xml", "robots.txt"
   ]);
   const forbidden = /assets\/team-hv-flames\.svg|assets\/ubl-championship-hero|ubl-core-commitments-trophy|assets\/sponsors|Northline/i;
   for (const file of releaseTextFiles) check(!forbidden.test(read(root, file)), `${file} references a forbidden temporary, fake, sponsor, or Northline asset`);
