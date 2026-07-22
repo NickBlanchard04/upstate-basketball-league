@@ -177,7 +177,7 @@ function teamProfileUrl(programId, division = "") {
   return `team.html?${params.toString()}`;
 }
 
-const UBL_TEAM_PROFILE_CACHE_VERSION = "20260722-1";
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260722-2";
 
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];

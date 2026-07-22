@@ -183,7 +183,7 @@
         <div class="consent-banner__copy">
           <span>Privacy</span>
           <h2 id="ubl-consent-title">Help improve the UBL site</h2>
-          <p id="ubl-consent-description">Allow optional analytics to improve schedules, standings, and page speed. We never use it for advertising.</p>
+          <p id="ubl-consent-description">Allow optional analytics to improve the site and show sponsors our combined audience reach. We do not share individual browsing histories.</p>
           <a href="privacy.html">Learn more</a>
         </div>
         <div class="consent-banner__actions">

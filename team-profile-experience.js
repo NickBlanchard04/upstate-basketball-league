@@ -1,6 +1,6 @@
 /* UBL interactive team-profile experience.
    Loaded after script.js so these focused renderers replace the legacy profile layout. */
-const TEAM_PROFILE_ASSET_VERSION = "20260722-1";
+const TEAM_PROFILE_ASSET_VERSION = "20260722-2";
 
 function teamGalleryUrl(programId, division = "") {
   const params = new URLSearchParams({ program: programId });

@@ -6600,7 +6600,9 @@ th {
 }
 
 .privacy-summary h2,
-.privacy-section h2 {
+.privacy-section h2,
+.privacy-impact h2,
+.privacy-toc h2 {
   margin: 0;
   color: var(--navy-950);
   font: 900 clamp(1.45rem, 5vw, 2.15rem)/1 var(--display);
@@ -6609,7 +6611,8 @@ th {
 
 .privacy-summary p,
 .privacy-section p,
-.privacy-section li {
+.privacy-section li,
+.privacy-impact p {
   color: var(--muted);
   line-height: 1.65;
 }
@@ -6646,11 +6649,92 @@ th {
   margin-top: 0.85rem;
 }
 
+.privacy-impact {
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.privacy-section-heading > span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--red);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.privacy-impact-grid {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.privacy-impact-grid > div {
+  padding: 1rem;
+  background: var(--canvas);
+  border-top: 3px solid var(--navy-800);
+}
+
+.privacy-impact-grid strong {
+  display: block;
+  color: var(--ink);
+  font: 800 1.15rem/1.1 var(--display);
+  text-transform: uppercase;
+}
+
+.privacy-impact-grid p {
+  margin: 0.5rem 0 0;
+  font-size: 0.86rem;
+}
+
+.privacy-toc {
+  margin-block: 1.5rem 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  color: var(--white);
+  background:
+    linear-gradient(120deg, rgba(7, 52, 103, 0.5), transparent 60%),
+    var(--navy-950);
+  border-left: 4px solid var(--red);
+}
+
+.privacy-toc h2 {
+  color: var(--white);
+}
+
+.privacy-toc ol {
+  margin: 0.9rem 0 0;
+  padding-left: 1.35rem;
+  display: grid;
+  gap: 0.45rem 2rem;
+}
+
+.privacy-toc li::marker {
+  color: #ff9aac;
+  font-weight: 800;
+}
+
+.privacy-toc a {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-underline-offset: 0.2rem;
+}
+
+.privacy-toc a:hover,
+.privacy-toc a:focus-visible {
+  color: var(--white);
+  text-decoration-color: var(--red);
+}
+
 .privacy-sections {
+  min-width: 0;
   display: grid;
 }
 
 .privacy-section {
+  min-width: 0;
+  scroll-margin-top: 7rem;
   padding-block: 1.4rem;
   border-bottom: 1px solid var(--line);
 }
@@ -6664,9 +6748,98 @@ th {
   padding-left: 1.2rem;
 }
 
+.privacy-section h3 {
+  max-width: 78ch;
+  margin: 1.15rem 0 0.45rem;
+  color: var(--navy-950);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.privacy-section > p,
+.privacy-section > ul,
+.privacy-section > .privacy-callout {
+  max-width: 78ch;
+}
+
+.privacy-section > p + p {
+  margin-top: 0.85rem;
+}
+
+.privacy-section li + li {
+  margin-top: 0.35rem;
+}
+
 .privacy-section a {
   color: var(--navy-800);
   font-weight: 700;
+}
+
+.privacy-section code {
+  padding: 0.08rem 0.28rem;
+  color: var(--ink);
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  font-size: 0.82em;
+}
+
+.privacy-callout {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff7f8;
+  border-left: 4px solid var(--red);
+}
+
+.privacy-callout strong {
+  color: var(--ink);
+}
+
+.privacy-callout p {
+  margin-top: 0.35rem;
+}
+
+.privacy-data-table-wrap,
+.privacy-cookie-table {
+  width: 100%;
+  min-width: 0;
+  margin-top: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+}
+
+.privacy-data-table {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  background: var(--white);
+}
+
+.privacy-data-table th,
+.privacy-data-table td {
+  padding: 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.privacy-data-table th {
+  color: var(--white);
+  background: var(--navy-950);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.privacy-data-table td {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.privacy-data-table tr:last-child td {
+  border-bottom: 0;
 }
 
 @media (min-width: 720px) {
@@ -6684,6 +6857,14 @@ th {
   .privacy-summary {
     grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.6fr);
     align-items: start;
+  }
+
+  .privacy-impact-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .privacy-toc ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
