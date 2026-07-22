@@ -381,7 +381,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(openSpot.locator(".team-card-logo-stage")).toHaveClass(/team-card-logo-stage-open/);
 
   const girlsKings = girlsColumn.locator('[data-program-card="kings-school"]');
-  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260721-12");
+  await expect(girlsKings).toHaveAttribute("href", "team.html?program=kings-school&division=girls&profileBuild=20260722-1");
   await expect(girlsKings).toHaveAccessibleName(/View team.*The King’s School.*Meet the program/);
   await expect(girlsKings.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(girlsKings.locator(".division-team-card-content")).toHaveCSS("text-align", "center");
@@ -405,7 +405,7 @@ test("team directory separates each division and opens the right profile", async
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await girlsKings.click();
-  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260721-12$/);
+  await expect(page).toHaveURL(/team\.html\?program=kings-school&division=girls&profileBuild=20260722-1$/);
   await expect(page.getByRole("heading", { name: "The King’s School" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Brodie Farr" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Todd Brown" })).toBeVisible();
@@ -1318,10 +1318,17 @@ test("analytics stays off until consent and then sends only bounded anonymous le
   });
 
   await page.goto("/schedule.html");
-  const consent = page.getByRole("dialog", { name: "Help us improve the UBL website" });
+  const consent = page.getByRole("dialog", { name: "Help improve the UBL site" });
   await expect(consent).toBeVisible();
   await expect(consent.getByRole("button", { name: "Allow analytics" })).toBeVisible();
-  await expect(consent.getByRole("button", { name: "Decline" })).toBeVisible();
+  await expect(consent.getByRole("button", { name: "No thanks" })).toBeVisible();
+  const consentBox = await consent.boundingBox();
+  const viewport = page.viewportSize();
+  expect(consentBox.height).toBeLessThanOrEqual(viewport.width <= 480 ? 210 : 175);
+  for (const label of ["Allow analytics", "No thanks"]) {
+    const buttonBox = await consent.getByRole("button", { name: label }).boundingBox();
+    expect(buttonBox.height).toBeGreaterThanOrEqual(44);
+  }
   await page.waitForTimeout(500);
   expect(analyticsBody).toBe("");
   await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveCount(0);
@@ -1341,7 +1348,7 @@ test("analytics stays off until consent and then sends only bounded anonymous le
 
   await page.goto("/privacy.html");
   await expect(page.locator("[data-consent-status]")).toContainText("currently allow");
-  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Help improve the UBL site" })).toHaveCount(0);
 });
 
 test("declining analytics persists without loading tracking", async ({ page }) => {
@@ -1362,19 +1369,19 @@ test("declining analytics persists without loading tracking", async ({ page }) =
   });
 
   await page.goto("/index.html");
-  const consent = page.getByRole("dialog", { name: "Help us improve the UBL website" });
-  await consent.getByRole("button", { name: "Decline" }).click();
+  const consent = page.getByRole("dialog", { name: "Help improve the UBL site" });
+  await consent.getByRole("button", { name: "No thanks" }).click();
   await page.waitForTimeout(600);
   expect(analyticsPosts).toBe(0);
   expect(await page.evaluate(() => localStorage.getItem("ubl-analytics-consent-v1"))).toBe("denied");
   await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveCount(0);
 
   await page.reload();
-  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Help improve the UBL site" })).toHaveCount(0);
   await page.goto("/privacy.html");
   await expect(page.locator("[data-consent-status]")).toContainText("currently decline");
   await page.getByRole("button", { name: "Review privacy choices" }).click();
-  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Help improve the UBL site" })).toBeVisible();
 });
 
 test("analytics stays disabled on unapproved preview hosts", async ({ page }) => {
@@ -1388,7 +1395,7 @@ test("analytics stays disabled on unapproved preview hosts", async ({ page }) =>
   await page.goto("/schedule.html");
   await page.waitForTimeout(1800);
   expect(analyticsPosts).toBe(0);
-  await expect(page.getByRole("dialog", { name: "Help us improve the UBL website" })).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Help improve the UBL site" })).toHaveCount(0);
 });
 
 test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {

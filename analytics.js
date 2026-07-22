@@ -181,14 +181,14 @@
     consentBanner.innerHTML = `
       <div class="consent-banner__inner">
         <div class="consent-banner__copy">
-          <span>Privacy choice</span>
-          <h2 id="ubl-consent-title">Help us improve the UBL website</h2>
-          <p id="ubl-consent-description">We use optional analytics to understand which league pages are useful and how well they perform. We do not use analytics for advertising.</p>
-          <a href="privacy.html">Read the privacy details</a>
+          <span>Privacy</span>
+          <h2 id="ubl-consent-title">Help improve the UBL site</h2>
+          <p id="ubl-consent-description">Allow optional analytics to improve schedules, standings, and page speed. We never use it for advertising.</p>
+          <a href="privacy.html">Learn more</a>
         </div>
         <div class="consent-banner__actions">
           <button class="button button-primary" type="button" data-consent-choice="granted">Allow analytics</button>
-          <button class="button button-outline" type="button" data-consent-choice="denied">Decline</button>
+          <button class="button button-outline" type="button" data-consent-choice="denied">No thanks</button>
         </div>
       </div>`;
     document.body.appendChild(consentBanner);
