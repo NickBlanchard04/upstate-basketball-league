@@ -4022,7 +4022,7 @@ th {
   gap: 1rem;
   border: 1px solid color-mix(in srgb, var(--profile-accent) 78%, white 22%);
   color: var(--white);
-  background: color-mix(in srgb, var(--profile-accent) 86%, var(--navy-950));
+  background: color-mix(in srgb, var(--profile-accent) 68%, var(--navy-950));
   box-shadow: 0 0.85rem 2rem color-mix(in srgb, var(--profile-accent) 24%, transparent);
   font: 900 0.82rem/1 var(--body);
   letter-spacing: 0.06em;
@@ -4043,7 +4043,7 @@ th {
 .team-profile-gallery-link:hover,
 .team-profile-gallery-link:focus-visible {
   color: var(--white);
-  background: color-mix(in srgb, var(--profile-accent) 74%, var(--navy-950));
+  background: color-mix(in srgb, var(--profile-accent) 58%, var(--navy-950));
   box-shadow: 0 1rem 2.4rem color-mix(in srgb, var(--profile-accent) 34%, transparent);
   transform: translateY(-2px);
 }
