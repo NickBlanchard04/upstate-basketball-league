@@ -39,6 +39,8 @@ const publicFiles = Object.freeze([
   ".well-known/security.txt",
   "security.txt",
   "sitemap.xml",
+  "llms.txt",
+  "5e2cb865318641f38db2af0e8a4a4bc8.txt",
   "site.webmanifest"
 ]);
 
