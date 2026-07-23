@@ -66,7 +66,7 @@ function createTeamCell(program, division) {
 
   link.className = "team-link";
   const divisionSlug = division === "Girls Varsity" ? "girls" : "boys";
-  link.href = `team.html?program=${encodeURIComponent(program.id)}&division=${divisionSlug}`;
+  link.href = `teams/${program.id}-${divisionSlug}.html`;
   link.setAttribute("aria-label", `View ${program.name} team details`);
 
   logo.src = safeImageUrl(program.logo);

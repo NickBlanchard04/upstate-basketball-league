@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const canonicalBase = "https://upstatebasketballleague.com/";
-const releaseToken = "20260723-1";
+const releaseToken = "20260723-2";
 const socialImage = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
 
@@ -153,7 +153,7 @@ const articles = [
     date: "July 22, 2026",
     isoDate: "2026-07-22",
     body: `
-      <p>The UBL program directory currently includes The King's School, Perth, Wilton Baptist, HV Rocks, and HV Flames across the league's boys and girls varsity divisions.</p>
+      <p>The UBL program directory currently includes <a href="teams/kings-school-boys.html">The King's School</a>, <a href="teams/perth-boys.html">Perth</a>, <a href="teams/wilton-baptist-boys.html">Wilton Baptist</a>, <a href="teams/hv-rocks-boys.html">HV Rocks</a>, and <a href="teams/hv-flames-girls.html">HV Flames</a> across the league's boys and girls varsity divisions.</p>
       <h2>One directory for useful program information</h2>
       <p>Each public team page brings together its approved coaching information, home-court details, program contact path, schedule, standings, and gallery link. Information that has not been approved by a team representative is clearly identified instead of being guessed.</p>
       <p>UBL is also welcoming another varsity program committed to organized competition, shared standards, and a meaningful championship path.</p>
@@ -234,6 +234,7 @@ function teamPage(program, key, team) {
     "@type": "SportsTeam",
     "@id": `${canonical}#team`,
     name: `${program.name} ${team.division}`,
+    alternateName: program.name,
     sport: "Basketball",
     url: canonical,
     logo: `${canonicalBase}${program.logo}`,

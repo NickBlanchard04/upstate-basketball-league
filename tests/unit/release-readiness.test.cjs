@@ -176,10 +176,22 @@ test("team directory and AI summary expose verified league information without J
   const json = [...teams.matchAll(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/g)]
     .map((match) => JSON.parse(match[1]))
     .find((schema) => schema["@type"] === "ItemList");
-  assert.equal(json.numberOfItems, 5);
+  assert.equal(json.numberOfItems, 8);
   assert.deepEqual(json.itemListElement.map((entry) => entry.item.name), [
-    "The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"
+    "The King's School Boys Varsity",
+    "The King's School Girls Varsity",
+    "Perth Boys Varsity",
+    "Perth Girls Varsity",
+    "Wilton Baptist Boys Varsity",
+    "Wilton Baptist Girls Varsity",
+    "HV Rocks Boys Varsity",
+    "HV Flames Girls Varsity"
   ]);
+  for (const entry of json.itemListElement) {
+    assert.match(entry.item.url, /^https:\/\/upstatebasketballleague\.com\/teams\/[a-z-]+-(?:boys|girls)\.html$/);
+    assert.equal(entry.item["@id"], `${entry.item.url}#team`);
+    assert.equal(entry.item.sport, "Basketball");
+  }
 
   const llms = read("llms.txt");
   assert.match(llms, /^# Upstate Basketball League$/m);
@@ -209,6 +221,31 @@ test("static team and news pages expose indexable source content and structured 
   }
 });
 
+test("team references use crawlable canonical profile links", () => {
+  const script = read("script.js");
+  const standings = read("ubl-standings.js");
+  const teams = read("teams.html");
+  const programNews = read("news/ubl-program-directory.html");
+
+  assert.match(script, /function teamEntityLinkMarkup\(/);
+  assert.match(script, /function gameTeamLinkMarkup\(/);
+  assert.match(script, /class="ticker-team-link team-entity-link"/);
+  assert.match(script, /class="schedule-team schedule-team-\$\{side\} team-entity-link"/);
+  assert.doesNotMatch(standings, /team\.html\?program=/);
+  assert.match(standings, /teams\/\$\{program\.id\}-\$\{divisionSlug\}\.html/);
+
+  for (const route of [
+    "teams/kings-school-boys.html",
+    "teams/perth-boys.html",
+    "teams/wilton-baptist-boys.html",
+    "teams/hv-rocks-boys.html",
+    "teams/hv-flames-girls.html"
+  ]) {
+    assert.match(teams, new RegExp(`href="${route.replaceAll(".", "\\.")}"`));
+    assert.match(programNews, new RegExp(`href="${route.replaceAll(".", "\\.")}"`));
+  }
+});
+
 test("security contact files follow the public vulnerability disclosure format", () => {
   const canonical = read(".well-known/security.txt");
   const legacy = read("security.txt");
@@ -229,9 +266,21 @@ test("homepage schema identifies the league without inventing a storefront", () 
   const website = schema["@graph"].find((item) => item["@type"] === "WebSite");
   assert.equal(organization.name, "Upstate Basketball League");
   assert.equal(organization.areaServed.name, "Upstate New York");
+  assert.equal(organization.member.length, 8);
   assert.deepEqual(organization.member.map((team) => team.name), [
-    "The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"
+    "The King's School Boys Varsity",
+    "The King's School Girls Varsity",
+    "Perth Boys Varsity",
+    "Perth Girls Varsity",
+    "Wilton Baptist Boys Varsity",
+    "Wilton Baptist Girls Varsity",
+    "HV Rocks Boys Varsity",
+    "HV Flames Girls Varsity"
   ]);
+  for (const team of organization.member) {
+    assert.match(team.url, /^https:\/\/upstatebasketballleague\.com\/teams\/[a-z-]+-(?:boys|girls)\.html$/);
+    assert.equal(team["@id"], `${team.url}#team`);
+  }
   assert.equal(organization.address, undefined);
   assert.equal(organization["@type"], "SportsOrganization");
   assert.equal(website.publisher["@id"], organization["@id"]);

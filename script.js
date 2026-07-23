@@ -1,4 +1,4 @@
-﻿let league = window.UBL_DATA;
+let league = window.UBL_DATA;
 const core = window.UBL_CORE;
 const { ACTIVE_STATUSES, FINAL_STATUSES, escapeHtml, publicVenueLabel, safeImageUrl } = core;
 
@@ -181,6 +181,37 @@ function teamProfileUrl(programId, division = "") {
   return `team.html?${params.toString()}`;
 }
 
+function canonicalTeamDivision(program, division = "") {
+  const normalized = division === "Girls Varsity" || division === "girls"
+    ? "Girls Varsity"
+    : division === "Boys Varsity" || division === "boys"
+      ? "Boys Varsity"
+      : "";
+  if (normalized && program?.divisions?.includes(normalized)) return normalized;
+  return program?.divisions?.[0] || normalized || "Boys Varsity";
+}
+
+function teamEntityLinkMarkup(programId, division = "", label = "", options = {}) {
+  const program = programById(programId);
+  const text = label || program?.name || "Team not assigned";
+  const className = ["team-entity-link", options.className].filter(Boolean).join(" ");
+  if (!program || program.id === "tbd") {
+    return `<span class="${safeAttribute(className)}">${escapeHtml(text)}</span>`;
+  }
+  const resolvedDivision = canonicalTeamDivision(program, division);
+  const tabIndex = options.tabIndex === -1 ? ' tabindex="-1"' : "";
+  return `<a class="${safeAttribute(className)}" href="${safeAttribute(teamProfileUrl(program.id, resolvedDivision))}" data-team-page-link="${safeAttribute(program.id)}" data-team-page-division="${safeAttribute(resolvedDivision)}" aria-label="${safeAttribute(`View ${program.name} ${resolvedDivision} team page`)}"${tabIndex}>${escapeHtml(text)}</a>`;
+}
+
+function gameTeamLinkMarkup(game, side, label = "", options = {}) {
+  return teamEntityLinkMarkup(
+    game[`${side}Id`],
+    game.division,
+    label || gameTeamName(game, side),
+    options
+  );
+}
+
 function requestedTeamProfileRoute() {
   const params = new URLSearchParams(location.search);
   return {
@@ -189,7 +220,7 @@ function requestedTeamProfileRoute() {
   };
 }
 
-const UBL_TEAM_PROFILE_CACHE_VERSION = "20260723-1";
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260723-2";
 
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];
@@ -237,7 +268,7 @@ function gameMarkup(game) {
     <article class="game-row" data-game-id="${safeAttribute(game.id || "")}">
       <div class="game-date">${escapeHtml(dateParts[0])}<span>${escapeHtml(dateParts.slice(1).join(" "))} &middot; ${escapeHtml(game.time)}</span></div>
       <div class="game-info">
-        <strong>${escapeHtml(gameTeamName(game, "away"))} <em>vs</em> ${escapeHtml(gameTeamName(game, "home"))}</strong>
+        <strong>${gameTeamLinkMarkup(game, "away")} <em>vs</em> ${gameTeamLinkMarkup(game, "home")}</strong>
         <p>${escapeHtml(game.division)} &middot; ${game.stage ? `${escapeHtml(game.stage)} &middot; ` : ""}${gameLocationMarkup(game)}</p>
         <div class="game-row-status">${gameStatusMarkup(game)}</div>
       </div>
@@ -256,11 +287,16 @@ function scheduleDateParts(game) {
 
 function scheduleTeamMarkup(game, side) {
   const team = tickerTeam(game, side);
+  const program = programById(game[`${side}Id`]);
+  const element = program && program.id !== "tbd" ? "a" : "div";
+  const attributes = program && program.id !== "tbd"
+    ? ` href="${safeAttribute(teamProfileUrl(program.id, canonicalTeamDivision(program, game.division)))}" data-team-page-link="${safeAttribute(program.id)}" data-team-page-division="${safeAttribute(canonicalTeamDivision(program, game.division))}" aria-label="${safeAttribute(`View ${program.name} ${canonicalTeamDivision(program, game.division)} team page`)}"`
+    : "";
   return `
-    <div class="schedule-team schedule-team-${side}">
+    <${element} class="schedule-team schedule-team-${side} team-entity-link"${attributes}>
       <img src="${safeAttribute(team.logo)}" alt="">
       <strong>${escapeHtml(team.name)}</strong>
-    </div>
+    </${element}>
   `;
 }
 
@@ -386,6 +422,15 @@ function tickerTeam(game, side) {
   };
 }
 
+function tickerTeamEntityMarkup(game, side, team, interactive = true) {
+  const program = programById(game[`${side}Id`]);
+  const contents = side === "away"
+    ? `<img src="${safeAttribute(team.logo)}" alt=""><b>${escapeHtml(team.short)}</b>`
+    : `<b>${escapeHtml(team.short)}</b><img src="${safeAttribute(team.logo)}" alt="">`;
+  if (!program || program.id === "tbd") return `<span class="ticker-team-link">${contents}</span>`;
+  return `<a class="ticker-team-link team-entity-link" href="${safeAttribute(teamProfileUrl(program.id, canonicalTeamDivision(program, game.division)))}" data-team-page-link="${safeAttribute(program.id)}" data-team-page-division="${safeAttribute(canonicalTeamDivision(program, game.division))}" aria-label="${safeAttribute(`View ${team.name} ${canonicalTeamDivision(program, game.division)} team page`)}"${interactive ? "" : ' tabindex="-1"'}>${contents}</a>`;
+}
+
 function tickerGameMarkup(game, interactive = true) {
   const away = tickerTeam(game, "away");
   const home = tickerTeam(game, "home");
@@ -397,15 +442,13 @@ function tickerGameMarkup(game, interactive = true) {
     ? `Final &middot; ${escapeHtml(game.division)}`
     : `${isLive ? "Live now &middot; " : ""}${escapeHtml(game.division)}${game.stage ? ` &middot; ${escapeHtml(game.stage)}` : ""}`;
   return `
-    <a class="ticker-game" href="schedule.html"${interactive ? "" : ' tabindex="-1"'} data-ticker-state="${state}" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}${isFinal ? ", final" : ""}.">
+    <article class="ticker-game" data-ticker-state="${state}" aria-label="${safeAttribute(away.name)} versus ${safeAttribute(home.name)}, ${safeAttribute(shortDate)} at ${safeAttribute(game.time)}${isFinal ? ", final" : ""}.">
       <time><span>${escapeHtml(shortDate)}</span><small>${escapeHtml(game.time)}</small></time>
-      <img src="${safeAttribute(away.logo)}" alt="">
-      <b>${escapeHtml(away.short)}</b>
+      ${tickerTeamEntityMarkup(game, "away", away, interactive)}
       <em>vs</em>
-      <b>${escapeHtml(home.short)}</b>
-      <img src="${safeAttribute(home.logo)}" alt="">
+      ${tickerTeamEntityMarkup(game, "home", home, interactive)}
       <span class="ticker-status">${status}</span>
-    </a>
+    </article>
   `;
 }
 
@@ -424,7 +467,7 @@ function renderUpcomingTicker() {
     <div class="ticker-window">
       <div class="ticker-track">
         <div class="ticker-group">${group}</div>
-        <div class="ticker-group" aria-hidden="true">${duplicateGroup}</div>
+        <div class="ticker-group" aria-hidden="true" inert>${duplicateGroup}</div>
       </div>
     </div>
   `;
@@ -441,9 +484,9 @@ function featuredMatchupMarkup(game, compact = false) {
     : "";
   return `
     <div class="featured-matchup${compact ? " featured-matchup-compact" : ""}" data-game-id="${safeAttribute(game.id || "")}">
-      <div><img src="${safeAttribute(away.logo)}" alt=""><strong>${escapeHtml(away.name)}</strong><span>Away</span></div>
+      <div><img src="${safeAttribute(away.logo)}" alt=""><strong>${gameTeamLinkMarkup(game, "away")}</strong><span>Away</span></div>
       ${score || "<b>VS</b>"}
-      <div><img src="${safeAttribute(home.logo)}" alt=""><strong>${escapeHtml(home.name)}</strong><span>Home</span></div>
+      <div><img src="${safeAttribute(home.logo)}" alt=""><strong>${gameTeamLinkMarkup(game, "home")}</strong><span>Home</span></div>
     </div>
   `;
 }
@@ -778,7 +821,7 @@ function bracketTeamRecord(programId, standings) {
   return `${row.wins}-${row.losses}`;
 }
 
-function bracketLiveTeamMarkup(slotClass, programId, standings, game, side, seedNumber = "") {
+function bracketLiveTeamMarkup(slotClass, programId, standings, game, side, division, seedNumber = "") {
   if (!programId) return "";
   const score = game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
     ? String(game[`${side}Score`])
@@ -787,13 +830,13 @@ function bracketLiveTeamMarkup(slotClass, programId, standings, game, side, seed
   const detailLabel = score ? `${detail} points` : detail ? `${detail} record` : "";
   return `
     <span class="bracket-live-team bracket-live-team-${slotClass}" data-bracket-slot="${safeAttribute(slotClass)}" data-program-id="${safeAttribute(programId)}"${seedNumber ? ` data-seed="${safeAttribute(seedNumber)}"` : ""} title="${safeAttribute(`${seedNumber ? `Seed ${seedNumber}, ` : ""}${bracketTeamName(programId, "Team")}${detailLabel ? `, ${detailLabel}` : ""}`)}">
-      <strong>${escapeHtml(bracketTeamName(programId, "Team"))}</strong>
+      <strong>${teamEntityLinkMarkup(programId, division, bracketTeamName(programId, "Team"), { className: "bracket-team-link", tabIndex: -1 })}</strong>
       ${detail ? `<small>${escapeHtml(detail)}</small>` : ""}
     </span>
   `;
 }
 
-function bracketMobileTeamMarkup(label, programId, fallback, standings, game, side, winner, seedNumber = "") {
+function bracketMobileTeamMarkup(label, programId, fallback, standings, game, side, winner, division, seedNumber = "") {
   const score = programId && game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
     ? String(game[`${side}Score`])
     : "";
@@ -804,34 +847,34 @@ function bracketMobileTeamMarkup(label, programId, fallback, standings, game, si
     <div class="bracket-mobile-team${winnerClass}"${programId ? ` data-mobile-program-id="${safeAttribute(programId)}"` : ""}${seedNumber ? ` data-mobile-seed="${safeAttribute(seedNumber)}"` : ""}>
       <span>${escapeHtml(label)}</span>
       <div>
-        <strong>${escapeHtml(bracketTeamName(programId, fallback))}</strong>
+        <strong>${teamEntityLinkMarkup(programId, division, bracketTeamName(programId, fallback), { className: "bracket-team-link", tabIndex: -1 })}</strong>
         <small aria-label="${safeAttribute(detailLabel)}">${escapeHtml(detail)}</small>
       </div>
     </div>
   `;
 }
 
-function bracketMobileMatchupMarkup(label, away, home, standings, game, winner) {
+function bracketMobileMatchupMarkup(label, away, home, standings, game, winner, division) {
   return `
     <article class="bracket-mobile-matchup" aria-label="${safeAttribute(label)}">
       <p>${escapeHtml(label)}</p>
       <div class="bracket-mobile-matchup-pair">
-        ${bracketMobileTeamMarkup(away.label, away.id, away.fallback, standings, game, "away", winner, away.seed)}
+        ${bracketMobileTeamMarkup(away.label, away.id, away.fallback, standings, game, "away", winner, division, away.seed)}
         <span class="bracket-mobile-versus" aria-hidden="true">VS</span>
-        ${bracketMobileTeamMarkup(home.label, home.id, home.fallback, standings, game, "home", winner, home.seed)}
+        ${bracketMobileTeamMarkup(home.label, home.id, home.fallback, standings, game, "home", winner, division, home.seed)}
       </div>
     </article>
   `;
 }
 
-function bracketSlotMarkup(label, programId, fallback, game, side, winner) {
+function bracketSlotMarkup(label, programId, fallback, game, side, winner, division) {
   const score = game && FINAL_STATUSES.has(game.status) && game[`${side}Score`] !== null
     ? `<b>${game[`${side}Score`]}</b>`
     : "";
   return `
     <div class="bracket-slot${winner && winner === programId ? " bracket-slot-winner" : ""}">
       <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(bracketTeamName(programId, fallback))}</strong>
+      <strong>${teamEntityLinkMarkup(programId, division, bracketTeamName(programId, fallback), { className: "bracket-team-link" })}</strong>
       ${score}
     </div>
   `;
@@ -865,13 +908,13 @@ function bracketMarkup(division, artwork) {
   return `
     <div class="bracket-live-artboard" aria-hidden="true">
       <img class="bracket-live-art" src="${safeAttribute(safeImageUrl(artwork))}" alt="" width="1672" height="941" decoding="async">
-      ${bracketLiveTeamMarkup("seed-5", playInAway, standings, playIn, "away", "5")}
-      ${bracketLiveTeamMarkup("seed-4", playInHome, standings, playIn, "home", "4")}
-      ${bracketLiveTeamMarkup("play-in-winner", semifinalOneAway, standings, semifinalOne, "away")}
-      ${bracketLiveTeamMarkup("seed-1", semifinalOneHome, standings, semifinalOne, "home", "1")}
-      ${bracketLiveTeamMarkup("seed-3", semifinalTwoAway, standings, semifinalTwo, "away", "3")}
-      ${bracketLiveTeamMarkup("seed-2", semifinalTwoHome, standings, semifinalTwo, "home", "2")}
-      ${champion ? `<span class="bracket-live-champion"><small>2027 ${escapeHtml(divisionName)} champion</small><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></span>` : ""}
+      ${bracketLiveTeamMarkup("seed-5", playInAway, standings, playIn, "away", division, "5")}
+      ${bracketLiveTeamMarkup("seed-4", playInHome, standings, playIn, "home", division, "4")}
+      ${bracketLiveTeamMarkup("play-in-winner", semifinalOneAway, standings, semifinalOne, "away", division)}
+      ${bracketLiveTeamMarkup("seed-1", semifinalOneHome, standings, semifinalOne, "home", division, "1")}
+      ${bracketLiveTeamMarkup("seed-3", semifinalTwoAway, standings, semifinalTwo, "away", division, "3")}
+      ${bracketLiveTeamMarkup("seed-2", semifinalTwoHome, standings, semifinalTwo, "home", division, "2")}
+      ${champion ? `<span class="bracket-live-champion"><small>2027 ${escapeHtml(divisionName)} champion</small><strong>${teamEntityLinkMarkup(champion, division, bracketTeamName(champion, "Champion"), { className: "bracket-team-link", tabIndex: -1 })}</strong></span>` : ""}
     </div>
     <div class="bracket-mobile-path" aria-hidden="true">
       <header class="bracket-mobile-identity">
@@ -884,22 +927,22 @@ function bracketMarkup(division, artwork) {
 
         <section class="bracket-mobile-round bracket-mobile-round-play-in">
           <header><strong>Play-in</strong><small>Date pending</small></header>
-          ${bracketMobileMatchupMarkup("Play-in matchup", { label: "Seed 5", id: playInAway, fallback: "Seed 5", seed: "5" }, { label: "Seed 4", id: playInHome, fallback: "Seed 4", seed: "4" }, standings, playIn, playInWinner)}
+          ${bracketMobileMatchupMarkup("Play-in matchup", { label: "Seed 5", id: playInAway, fallback: "Seed 5", seed: "5" }, { label: "Seed 4", id: playInHome, fallback: "Seed 4", seed: "4" }, standings, playIn, playInWinner, division)}
         </section>
 
         <section class="bracket-mobile-round bracket-mobile-round-semifinals">
           <header><strong>Semifinals</strong><small>Date pending</small></header>
-          ${bracketMobileMatchupMarkup("Semifinal 1", { label: "Seed 1", id: semifinalOneHome, fallback: "Seed 1", seed: "1" }, { label: "Play-in winner", id: semifinalOneAway, fallback: "Play-in winner" }, standings, semifinalOne, semifinalOneWinner)}
-          ${bracketMobileMatchupMarkup("Semifinal 2", { label: "Seed 3", id: semifinalTwoAway, fallback: "Seed 3", seed: "3" }, { label: "Seed 2", id: semifinalTwoHome, fallback: "Seed 2", seed: "2" }, standings, semifinalTwo, semifinalTwoWinner)}
+          ${bracketMobileMatchupMarkup("Semifinal 1", { label: "Seed 1", id: semifinalOneHome, fallback: "Seed 1", seed: "1" }, { label: "Play-in winner", id: semifinalOneAway, fallback: "Play-in winner" }, standings, semifinalOne, semifinalOneWinner, division)}
+          ${bracketMobileMatchupMarkup("Semifinal 2", { label: "Seed 3", id: semifinalTwoAway, fallback: "Seed 3", seed: "3" }, { label: "Seed 2", id: semifinalTwoHome, fallback: "Seed 2", seed: "2" }, standings, semifinalTwo, semifinalTwoWinner, division)}
         </section>
 
         <section class="bracket-mobile-round bracket-mobile-round-championship">
           <header><strong>Championship</strong><small>Date pending</small></header>
-          ${bracketMobileMatchupMarkup("UBL championship", { label: "Semifinal 1", id: championshipAway, fallback: "Semifinal 1 winner" }, { label: "Semifinal 2", id: championshipHome, fallback: "Semifinal 2 winner" }, standings, championship, champion)}
+          ${bracketMobileMatchupMarkup("UBL championship", { label: "Semifinal 1", id: championshipAway, fallback: "Semifinal 1 winner" }, { label: "Semifinal 2", id: championshipHome, fallback: "Semifinal 2 winner" }, standings, championship, champion, division)}
           <div class="bracket-mobile-finish">
             <img src="assets/playoff-brackets/ubl-championship-trophy-exact-cutout.webp" alt="" width="240" height="320" loading="lazy" decoding="async">
             ${champion
-              ? `<div class="bracket-mobile-champion"><span>2027 ${escapeHtml(divisionName)} champion</span><strong>${escapeHtml(bracketTeamName(champion, "Champion"))}</strong></div>`
+              ? `<div class="bracket-mobile-champion"><span>2027 ${escapeHtml(divisionName)} champion</span><strong>${teamEntityLinkMarkup(champion, division, bracketTeamName(champion, "Champion"), { className: "bracket-team-link", tabIndex: -1 })}</strong></div>`
               : `<span class="bracket-mobile-champion-pending">2027 UBL champion</span>`}
           </div>
         </section>
@@ -907,16 +950,16 @@ function bracketMarkup(division, artwork) {
     </div>
     <div class="sr-only bracket-accessible-summary">
       <h3>Play-in</h3>
-      ${bracketSlotMarkup("Seed 5", playInAway, "Regular season seed", playIn, "away", playInWinner)}
-      ${bracketSlotMarkup("Seed 4", playInHome, "Regular season seed", playIn, "home", playInWinner)}
+      ${bracketSlotMarkup("Seed 5", playInAway, "Regular season seed", playIn, "away", playInWinner, division)}
+      ${bracketSlotMarkup("Seed 4", playInHome, "Regular season seed", playIn, "home", playInWinner, division)}
       <p>Winner advances to play Seed 1</p>
       <h3>Semifinals</h3>
-      ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "Advancing team", semifinalOne, "away", semifinalOneWinner)}
-      ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner)}
-      ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "Regular season seed", semifinalTwo, "away", semifinalTwoWinner)}
-      ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "Regular season seed", semifinalTwo, "home", semifinalTwoWinner)}
+      ${bracketSlotMarkup("Play-in winner", semifinalOneAway, "Advancing team", semifinalOne, "away", semifinalOneWinner, division)}
+      ${bracketSlotMarkup("Seed 1", semifinalOneHome, "Regular season leader", semifinalOne, "home", semifinalOneWinner, division)}
+      ${bracketSlotMarkup("Seed 3", semifinalTwoAway, "Regular season seed", semifinalTwo, "away", semifinalTwoWinner, division)}
+      ${bracketSlotMarkup("Seed 2", semifinalTwoHome, "Regular season seed", semifinalTwo, "home", semifinalTwoWinner, division)}
       <h3>Championship</h3>
-      <p>2027 UBL ${escapeHtml(divisionName)} champion: ${escapeHtml(bracketTeamName(champion, "Crowned after the February playoffs"))}</p>
+      <p>2027 UBL ${escapeHtml(divisionName)} champion: ${teamEntityLinkMarkup(champion, division, bracketTeamName(champion, "Crowned after the February playoffs"), { className: "bracket-team-link" })}</p>
     </div>
   `;
 }
@@ -1406,18 +1449,19 @@ function ensureGalleryProgramSections() {
     const logo = safeImageUrl(program.logo) || "assets/icons/icon-192.png";
     if (!document.querySelector(`[data-gallery-trigger="${CSS.escape(program.id)}"]`)) {
       cardGrid.insertAdjacentHTML("beforeend", `
-        <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="${safeAttribute(program.id)}" data-gallery-divisions="${safeAttribute(divisions)}" aria-expanded="false" aria-controls="team-album-${safeAttribute(program.id)}" aria-label="${safeAttribute(`Open ${program.name} photo album`)}" style="--card-order:${index}">
+        <article class="team-gallery-card division-team-card" data-gallery-card data-gallery-program="${safeAttribute(program.id)}" data-gallery-divisions="${safeAttribute(divisions)}" data-expanded="false" style="--card-order:${index}">
+          <button class="team-gallery-card-trigger" type="button" data-gallery-trigger="${safeAttribute(program.id)}" aria-expanded="false" aria-controls="team-album-${safeAttribute(program.id)}" aria-label="${safeAttribute(`Open ${program.name} photo album`)}"></button>
           <span class="team-card-court" aria-hidden="true"><i></i></span>
           <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
           <span class="team-card-logo-stage"><img src="${safeAttribute(logo)}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
-          <span class="division-team-card-content"><small class="team-card-abbr">${escapeHtml(program.short)}</small><strong>${escapeHtml(program.name)}</strong><span><span data-gallery-card-division-label>${escapeHtml(divisionSummary)}</span> &middot; <span data-gallery-count-for="${safeAttribute(program.id)}">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
-        </button>
+          <span class="division-team-card-content"><small class="team-card-abbr">${escapeHtml(program.short)}</small><strong>${teamEntityLinkMarkup(program.id, program.divisions[0], program.name, { className: "team-gallery-profile-link" })}</strong><span><span data-gallery-card-division-label>${escapeHtml(divisionSummary)}</span> &middot; <span data-gallery-count-for="${safeAttribute(program.id)}">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+        </article>
       `);
     }
     if (!document.querySelector(`[data-gallery-team="${CSS.escape(program.id)}"]`)) {
       albums.insertAdjacentHTML("beforeend", `
         <section class="team-gallery" id="team-album-${safeAttribute(program.id)}" data-gallery-team="${safeAttribute(program.id)}" data-gallery-divisions="${safeAttribute(divisions)}" aria-labelledby="team-album-${safeAttribute(program.id)}-title" hidden>
-          <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="${safeAttribute(logo)}" alt="" width="192" height="192"><span><strong id="team-album-${safeAttribute(program.id)}-title">${escapeHtml(program.name)}</strong><small>${escapeHtml(divisionSummary)} album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="${safeAttribute(program.id)}">Close album</button></span></header>
+          <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="${safeAttribute(logo)}" alt="" width="192" height="192"><span><strong id="team-album-${safeAttribute(program.id)}-title">${teamEntityLinkMarkup(program.id, program.divisions[0], program.name, { className: "team-gallery-profile-link" })}</strong><small>${escapeHtml(divisionSummary)} album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="${safeAttribute(program.id)}">Close album</button></span></header>
           <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>${escapeHtml(program.name)} photos will appear here as the season gets underway.</p></div>
         </section>
       `);
@@ -1449,11 +1493,13 @@ function setExpandedGallery(teamId) {
 
   document.querySelectorAll("[data-gallery-trigger]").forEach((trigger) => {
     const expanded = Boolean(teamId) && trigger.dataset.galleryTrigger === teamId;
+    const card = trigger.closest("[data-gallery-card]");
     trigger.setAttribute("aria-expanded", String(expanded));
-    trigger.querySelectorAll("[data-gallery-action-label]").forEach((actionLabel) => {
+    if (card) card.dataset.expanded = String(expanded);
+    card?.querySelectorAll("[data-gallery-action-label]").forEach((actionLabel) => {
       actionLabel.textContent = expanded ? "Album open" : "Open album";
     });
-    trigger.querySelectorAll("[data-gallery-cta-label]").forEach((actionLabel) => {
+    card?.querySelectorAll("[data-gallery-cta-label]").forEach((actionLabel) => {
       actionLabel.textContent = expanded ? "Close album" : "View photos";
     });
   });
@@ -1506,7 +1552,17 @@ function applyGalleryDivisionFilter(division) {
     card.classList.remove("is-gallery-last-single");
     const divisionLabel = card.querySelector("[data-gallery-card-division-label]");
     if (divisionLabel && hasSelectedDivision) divisionLabel.textContent = selectedDivision;
+    card.querySelectorAll(".team-gallery-profile-link").forEach((link) => {
+      const program = programById(card.dataset.galleryProgram);
+      if (program) link.href = teamProfileUrl(program.id, canonicalTeamDivision(program, selectedDivision));
+    });
     if (visible) visibleCards.push(card);
+  });
+  document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
+    const program = programById(gallery.dataset.galleryTeam);
+    gallery.querySelectorAll(".team-gallery-profile-link").forEach((link) => {
+      if (program) link.href = teamProfileUrl(program.id, canonicalTeamDivision(program, selectedDivision));
+    });
   });
   if (visibleCards.length % 3 === 1) visibleCards.at(-1)?.classList.add("is-gallery-last-single");
   if (hasSelectedDivision && directory) initializeTeamCardMotion(directory);
@@ -1521,7 +1577,7 @@ function showGalleryDivision(division, { scroll = false, updateHash = false } = 
   const divisionColumn = document.querySelector("[data-gallery-division-column]");
   directory?.classList.remove("is-direct-album");
   const expandedCard = document.querySelector('[data-gallery-trigger][aria-expanded="true"]');
-  if (expandedCard?.hidden) closeGalleryAlbum();
+  if (expandedCard?.closest("[data-gallery-card]")?.hidden) closeGalleryAlbum();
   if (updateHash) {
     const divisionSlug = selectedDivision === "Girls Varsity" ? "girls" : "boys";
     history.replaceState(null, "", `#gallery-${divisionSlug}-division`);
