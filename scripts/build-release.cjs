@@ -7,6 +7,7 @@ const distRoot = path.resolve(siteRoot, "dist");
 const publicFiles = Object.freeze([
   ".nojekyll",
   "index.html",
+  "league-facts.html",
   "schedule.html",
   "standings.html",
   "teams.html",

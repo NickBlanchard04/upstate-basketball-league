@@ -3,13 +3,14 @@ const path = require("node:path");
 
 const siteRoot = path.resolve(__dirname, "..");
 const distRoot = path.join(siteRoot, "dist");
-const releaseToken = "20260723-2";
+const releaseToken = "20260723-3";
 const canonicalBase = "https://upstatebasketballleague.com/";
 const socialImageUrl = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialImageAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
 
 const publicHtml = [
   "index.html",
+  "league-facts.html",
   "schedule.html",
   "standings.html",
   "teams.html",
@@ -37,6 +38,7 @@ const publicHtml = [
 
 const indexablePages = new Map([
   ["index.html", canonicalBase],
+  ["league-facts.html", `${canonicalBase}league-facts.html`],
   ["schedule.html", `${canonicalBase}schedule.html`],
   ["standings.html", `${canonicalBase}standings.html`],
   ["teams.html", `${canonicalBase}teams.html`],
@@ -61,6 +63,7 @@ const indexablePages = new Map([
 
 const expectedSitemapUrls = [
   canonicalBase,
+  `${canonicalBase}league-facts.html`,
   `${canonicalBase}schedule.html`,
   `${canonicalBase}standings.html`,
   `${canonicalBase}teams.html`,
@@ -269,7 +272,16 @@ function validateSitemap(root) {
     .map((match) => [match[1].replaceAll("&amp;", "&"), match[2]]);
   check(entries.length === expectedSitemapUrls.length, "Every sitemap route needs a lastmod date");
   for (const [url, lastmod] of entries) {
-    const expected = "2026-07-22";
+    const updatedOnJuly23 = new Set([
+      canonicalBase,
+      `${canonicalBase}league-facts.html`,
+      `${canonicalBase}news.html`,
+      `${canonicalBase}news/2026-27-season-planning.html`,
+      `${canonicalBase}news/2027-playoff-format.html`,
+      `${canonicalBase}news/ubl-program-directory.html`,
+      `${canonicalBase}about.html`
+    ]);
+    const expected = updatedOnJuly23.has(url) ? "2026-07-23" : "2026-07-22";
     check(lastmod === expected, `${url} has an inaccurate sitemap lastmod date`);
   }
   check(!urls.some((url) => /\/team\.html(?:$|\?)/.test(url)), "Generic client-rendered team template must not appear in sitemap");
@@ -280,6 +292,13 @@ function validateSitemap(root) {
 }
 
 function validateDiscoveryFiles(root) {
+  const facts = read(root, "league-facts.html");
+  check(facts.includes("What is the Upstate Basketball League?"), "league-facts.html needs the exact league identity question");
+  check(facts.includes("not a college basketball program") && facts.includes("adult recreational league"), "league-facts.html needs a visible disambiguation statement");
+  check(facts.includes('"@type": "SportsOrganization"') && facts.includes('"@type": "FAQPage"'), "league-facts.html needs organization and FAQ structured data");
+  check(facts.includes("Andy Walts") && facts.includes("Chris Webster"), "league-facts.html needs confirmed league leadership");
+  check(facts.includes("Info.upstatebasketballleague@gmail.com"), "league-facts.html needs the official contact");
+
   const teams = read(root, "teams.html");
   for (const name of ["The King's School", "Perth", "Wilton Baptist", "HV Rocks", "HV Flames"]) {
     check(teams.includes(name), `teams.html must expose ${name} without requiring JavaScript`);
@@ -302,6 +321,7 @@ function validateDiscoveryFiles(root) {
 
   const llms = read(root, "llms.txt");
   check(llms.startsWith("# Upstate Basketball League"), "llms.txt needs an official league heading");
+  check(llms.includes(`${canonicalBase}league-facts.html`), "llms.txt needs the official league facts source");
   check(llms.includes(`${canonicalBase}schedule.html`) && llms.includes(`${canonicalBase}standings.html`), "llms.txt needs official schedule and standings sources");
   check(llms.includes("Info.upstatebasketballleague@gmail.com"), "llms.txt needs the league contact");
 
