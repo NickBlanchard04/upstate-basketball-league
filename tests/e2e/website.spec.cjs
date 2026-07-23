@@ -349,6 +349,7 @@ test("team directory separates each division and opens the right profile", async
   await page.goto("/teams.html");
 
   const directory = page.locator("[data-team-directory]");
+  const profileIndex = page.locator(".team-profile-index");
   const girlsColumn = page.locator("#girls-division");
   const boysColumn = page.locator("#boys-division");
   const girlsCards = girlsColumn.locator(".division-team-card");
@@ -359,6 +360,7 @@ test("team directory separates each division and opens the right profile", async
   await expect(page.locator(".division-team-card")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Girls", exact: true })).toHaveAttribute("aria-pressed", "false");
   await expect(page.getByRole("button", { name: "Boys", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(profileIndex)[testInfo.project.name.startsWith("desktop") ? "toBeVisible" : "toBeHidden"]();
 
   await page.getByRole("button", { name: "Girls", exact: true }).click();
   await expect(directory).toBeVisible();
