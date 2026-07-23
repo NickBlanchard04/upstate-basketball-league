@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const canonicalBase = "https://upstatebasketballleague.com/";
-const releaseToken = "20260722-4";
+const releaseToken = "20260723-1";
 const socialImage = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
 
