@@ -1114,13 +1114,29 @@ test("about page explains the league, season, testimonial, and leadership", asyn
   await seasonCards.nth(0).click();
   await expect(seasonCards.nth(0)).toHaveAttribute("aria-pressed", "true");
   await expect(seasonCards.nth(0).locator(".season-card-back")).toHaveAttribute("aria-hidden", "false");
+  await expect(seasonCards.nth(0).locator(".season-back-number")).toHaveCount(0);
   await expect(seasonCards.nth(0)).toContainText("Member programs register Boys Varsity");
+
+  if (testInfo.project.name === "mobile-chromium") {
+    const flippedCardLayout = await seasonCards.nth(0).evaluate((card) => {
+      const description = card.querySelector(".season-back-description").getBoundingClientRect();
+      const returnCue = card.querySelector(".season-back-cue").getBoundingClientRect();
+      return {
+        descriptionAboveDivider: description.bottom <= returnCue.top,
+        dividerVisible: Number.parseFloat(getComputedStyle(card.querySelector(".season-back-cue")).borderTopWidth) > 0,
+      };
+    });
+    expect(flippedCardLayout).toEqual({ descriptionAboveDivider: true, dividerVisible: true });
+  }
+
   await seasonCards.nth(1).click();
   await expect(seasonCards.nth(0)).toHaveAttribute("aria-pressed", "false");
   await expect(seasonCards.nth(1)).toHaveAttribute("aria-pressed", "true");
   await expect(seasonCards.nth(1)).toContainText("December and runs through the end of January");
   await expect(page.locator(".season-back-icon")).toHaveCount(0);
   await expect(seasonCards.nth(1).locator(".season-card-back")).toHaveCSS("text-align", "center");
+  await seasonCards.nth(1).click();
+  await expect(seasonCards.nth(1)).toHaveAttribute("aria-pressed", "false");
 
   if (testInfo.project.name === "mobile-chromium") {
     await expect(page.locator(".league-profile-grid")).toBeHidden();

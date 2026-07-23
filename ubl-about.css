@@ -1082,9 +1082,9 @@
 }
 
 .season-card-back {
-  padding: 1.35rem;
-  place-content: center;
-  justify-items: center;
+  padding: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: stretch;
   overflow: hidden;
   border: 1px solid rgba(237, 23, 58, 0.95);
   color: var(--ubl-white);
@@ -1097,6 +1097,17 @@
     inset 0 0 2.8rem rgba(237, 23, 58, 0.18),
     0 0 1.15rem rgba(237, 23, 58, 0.25);
   transform: rotateY(180deg);
+}
+
+.season-back-content {
+  min-height: 0;
+  padding: 1.35rem 1.35rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .season-card-back::before,
@@ -1120,16 +1131,6 @@
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 50%;
   box-shadow: 0 0 0 1.4rem rgba(255, 255, 255, 0.04);
-}
-
-.season-back-number {
-  position: absolute;
-  top: 0.65rem;
-  right: 0.95rem;
-  color: rgba(255, 255, 255, 0.1);
-  font: italic 700 7rem/1 "Teko", sans-serif;
-  text-shadow: 0 0 1.2rem rgba(237, 23, 58, 0.42);
-  transform: skewX(-7deg);
 }
 
 .season-back-logo {
@@ -1157,7 +1158,30 @@
 }
 
 .season-back-cue {
-  margin-top: 0.65rem;
+  width: 100%;
+  min-height: 4.1rem;
+  margin: 0;
+  padding: 0.8rem 1rem;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  border-top: 0.24rem solid var(--ubl-red);
+  background: rgba(2, 15, 34, 0.66);
+}
+
+@media (max-width: 767px) {
+  .season-card-front {
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      opacity 0s linear 360ms,
+      visibility 0s linear 360ms;
+  }
+
+  .season-flip-card.is-flipped .season-card-front {
+    visibility: hidden;
+    opacity: 0;
+  }
 }
 
 .season-mobile-progress {
@@ -2030,12 +2054,8 @@
     font-size: 0.875rem;
   }
 
-  .season-card-back {
+  .season-back-content {
     padding: clamp(1.15rem, 1.7vw, 1.65rem);
-  }
-
-  .season-back-number {
-    font-size: clamp(5.5rem, 7vw, 7rem);
   }
 
   .season-back-title {
@@ -2248,12 +2268,25 @@
     font-size: 0.875rem;
   }
 
-  .season-card-back {
-    padding: clamp(1.35rem, 3vw, 2.25rem);
+  .season-back-content {
+    padding: 0;
   }
 
-  .season-back-number {
-    font-size: clamp(6rem, 10vw, 8.2rem);
+  .season-card-back {
+    padding: clamp(1.35rem, 3vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .season-back-cue {
+    width: auto;
+    min-height: 2.75rem;
+    margin-top: 0.65rem;
+    padding: 0;
+    border-top: 0;
+    background: transparent;
   }
 
   .season-back-title {
