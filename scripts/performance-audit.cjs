@@ -3,6 +3,7 @@ const { chromium } = require("@playwright/test");
 const defaultBaseUrl = "https://upstatebasketballleague.com";
 const routes = [
   "index.html",
+  "league-facts.html",
   "schedule.html",
   "standings.html",
   "teams.html",

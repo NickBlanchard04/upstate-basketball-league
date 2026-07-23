@@ -47,6 +47,7 @@ async function expectNoAppErrors(page, action) {
 test("all public routes render meaningful content without runtime errors", async ({ page }) => {
   const routes = [
     ["/index.html", "Faith."],
+    ["/league-facts.html", "What is the Upstate Basketball League?"],
     ["/schedule.html", "Choose a week"],
     ["/standings.html", "Standings"],
     ["/teams.html", "Meet the teams shaping UBL."],
@@ -54,7 +55,7 @@ test("all public routes render meaningful content without runtime errors", async
     ["/bracket.html", "Playoff brackets"],
     ["/rules.html", "League standards"],
     ["/gallery.html", "Gallery"],
-    ["/news.html", "UBL news, clearly organized."],
+    ["/news.html", "Upstate Basketball League news."],
     ["/news/2027-playoff-format.html", "UBL outlines separate 2027 varsity playoff brackets"],
     ["/sponsors.html", "Partner with the UBL"],
     ["/about.html", "How a UBL season works"],
@@ -75,7 +76,7 @@ async function useLiveFeed(page, sourceFeed) {
 }
 
 test("public pages do not expose internal placeholder language", async ({ page }) => {
-  for (const route of ["/schedule.html", "/teams.html", "/teams/hv-rocks-boys.html", "/bracket.html", "/gallery.html", "/news.html", "/sponsors.html", "/about.html"]) {
+  for (const route of ["/league-facts.html", "/schedule.html", "/teams.html", "/teams/hv-rocks-boys.html", "/bracket.html", "/gallery.html", "/news.html", "/sponsors.html", "/about.html"]) {
     await page.goto(route);
     const visibleText = await page.locator("body").innerText();
     expect(visibleText).not.toMatch(/\bTBD\b|placeholder|to be confirmed|coming soon/i);
@@ -103,6 +104,8 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   await expect(page.locator(".score-ticker")).toBeVisible();
   await expect(page.locator(".ticker-track")).toHaveCSS("animation-name", "ticker-scroll");
   await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet");
+  await expect(page.locator(".league-identity")).toContainText("The Upstate Basketball League (UBL) is a faith-rooted boys and girls varsity basketball league");
+  await expect(page.locator(".league-identity a")).toHaveAttribute("href", "league-facts.html");
   const openSpot = page.locator(".team-card-open-spot");
   await expect(openSpot.locator("img")).toHaveAttribute("src", "assets/icons/icon-192.png");
   await expect(openSpot).toHaveAttribute("href", "mailto:Info.upstatebasketballleague@gmail.com?subject=Interested%20in%20joining%20the%20UBL");
@@ -123,6 +126,21 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
     });
     expect(hasStandingsHoverRule).toBe(true);
   }
+});
+
+test("official league facts page answers the exact entity question without horizontal overflow", async ({ page }) => {
+  await page.goto("/league-facts.html");
+  await expect(page.locator("h1")).toHaveText("What is the Upstate Basketball League?");
+  await expect(page.locator(".league-facts-answer")).toContainText("not a college basketball program");
+  await expect(page.locator(".league-fact-grid")).toContainText("Andy Walts");
+  await expect(page.locator(".league-fact-grid")).toContainText("Chris Webster");
+  await expect(page.locator(".league-program-columns a")).toHaveCount(8);
+  await expect(page.locator(".league-faq details")).toHaveCount(5);
+  const schema = await page.locator('script[type="application/ld+json"]').textContent();
+  const graph = JSON.parse(schema)["@graph"];
+  expect(graph.some((item) => item["@type"] === "SportsOrganization")).toBe(true);
+  expect(graph.some((item) => item["@type"] === "FAQPage")).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 
 test("team names link to canonical division profiles across league surfaces", async ({ page }) => {
@@ -1183,7 +1201,7 @@ test("about page explains the league, season, testimonial, and leadership", asyn
     const profileDetails = page.locator(".league-profile-mobile details");
     await profileDetails.nth(0).locator("summary").click();
     await expect(profileDetails.nth(0)).toHaveAttribute("open", "");
-    await expect(profileDetails.nth(0)).toContainText("A structured league that brings faith");
+    await expect(profileDetails.nth(0)).toContainText("The Upstate Basketball League (UBL) is a faith-rooted");
     await profileDetails.nth(1).locator("summary").click();
     await expect(profileDetails.nth(0)).not.toHaveAttribute("open", "");
     await expect(profileDetails.nth(1)).toHaveAttribute("open", "");
@@ -1197,7 +1215,7 @@ test("about page explains the league, season, testimonial, and leadership", asyn
     await profileCards.nth(0).click();
     await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "true");
     await expect(profileCards.nth(0).locator(".league-profile-back")).toHaveAttribute("aria-hidden", "false");
-    await expect(profileCards.nth(0)).toContainText("A structured league that brings faith");
+    await expect(profileCards.nth(0)).toContainText("The Upstate Basketball League (UBL) is a faith-rooted");
     await profileCards.nth(1).click();
     await expect(profileCards.nth(0)).toHaveAttribute("aria-pressed", "false");
     await expect(profileCards.nth(1)).toHaveAttribute("aria-pressed", "true");
@@ -1328,7 +1346,7 @@ test("sponsorship page presents a focused partner path and prospective partner c
 });
 
 test("public pages expose complete search and social metadata", async ({ page, request }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "teams/hv-rocks-boys.html", "bracket.html", "rules.html", "gallery.html", "news.html", "news/2027-playoff-format.html", "sponsors.html", "about.html"];
+  const routes = ["index.html", "league-facts.html", "schedule.html", "standings.html", "teams.html", "teams/hv-rocks-boys.html", "bracket.html", "rules.html", "gallery.html", "news.html", "news/2027-playoff-format.html", "sponsors.html", "about.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /\S/);
@@ -1462,7 +1480,7 @@ test("analytics stays disabled on unapproved preview hosts", async ({ page }) =>
 });
 
 test("public routes have no automatic WCAG A or AA violations", async ({ page }) => {
-  const routes = ["index.html", "schedule.html", "standings.html", "teams.html", "teams/hv-rocks-boys.html", "bracket.html", "rules.html", "gallery.html", "news.html", "news/2027-playoff-format.html", "sponsors.html", "about.html", "privacy.html", "404.html"];
+  const routes = ["index.html", "league-facts.html", "schedule.html", "standings.html", "teams.html", "teams/hv-rocks-boys.html", "bracket.html", "rules.html", "gallery.html", "news.html", "news/2027-playoff-format.html", "sponsors.html", "about.html", "privacy.html", "404.html"];
   for (const route of routes) {
     await page.goto(`/${route}`);
     const results = await new AxeBuilder({ page })

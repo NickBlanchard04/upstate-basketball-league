@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const canonicalBase = "https://upstatebasketballleague.com/";
-const releaseToken = "20260723-2";
+const releaseToken = "20260723-3";
 const socialImage = `${canonicalBase}assets/social/ubl-social-share.jpg`;
 const socialAlt = "Upstate Basketball League mark beside an illustrated varsity basketball player preparing under arena lights";
 
@@ -298,7 +298,7 @@ function teamPage(program, key, team) {
 
 function newsIndexPage() {
   const canonical = `${canonicalBase}news.html`;
-  const description = "Read official Upstate Basketball League season updates, playoff information, program announcements, and public league news.";
+  const description = "Read official Upstate Basketball League season updates, playoff information, program announcements, team news, and public UBL facts.";
   const itemList = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -316,18 +316,18 @@ function newsIndexPage() {
   };
   return `<!DOCTYPE html>
 <html lang="en">
-<head>${metadata({ title: "UBL News and League Updates | Upstate NY", description, canonical, schema: itemList })}
+<head>${metadata({ title: "Upstate Basketball League News | Official UBL Updates", description, canonical, schema: itemList })}
   <link rel="stylesheet" href="styles.css?v=${releaseToken}">
   <link rel="stylesheet" href="discovery.css?v=${releaseToken}">
   <script src="config.js?v=${releaseToken}" defer></script><script src="analytics.js?v=${releaseToken}" defer></script><script src="site-shell.js?v=${releaseToken}" defer></script>
 </head>
 <body class="discovery-page news-index-page">${header("News")}
   <main id="main">
-    <section class="discovery-hero"><div class="section-wrap"><span>Official league updates</span><h1>UBL news, clearly organized.</h1><p>Season planning, program information, playoff updates, and public league announcements from the Upstate Basketball League.</p></div></section>
+    <section class="discovery-hero"><div class="section-wrap"><span>Official league updates</span><h1>Upstate Basketball League news.</h1><p>Season planning, program information, playoff updates, official league facts, and public announcements from the UBL.</p></div></section>
     <section class="news-feed section-wrap" aria-labelledby="latest-news-title"><header><span>Latest from the league</span><h2 id="latest-news-title">League updates</h2></header><div class="news-grid">
       ${articles.map((article) => `<article class="news-card"><span>${article.eyebrow}</span><time datetime="${article.isoDate}">${article.date}</time><h3><a href="news/${article.slug}.html">${article.title}</a></h3><p>${article.description}</p><a class="news-card-link" href="news/${article.slug}.html">Read update <span aria-hidden="true">&#8594;</span></a></article>`).join("\n      ")}
     </div></section>
-    <section class="explore-panel section-wrap" aria-labelledby="news-explore-title"><div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="news-explore-title">Stay connected to the UBL season.</h2></div><nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a><a href="about.html">About UBL</a></nav></section>
+    <section class="explore-panel section-wrap" aria-labelledby="news-explore-title"><div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="news-explore-title">Stay connected to the UBL season.</h2></div><nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="league-facts.html">League facts</a><a href="schedule.html">Schedule</a><a href="standings.html">Standings</a><a href="teams.html">Teams</a></nav></section>
   </main>
 </body>
 </html>\n`;
@@ -360,7 +360,7 @@ function articlePage(article) {
       <header class="league-article-hero"><div class="section-wrap"><a href="news.html">All league news</a><span>${article.eyebrow}</span><h1>${article.title}</h1><p>${article.description}</p><time datetime="${article.isoDate}">${article.date}</time></div></header>
       <div class="league-article-body section-wrap">${article.body}</div>
     </article>
-    <section class="explore-panel section-wrap" aria-labelledby="article-explore-title"><div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="article-explore-title">Keep following the UBL season.</h2></div><nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="news.html">All news</a><a href="schedule.html">Schedule</a><a href="teams.html">Teams</a><a href="about.html">About UBL</a></nav></section>
+    <section class="explore-panel section-wrap" aria-labelledby="article-explore-title"><div class="explore-panel-copy"><span class="explore-panel-eyebrow">Keep exploring</span><h2 id="article-explore-title">Keep following the UBL season.</h2></div><nav class="explore-panel-links" aria-label="Keep exploring the UBL"><a href="league-facts.html">League facts</a><a href="news.html">All news</a><a href="schedule.html">Schedule</a><a href="teams.html">Teams</a></nav></section>
   </main>
 </body>
 </html>\n`;

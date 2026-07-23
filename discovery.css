@@ -383,6 +383,213 @@
   color: rgba(255, 255, 255, .72);
 }
 
+.league-facts-hero h1 {
+  max-width: 18ch;
+}
+
+.league-facts-answer,
+.league-fact-grid,
+.league-facts-programs,
+.league-faq,
+.league-citation {
+  margin-top: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.league-facts-answer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px;
+  align-items: center;
+  gap: clamp(1.4rem, 5vw, 4rem);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-top: 5px solid var(--red);
+  background: var(--navy-950);
+  color: var(--white);
+  box-shadow: 0 1.25rem 3rem rgba(2, 15, 34, .16);
+}
+
+.league-facts-answer span,
+.league-fact-grid header span,
+.league-facts-programs header > span,
+.league-faq header span,
+.league-citation > span {
+  color: var(--red);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.league-facts-answer span {
+  color: #ff6b80;
+}
+
+.league-citation > span {
+  color: #9f0d24;
+}
+
+.league-facts-answer h2,
+.league-fact-grid h2,
+.league-facts-programs h2,
+.league-faq h2,
+.league-citation h2 {
+  margin: .45rem 0 .85rem;
+  font: 900 clamp(2.25rem, 5vw, 4.5rem)/.88 "Barlow Condensed", sans-serif;
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+
+.league-facts-answer p {
+  max-width: 76ch;
+  color: rgba(255, 255, 255, .78);
+  line-height: 1.72;
+}
+
+.league-facts-answer p:last-child {
+  margin-bottom: 0;
+}
+
+.league-facts-answer strong {
+  color: var(--white);
+}
+
+.league-facts-answer img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 1.5rem rgba(227, 19, 49, .24));
+}
+
+.league-fact-grid,
+.league-facts-programs,
+.league-faq {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.league-fact-grid > header,
+.league-facts-programs > header,
+.league-faq > header {
+  max-width: 760px;
+  margin-bottom: 1.4rem;
+}
+
+.league-fact-grid dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.league-fact-grid dl > div {
+  min-width: 0;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.league-fact-grid dt {
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.league-fact-grid dd {
+  margin: .35rem 0 0;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.league-fact-grid a,
+.league-facts-programs a,
+.league-faq a,
+.league-citation a {
+  color: var(--navy-800);
+  font-weight: 800;
+  text-decoration-color: rgba(227, 19, 49, .45);
+  text-decoration-thickness: .12rem;
+  text-underline-offset: .25rem;
+}
+
+.league-facts-programs header p {
+  max-width: 70ch;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.league-program-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.league-program-columns section {
+  padding: clamp(1.1rem, 3vw, 1.8rem);
+  border-top: 4px solid var(--red);
+  background: var(--canvas);
+}
+
+.league-program-columns h3 {
+  margin: 0;
+  font: 900 2rem/1 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+}
+
+.league-program-columns ul {
+  display: grid;
+  gap: .7rem;
+  margin: 1rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.league-faq-list {
+  display: grid;
+  gap: .6rem;
+}
+
+.league-faq details {
+  border: 1px solid var(--line);
+  background: var(--canvas);
+}
+
+.league-faq summary {
+  min-height: 52px;
+  padding: 1rem 3rem 1rem 1rem;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.league-faq details p {
+  max-width: 76ch;
+  margin: 0;
+  padding: 0 1rem 1.2rem;
+  color: var(--muted);
+  line-height: 1.68;
+}
+
+.league-citation {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-left: 5px solid var(--red);
+  background: #e4eaf2;
+}
+
+.league-citation blockquote {
+  max-width: 900px;
+  margin: 1rem 0;
+  font: 800 clamp(1.5rem, 3vw, 2.2rem)/1.15 "Barlow Condensed", sans-serif;
+}
+
+.league-citation p {
+  max-width: 76ch;
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
 @media (min-width: 768px) {
   .team-profile-index {
     display: block;
@@ -404,6 +611,10 @@
   .static-team-header h1 { font-size: clamp(2.7rem, 14vw, 4rem); }
   .static-team-grid { grid-template-columns: 1fr; }
   .team-profile-link-grid { grid-template-columns: 1fr; }
+  .league-facts-answer { grid-template-columns: 1fr; }
+  .league-facts-answer img { width: 78px; grid-row: 1; }
+  .league-fact-grid dl,
+  .league-program-columns { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -61,7 +61,7 @@ test("mobile team routes and profile assets share one cache version", () => {
 
 test("public source excludes fabricated identity and affiliation assets", () => {
   const files = [
-    "index.html", "schedule.html", "standings.html", "teams.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
+    "index.html", "league-facts.html", "schedule.html", "standings.html", "teams.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
     "teams/perth-boys.html", "teams/perth-girls.html", "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html",
     "teams/hv-rocks-boys.html", "teams/hv-flames-girls.html", "team.html", "bracket.html", "rules.html", "gallery.html",
     "news.html", "news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html",
@@ -88,6 +88,7 @@ test("sitemap contains only statically indexable canonical pages", () => {
   assert.ok(!urls.some((url) => url.includes("team.html")));
   assert.equal((sitemap.match(/<lastmod>[^<]+<\/lastmod>/g) || []).length, urls.length);
   assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/teams\.html<\/loc><lastmod>2026-07-22<\/lastmod>/);
+  assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/league-facts\.html<\/loc><lastmod>2026-07-23<\/lastmod>/);
   assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/news\.html<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/upstatebasketballleague\.com\/teams\/hv-rocks-boys\.html<\/loc>/);
 
@@ -111,7 +112,7 @@ test("public discovery files and metadata use the registered UBL domain", () => 
   const canonicalBase = "https://upstatebasketballleague.com";
   const legacyBase = "https://nickblanchard04.github.io/upstate-basketball-league";
   const publicFiles = [
-    "index.html", "schedule.html", "standings.html", "teams.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
+    "index.html", "league-facts.html", "schedule.html", "standings.html", "teams.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
     "teams/perth-boys.html", "teams/perth-girls.html", "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html",
     "teams/hv-rocks-boys.html", "teams/hv-flames-girls.html", "team.html", "bracket.html", "rules.html", "gallery.html",
     "news.html", "news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html",
@@ -195,9 +196,33 @@ test("team directory and AI summary expose verified league information without J
 
   const llms = read("llms.txt");
   assert.match(llms, /^# Upstate Basketball League$/m);
+  assert.match(llms, /https:\/\/upstatebasketballleague\.com\/league-facts\.html/);
   assert.match(llms, /https:\/\/upstatebasketballleague\.com\/schedule\.html/);
   assert.match(llms, /https:\/\/upstatebasketballleague\.com\/news\.html/);
   assert.match(llms, /Info\.upstatebasketballleague@gmail\.com/);
+});
+
+test("official league facts page gives search systems a supported disambiguation source", () => {
+  const facts = read("league-facts.html");
+  assert.match(facts, /<title>What Is the Upstate Basketball League\? \| Official UBL Facts<\/title>/);
+  assert.match(facts, /<h1>What is the Upstate Basketball League\?<\/h1>/);
+  assert.match(facts, /not a college basketball program, adult recreational league, youth travel tournament series, or AAU circuit/);
+  assert.match(facts, /Andy Walts/);
+  assert.match(facts, /Chris Webster/);
+  assert.match(facts, /Info\.upstatebasketballleague@gmail\.com/);
+
+  const json = facts.match(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/)?.[1];
+  assert.ok(json, "league-facts.html must include JSON-LD");
+  const graph = JSON.parse(json)["@graph"];
+  const organization = graph.find((item) => item["@type"] === "SportsOrganization");
+  const aboutPage = graph.find((item) => item["@type"] === "AboutPage");
+  const faq = graph.find((item) => item["@type"] === "FAQPage");
+  assert.equal(organization.name, "Upstate Basketball League");
+  assert.equal(organization.alternateName, "UBL");
+  assert.equal(organization.foundingDate, "2026");
+  assert.match(organization.disambiguatingDescription, /not a college basketball program/);
+  assert.equal(aboutPage.mainEntity["@id"], organization["@id"]);
+  assert.equal(faq.mainEntity.length, 4);
 });
 
 test("static team and news pages expose indexable source content and structured data", () => {
@@ -266,6 +291,9 @@ test("homepage schema identifies the league without inventing a storefront", () 
   const website = schema["@graph"].find((item) => item["@type"] === "WebSite");
   assert.equal(organization.name, "Upstate Basketball League");
   assert.equal(organization.areaServed.name, "Upstate New York");
+  assert.equal(organization.foundingDate, "2026");
+  assert.match(organization.disambiguatingDescription, /not a college basketball program/);
+  assert.equal(organization.subjectOf["@id"], "https://upstatebasketballleague.com/league-facts.html#webpage");
   assert.equal(organization.member.length, 8);
   assert.deepEqual(organization.member.map((team) => team.name), [
     "The King's School Boys Varsity",
@@ -288,7 +316,7 @@ test("homepage schema identifies the league without inventing a storefront", () 
 
 test("public pages use one shared Keep Exploring component", () => {
   const files = [
-    "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "about.html", "news.html",
+    "league-facts.html", "schedule.html", "standings.html", "teams.html", "bracket.html", "rules.html", "about.html", "news.html",
     "news/2026-27-season-planning.html", "news/2027-playoff-format.html", "news/ubl-program-directory.html",
     "teams/hv-flames-girls.html", "teams/hv-rocks-boys.html", "teams/kings-school-boys.html", "teams/kings-school-girls.html",
     "teams/perth-boys.html", "teams/perth-girls.html", "teams/wilton-baptist-boys.html", "teams/wilton-baptist-girls.html"
