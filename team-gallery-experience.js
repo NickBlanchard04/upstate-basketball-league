@@ -89,18 +89,19 @@ function ensureGalleryProgramSections() {
     const logo = safeImageUrl(program.logo) || "assets/icons/icon-192.png";
     if (!document.querySelector(`[data-gallery-trigger="${CSS.escape(program.id)}"]`)) {
       cardGrid.insertAdjacentHTML("beforeend", `
-        <button class="team-gallery-card division-team-card" type="button" data-gallery-card data-gallery-trigger="${safeAttribute(program.id)}" data-gallery-divisions="${safeAttribute(divisions)}" aria-expanded="false" aria-controls="team-album-${safeAttribute(program.id)}" aria-label="${safeAttribute(`Open ${program.name} photo album`)}" style="--card-order:${index}">
+        <article class="team-gallery-card division-team-card" data-gallery-card data-gallery-program="${safeAttribute(program.id)}" data-gallery-divisions="${safeAttribute(divisions)}" data-expanded="false" style="--card-order:${index}">
+          <button class="team-gallery-card-trigger" type="button" data-gallery-trigger="${safeAttribute(program.id)}" aria-expanded="false" aria-controls="team-album-${safeAttribute(program.id)}" aria-label="${safeAttribute(`Open ${program.name} photo album`)}"></button>
           <span class="team-card-court" aria-hidden="true"><i></i></span>
           <span class="team-card-view"><span data-gallery-action-label>Open album</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
           <span class="team-card-logo-stage"><img src="${safeAttribute(logo)}" alt="" width="192" height="192" loading="lazy" decoding="async"></span>
-          <span class="division-team-card-content"><small class="team-card-abbr">${escapeHtml(program.short)}</small><strong>${escapeHtml(program.name)}</strong><span><span data-gallery-card-division-label>${escapeHtml(divisionSummary)}</span> &middot; <span data-gallery-count-for="${safeAttribute(program.id)}">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
-        </button>
+          <span class="division-team-card-content"><small class="team-card-abbr">${escapeHtml(program.short)}</small><strong>${teamEntityLinkMarkup(program.id, program.divisions[0], program.name, { className: "team-gallery-profile-link" })}</strong><span><span data-gallery-card-division-label>${escapeHtml(divisionSummary)}</span> &middot; <span data-gallery-count-for="${safeAttribute(program.id)}">No photos published</span></span><b><span data-gallery-cta-label>View photos</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></span>
+        </article>
       `);
     }
     if (!document.querySelector(`[data-gallery-team="${CSS.escape(program.id)}"]`)) {
       albums.insertAdjacentHTML("beforeend", `
         <section class="team-gallery" id="team-album-${safeAttribute(program.id)}" data-gallery-team="${safeAttribute(program.id)}" data-gallery-divisions="${safeAttribute(divisions)}" aria-labelledby="team-album-${safeAttribute(program.id)}-title" hidden>
-          <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="${safeAttribute(logo)}" alt="" width="192" height="192"><span><strong id="team-album-${safeAttribute(program.id)}-title">${escapeHtml(program.name)}</strong><small>${escapeHtml(divisionSummary)} album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="${safeAttribute(program.id)}">Close album</button></span></header>
+          <header class="team-gallery-heading"><span class="team-gallery-identity"><img src="${safeAttribute(logo)}" alt="" width="192" height="192"><span><strong id="team-album-${safeAttribute(program.id)}-title">${teamEntityLinkMarkup(program.id, program.divisions[0], program.name, { className: "team-gallery-profile-link" })}</strong><small>${escapeHtml(divisionSummary)} album</small></span></span><span class="team-gallery-heading-actions"><span class="team-gallery-count" data-gallery-count>No photos published</span><button type="button" data-gallery-close="${safeAttribute(program.id)}">Close album</button></span></header>
           <div class="team-gallery-content"><div class="gallery-grid" data-gallery-grid></div><p class="gallery-empty" data-gallery-empty>${escapeHtml(program.name)} photos will appear here as the season gets underway.</p></div>
         </section>
       `);
@@ -133,11 +134,13 @@ function setExpandedGallery(teamId) {
 
   document.querySelectorAll("[data-gallery-trigger]").forEach((trigger) => {
     const expanded = Boolean(teamId) && trigger.dataset.galleryTrigger === teamId;
+    const card = trigger.closest("[data-gallery-card]");
     trigger.setAttribute("aria-expanded", String(expanded));
-    trigger.querySelectorAll("[data-gallery-action-label]").forEach((actionLabel) => {
+    if (card) card.dataset.expanded = String(expanded);
+    card?.querySelectorAll("[data-gallery-action-label]").forEach((actionLabel) => {
       actionLabel.textContent = expanded ? "Album open" : "Open album";
     });
-    trigger.querySelectorAll("[data-gallery-cta-label]").forEach((actionLabel) => {
+    card?.querySelectorAll("[data-gallery-cta-label]").forEach((actionLabel) => {
       actionLabel.textContent = expanded ? "Close album" : "View photos";
     });
   });
@@ -190,7 +193,17 @@ function applyGalleryDivisionFilter(division) {
     card.classList.remove("is-gallery-last-single");
     const divisionLabel = card.querySelector("[data-gallery-card-division-label]");
     if (divisionLabel && hasSelectedDivision) divisionLabel.textContent = selectedDivision;
+    card.querySelectorAll(".team-gallery-profile-link").forEach((link) => {
+      const program = programById(card.dataset.galleryProgram);
+      if (program) link.href = teamProfileUrl(program.id, canonicalTeamDivision(program, selectedDivision));
+    });
     if (visible) visibleCards.push(card);
+  });
+  document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
+    const program = programById(gallery.dataset.galleryTeam);
+    gallery.querySelectorAll(".team-gallery-profile-link").forEach((link) => {
+      if (program) link.href = teamProfileUrl(program.id, canonicalTeamDivision(program, selectedDivision));
+    });
   });
   if (visibleCards.length % 3 === 1) visibleCards.at(-1)?.classList.add("is-gallery-last-single");
   if (hasSelectedDivision && directory) initializeTeamCardMotion(directory);
@@ -205,7 +218,7 @@ function showGalleryDivision(division, { scroll = false, updateHash = false } = 
   const divisionColumn = document.querySelector("[data-gallery-division-column]");
   directory?.classList.remove("is-direct-album");
   const expandedCard = document.querySelector('[data-gallery-trigger][aria-expanded="true"]');
-  if (expandedCard?.hidden) closeGalleryAlbum();
+  if (expandedCard?.closest("[data-gallery-card]")?.hidden) closeGalleryAlbum();
   if (updateHash) {
     const divisionSlug = selectedDivision === "Girls Varsity" ? "girls" : "boys";
     history.replaceState(null, "", `#gallery-${divisionSlug}-division`);

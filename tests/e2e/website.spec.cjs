@@ -125,6 +125,44 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   }
 });
 
+test("team names link to canonical division profiles across league surfaces", async ({ page }) => {
+  await page.goto("/index.html");
+  await expect(page.locator(".featured-matchup [data-team-page-link]").first()).toHaveAttribute("href", /^teams\/[a-z-]+-(boys|girls)\.html$/);
+  await expect(page.locator(".ticker-group:not([aria-hidden]) [data-team-page-link]").first()).toHaveAttribute("href", /^teams\/[a-z-]+-(boys|girls)\.html$/);
+  await expect(page.locator("[data-game-list] [data-team-page-link]").first()).toHaveAttribute("href", /^teams\/[a-z-]+-(boys|girls)\.html$/);
+
+  await page.goto("/schedule.html");
+  await expect(page.locator("[data-week-game-list] .schedule-team[href]").first()).toHaveAttribute("href", /^teams\/[a-z-]+-(boys|girls)\.html$/);
+
+  await page.goto("/standings.html");
+  await expect(page.locator("[data-standings-division] .team-link").first()).toHaveAttribute("href", /^teams\/[a-z-]+-(boys|girls)\.html$/);
+
+  await page.goto("/bracket.html");
+  await expect(page.locator(".bracket-accessible-summary [data-team-page-link]").first()).toHaveAttribute("href", /^teams\/[a-z-]+-(boys|girls)\.html$/);
+
+  await page.goto("/gallery.html");
+  await page.getByRole("button", { name: "Girls", exact: true }).click();
+  await expect(page.locator('[data-gallery-card][data-gallery-program="kings-school"] .team-gallery-profile-link')).toHaveAttribute("href", "teams/kings-school-girls.html");
+});
+
+test("short-phone navigation keeps About above the homepage ticker", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"), "Mobile-specific fixed navigation behavior");
+
+  for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 667 }, { width: 430, height: 932 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/index.html");
+    await page.locator(".menu-toggle").click();
+    const about = page.locator(".site-nav a[href='about.html']");
+    const ticker = page.locator(".score-ticker");
+    await about.scrollIntoViewIfNeeded();
+    const [aboutBox, tickerBox] = await Promise.all([about.boundingBox(), ticker.boundingBox()]);
+    expect(aboutBox).not.toBeNull();
+    expect(tickerBox).not.toBeNull();
+    expect(aboutBox.y + aboutBox.height).toBeLessThanOrEqual(tickerBox.y + 1);
+    await expect(about).toBeVisible();
+  }
+});
+
 test("homepage places Coming Up below standings and mixes prior-night finals into the ticker", async ({ page }) => {
   const resultFeed = structuredClone(feed);
   Object.assign(resultFeed.games[0], { status: "Final", awayScore: 41, homeScore: 50 });
@@ -770,7 +808,8 @@ test("bundled gallery metadata renders responsively and remains interactive", as
     expect(Math.abs((cardBoxes[3].x + cardBoxes[3].width / 2) - (gridBox.x + gridBox.width / 2))).toBeLessThan(4);
   }
   const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
-  const kingsCard = page.locator('[data-gallery-trigger="kings-school"]');
+  const kingsCard = page.locator('[data-gallery-card][data-gallery-program="kings-school"]');
+  const kingsTrigger = kingsCard.locator('[data-gallery-trigger="kings-school"]');
   const bundledPhotos = kingsGallery.locator("[data-gallery-photo-id]");
   const firstPhoto = kingsGallery.locator('[data-gallery-photo-id="kings-gallery-01"]');
   const firstImage = firstPhoto.locator("img");
@@ -788,16 +827,16 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(kingsCard.locator(".team-card-abbr")).toHaveText("TKS");
   await expect(kingsCard.locator(".division-team-card-content")).toContainText("13 photos");
 
-  await expect(kingsCard).toHaveAttribute("aria-expanded", "false");
+  await expect(kingsTrigger).toHaveAttribute("aria-expanded", "false");
   await expect(kingsGallery).toBeHidden();
-  await kingsCard.click();
-  await expect(kingsCard).toHaveAttribute("aria-expanded", "true");
+  await kingsTrigger.click();
+  await expect(kingsTrigger).toHaveAttribute("aria-expanded", "true");
   await expect(kingsCard.locator("[data-gallery-action-label]")).toHaveText("Album open");
   await expect(kingsCard.locator("[data-gallery-cta-label]")).toHaveText("Close album");
   await expect(kingsGallery).toBeVisible();
-  await kingsCard.click();
+  await kingsTrigger.click();
   await expect(kingsGallery).toBeHidden();
-  await kingsCard.click();
+  await kingsTrigger.click();
   await expect(kingsGallery).toBeVisible();
   const albumShare = kingsGallery.locator('[data-gallery-share-album="kings-school"]');
   await expect(albumShare).toBeVisible();
@@ -892,9 +931,10 @@ test("approved Drive photos appear only in their matching team and division", as
 
   await page.goto("/gallery.html");
   const rocksGallery = page.locator('[data-gallery-team="hv-rocks"]');
-  const rocksCard = page.locator('[data-gallery-trigger="hv-rocks"]');
+  const rocksCard = page.locator('[data-gallery-card][data-gallery-program="hv-rocks"]');
+  const rocksTrigger = rocksCard.locator('[data-gallery-trigger="hv-rocks"]');
   await page.getByRole("button", { name: "Boys", exact: true }).click();
-  await rocksCard.click();
+  await rocksTrigger.click();
   await expect(rocksGallery.locator("[data-gallery-count]")).toHaveText("1 photo");
   await expect(rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"]')).toBeVisible();
   const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
@@ -908,7 +948,7 @@ test("approved Drive photos appear only in their matching team and division", as
   await page.getByRole("button", { name: "Boys", exact: true }).click();
   await expect(rocksCard).toBeVisible();
   await expect(rocksGallery).toBeHidden();
-  await rocksCard.click();
+  await rocksTrigger.click();
   await expect(rocksGallery).toBeVisible();
   await rocksGallery.locator('[data-gallery-photo-id="approved-rocks-1"] [data-gallery-full]').click();
   await expect(page.locator(".gallery-lightbox")).toBeVisible();
