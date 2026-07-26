@@ -593,6 +593,97 @@
 @media (min-width: 768px) {
   .team-profile-index {
     display: block;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-inline: clamp(1.25rem, 2.5vw, 2.5rem);
+    border: 1px solid rgba(255, 255, 255, .09);
+    background:
+      linear-gradient(110deg, rgba(2, 15, 34, .84), rgba(4, 31, 68, .72)),
+      url("assets/optimized/ubl-season-playbook-texture.webp") center / cover;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .07),
+      inset 0 -1px 0 rgba(255, 255, 255, .04),
+      0 1.5rem 3.5rem rgba(0, 0, 0, .18);
+  }
+
+  .team-profile-index::before {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    content: "";
+    background:
+      linear-gradient(90deg, rgba(11, 75, 137, .16), transparent 28%, transparent 72%, rgba(227, 19, 49, .12)),
+      repeating-linear-gradient(90deg, transparent 0 11.95rem, rgba(255, 255, 255, .025) 12rem);
+    pointer-events: none;
+  }
+
+  .team-profile-index > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .team-profile-index h2 {
+    color: var(--white);
+  }
+
+  .team-profile-index header p {
+    color: rgba(255, 255, 255, .7);
+  }
+
+  .team-profile-link-grid a {
+    --profile-card-accent: var(--navy-700);
+    --profile-card-line: rgba(11, 75, 137, .14);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-bottom-color: var(--profile-card-accent);
+    background:
+      radial-gradient(circle at 82% 48%, transparent 0 2.55rem, var(--profile-card-line) 2.6rem 2.68rem, transparent 2.73rem),
+      linear-gradient(90deg, transparent 0 81%, var(--profile-card-line) 81.25%, transparent 81.6%),
+      repeating-linear-gradient(135deg, rgba(2, 15, 34, .026) 0 1px, transparent 1px 7px),
+      linear-gradient(145deg, #ffffff 0%, #f1f5fa 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, .7),
+      0 .75rem 1.6rem rgba(0, 0, 0, .16);
+  }
+
+  .team-profile-link-grid a:nth-child(even) {
+    --profile-card-accent: var(--red);
+    --profile-card-line: rgba(227, 19, 49, .14);
+  }
+
+  .team-profile-link-grid a::before {
+    position: absolute;
+    z-index: -1;
+    top: -.7rem;
+    right: -1.8rem;
+    width: 7.2rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--profile-card-line);
+    border-radius: 50%;
+    content: "";
+    box-shadow: 0 0 0 .8rem rgba(255, 255, 255, .15);
+    pointer-events: none;
+  }
+
+  .team-profile-link-grid a:hover,
+  .team-profile-link-grid a:focus-visible {
+    --profile-card-line: rgba(255, 255, 255, .13);
+    background:
+      radial-gradient(circle at 82% 48%, transparent 0 2.55rem, var(--profile-card-line) 2.6rem 2.68rem, transparent 2.73rem),
+      linear-gradient(90deg, transparent 0 81%, var(--profile-card-line) 81.25%, transparent 81.6%),
+      repeating-linear-gradient(135deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 7px),
+      linear-gradient(145deg, var(--navy-800), var(--navy-950));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, .08),
+      0 1rem 2.2rem rgba(0, 0, 0, .28);
+  }
+
+  .team-profile-link-grid strong,
+  .team-profile-link-grid span {
+    position: relative;
+    z-index: 1;
   }
 }
 
