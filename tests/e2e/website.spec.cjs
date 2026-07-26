@@ -160,7 +160,15 @@ test("team names link to canonical division profiles across league surfaces", as
 
   await page.goto("/gallery.html");
   await page.getByRole("button", { name: "Girls", exact: true }).click();
-  await expect(page.locator('[data-gallery-card][data-gallery-program="kings-school"] .team-gallery-profile-link')).toHaveAttribute("href", "teams/kings-school-girls.html");
+  const galleryProfileLink = page.locator('[data-gallery-card][data-gallery-program="kings-school"] .team-gallery-profile-link');
+  await expect(galleryProfileLink).toHaveAttribute("href", "teams/kings-school-girls.html");
+  await expect(galleryProfileLink).toHaveAttribute("data-team-page-division", "Girls Varsity");
+    await expect(galleryProfileLink).toHaveAccessibleName(/View The King.s School Girls Varsity team page/);
+
+  await page.getByRole("button", { name: "Boys", exact: true }).click();
+  await expect(galleryProfileLink).toHaveAttribute("href", "teams/kings-school-boys.html");
+  await expect(galleryProfileLink).toHaveAttribute("data-team-page-division", "Boys Varsity");
+    await expect(galleryProfileLink).toHaveAccessibleName(/View The King.s School Boys Varsity team page/);
 });
 
 test("short-phone navigation keeps About above the homepage ticker", async ({ page }, testInfo) => {
@@ -798,6 +806,10 @@ test("bundled gallery metadata renders responsively and remains interactive", as
   await expect(page.locator(".gallery-lede")).toHaveCount(0);
   await expect(page.locator("body")).toHaveClass(/gallery-landing-page/);
   await expect(page.getByRole("heading", { name: "Gallery", exact: true })).toBeVisible();
+  expect(await page.getByRole("heading", { name: "Gallery", exact: true }).evaluate((heading) => {
+    const style = getComputedStyle(heading);
+    return Number.parseFloat(style.letterSpacing) / Number.parseFloat(style.fontSize);
+  })).toBeCloseTo(-0.03, 3);
   const galleryDirectory = page.locator("[data-gallery-directory]");
   await expect(galleryDirectory).toBeHidden();
   const galleryOpenSpot = page.locator(".gallery-opportunity");
@@ -824,6 +836,11 @@ test("bundled gallery metadata renders responsively and remains interactive", as
     expect(Math.abs(cardBoxes[0].width - cardBoxes[1].width)).toBeLessThan(4);
     expect(cardBoxes[0].width).toBeLessThan(gridBox.width * 0.4);
     expect(Math.abs((cardBoxes[3].x + cardBoxes[3].width / 2) - (gridBox.x + gridBox.width / 2))).toBeLessThan(4);
+
+    const profileLinkBox = await page.locator('[data-gallery-card][data-gallery-program="kings-school"] .team-gallery-profile-link').boundingBox();
+    expect(profileLinkBox).not.toBeNull();
+    expect(profileLinkBox.width).toBeGreaterThanOrEqual(44);
+    expect(profileLinkBox.height).toBeGreaterThanOrEqual(44);
   }
   const kingsGallery = page.locator('[data-gallery-team="kings-school"]');
   const kingsCard = page.locator('[data-gallery-card][data-gallery-program="kings-school"]');

@@ -1791,7 +1791,7 @@ th {
 }
 
 .gallery-hero .teams-hero-copy h1 {
-  letter-spacing: 0.08em;
+  letter-spacing: -0.03em;
 }
 
 .gallery-directory.is-direct-album .division-heading,
@@ -4737,6 +4737,16 @@ th {
     font-size: clamp(0.875rem, 3.8vw, 1.05rem);
     line-height: 0.95;
     overflow-wrap: anywhere;
+  }
+
+  .team-gallery-card .team-gallery-profile-link {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    margin-block: -0.7rem;
+    padding: 0.7rem 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
