@@ -160,6 +160,13 @@ function activeGalleryDivision() {
     || "all";
 }
 
+function updateGalleryProfileLink(link, program, division) {
+  const resolvedDivision = canonicalTeamDivision(program, division);
+  link.href = teamProfileUrl(program.id, resolvedDivision);
+  link.dataset.teamPageDivision = resolvedDivision;
+  link.setAttribute("aria-label", `View ${program.name} ${resolvedDivision} team page`);
+}
+
 function applyGalleryDivisionFilter(division) {
   const selectedDivision = division === "Boys Varsity" || division === "Girls Varsity" ? division : "all";
   const hasSelectedDivision = selectedDivision !== "all";
@@ -195,14 +202,14 @@ function applyGalleryDivisionFilter(division) {
     if (divisionLabel && hasSelectedDivision) divisionLabel.textContent = selectedDivision;
     card.querySelectorAll(".team-gallery-profile-link").forEach((link) => {
       const program = programById(card.dataset.galleryProgram);
-      if (program) link.href = teamProfileUrl(program.id, canonicalTeamDivision(program, selectedDivision));
+      if (program) updateGalleryProfileLink(link, program, selectedDivision);
     });
     if (visible) visibleCards.push(card);
   });
   document.querySelectorAll("[data-gallery-team]").forEach((gallery) => {
     const program = programById(gallery.dataset.galleryTeam);
     gallery.querySelectorAll(".team-gallery-profile-link").forEach((link) => {
-      if (program) link.href = teamProfileUrl(program.id, canonicalTeamDivision(program, selectedDivision));
+      if (program) updateGalleryProfileLink(link, program, selectedDivision);
     });
   });
   if (visibleCards.length % 3 === 1) visibleCards.at(-1)?.classList.add("is-gallery-last-single");
