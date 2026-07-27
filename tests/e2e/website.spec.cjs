@@ -144,6 +144,45 @@ test("homepage keeps every primary content surface in the dark arena theme", asy
   expect(theme.headings.every((color) => color === "rgb(255, 255, 255)")).toBe(true);
 });
 
+test("homepage ends with league context and links the countdown to its exact schedule matchup", async ({ page }, testInfo) => {
+  await page.goto("/index.html");
+
+  await expect(page.locator("main > .league-identity")).toHaveCount(1);
+  expect(await page.locator("main").evaluate((main) =>
+    main.lastElementChild?.classList.contains("league-identity")
+  )).toBe(true);
+
+  const countdownLink = page.locator("[data-countdown-link]");
+  await expect(countdownLink).toHaveAttribute(
+    "href",
+    /^schedule\.html\?game=[a-z0-9-]+#game-[a-z0-9-]+$/
+  );
+  await expect(countdownLink).toHaveAttribute(
+    "aria-label",
+    /View .+ versus .+ in the schedule/
+  );
+
+  if (testInfo.project.name.startsWith("desktop")) {
+    const placement = await page.evaluate(() => {
+      const actions = document.querySelector(".hero-actions").getBoundingClientRect();
+      const countdown = document.querySelector("[data-countdown-link]").getBoundingClientRect();
+      return {
+        belowActions: countdown.top >= actions.bottom,
+        leftAligned: Math.abs(countdown.left - actions.left) <= 1
+      };
+    });
+    expect(placement).toEqual({ belowActions: true, leftAligned: true });
+  }
+
+  await countdownLink.click({ force: true });
+  await expect(page).toHaveURL(/\/schedule\.html\?game=[a-z0-9-]+#game-[a-z0-9-]+$/);
+  const linkedGame = page.locator(".schedule-game-row.is-linked-game");
+  await expect(linkedGame).toBeVisible();
+  await expect(linkedGame).toHaveAttribute("data-game-id", "ubl-001");
+  const linkedGameId = await linkedGame.getAttribute("id");
+  expect(new URL(page.url()).hash).toBe(`#${linkedGameId}`);
+});
+
 test("official league facts page answers the exact entity question without horizontal overflow", async ({ page }) => {
   await page.goto("/league-facts.html");
   await expect(page.locator("h1")).toHaveText("What is the Upstate Basketball League?");

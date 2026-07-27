@@ -234,6 +234,40 @@ function safeAttribute(value) {
   return escapeHtml(value);
 }
 
+function gameReferenceId(game) {
+  const identity = [
+    game?.iso,
+    game?.time,
+    game?.division,
+    game?.awayId,
+    game?.homeId
+  ].filter(Boolean).join("-");
+  return (identity || game?.id || "matchup")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function gameAnchorId(game) {
+  return `game-${gameReferenceId(game)}`;
+}
+
+function scheduleGameUrl(game) {
+  const reference = gameReferenceId(game);
+  return `schedule.html?game=${encodeURIComponent(reference)}#${gameAnchorId(game)}`;
+}
+
+function requestedScheduleGameReference() {
+  return new URLSearchParams(window.location.search).get("game") || "";
+}
+
+function requestedScheduleGame() {
+  const reference = requestedScheduleGameReference();
+  return reference
+    ? allScheduledGames().find((game) => gameReferenceId(game) === reference)
+    : null;
+}
+
 function mapTriggerMarkup(label, address, detail = "", context = "Game location") {
   if (!address) return escapeHtml(label);
   return `
@@ -302,7 +336,7 @@ function scheduleTeamMarkup(game, side) {
 
 function scheduleGameRowMarkup(game) {
   return `
-    <article class="game-row schedule-game-row" data-game-id="${safeAttribute(game.id || "")}">
+    <article class="game-row schedule-game-row" id="${safeAttribute(gameAnchorId(game))}" data-game-id="${safeAttribute(game.id || "")}">
       ${scheduleTeamMarkup(game, "away")}
       <span class="schedule-versus" aria-hidden="true">vs</span>
       ${scheduleTeamMarkup(game, "home")}
@@ -475,6 +509,24 @@ function renderUpcomingTicker() {
 
 let scheduleDivision = "all";
 let selectedWeekId = "";
+let scheduleDeepLinkHandled = false;
+
+function focusRequestedScheduleGame() {
+  const game = requestedScheduleGame();
+  const target = game ? document.getElementById(gameAnchorId(game)) : null;
+  if (!target) return;
+  target.classList.add("is-linked-game");
+  if (scheduleDeepLinkHandled) return;
+  scheduleDeepLinkHandled = true;
+  target.setAttribute("tabindex", "-1");
+  window.requestAnimationFrame(() => {
+    target.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "center"
+    });
+    target.focus({ preventScroll: true });
+  });
+}
 
 function featuredMatchupMarkup(game, compact = false) {
   const away = tickerTeam(game, "away");
@@ -517,7 +569,7 @@ function renderFeaturedGame() {
     </div>
     <div class="featured-live-list">${liveGames.map((item, index) => featuredMatchupMarkup(item, index > 0)).join("")}</div>
     <p>${escapeHtml(game.division)} &middot; ${game.stage ? `${escapeHtml(game.stage)} &middot; ` : ""}${gameLocationMarkup(game)}</p>
-    <a class="text-link" href="schedule.html">View game details</a>
+    <a class="text-link" href="${safeAttribute(scheduleGameUrl(game))}">View game details</a>
   `;
 }
 
@@ -570,6 +622,7 @@ function renderSchedulePage() {
   weekList.innerHTML = games.length
     ? scheduleSlateMarkup(games)
     : `<div class="schedule-empty"><strong>No games planned</strong><p>${escapeHtml(week.note || "No games match this division filter.")}</p></div>`;
+  focusRequestedScheduleGame();
   const weekIndex = league.scheduleWeeks.indexOf(week);
   document.querySelectorAll("[data-week-step]").forEach((button) => {
     const direction = Number(button.dataset.weekStep);
@@ -1938,7 +1991,15 @@ function configureCountdown() {
   if (!openingGame) return;
   countdownTarget = gameStartTime(openingGame);
   const label = document.querySelector("[data-tipoff-date]");
-  if (label) label.textContent = `${openingGame.date.replace(/^\w+\s/, "")} · ${openingGame.time} ET`;
+  if (label) label.textContent = `${openingGame.date.replace(/^\w+\s/, "")} \u00b7 ${openingGame.time} ET`;
+  const link = document.querySelector("[data-countdown-link]");
+  if (link) {
+    link.href = scheduleGameUrl(openingGame);
+    link.setAttribute(
+      "aria-label",
+      `View ${gameTeamName(openingGame, "away")} versus ${gameTeamName(openingGame, "home")} in the schedule`
+    );
+  }
 }
 
 function updateCountdown() {
@@ -1953,6 +2014,13 @@ function updateCountdown() {
 }
 
 function chooseScheduleWeek() {
+  const requestedGame = requestedScheduleGame();
+  if (requestedGame) {
+    selectedWeekId = league.scheduleWeeks.find((week) =>
+      week.games.some((game) => gameReferenceId(game) === gameReferenceId(requestedGame))
+    )?.id || selectedWeekId;
+    return;
+  }
   if (league.scheduleWeeks.some((week) => week.id === selectedWeekId)) return;
   const focus = scheduleFocus();
   const game = focus.current || focus.next;
@@ -1978,6 +2046,7 @@ function renderLeagueData() {
 
 function renderCriticalHomeData() {
   renderDataFreshness();
+  configureCountdown();
   updateCountdown();
 }
 
