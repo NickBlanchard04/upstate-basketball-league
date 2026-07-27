@@ -220,7 +220,7 @@ function requestedTeamProfileRoute() {
   };
 }
 
-const UBL_TEAM_PROFILE_CACHE_VERSION = "20260726-1";
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260726-2";
 
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];

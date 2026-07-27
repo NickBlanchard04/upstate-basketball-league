@@ -418,10 +418,24 @@ test("standings uses the shared site header on desktop and mobile", async ({ pag
 
   if (page.viewportSize().width < 1024) {
     const menuToggle = page.locator(".menu-toggle");
+    const menuBars = menuToggle.locator("span:not(.sr-only)");
     await expect(menuToggle).toHaveAccessibleName("Open menu");
     await menuToggle.click();
     await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
     await expect(menuToggle).toHaveAccessibleName("Close menu");
+    await page.waitForTimeout(220);
+    expect(await menuBars.evaluateAll((bars) => bars.map((bar) => ({
+      opacity: getComputedStyle(bar).opacity,
+      transform: getComputedStyle(bar).transform,
+    })))).toEqual([
+      expect.objectContaining({ opacity: "1", transform: expect.not.stringMatching(/^none$/) }),
+      expect.objectContaining({ opacity: "0" }),
+      expect.objectContaining({ opacity: "1", transform: expect.not.stringMatching(/^none$/) }),
+    ]);
+
+    await menuToggle.click();
+    await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+    await expect(menuToggle).toHaveAccessibleName("Open menu");
   }
 });
 
