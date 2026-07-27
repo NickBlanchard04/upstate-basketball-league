@@ -128,6 +128,22 @@ test("homepage uses the shared schedule and continuously moving game ticker", as
   }
 });
 
+test("homepage keeps every primary content surface in the dark arena theme", async ({ page }) => {
+  await page.goto("/index.html");
+  const theme = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).backgroundColor,
+    panels: Array.from(document.querySelectorAll(".feature-deck .panel, .home-league-grid .panel"))
+      .map((panel) => getComputedStyle(panel).backgroundColor),
+    headings: Array.from(document.querySelectorAll(".feature-deck h2, .home-league-grid h2"))
+      .map((heading) => getComputedStyle(heading).color),
+  }));
+
+  expect(theme.body).toBe("rgb(2, 15, 34)");
+  expect(theme.panels.length).toBe(4);
+  expect(theme.panels.every((color) => color !== "rgb(255, 255, 255)")).toBe(true);
+  expect(theme.headings.every((color) => color === "rgb(255, 255, 255)")).toBe(true);
+});
+
 test("official league facts page answers the exact entity question without horizontal overflow", async ({ page }) => {
   await page.goto("/league-facts.html");
   await expect(page.locator("h1")).toHaveText("What is the Upstate Basketball League?");

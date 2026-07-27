@@ -7150,3 +7150,240 @@ th {
     transition: none;
   }
 }
+
+/* Homepage dark arena theme */
+.home-page {
+  color: var(--white);
+  background: var(--navy-950);
+}
+
+.home-page main {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% 22%, transparent 0 16rem, rgba(255, 255, 255, 0.035) 16.08rem 16.15rem, transparent 16.23rem),
+    linear-gradient(135deg, rgba(11, 75, 137, 0.12), transparent 34%),
+    linear-gradient(225deg, rgba(227, 19, 49, 0.09), transparent 28%),
+    var(--navy-950);
+}
+
+.home-page .league-identity {
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    radial-gradient(circle at 100% 0, rgba(227, 19, 49, 0.2), transparent 40%),
+    linear-gradient(135deg, rgba(7, 52, 103, 0.94), rgba(2, 15, 34, 0.99) 62%);
+  box-shadow: 0 1.1rem 2.8rem rgba(0, 0, 0, 0.34);
+}
+
+.home-page .panel {
+  border-color: rgba(159, 179, 202, 0.24);
+  color: var(--white);
+  background:
+    linear-gradient(145deg, rgba(7, 52, 103, 0.42), rgba(4, 26, 56, 0.96) 44%, rgba(2, 15, 34, 0.98)),
+    var(--navy-900);
+  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.28);
+}
+
+.home-page .panel-heading h2,
+.home-page .section-title h2 {
+  color: var(--white);
+}
+
+.home-page .panel-heading span,
+.home-page .heading-link,
+.home-page .section-title > a {
+  color: #ff8da0;
+}
+
+.home-page .heading-link:hover,
+.home-page .heading-link:focus-visible,
+.home-page .section-title > a:hover,
+.home-page .section-title > a:focus-visible {
+  color: var(--white);
+}
+
+.home-page .featured-matchup {
+  border-color: rgba(159, 179, 202, 0.24);
+}
+
+.home-page .featured-matchup img {
+  padding: 0.35rem;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.home-page .featured-matchup strong,
+.home-page .featured-score {
+  color: var(--white);
+}
+
+.home-page .featured-matchup span,
+.home-page .featured-game > p {
+  color: #a9b8ca;
+}
+
+.home-page .featured-matchup b {
+  border: 1px solid rgba(255, 141, 160, 0.42);
+  color: var(--white);
+  background: rgba(227, 19, 49, 0.18);
+}
+
+.home-page .featured-empty,
+.home-page .schedule-empty {
+  border-color: rgba(159, 179, 202, 0.28);
+  color: #a9b8ca;
+  background: rgba(2, 15, 34, 0.56);
+}
+
+.home-page .featured-empty strong,
+.home-page .schedule-empty strong {
+  color: var(--white);
+}
+
+.home-page .text-link {
+  border-color: rgba(159, 179, 202, 0.54);
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.home-page .text-link:hover,
+.home-page .text-link:focus-visible {
+  border-color: var(--red);
+  background: rgba(227, 19, 49, 0.16);
+}
+
+.home-page .team-card:not(.team-card-open-spot) {
+  border-color: rgba(159, 179, 202, 0.24);
+  color: var(--white);
+  background: rgba(2, 15, 34, 0.5);
+}
+
+.home-page .team-card:not(.team-card-open-spot) img {
+  padding: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.home-page .team-card span {
+  color: #9fb0c5;
+}
+
+.home-page .team-card:not(.team-card-open-spot):hover,
+.home-page .team-card:not(.team-card-open-spot):focus-visible {
+  border-color: rgba(255, 141, 160, 0.8);
+  background: rgba(7, 52, 103, 0.62);
+  box-shadow: 0 0.7rem 1.6rem rgba(0, 0, 0, 0.3);
+}
+
+.home-page .team-card-open-spot span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.home-page .section-title {
+  border-bottom: 1px solid rgba(159, 179, 202, 0.24);
+  background:
+    linear-gradient(90deg, rgba(7, 52, 103, 0.74), rgba(4, 26, 56, 0.38)),
+    transparent;
+}
+
+.home-page .tabs button {
+  border-color: rgba(159, 179, 202, 0.38);
+  color: #dce7f3;
+  background: rgba(2, 15, 34, 0.66);
+}
+
+.home-page .tabs button:hover,
+.home-page .tabs button:focus-visible {
+  border-color: rgba(255, 141, 160, 0.8);
+  color: var(--white);
+}
+
+.home-page .tabs button.active {
+  border-color: var(--red);
+  color: var(--white);
+  background: var(--red);
+}
+
+.home-page .game-list {
+  border-color: rgba(159, 179, 202, 0.26);
+  background: rgba(2, 15, 34, 0.48);
+}
+
+.home-page .game-row {
+  border-color: rgba(159, 179, 202, 0.22);
+}
+
+.home-page .game-row:hover {
+  background: rgba(7, 52, 103, 0.24);
+}
+
+.home-page .game-date {
+  color: #ff8da0;
+}
+
+.home-page .game-date span,
+.home-page .game-info p,
+.home-page .game-status-note,
+.home-page .panel-note,
+.home-page .data-freshness {
+  color: #9fb0c5;
+}
+
+.home-page .game-info strong,
+.home-page .game-score {
+  color: var(--white);
+}
+
+.home-page .game-info .map-trigger {
+  color: #8fc9ff;
+}
+
+.home-page .table-wrap {
+  border: 1px solid rgba(159, 179, 202, 0.24);
+  border-radius: 0.55rem;
+}
+
+.home-page th,
+.home-page td {
+  border-color: rgba(159, 179, 202, 0.2);
+}
+
+.home-page th {
+  color: #9fb0c5;
+  background: rgba(2, 15, 34, 0.72);
+}
+
+.home-page td {
+  color: #dce7f3;
+}
+
+.home-page tbody tr:hover {
+  background: rgba(7, 52, 103, 0.24);
+}
+
+.home-page .standings-team {
+  color: var(--white);
+}
+
+.home-page .standings-team img {
+  padding: 0.14rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.home-page .seed-cell {
+  color: #ff8da0;
+}
+
+.home-page .home-data-freshness {
+  padding: 0.2rem 0.25rem 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .home-page .feature-deck,
+  .home-page .home-league-grid {
+    gap: 1rem;
+  }
+}
