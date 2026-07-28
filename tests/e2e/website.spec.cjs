@@ -1155,6 +1155,23 @@ test("bundled data renders immediately while the primary live feed loads without
   expect(snapshotRequests).toBe(0);
 });
 
+test("homepage panels render from bundled data before a delayed live feed responds", async ({ page }) => {
+  await page.unroute(liveFeedUrlPattern);
+  await page.route(liveFeedUrlPattern, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await route.fulfill({ json: feed });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+
+  await expect(page.locator("[data-featured-game] h2")).toHaveText("Next league game", { timeout: 250 });
+  await expect(page.locator("[data-team-card-grid] .team-card")).not.toHaveCount(0, { timeout: 250 });
+  await expect(page.locator("[data-standings-body] tr")).not.toHaveCount(0, { timeout: 250 });
+  await expect(page.locator("[data-game-list] .game-row")).not.toHaveCount(0, { timeout: 250 });
+  await expect(page.locator("[data-freshness]")).toContainText("saved schedule while live updates load");
+  await expect(page.locator("[data-freshness]")).toContainText("synced from the league sheet", { timeout: 3000 });
+});
+
 test("identical live data does not replace already rendered schedule nodes", async ({ page }) => {
   await page.goto("/schedule.html");
   await expect(page.locator("[data-week-game-list] .game-row")).not.toHaveCount(0);

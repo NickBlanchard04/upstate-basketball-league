@@ -220,7 +220,7 @@ function requestedTeamProfileRoute() {
   };
 }
 
-const UBL_TEAM_PROFILE_CACHE_VERSION = "20260726-2";
+const UBL_TEAM_PROFILE_CACHE_VERSION = "20260727-1";
 
 function gameTeamName(game, side) {
   const programId = game[`${side}Id`];
@@ -577,10 +577,12 @@ function renderHomeSchedule() {
   const gameList = document.querySelector("[data-game-list]");
   if (!gameList) return;
   const { currentGames, next } = scheduleFocus();
-  const featuredIds = new Set((currentGames.length ? currentGames : next ? [next] : []).map((game) => game.id));
+  const featuredGames = new Set(
+    (currentGames.length ? currentGames : next ? [next] : []).map(gameReferenceId)
+  );
   const games = upcomingScheduledGames(12)
     .filter((game) => scheduleDivision === "all" || game.division === scheduleDivision)
-    .filter((game) => !featuredIds.has(game.id))
+    .filter((game) => !featuredGames.has(gameReferenceId(game)))
     .slice(0, 4);
   gameList.innerHTML = games.length
     ? games.map(gameMarkup).join("")
@@ -2044,12 +2046,6 @@ function renderLeagueData() {
   updateCountdown();
 }
 
-function renderCriticalHomeData() {
-  renderDataFreshness();
-  configureCountdown();
-  updateCountdown();
-}
-
 let renderedLeagueSignature = "";
 let hasCompletedFullRender = false;
 
@@ -2061,16 +2057,11 @@ function leagueSignature(data) {
   }
 }
 
-function applyLeagueData(data, criticalOnly = false) {
+function applyLeagueData(data) {
   const nextSignature = leagueSignature(data);
   league = data;
   scheduledGamesCacheLeague = null;
   scheduledGamesCache = [];
-  if (criticalOnly) {
-    renderedLeagueSignature = nextSignature;
-    renderCriticalHomeData();
-    return;
-  }
   if (nextSignature === renderedLeagueSignature && hasCompletedFullRender) {
     document.querySelectorAll("[data-bracket]").forEach(updateBracketStatus);
     renderDataFreshness();
@@ -2082,7 +2073,7 @@ function applyLeagueData(data, criticalOnly = false) {
 }
 
 function initializeApp() {
-  applyLeagueData(window.UBL_DATA, document.body.classList.contains("home-page"));
+  applyLeagueData(window.UBL_DATA);
   initializeGallery();
   Promise.resolve(window.UBL_DATA_READY || window.UBL_DATA)
     .then(applyLeagueData)
