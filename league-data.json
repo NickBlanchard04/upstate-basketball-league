@@ -1,29 +1,22 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-07-15T22:47:18.005Z",
+  "lastUpdated": "2026-07-16T03:09:46.822Z",
   "settings": {
-    "season": "2026-27",
     "timezone": "America/New_York",
+    "dataVersion": 1,
+    "lastUpdated": "2026-07-16T03:09:46.822Z",
     "gameDurationMinutes": 90,
     "showSimultaneousLiveGames": true,
-    "tiebreaker1": "win_percentage",
-    "tiebreaker2": "head_to_head",
-    "tiebreaker3": "point_differential",
-    "tiebreaker4": "points_allowed",
-    "forfeitWinningScore": 1,
-    "forfeitLosingScore": 0,
-    "cancelledCountsInStandings": false,
-    "postponedDisplay": "New date pending",
-    "refreshMinutes": 1,
-    "dataVersion": 1,
-    "lastUpdated": "2026-07-15T22:47:18.005Z"
+    "scoreReporterEnforced": false,
+    "coachReminderMinutes": 90,
+    "commissionerEscalationMinutes": 150
   },
   "teams": [
     {
       "id": "kings-school",
       "name": "The King’s School",
       "short": "TKS",
-      "logo": "assets/optimized/team-kings-school-192.webp",
+      "logo": "https://nickblanchard04.github.io/upstate-basketball-league/assets/optimized/team-kings-school-192.webp",
       "divisions": [
         "Boys Varsity",
         "Girls Varsity"
@@ -35,7 +28,7 @@
       "id": "perth",
       "name": "Perth",
       "short": "PER",
-      "logo": "assets/optimized/team-perth-192.webp",
+      "logo": "https://nickblanchard04.github.io/upstate-basketball-league/assets/optimized/team-perth-192.webp",
       "divisions": [
         "Boys Varsity",
         "Girls Varsity"
@@ -47,7 +40,7 @@
       "id": "wilton-baptist",
       "name": "Wilton Baptist",
       "short": "WBC",
-      "logo": "assets/optimized/team-wilton-baptist-192.webp",
+      "logo": "https://nickblanchard04.github.io/upstate-basketball-league/assets/optimized/team-wilton-baptist-192.webp",
       "divisions": [
         "Boys Varsity",
         "Girls Varsity"
@@ -59,7 +52,7 @@
       "id": "hv-rocks",
       "name": "HV Rocks",
       "short": "HVR",
-      "logo": "assets/optimized/team-hudson-valley-rocks-192.webp",
+      "logo": "https://nickblanchard04.github.io/upstate-basketball-league/assets/optimized/team-hudson-valley-rocks-192.webp",
       "divisions": [
         "Boys Varsity"
       ],
@@ -70,7 +63,7 @@
       "id": "hv-flames",
       "name": "HV Flames",
       "short": "HVF",
-      "logo": "assets/icons/icon-192.png",
+      "logo": "https://nickblanchard04.github.io/upstate-basketball-league/assets/team-hv-flames.svg",
       "divisions": [
         "Girls Varsity"
       ],
@@ -81,7 +74,7 @@
       "id": "tbd",
       "name": "Open League Spot",
       "short": "OPEN",
-      "logo": "assets/icons/icon-192.png",
+      "logo": "https://nickblanchard04.github.io/upstate-basketball-league/assets/optimized/ubl-logo-192.webp",
       "divisions": [
         "Boys Varsity",
         "Girls Varsity"
@@ -102,14 +95,14 @@
       "id": "perth-gym",
       "name": "Perth Home Gym",
       "address": "",
-      "mapLabel": "Perth home court",
+      "mapLabel": "Perth - TBD",
       "status": "Needs confirmation"
     },
     {
       "id": "wilton-baptist-gym",
       "name": "Wilton Baptist Home Gym",
       "address": "",
-      "mapLabel": "Wilton Baptist home court",
+      "mapLabel": "Wilton Baptist - TBD",
       "status": "Needs confirmation"
     },
     {
@@ -123,28 +116,28 @@
       "id": "play-in-site",
       "name": "Play-in Site",
       "address": "",
-      "mapLabel": "League play-in venue",
+      "mapLabel": "Play-in site - TBD",
       "status": "Needs confirmation"
     },
     {
       "id": "semifinal-a",
       "name": "Semifinal Site A",
       "address": "",
-      "mapLabel": "League semifinal venue A",
+      "mapLabel": "Semifinal Site A - TBD",
       "status": "Needs confirmation"
     },
     {
       "id": "semifinal-b",
       "name": "Semifinal Site B",
       "address": "",
-      "mapLabel": "League semifinal venue B",
+      "mapLabel": "Semifinal Site B - TBD",
       "status": "Needs confirmation"
     },
     {
       "id": "championship-site",
       "name": "Championship Site",
       "address": "",
-      "mapLabel": "UBL championship venue",
+      "mapLabel": "Championship site - TBD",
       "status": "Needs confirmation"
     }
   ],
@@ -165,7 +158,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "opening-week"
+      "weekId": "opening-week",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-002",
@@ -182,8 +176,9 @@
       "homeScore": null,
       "stage": "",
       "notes": "",
-      "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "opening-week"
+      "lastUpdated": "2026-07-16T03:09:46.822Z",
+      "weekId": "opening-week",
+      "scoreReporterTeamId": "kings-school"
     },
     {
       "id": "ubl-003",
@@ -201,7 +196,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-2"
+      "weekId": "week-2",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-004",
@@ -219,7 +215,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-2"
+      "weekId": "week-2",
+      "scoreReporterTeamId": "hv-rocks"
     },
     {
       "id": "ubl-005",
@@ -237,7 +234,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-2"
+      "weekId": "week-2",
+      "scoreReporterTeamId": "kings-school"
     },
     {
       "id": "ubl-006",
@@ -255,7 +253,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-3"
+      "weekId": "week-3",
+      "scoreReporterTeamId": "hv-flames"
     },
     {
       "id": "ubl-007",
@@ -273,7 +272,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-3"
+      "weekId": "week-3",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-008",
@@ -291,7 +291,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-3"
+      "weekId": "week-3",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-009",
@@ -309,7 +310,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "holiday-week"
+      "weekId": "holiday-week",
+      "scoreReporterTeamId": "hv-rocks"
     },
     {
       "id": "ubl-010",
@@ -327,7 +329,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-4"
+      "weekId": "week-4",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-011",
@@ -345,7 +348,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-4"
+      "weekId": "week-4",
+      "scoreReporterTeamId": "kings-school"
     },
     {
       "id": "ubl-012",
@@ -363,7 +367,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-4"
+      "weekId": "week-4",
+      "scoreReporterTeamId": "hv-rocks"
     },
     {
       "id": "ubl-013",
@@ -381,7 +386,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-4"
+      "weekId": "week-4",
+      "scoreReporterTeamId": "kings-school"
     },
     {
       "id": "ubl-014",
@@ -399,7 +405,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-4"
+      "weekId": "week-4",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-015",
@@ -417,7 +424,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-4"
+      "weekId": "week-4",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-016",
@@ -435,7 +443,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-5"
+      "weekId": "week-5",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-017",
@@ -453,7 +462,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-5"
+      "weekId": "week-5",
+      "scoreReporterTeamId": "hv-rocks"
     },
     {
       "id": "ubl-018",
@@ -471,7 +481,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-5"
+      "weekId": "week-5",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-019",
@@ -489,7 +500,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-5"
+      "weekId": "week-5",
+      "scoreReporterTeamId": "kings-school"
     },
     {
       "id": "ubl-020",
@@ -507,7 +519,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-5"
+      "weekId": "week-5",
+      "scoreReporterTeamId": "hv-flames"
     },
     {
       "id": "ubl-021",
@@ -525,7 +538,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-6"
+      "weekId": "week-6",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-022",
@@ -543,7 +557,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-6"
+      "weekId": "week-6",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-023",
@@ -561,7 +576,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-6"
+      "weekId": "week-6",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-024",
@@ -579,7 +595,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-7"
+      "weekId": "week-7",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-025",
@@ -597,7 +614,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-7"
+      "weekId": "week-7",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-026",
@@ -615,7 +633,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-7"
+      "weekId": "week-7",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-027",
@@ -633,7 +652,8 @@
       "stage": "",
       "notes": "League play resumes after midterm exams.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-7"
+      "weekId": "week-7",
+      "scoreReporterTeamId": "hv-flames"
     },
     {
       "id": "ubl-028",
@@ -651,7 +671,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-7"
+      "weekId": "week-7",
+      "scoreReporterTeamId": "hv-rocks"
     },
     {
       "id": "ubl-029",
@@ -669,7 +690,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-7"
+      "weekId": "week-7",
+      "scoreReporterTeamId": "wilton-baptist"
     },
     {
       "id": "ubl-030",
@@ -687,7 +709,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-8"
+      "weekId": "week-8",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-031",
@@ -705,7 +728,8 @@
       "stage": "",
       "notes": "",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-8"
+      "weekId": "week-8",
+      "scoreReporterTeamId": "perth"
     },
     {
       "id": "ubl-032",
@@ -723,7 +747,8 @@
       "stage": "",
       "notes": "Final planned regular-season games before winter break and the postseason.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-9"
+      "weekId": "week-9",
+      "scoreReporterTeamId": "kings-school"
     },
     {
       "id": "ubl-033",
@@ -741,7 +766,8 @@
       "stage": "",
       "notes": "Final planned regular-season games before winter break and the postseason.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "week-9"
+      "weekId": "week-9",
+      "scoreReporterTeamId": "hv-flames"
     },
     {
       "id": "ubl-034",
@@ -759,7 +785,8 @@
       "stage": "Play-in",
       "notes": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "playoff-week"
+      "weekId": "playoff-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-035",
@@ -777,7 +804,8 @@
       "stage": "Play-in",
       "notes": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "playoff-week"
+      "weekId": "playoff-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-036",
@@ -795,7 +823,8 @@
       "stage": "Semifinal",
       "notes": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "playoff-week"
+      "weekId": "playoff-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-037",
@@ -813,7 +842,8 @@
       "stage": "Semifinal",
       "notes": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "playoff-week"
+      "weekId": "playoff-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-038",
@@ -831,7 +861,8 @@
       "stage": "Semifinal",
       "notes": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "playoff-week"
+      "weekId": "playoff-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-039",
@@ -849,7 +880,8 @@
       "stage": "Semifinal",
       "notes": "Tentative postseason dates during winter break. Seed 4 plays Seed 5; the winner advances to play Seed 1.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "playoff-week"
+      "weekId": "playoff-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-040",
@@ -867,7 +899,8 @@
       "stage": "Championship",
       "notes": "Tentative UBL championship date following winter break.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "championship-week"
+      "weekId": "championship-week",
+      "scoreReporterTeamId": ""
     },
     {
       "id": "ubl-041",
@@ -885,7 +918,184 @@
       "stage": "Championship",
       "notes": "Tentative UBL championship date following winter break.",
       "lastUpdated": "2026-07-15T22:47:18.005Z",
-      "weekId": "championship-week"
+      "weekId": "championship-week",
+      "scoreReporterTeamId": ""
+    }
+  ],
+  "profiles": [
+    {
+      "id": "kings-school:Boys Varsity",
+      "teamId": "kings-school",
+      "division": "Boys Varsity",
+      "summary": "A founding UBL program fielding both boys and girls varsity teams.",
+      "representativeEmail": "athletic_director@kingsschool.info",
+      "homeVenueId": "kings-school-gym",
+      "headCoach": {
+        "name": "Hudson Waters",
+        "experience": "Second season as head coach.",
+        "photo": "assets/optimized/hudson-waters-192.webp"
+      },
+      "assistants": [
+        {
+          "name": "Jacob Fischer",
+          "experience": "Assistant coach and Class of 2022 alumnus.",
+          "photo": "assets/optimized/jacob-fischer-192.webp"
+        }
+      ],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "kings-school:Girls Varsity",
+      "teamId": "kings-school",
+      "division": "Girls Varsity",
+      "summary": "A founding UBL program fielding both boys and girls varsity teams.",
+      "representativeEmail": "athletic_director@kingsschool.info",
+      "homeVenueId": "kings-school-gym",
+      "headCoach": {
+        "name": "Brodie Farr",
+        "experience": "Class of 1992 alumnus; coached the program for four seasons.",
+        "photo": ""
+      },
+      "assistants": [
+        {
+          "name": "Todd Brown",
+          "experience": "Coached alongside Brodie Farr for four seasons.",
+          "photo": ""
+        }
+      ],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "perth:Boys Varsity",
+      "teamId": "perth",
+      "division": "Boys Varsity",
+      "summary": "A founding UBL program with boys and girls varsity participation planned.",
+      "representativeEmail": "",
+      "homeVenueId": "perth-gym",
+      "headCoach": {
+        "name": "",
+        "experience": "",
+        "photo": ""
+      },
+      "assistants": [],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "perth:Girls Varsity",
+      "teamId": "perth",
+      "division": "Girls Varsity",
+      "summary": "A founding UBL program with boys and girls varsity participation planned.",
+      "representativeEmail": "",
+      "homeVenueId": "perth-gym",
+      "headCoach": {
+        "name": "",
+        "experience": "",
+        "photo": ""
+      },
+      "assistants": [],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "wilton-baptist:Boys Varsity",
+      "teamId": "wilton-baptist",
+      "division": "Boys Varsity",
+      "summary": "A founding UBL program led by coach Chris Webster.",
+      "representativeEmail": "",
+      "homeVenueId": "wilton-baptist-gym",
+      "headCoach": {
+        "name": "Chris Webster",
+        "experience": "Head coach at Wilton Baptist for 10 seasons.",
+        "photo": "assets/optimized/chris-webster-192.webp"
+      },
+      "assistants": [
+        {
+          "name": "Rob Newcome",
+          "experience": "Coaching for eight seasons.",
+          "photo": ""
+        }
+      ],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "wilton-baptist:Girls Varsity",
+      "teamId": "wilton-baptist",
+      "division": "Girls Varsity",
+      "summary": "A founding UBL program led by coach Chris Webster.",
+      "representativeEmail": "",
+      "homeVenueId": "wilton-baptist-gym",
+      "headCoach": {
+        "name": "Chris Webster",
+        "experience": "Head coach at Wilton Baptist for 10 seasons.",
+        "photo": "assets/optimized/chris-webster-192.webp"
+      },
+      "assistants": [],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "hv-rocks:Boys Varsity",
+      "teamId": "hv-rocks",
+      "division": "Boys Varsity",
+      "summary": "HV Rocks has competed for nearly 30 years.",
+      "representativeEmail": "",
+      "homeVenueId": "open-arms",
+      "headCoach": {
+        "name": "Marc Bailey",
+        "experience": "Head coach with 15 seasons of coaching experience.",
+        "photo": ""
+      },
+      "assistants": [
+        {
+          "name": "Tim Stuitje",
+          "experience": "Assistant coach for three seasons, entering his fourth.",
+          "photo": ""
+        }
+      ],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "hv-flames:Girls Varsity",
+      "teamId": "hv-flames",
+      "division": "Girls Varsity",
+      "summary": "HV Flames competes in the UBL Girls Varsity division.",
+      "representativeEmail": "",
+      "homeVenueId": "open-arms",
+      "headCoach": {
+        "name": "Rebekah Johnson",
+        "experience": "Additional coach information is being collected.",
+        "photo": ""
+      },
+      "assistants": [],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "tbd:Boys Varsity",
+      "teamId": "tbd",
+      "division": "Boys Varsity",
+      "summary": "UBL is recruiting a fifth program ready for structured varsity competition, shared standards, and a meaningful championship experience.",
+      "representativeEmail": "info.upstatebasketballleague@gmail.com",
+      "homeVenueId": "",
+      "headCoach": {
+        "name": "Your program",
+        "experience": "Applications are open for the 2026-27 season.",
+        "photo": ""
+      },
+      "assistants": [],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
+    },
+    {
+      "id": "tbd:Girls Varsity",
+      "teamId": "tbd",
+      "division": "Girls Varsity",
+      "summary": "UBL is recruiting a fifth program ready for structured varsity competition, shared standards, and a meaningful championship experience.",
+      "representativeEmail": "info.upstatebasketballleague@gmail.com",
+      "homeVenueId": "",
+      "headCoach": {
+        "name": "Your program",
+        "experience": "Applications are open for the 2026-27 season.",
+        "photo": ""
+      },
+      "assistants": [],
+      "lastUpdated": "2026-07-19T05:58:30.674Z"
     }
   ]
 }
